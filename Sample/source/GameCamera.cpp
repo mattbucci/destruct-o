@@ -118,14 +118,19 @@ double CalculateIntersectionDistance(vec3 rayStart, vec3 rayDirection, vec3 plan
 
 	return topPart/bottomPart;
 }
-double lastDist;
-vec2 GameCamera::UnprojectToGround(vec2 pos) {
+
+pair<vec2,vec2> GameCamera::FindExtents(float minZ, float maxZ) {
+	//STUB!
+	_ASSERTE(false);
+	return pair<vec2,vec2>(); 
+}
+
+vec2 GameCamera::UnprojectToGround(vec2 pos, float groundHeight) {
 	pair<vec3,vec3> unprojected = Unproject(pos);
 	//Now lets do some simple math to figure out where a vector with position,normal
 	//intersects with plane
-	double dist = CalculateIntersectionDistance(unprojected.first,unprojected.second,vec3(0,0,2),vec3(0,0,1));
+	double dist = CalculateIntersectionDistance(unprojected.first,unprojected.second,vec3(0,0,groundHeight),vec3(0,0,1));
 
-	lastDist = dist;
 	//If the dist isn't right, (it's behind you) correct it as much as possible
 	if (dist > 0) {
 		double x = 0;

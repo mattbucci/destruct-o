@@ -57,10 +57,6 @@ int main(int argc, char* argv[])
 
 	//Copied from some glue initiation code
 	fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
-	
-	if (GLEW_VERSION_3_2) {
-		cout << "LOADED version 3.2\n";
-	}
 #endif
 
 	//Setup sensible basics for opengl
@@ -77,6 +73,8 @@ int main(int argc, char* argv[])
 	VisualInterface.init();
 	//Populate the list of game systems
 	Frames::BuildSystemList();
+
+	glClearColor(0.0f,0.0f,0.0f,1.0f);
 
 	//The game loop begins
 	while (1) {
@@ -104,6 +102,9 @@ int main(int argc, char* argv[])
 				eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),event.motion.x,event.motion.y));
 				break;
 			}
+			//We do this outside the switch statement so we can break out of the while loop
+			if (event.type == SDL_QUIT)
+				break;
 		}
 			
 
@@ -120,23 +121,6 @@ int main(int argc, char* argv[])
 		Frames::UpdateAliveFrame();
 	}
 
-
-	/* Clear our buffer with a red background */
-	glClearColor ( 1.0, 0.0, 0.0, 1.0 );
-	glClear ( GL_COLOR_BUFFER_BIT );
-	/* Swap our back buffer to the front */
-	SDL_GL_SwapWindow(displayWindow);
-	/* Wait 2 seconds */
-	SDL_Delay(2000);
- 
-	/* Same as above, but green */
-	glClearColor ( 0.0, 1.0, 0.0, 1.0 );
-	glClear ( GL_COLOR_BUFFER_BIT );
-	SDL_GL_SwapWindow(displayWindow);
-	SDL_Delay(2000);
-	
-	
-	SDL_Delay(5000);
 	SDL_Quit();
 	
 	return 0;

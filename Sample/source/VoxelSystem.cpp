@@ -50,28 +50,9 @@ void VoxelSystem::pushSide(vec3 pos, vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d
 void VoxelSystem::pushVoxel(vec3 pos,int materialId, int & vertNumber) {
 
 	//So the original plan was to use one buffer that's why we have vertNumber
-	//but with a triangle strp we can send a lot less vertices than if we used GL_TRIANGLES
-	//the downside is separate draw calls for separate voxels... ouch
+	//but I ran out of time
 	vertNumber = 0;
 
-	/*vat(vertNumber++) = vec3(0,0,1)+pos;
-	vat(vertNumber++) = vec3(0,1,1)+pos;
-	vat(vertNumber++) = vec3(1,1,1)+pos;
-
-	vat(vertNumber++) = vec3(1,1,0)+pos;
-	vat(vertNumber++) = vec3(1,0,0)+pos;
-
-	vat(vertNumber++) = vec3(0,0,1)+pos;
-	vat(vertNumber++) = vec3(0,0,0)+pos;
-
-	vat(vertNumber++) = vec3(0,1,0)+pos;
-	vat(vertNumber++) = vec3(0,1,1)+pos;
-
-	vat(vertNumber++) = vec3(0,1,1)+pos;
-	vat(vertNumber++) = vec3(0,1,0)+pos;
-
-	vat(vertNumber++) = vec3(0,0,0)+pos;
-	vat(vertNumber++) = vec3(1,0,0)+pos;*/
 	//A cube
 
 	//Top

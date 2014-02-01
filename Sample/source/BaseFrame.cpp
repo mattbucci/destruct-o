@@ -93,7 +93,12 @@ void BaseFrame::Draw(double width, double height) {
 	vec2 minPoint = mapExtents;
 	vec2 maxPoint = vec2(0,0);
 	for (int i = 0; i < 4; i++) {
-		vec2 projected = camera.UnprojectToGround(testPoints[i]);
+		//Check unprojection to ground, and ceiling of the world
+		vec2 projected = camera.UnprojectToGround(testPoints[i],0.0);
+		minPoint = glm::min(minPoint,projected);
+		maxPoint = glm::max(maxPoint,projected);
+		//Check unprojection to ground, and ceiling of the world
+		projected = camera.UnprojectToGround(testPoints[i],10.0);
 		minPoint = glm::min(minPoint,projected);
 		maxPoint = glm::max(maxPoint,projected);
 	}
@@ -103,6 +108,8 @@ void BaseFrame::Draw(double width, double height) {
 	//Limit points to valid ranges (vec2() creates a zero vector)
 	minPoint = glm::max(vec2(),minPoint);
 	maxPoint = glm::min(mapExtents-vec2(1,1),maxPoint);
+
+	//maxPoint = mapExtents-vec2(1,1);
 
 	//Startup 3d rendering
 	//Enable the 2d shader for interface drawing

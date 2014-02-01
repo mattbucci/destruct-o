@@ -36,6 +36,10 @@ public:
 	vec3 Position();
 	void AOA(float angle);
 
+	//Determine the min/max point of visible extents given the min/max height
+	//Combines Unproject with UnprojectToGround
+	//Not implemented currently
+	pair<vec2,vec2> FindExtents(float minZ, float maxZ);
 	//Given a screen coordinate, what 3d vector does that coordinate represent
 	//in game
 	//The return value is location,direction
@@ -43,6 +47,6 @@ public:
 	//Given a screen coordinate find the location on the terrain that matches that click
 	//That is, where on the ground did the user click
 	//doesn't take into account the varying nature of the terrain yet
-	vec2 UnprojectToGround(vec2 pos);
+	vec2 UnprojectToGround(vec2 pos, float groundHeight = 0.0);
 
 };
