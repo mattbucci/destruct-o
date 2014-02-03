@@ -11,7 +11,7 @@ class VoxelSystem {
 	//Stores the tile in RGBA format 
 	vector<unsigned char> rawTile;
 	//Push a side of the cube
-	void pushSide(vec3 pos, vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d, int & vertNumber);
+	void pushSide(vec3 pos, vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d, int & vertNumber,int materialId);
 	//Draw a single voxel
 	void pushVoxel(vec3 pos,int materialId, int & vertNumber);
 
@@ -23,6 +23,8 @@ class VoxelSystem {
 	//which allows normals and texture coordinate generation
 	vec4 * vertices;
 	unsigned int verticeCount;
+	//The texture used for voxels
+	GLuint textureId;
 public:
 	VoxelSystem();
 	~VoxelSystem();

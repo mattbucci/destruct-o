@@ -84,28 +84,6 @@ BaseFrame::~BaseFrame() {
 
 }
 
-//Limit the distance from "fromPoint" to "originalPoint" to distance
-//if the distance is greater than that, use the closest point in the direction of
-//originalPoint at distance "distance" from "fromPoint" as the new point
-vec2 limitDistance(vec2 originalPoint, vec2 fromPoint, float distance) {
-	
-	/*if (glm::distance(originalPoint,fromPoint) > distance) {
-		vec2 direction = glm::normalize(originalPoint-fromPoint);
-		return direction*distance+fromPoint;
-	} */
-	vec2 dist = originalPoint-fromPoint;
-	if (dist.x > distance)
-		dist.x = distance;
-	if (dist.x < -distance);
-		dist.x = -distance;
-	if (dist.y > distance)
-		dist.y = distance;
-	if (dist.y < -distance);
-		dist.y = -distance;
-
-	return fromPoint+dist;
-}
-
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {
 	//Issue events to dialog
 	//Run the dialog system and monitor pressed keys
@@ -121,7 +99,7 @@ void BaseFrame::Draw(double width, double height) {
 	vec2 mapExtents = vec2(voxels.GetWidth(),voxels.GetHeight());
 
 	//Rotate camera
-	camera.Rotation((float)(OS::Now()/30.0)*2.0f*M_PI);
+	camera.Rotation((float)((OS::Now()/30.0)*2.0f*M_PI));
 
 
 	//New strategy for determining draw box
@@ -137,7 +115,7 @@ void BaseFrame::Draw(double width, double height) {
 	float userAngle = camera.Rotation();
 	static const float rectHalfWidth = 30.0f; //Half the width of the rectangle
 	static const float rectHeight = 100.0f; //the full length of the rectangle
-	static const float rectHalfDiagonal = M_PI/2.0f-atan2(rectHeight,rectHalfWidth); //The angle of the diagonal (to the center of the width side)
+	static const float rectHalfDiagonal =(float)( M_PI/2.0f-atan2(rectHeight,rectHalfWidth)); //The angle of the diagonal (to the center of the width side)
 	static const float rectDiagonalLength = sqrt(rectHalfWidth*rectHalfWidth+rectHeight*rectHeight);
 	vec2 testPoints[4] = {
 		//Use the edges of a rectangle with the viewer in the bottom center
