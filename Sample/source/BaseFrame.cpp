@@ -8,6 +8,8 @@
 #include "Button.h"
 #include "Listbox.h"
 
+#include "OS.h"
+
 BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	//Build the dialog shader
 	GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/vsh_interface.glsl","Interface/Shaders/fsh_interface.glsl");
@@ -82,25 +84,77 @@ BaseFrame::~BaseFrame() {
 
 }
 
+//Limit the distance from "fromPoint" to "originalPoint" to distance
+//if the distance is greater than that, use the closest point in the direction of
+//originalPoint at distance "distance" from "fromPoint" as the new point
+vec2 limitDistance(vec2 originalPoint, vec2 fromPoint, float distance) {
+	
+	/*if (glm::distance(originalPoint,fromPoint) > distance) {
+		vec2 direction = glm::normalize(originalPoint-fromPoint);
+		return direction*distance+fromPoint;
+	} */
+	vec2 dist = originalPoint-fromPoint;
+	if (dist.x > distance)
+		dist.x = distance;
+	if (dist.x < -distance);
+		dist.x = -distance;
+	if (dist.y > distance)
+		dist.y = distance;
+	if (dist.y < -distance);
+		dist.y = -distance;
+
+	return fromPoint+dist;
+}
+
+bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {
+	//Issue events to dialog
+	//Run the dialog system and monitor pressed keys
+	passEventsToControl(inputEvents);
+
+	return true;
+}
+
 void BaseFrame::Draw(double width, double height) {
 	vec2 viewPortSize = vec2((float)width,(float)height);
 	//Save size in camera as well (for unprojection)
 	camera.UpdateViewSize(viewPortSize);
 	vec2 mapExtents = vec2(voxels.GetWidth(),voxels.GetHeight());
+
+	//Rotate camera
+	camera.Rotation((float)(OS::Now()/30.0)*2.0f*M_PI);
+
+
+	//New strategy for determining draw box
+	//Create a rectangle with the user on the bottom center, with the top of the rectangle
+	//far away from the user in his view direction
+	//Use the points of this rotated rectangle
+	//to choose a min/max point of the voxel draw rectangle
+
+
 	//First determine visible extents by testing all corners
 	viewPortSize = vec2(width,height);
-	vec2 testPoints[4] = {vec2(0,0), vec2(width,0), vec2(0,height), viewPortSize};
+	vec2 userPosition = vec2(camera.Position());
+	float userAngle = camera.Rotation();
+	static const float rectHalfWidth = 30.0f; //Half the width of the rectangle
+	static const float rectHeight = 100.0f; //the full length of the rectangle
+	static const float rectHalfDiagonal = M_PI/2.0f-atan2(rectHeight,rectHalfWidth); //The angle of the diagonal (to the center of the width side)
+	static const float rectDiagonalLength = sqrt(rectHalfWidth*rectHalfWidth+rectHeight*rectHeight);
+	vec2 testPoints[4] = {
+		//Use the edges of a rectangle with the viewer in the bottom center
+		//First the bottom left
+		userPosition + vec2(cos(M_PI/2.0f+userAngle),sin(M_PI/2.0f+userAngle))*rectHalfWidth,
+		//Next bottom right
+		userPosition + vec2(cos(-M_PI/2.0f+userAngle),sin(-M_PI/2.0f+userAngle))*rectHalfWidth,
+		//Top Left
+		userPosition + vec2(cos(rectHalfDiagonal+userAngle),sin(rectHalfDiagonal+userAngle))*rectDiagonalLength,
+		//Top Right
+		userPosition + vec2(cos(-rectHalfDiagonal+userAngle),sin(-rectHalfDiagonal+userAngle))*rectDiagonalLength,
+	};
 	vec2 minPoint = mapExtents;
 	vec2 maxPoint = vec2(0,0);
 	for (int i = 0; i < 4; i++) {
-		//Check unprojection to ground, and ceiling of the world
-		vec2 projected = camera.UnprojectToGround(testPoints[i],0.0);
-		minPoint = glm::min(minPoint,projected);
-		maxPoint = glm::max(maxPoint,projected);
-		//Check unprojection to ground, and ceiling of the world
-		projected = camera.UnprojectToGround(testPoints[i],10.0);
-		minPoint = glm::min(minPoint,projected);
-		maxPoint = glm::max(maxPoint,projected);
+		minPoint = glm::min(minPoint,testPoints[i]);
+		maxPoint = glm::max(maxPoint,testPoints[i]);
 	}
 
 	minPoint = glm::floor(minPoint);
@@ -109,7 +163,6 @@ void BaseFrame::Draw(double width, double height) {
 	minPoint = glm::max(vec2(),minPoint);
 	maxPoint = glm::min(mapExtents-vec2(1,1),maxPoint);
 
-	//maxPoint = mapExtents-vec2(1,1);
 
 	//Startup 3d rendering
 	//Enable the 2d shader for interface drawing
@@ -130,5 +183,5 @@ void BaseFrame::Draw(double width, double height) {
 	voxels.Draw(shaders3d,camera.Position(),(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);
 
 	//Call the parent draw to draw interface
-	GameSystem::Draw(width,height);
+	//GameSystem::Draw(width,height);
 }

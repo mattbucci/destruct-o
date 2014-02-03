@@ -5,15 +5,24 @@
 
 class GL3DProgram;
 
-class VoxelSystem : GLDynamicVertexGroup {
+class VoxelSystem {
 	unsigned int tileWidth;
 	unsigned int tileHeight;
 	//Stores the tile in RGBA format 
 	vector<unsigned char> rawTile;
 	//Push a side of the cube
 	void pushSide(vec3 pos, vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d, int & vertNumber);
-	//Push a voxel into the glydynamicvertexgroup starting at vertnumber
+	//Draw a single voxel
 	void pushVoxel(vec3 pos,int materialId, int & vertNumber);
+
+	GLuint vertexArray;
+	//Normals and texture coordinates
+	//generated inside the shader
+	GLuint vertexBuffer;
+	//vertices are 4 floats instead of 3 because the 4th is an id
+	//which allows normals and texture coordinate generation
+	vec4 * vertices;
+	unsigned int verticeCount;
 public:
 	VoxelSystem();
 	~VoxelSystem();

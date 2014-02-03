@@ -11,6 +11,11 @@ public:
 	BaseFrame(ShaderGroup * shaders);
 	~BaseFrame();
 
+	//Override update to remove FPS control
+	//provided by the game system
+	virtual bool Update(double delta,double now, vector<InputEvent> inputEvents);
+
+
 	//Draw happens whenever possible
 	void Draw(double width, double height) override;
 };

@@ -32,6 +32,7 @@ public:
 	void Draw(GL3DProgram * shaders);
 
 	void Rotation(float rotation);
+	float Rotation();
 	void Position(vec3 pos);
 	vec3 Position();
 	void AOA(float angle);

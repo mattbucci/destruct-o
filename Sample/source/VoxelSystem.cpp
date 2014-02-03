@@ -2,10 +2,20 @@
 #include "VoxelSystem.h"
 #include "lodepng.h"
 
+#include "GL3DProgram.h"
+#include "OS.h"
+
 VoxelSystem::VoxelSystem() {
-	//Resize self to match expected vertex count
-	UpdateGroup(GL_TRIANGLES,36);
 	tileWidth = tileHeight = 0;
+	//Build the vertex/buffer array
+	vertices = NULL;
+	//Generate the opengl buffers representing this vertex group
+	//will also need a buffer for textures in the future
+	glGenBuffers(1,&vertexBuffer);
+	glGenVertexArrays(1,&vertexArray);
+
+	verticeCount = 0;
+	vertices = new vec4[36];
 }
 VoxelSystem::~VoxelSystem() {
 
@@ -33,18 +43,18 @@ bool VoxelSystem::LoadTile(string tileName) {
 }
 
 void VoxelSystem::pushSide(vec3 pos, vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d, int & vertNumber) {
-	nat(vertNumber) = normal;
-	vat(vertNumber++) = a+pos;
-	nat(vertNumber) = normal;
-	vat(vertNumber++) = b+pos;
-	nat(vertNumber) = normal;
-	vat(vertNumber++) = c+pos;
-	nat(vertNumber) = normal;
-	vat(vertNumber++) = d+pos;
-	nat(vertNumber) = normal;
-	vat(vertNumber++) = b+pos;
-	nat(vertNumber) = normal;
-	vat(vertNumber++) = c+pos;
+	//nat(vertNumber) = normal;
+	vertices[vertNumber++] = vec4(a+pos,(float)vertNumber);
+	//nat(vertNumber) = normal;
+	vertices[vertNumber++] = vec4(b+pos,(float)vertNumber);
+	//nat(vertNumber) = normal;
+	vertices[vertNumber++] = vec4(c+pos,(float)vertNumber);
+	//nat(vertNumber) = normal;
+	vertices[vertNumber++] = vec4(b+pos,(float)vertNumber);
+	//nat(vertNumber) = normal;
+	vertices[vertNumber++] = vec4(d+pos,(float)vertNumber);
+	//nat(vertNumber) = normal;
+	vertices[vertNumber++] = vec4(c+pos,(float)vertNumber);
 }
 
 void VoxelSystem::pushVoxel(vec3 pos,int materialId, int & vertNumber) {
@@ -64,11 +74,21 @@ void VoxelSystem::pushVoxel(vec3 pos,int materialId, int & vertNumber) {
 	//Right
 	pushSide(pos,vec3(-1,0,0),vec3(0,0,0),vec3(0,1,0),vec3(0,0,1),vec3(0,1,1),vertNumber);
 	//Back
-	pushSide(pos,vec3(0,1,0),vec3(0,1,0),vec3(1,1,0),vec3(0,1,1),vec3(1,1,1),vertNumber);
+	pushSide(pos,vec3(0,1,0),vec3(0,1,0),vec3(0,1,1),vec3(1,1,0),vec3(1,1,1),vertNumber);
 	//Front
 	pushSide(pos,vec3(0,-1,0),vec3(0,0,0),vec3(1,0,0),vec3(0,0,1),vec3(1,0,1),vertNumber);
 
-	GLDynamicVertexGroup::Draw();
+	//Rebind the array to bring them into the current context
+	glBindVertexArray ( vertexArray );
+
+	//Push voxel to gpu
+	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
+	glBufferData ( GL_ARRAY_BUFFER, 36*sizeof(vec4), vertices, GL_DYNAMIC_READ );
+	glEnableVertexAttribArray ( 0 );
+	glVertexAttribPointer ( 0, 4, GL_FLOAT, GL_FALSE, 0, 0 );
+	
+	//Draw voxel
+	glDrawArrays( GL_TRIANGLES, 0, 36 );
 }
 
 //Draw the voxels in a region
@@ -78,8 +98,9 @@ void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int 
 	_ASSERTE(tox < tileWidth);
 	_ASSERTE(toy < tileHeight);
 
-	int vertNumber = 0;
 	
+
+	int vertNumber = 0;
 
 	for (int y = aty; y <= toy; y++) {
 		//It is important for x to be the inner loop
@@ -90,13 +111,10 @@ void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int 
 			int pixelNumber = (tileWidth*y+x)*4;
 			//Get position
 			vec3 pos = vec3(x,y,rawTile[pixelNumber]/10);
-			//Calculate distance squared
-			vec3 dist = drawPos-pos;
-			//Reject if too far away (500 tiles hard coded right now)
-			if (glm::dot(dist,dist) < 100*100)
-				//For now use raw tile % 4 to map all tiles to be within the 4 valid materials
-				//that i've made
-				pushVoxel(pos,rawTile[pixelNumber+1] % 4,vertNumber);
+
+			//For now use raw tile % 4 to map all tiles to be within the 4 valid materials
+			//that i've made
+			pushVoxel(pos,rawTile[pixelNumber+1] % 4,vertNumber);
 		}
 	}
 }

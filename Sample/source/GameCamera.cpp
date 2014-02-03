@@ -3,11 +3,11 @@
 #include "OS.h"
 
 #ifndef M_PI
-#define M_PI 3.141592
+#define M_PI 3.141592f
 #endif
 
 GameCamera::GameCamera() {
-	cameraPosition = vec3(100,100,90);
+	cameraPosition = vec3(1000,1000,10);
 	angleOfAttack = 20.0f;
 	rotation = 0;
 
@@ -19,21 +19,14 @@ void GameCamera::UpdateViewSize(vec2 viewSize) {
 }
 
 void GameCamera::Draw(GL3DProgram * shaders) {
+	//float offset = (float)(1000.0*OS::Now()/10000.0)*2.0f*M_PI;
 
 	//Build a camera matrix to apply to the camera vector
-	//which points from 0,0,0 back up at the camera
-	mat4 cameraMatrix;
-	vec4 cameraVector = vec4(0,1,0,1);
-	vec4 upVector = vec4(0,0,-1,1);
-	cameraMatrix *= glm::rotate(rotation,vec3(0,0,1));
-	float cx = cos(rotation/180.0f*M_PI);
-	float cy = sin(rotation/180.0f*M_PI);
-	cameraMatrix *= glm::rotate(180-angleOfAttack,vec3(1.0f,0.0f,0.0f));
-	cameraVector = cameraMatrix*(glm::normalize(cameraVector)*cameraPosition.z);
-	upVector = cameraMatrix*upVector;
+	vec3 cameraVector = vec3(cos(rotation),sin(rotation),-.25);
+
 	//Calculate camera position without z
-	vec3 pos = vec3(cameraPosition.x,cameraPosition.y,0);
-	shaders->Camera.SetCameraPosition(vec3(cameraVector)+pos,pos,vec3(upVector));
+	vec3 pos = vec3(cameraPosition.x,cameraPosition.y,cameraPosition.z);
+	shaders->Camera.SetCameraPosition(pos,pos+cameraVector,vec3(0,0,1));
 	//IF YOU CHANGE NEAR/FAR CLIPPING PLANE, PLEASE CHANGE UNPROJECT (below) AS WELL
 	shaders->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,1,1000); //width/height
 	shaders->Camera.Apply();
@@ -154,8 +147,13 @@ vec2 GameCamera::UnprojectToGround(vec2 pos, float groundHeight) {
 }
 
 void GameCamera::Rotation(float rotation) {
-	this->rotation = rotation*M_PI/180.0;
+	this->rotation = rotation;
 }
+
+float GameCamera::Rotation() {
+	return rotation;
+}
+
 void GameCamera::Position(vec3 pos) {
 	cameraPosition = pos;
 }

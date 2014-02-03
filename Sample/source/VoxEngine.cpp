@@ -69,6 +69,9 @@ int main(int argc, char* argv[])
 	//re-enable for performance reasons after voxel system complete
 	glDisable(GL_CULL_FACE);
 
+	//Attempt to enable vsync
+	SDL_GL_SetSwapInterval(1);
+
 	//Initialze the dialog constants
 	VisualInterface.init();
 	//Populate the list of game systems
