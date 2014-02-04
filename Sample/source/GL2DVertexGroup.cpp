@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GL2DVertexGroup.h"
 #include "GLModel.h"
+#include "GL2DProgram.h"
 
 //For opengl es
 #ifdef __MOBILE__
@@ -67,7 +68,8 @@ GL2DVertexGroup::GL2DVertexGroup(GLenum gltype, int vertexCount) {
 	vertices = new vec2[vertexCount];
 	vertexTextureCoords = new vec2[vertexCount];
 
-	memset(vertexTextureCoords,0,sizeof(vec2)*vertexCount);
+	for (int i = 0; i < vertexCount; i++)
+		vertexTextureCoords[i] = vec2(1.0f,1.0f);
 
 	this->gltype = gltype;
 	this->vertexCount = vertexCount;
@@ -99,6 +101,10 @@ void GL2DVertexGroup::ResizeVertexGroup(int newSize) {
 
 	vertices = new vec2[vertexCount];
 	vertexTextureCoords = new vec2[vertexCount];
+	//Texture coordinates must be valid or they could cause silent
+	//errors in the shaders
+	for (int i = 0; i < vertexCount; i++)
+		vertexTextureCoords[i] = vec2(1.0f,1.0f);
 	//Buffer junk data (doesn't matter if data is uninitialized)
 	//This allows the allocation to happen once
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
@@ -126,7 +132,7 @@ vec2 & GL2DVertexGroup::xat(const int index) {
 }
 
 
-void GL2DVertexGroup::Draw() {
+void GL2DVertexGroup::Draw(GL2DProgram * shader) {
 	_ASSERTE(vertexBuffer >= 0);
 	_ASSERTE(vertexArray >= 0);
 	_ASSERTE(textureBuffer >= 0);
@@ -141,16 +147,16 @@ void GL2DVertexGroup::Draw() {
 	 //positions
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
 	glBufferSubData ( GL_ARRAY_BUFFER, 0, vertexCount*sizeof(vec2), vertices );
-	glEnableVertexAttribArray ( 0 );
-	glVertexAttribPointer ( 0, 2, GL_FLOAT, GL_FALSE, 0, 0 );
+	glEnableVertexAttribArray ( shader->AttributePosition() );
+	glVertexAttribPointer ( shader->AttributePosition(), 2, GL_FLOAT, GL_FALSE, 0, 0 );
 
 
 	// texture coordinates
 	glBindBuffer ( GL_ARRAY_BUFFER, textureBuffer ); 
 	glBufferSubData ( GL_ARRAY_BUFFER, 0, vertexCount*sizeof(vec2), vertexTextureCoords );
-	glEnableVertexAttribArray ( 1 );
-	glVertexAttribPointer ( 1, 2, GL_FLOAT, GL_FALSE, 0, 0 );
-   
+	glEnableVertexAttribArray ( shader->AttributeTexture() );
+	glVertexAttribPointer ( shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, 0, 0 );
+
 	glDrawArrays( gltype, 0, vertexCount );
 }
 

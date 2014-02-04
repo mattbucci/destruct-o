@@ -108,7 +108,7 @@ void BaseFrame::Draw(double width, double height) {
 	//Use the points of this rotated rectangle
 	//to choose a min/max point of the voxel draw rectangle
 
-
+	
 	//First determine visible extents by testing all corners
 	viewPortSize = vec2(width,height);
 	vec2 userPosition = vec2(camera.Position());
@@ -159,7 +159,7 @@ void BaseFrame::Draw(double width, double height) {
 	//camera draw also sets up world light
 	camera.Draw(shaders3d);
 	voxels.Draw(shaders3d,camera.Position(),(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);
-
+	
 	//Call the parent draw to draw interface
-	//GameSystem::Draw(width,height);
+	GameSystem::Draw(width,height);
 }

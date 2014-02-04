@@ -116,7 +116,7 @@ void RasterizedText::Draw(GL2DProgram * shader) {
 	shader->Model.Scale(scale,scale,scale);
 	shader->Model.Apply();
 
-	GL2DVertexGroup::Draw();
+	GL2DVertexGroup::Draw(shader);
 
 	//Turn textures back off
 	shader->EnableTexture(false);

@@ -10,6 +10,8 @@ class GL2DProgram : public GLProgram {
 	GLint textureEnabled;
 	GLint widthUniform;
 	GLint heightUniform;
+	GLint attributeIndexPosition;
+	GLint attributeIndexTexture;
 public:
 	GL2DProgram(string vertexShaderPath, string fragmentShaderPath);
 
@@ -18,6 +20,14 @@ public:
 
 	void SetWidthHeight(float width, float height);
 	void SetColor(vec4 color);
+
+	//Also binds attributes
+	//vertex to 0
+	//texture to 1
+	//void UseProgram() override;
+
+	const GLint AttributePosition();
+	const GLint AttributeTexture();
 
 	//For manually bound textures
 	void EnableTexture(bool enable);

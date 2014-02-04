@@ -325,7 +325,7 @@ void Control::drawBackground(GL2DProgram * shaders) {
 		n->Bind9Texture(shaders);
 	}
 
-	GL2DVertexGroup::Draw();
+	GL2DVertexGroup::Draw(shaders);
 }
 
 float Control::findPinPos(Control::PinType pin, float mySize, float parentMax) {

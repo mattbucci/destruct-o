@@ -66,7 +66,7 @@ void Shape::Draw(GL2DProgram * shaders) {
 							calculatedPosition.Y+calculatedPosition.Height/2.0-(yMax-yMin)/2.0,0);*/
 	shaders->Model.Scale(calculatedPosition.Width/(xMax-xMin), calculatedPosition.Height/(yMax-yMin),0);
 	shaders->Model.Apply();
-	GL2DVertexGroup::Draw();
+	GL2DVertexGroup::Draw(shaders);
 	shaders->Model.PopMatrix();
 }
 

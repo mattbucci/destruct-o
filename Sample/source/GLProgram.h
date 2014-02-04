@@ -16,7 +16,7 @@ public:
 	GLProgram(string vertexShaderPath, string fragmentShaderPath, string geometryShaderPath = "");
 	virtual ~GLProgram();
 
-	void UseProgram(void);
+	virtual	void UseProgram(void);
 
 	void EnableTextureSlot(string uniformName,int slot);
 
