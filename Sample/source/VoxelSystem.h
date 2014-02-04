@@ -1,7 +1,6 @@
 #pragma once
 
 #include "stdafx.h"
-#include "GLDynamicVertexGroup.h"
 
 class GL3DProgram;
 

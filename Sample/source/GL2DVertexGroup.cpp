@@ -2,6 +2,66 @@
 #include "GL2DVertexGroup.h"
 #include "GLModel.h"
 
+//For opengl es
+#ifdef __MOBILE__
+
+//Build the arrays to create the vertex group
+GL2DVertexGroup::GL2DVertexGroup(GLenum gltype, int vertexCount) {
+	vertices = new vec2[vertexCount];
+	vertexTextureCoords = new vec2[vertexCount];
+
+	memset(vertexTextureCoords,0,sizeof(vec2)*vertexCount);
+
+	this->gltype = gltype;
+	this->vertexCount = vertexCount;
+}
+
+void GL2DVertexGroup::ResizeVertexGroup(int newSize) {
+	delete[] vertices;
+	delete[] vertexTextureCoords;
+
+	this->vertexCount = newSize;
+
+	vertices = new vec2[vertexCount];
+	vertexTextureCoords = new vec2[vertexCount];
+}
+
+GL2DVertexGroup::~GL2DVertexGroup() {
+	delete [] vertices;
+	delete [] vertexTextureCoords;
+}
+	
+//For modifying vertices
+vec2 & GL2DVertexGroup::vat(const int index) {
+	return vertices[index];
+}
+
+vec2 & GL2DVertexGroup::xat(const int index) {
+	return vertexTextureCoords[index];
+}
+
+
+void GL2DVertexGroup::Draw() {
+
+	//If there are no vertices, abort
+	if (vertexCount == 0)
+		return;
+
+	//positions
+	glVertexAttribPointer ( 0, 2, GL_FLOAT, GL_FALSE, 0, vertices );
+	glEnableVertexAttribArray ( 0 );
+
+
+	// texture coordinates
+	glVertexAttribPointer ( 1, 2, GL_FLOAT, GL_FALSE, 0, vertexTextureCoords );
+	glEnableVertexAttribArray ( 1 );
+	
+   
+	glDrawArrays( gltype, 0, vertexCount );
+}
+#else
+//For desktops
+
 //Build the arrays to create the vertex group
 GL2DVertexGroup::GL2DVertexGroup(GLenum gltype, int vertexCount) {
 	vertices = new vec2[vertexCount];
@@ -93,3 +153,5 @@ void GL2DVertexGroup::Draw() {
    
 	glDrawArrays( gltype, 0, vertexCount );
 }
+
+#endif

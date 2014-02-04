@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "GLFrameBuffer.h"
-
+/*
 GLFrameBuffer::GLFrameBuffer(int width, int height, int bufferCount,bool enableDepth) {
 	//Max of 8 buffers right now
 	_ASSERTE(bufferCount <= 8);
@@ -76,3 +76,4 @@ GLFrameBuffer::~GLFrameBuffer() {
 	glDeleteTextures(frameTextureCount,frameTextures);
 	glDeleteFramebuffers(1,&frameBuffer);
 }
+*/

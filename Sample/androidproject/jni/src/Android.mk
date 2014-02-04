@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
  
-LOCAL_LDLIBS    := -lGLESv1_CM -llog 
+LOCAL_LDLIBS    := -lGLESv1_CM -llog -lGLESv2
  
 LOCAL_SHARED_LIBRARIES := SDL2 SDL2_ttf
  

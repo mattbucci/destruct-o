@@ -5,9 +5,11 @@
 GLProgram::GLProgram(string vertexShaderPath, string fragmentShaderPath, string geometryShaderPath) {
 	vertexShader = new GLShader(vertexShaderPath,GL_VERTEX_SHADER);
 	fragmentShader = new GLShader(fragmentShaderPath,GL_FRAGMENT_SHADER);
+#ifndef __MOBILE__
 	if (geometryShaderPath.length() > 0) 
 		geometryShader = new GLShader(geometryShaderPath,GL_GEOMETRY_SHADER);
 	else
+#endif
 		geometryShader = NULL;
 
 	programId = glCreateProgram();

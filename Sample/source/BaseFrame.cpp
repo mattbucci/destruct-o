@@ -150,7 +150,7 @@ void BaseFrame::Draw(double width, double height) {
 	shaders3d->Model.Apply();
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH);
+	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);

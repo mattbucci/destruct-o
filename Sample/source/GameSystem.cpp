@@ -57,7 +57,7 @@ void GameSystem::Draw(double width, double height) {
 	shaders2d->SetWidthHeight((float)width,(float)height);
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
-	glDisable(GL_DEPTH);
+	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);

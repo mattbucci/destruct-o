@@ -11,8 +11,8 @@ VoxelSystem::VoxelSystem() {
 	vertices = NULL;
 	//Generate the opengl buffers representing this vertex group
 	//will also need a buffer for textures in the future
-	glGenBuffers(1,&vertexBuffer);
-	glGenVertexArrays(1,&vertexArray);
+	//glGenBuffers(1,&vertexBuffer);
+	//glGenVertexArrays(1,&vertexArray);
 
 	verticeCount = 0;
 	vertices = new vec4[36];
@@ -89,7 +89,7 @@ void VoxelSystem::pushVoxel(vec3 pos,int materialId, int & vertNumber) {
 	pushSide(pos,vec3(0,-1,0),vec3(0,0,0),vec3(1,0,0),vec3(0,0,1),vec3(1,0,1),vertNumber,materialId);
 
 	//Rebind the array to bring them into the current context
-	glBindVertexArray ( vertexArray );
+	/*glBindVertexArray ( vertexArray );
 
 	//Push voxel to gpu
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
@@ -98,7 +98,7 @@ void VoxelSystem::pushVoxel(vec3 pos,int materialId, int & vertNumber) {
 	glVertexAttribPointer ( 0, 4, GL_FLOAT, GL_FALSE, 0, 0 );
 	
 	//Draw voxel
-	glDrawArrays( GL_TRIANGLES, 0, 36 );
+	glDrawArrays( GL_TRIANGLES, 0, 36 );*/
 }
 
 //Draw the voxels in a region

@@ -37,6 +37,9 @@ void OS::SleepTime(double seconds) {
 #ifdef __APPLE__
 #include <unistd.h>
 #endif
+#ifdef __ANDROID__
+#include <unistd.h>
+#endif
 
 //UNIX stuff
 #include <sys/time.h>

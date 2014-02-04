@@ -4,7 +4,6 @@
 
 #define SIMULATION_TIME .025
 //again SDL defines "main" why?!
-#undef main
 
 class GameSystem;
 
