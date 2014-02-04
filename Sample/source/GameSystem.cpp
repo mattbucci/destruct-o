@@ -57,10 +57,8 @@ void GameSystem::Draw(double width, double height) {
 	shaders2d->SetWidthHeight((float)width,(float)height);
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
-	glDisable(GL_DEPTH);
-	glDepthMask(GL_TRUE);
+	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Update debug data before draw
@@ -70,7 +68,8 @@ void GameSystem::Draw(double width, double height) {
 	Controls.Draw(shaders2d,Rect(0,0,(float)width,(float)height));
 
 	//Keep track of fps
-	fpsCount.MarkFrameRendered();
+	fpsCount.MarkFrameRendered();//*/
+	
 }
 
 //When this frame starts running this will be called

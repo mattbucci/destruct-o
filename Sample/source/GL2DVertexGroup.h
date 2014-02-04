@@ -4,6 +4,7 @@
 #include "stdafx.h"
 
 class GLModel;
+class GL2DProgram;
 
 class GL2DVertexGroup {
 	//The number of vertices in the vertex group
@@ -32,5 +33,5 @@ public:
 	vec2 & xat(const int index);
 
 	//void Bind(mat4 transformation);
-	void Draw();
+	void Draw(GL2DProgram * shader);
 };

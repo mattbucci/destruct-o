@@ -11,6 +11,18 @@ GL2DProgram::GL2DProgram(string vertexShaderPath, string fragmentShaderPath) :
 	textureEnabled = glGetUniformLocation(programId,"textureEnabled");
 	widthUniform = glGetUniformLocation(programId,"uWidth");
 	heightUniform = glGetUniformLocation(programId,"uHeight");
+
+	glBindAttribLocation(programId, 0, "vPos");
+	glBindAttribLocation(programId, 1, "vTex");
+	attributeIndexTexture = glGetAttribLocation(programId,"vTex");
+	attributeIndexPosition = glGetAttribLocation(programId,"vPos");
+}
+
+const GLint GL2DProgram::AttributePosition() {
+	return attributeIndexPosition;
+}
+const GLint GL2DProgram::AttributeTexture() {
+	return attributeIndexTexture;
 }
 
 void GL2DProgram::SetColor(vec4 color) {
@@ -23,5 +35,5 @@ void GL2DProgram::SetWidthHeight(float width, float height) {
 }
 
 void GL2DProgram::EnableTexture(bool enable) {
-	glUniform1i(textureEnabled,(enable) ? 1 : 0);
+	glUniform1f(textureEnabled,(enable) ? 1.0f : 0.0f);
 }
