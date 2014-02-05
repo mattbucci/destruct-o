@@ -12,16 +12,32 @@
 
 BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	cout << "\t Constructing base frame\n";
-	//Build the dialog shader
-	GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/vsh_interface.glsl","Interface/Shaders/fsh_interface.glsl");
-	if (!shaders2d->Valid()) 
-		cout << "Failed to build opengl program\n";
-	shaders->AddShader(shaders2d,"2d");
-	//Build the voxel shader
-	GL3DProgram * shaders3d = new GL3DProgram("Interface/Shaders/vsh_3d.glsl","Interface/Shaders/fsh_3d.glsl");
-	if (!shaders3d->Valid()) 
-		cout << "Failed to build opengl program\n";
-	shaders->AddShader(shaders3d,"3d");
+	//Load the shaders appropriate for the opengl version being used
+	if (OpenglVersion == 33) {
+		//Build the dialog shader
+		GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl33/vsh_interface.glsl","Interface/Shaders/glsl33/fsh_interface.glsl");
+		if (!shaders2d->Valid()) 
+			cout << "Failed to build opengl program\n";
+		shaders->AddShader(shaders2d,"2d");
+		//Build the voxel shader
+		GL3DProgram * shaders3d = new GL3DProgram("Interface/Shaders/glsl33/vsh_3d.glsl","Interface/Shaders/glsl33/fsh_3d.glsl");
+		if (!shaders3d->Valid()) 
+			cout << "Failed to build opengl program\n";
+		shaders->AddShader(shaders3d,"3d");
+	}
+	else {
+		//Build the dialog shader
+		GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl11/vsh_interface.glsl","Interface/Shaders/glsl11/fsh_interface.glsl");
+		if (!shaders2d->Valid()) 
+			cout << "Failed to build opengl program\n";
+		shaders->AddShader(shaders2d,"2d");
+		//Build the voxel shader
+		GL3DProgram * shaders3d = new GL3DProgram("Interface/Shaders/glsl11/vsh_3d.glsl","Interface/Shaders/glsl11/fsh_3d.glsl");
+		if (!shaders3d->Valid()) 
+			cout << "Failed to build opengl program\n";
+		shaders->AddShader(shaders3d,"3d");
+	}
+
 
 	//Load the sample tile
 	if (!voxels.LoadTile("basic-h.png")) {
@@ -114,8 +130,8 @@ void BaseFrame::Draw(double width, double height) {
 	viewPortSize = vec2(width,height);
 	vec2 userPosition = vec2(camera.Position());
 	float userAngle = camera.Rotation();
-	static const float rectHalfWidth = 20.0f; //Half the width of the rectangle
-	static const float rectHeight = 200.0f; //the full length of the rectangle
+	static const float rectHalfWidth = 10.0f; //Half the width of the rectangle
+	static const float rectHeight = 30.0f; //the full length of the rectangle
 	static const float rectHalfDiagonal =(float)( M_PI/2.0f-atan2(rectHeight,rectHalfWidth)); //The angle of the diagonal (to the center of the width side)
 	static const float rectDiagonalLength = sqrt(rectHalfWidth*rectHalfWidth+rectHeight*rectHeight);
 	vec2 testPoints[4] = {

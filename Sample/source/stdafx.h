@@ -5,8 +5,6 @@
 
 #pragma once
 
-
-
 //Basic I/O
 #include <iostream>
 
@@ -25,6 +23,12 @@
 
 using namespace std;
 
+//Define mobile platforms
+//iOS would also go here
+#ifdef __ANDROID__
+#define __MOBILE__
+#endif
+
 //For android or any other platform which requires it
 //this converts "cout" into an actually loggable format
 #include "AuxLogger.h"
@@ -39,13 +43,14 @@ using namespace std;
 #undef UNICODE
 #endif
 
+#ifndef __MOBILE__
 #include <GL/glew.h>
+#endif
 
-//Opengl3 for nonwindows platforms
+//GLEW now handles all of opengl
 #ifndef WIN32
 //for OSX
 #ifdef __APPLE__
-//#include <OpenGL/gl3.h>
 //Prevent SDL from using gl.h
 #define __gl_h_
 #endif
@@ -59,20 +64,6 @@ using namespace std;
 
 
 #include <SDL/SDL.h>
-
-
-//Define mobile platforms
-//iOS would also go here
-#ifdef __ANDROID__
-#define __MOBILE__
-#endif
-
-//GLEW (should be replaced)
-#ifdef WIN32
-
-#endif
-
-
 
 //SDL 2
 #ifndef __ANDROID__
@@ -109,3 +100,8 @@ using glm::quat;
 #else
 #define main SDL_main
 #endif
+
+//A variable which at runtime can be used to figure out what version is running
+//3 is 33
+//2 is 20
+extern int OpenglVersion;

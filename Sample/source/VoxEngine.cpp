@@ -10,42 +10,47 @@
 
 SDL_Renderer* displayRenderer;
 
+//A variable which at runtime can be used to figure out what version is running
+int OpenglVersion;
+
+//This should be encapsualted in a class, but... here it is
+//returns NULL if that context couldn't be constructed
+SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion);
+
 //Game entry point
 int main(int argc, char** argv)
 {
 	SDL_Init(SDL_INIT_VIDEO);
 
-	//FROM: http://www.opengl.org/wiki/Tutorial1:_Creating_a_Cross_Platform_OpenGL_3.2_Context_in_SDL_(C_/_SDL)
-	/* Request opengl 3.2 context.
-	 * SDL doesn't have the ability to choose which profile at this time of writing,
-	 * but it should default to the core profile */
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
- 
-	/* Turn on double buffering with a 24bit Z buffer.
-	 * You may need to change this to 16 or 32 for your system */
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
+	SDL_Window * displayWindow = NULL;
 
-	SDL_Window* displayWindow;
-	
-	SDL_RendererInfo displayRendererInfo;
-	SDL_CreateWindowAndRenderer(800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN, &displayWindow, &displayRenderer);
-	SDL_GetRendererInfo(displayRenderer, &displayRendererInfo);
-	/*TODO: Check that we have OpenGL */
-	if ((displayRendererInfo.flags & SDL_RENDERER_ACCELERATED) == 0 || 
-		(displayRendererInfo.flags & SDL_RENDERER_TARGETTEXTURE) == 0) {
-		/*TODO: Handle this. We have no render surface and not accelerated. */
-		cout << "Something went terribly wrong";
+#ifndef __MOBILE__
+	//Build us a state of the art context
+	displayWindow = BuildSDLContext(3,3);
+	OpenglVersion = 33;
+#endif
+	//If that fails, try for something less state of the art
+	if (displayWindow == NULL) {
+		displayWindow = BuildSDLContext(2,0);
+		OpenglVersion = 20;
 	}
-	
+
+	if (displayWindow == NULL) {
+		cout << "Failed to open any opengl context on this device. Your device is too out dated, sorry.\n";
+		SDL_Quit();
+		return -5;
+	}
+
+
 	/* Create our opengl context and attach it to our window */
 	SDL_GLContext maincontext = SDL_GL_CreateContext(displayWindow);
 	
-	//Start GLEW for windows 32
+	//Start GLEW for windows/linux/OSX
 #ifndef __MOBILE__
-	//glewExperimental = GL_TRUE;
+#ifdef WIN32
+	glewExperimental = GL_TRUE;
+#endif
 	GLenum res = glewInit();
 	if (res != GLEW_OK) {
 		cout << glewGetString(GLEW_VERSION) << ", Error: " << glewGetErrorString(res) << "\n";
@@ -54,6 +59,10 @@ int main(int argc, char** argv)
 
 	//Copied from some glue initiation code
 	fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+
+	if (GLEW_VERSION_3_3)
+		cout << "Glew says opengl 3.3 is supported\n";
+
 #endif
 
 	//Setup sensible basics for opengl
@@ -66,7 +75,7 @@ int main(int argc, char** argv)
 	//re-enable for performance reasons after voxel system complete
 	glDisable(GL_CULL_FACE);
 
-	//Attempt to enable vsync
+	//Attempt to enable vsync (fails on mobile)
 	SDL_GL_SetSwapInterval(1);
 
 	//Initialze the dialog constants
@@ -150,3 +159,38 @@ int main(int argc, char** argv)
 	return 0;
 }
 
+
+
+
+//returns NULL if that context couldn't be constructed
+SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion) {
+	//FROM: http://www.opengl.org/wiki/Tutorial1:_Creating_a_Cross_Platform_OpenGL_3.2_Context_in_SDL_(C_/_SDL)
+	//First try opengl 3.3
+	/* Request opengl 3.3 context.
+	 * SDL doesn't have the ability to choose which profile at this time of writing,
+	 * but it should default to the core profile */
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, openglMajorVersion);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, openglMinorVersion);
+ 
+	/* Turn on double buffering with a 24bit Z buffer.
+	 * You may need to change this to 16 or 32 for your system */
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+
+	SDL_Window* displayWindow;
+	
+	SDL_RendererInfo displayRendererInfo;
+	SDL_CreateWindowAndRenderer(800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN, &displayWindow, &displayRenderer);
+	SDL_GetRendererInfo(displayRenderer, &displayRendererInfo);
+	/*TODO: Check that we have OpenGL */
+	if ((displayRendererInfo.flags & SDL_RENDERER_ACCELERATED) == 0 || 
+		(displayRendererInfo.flags & SDL_RENDERER_TARGETTEXTURE) == 0) {
+		cout << "Failed to build context with opengl version: " << openglMajorVersion << "." << openglMinorVersion << "\n";
+		SDL_DestroyWindow(displayWindow);
+		return NULL;
+	}
+	else
+		cout << "Built context with opengl version: " << openglMajorVersion << "." << openglMinorVersion << "\n";
+	return displayWindow;
+}
