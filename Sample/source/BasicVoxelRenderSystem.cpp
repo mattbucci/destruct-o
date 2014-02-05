@@ -26,14 +26,16 @@ BasicVoxelRenderSystem::~BasicVoxelRenderSystem() {
 
 void BasicVoxelRenderSystem::pushSide(vec3 pos, vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d, int & vertNumber,int materialId) {
 	int curVoxel = bufferedVoxels*36;
+    float voxelNormal = (float)vertNumber/6.0+.5 + (float)materialId*100.0f;
 	//The 4th float in each vector is a vertex id mixed with the material id
-	//and is used to generate normals and texture coordinates on the gpu
-	vertices[curVoxel+vertNumber++] = vec4(a+pos,(float)(vertNumber+materialId*100));
-	vertices[curVoxel+vertNumber++] = vec4(b+pos,(float)(vertNumber+materialId*100));
-	vertices[curVoxel+vertNumber++] = vec4(c+pos,(float)(vertNumber+materialId*100));
-	vertices[curVoxel+vertNumber++] = vec4(b+pos,(float)(vertNumber+materialId*100));
-	vertices[curVoxel+vertNumber++] = vec4(d+pos,(float)(vertNumber+materialId*100));
-	vertices[curVoxel+vertNumber++] = vec4(c+pos,(float)(vertNumber+materialId*100));
+	//and is used to generate normals
+    //Texture coordinates are encoded in the negative signs of .x and .y
+	vertices[curVoxel+vertNumber++] = vec4(a+pos,voxelNormal)*vec4(1,1,1,1);
+	vertices[curVoxel+vertNumber++] = vec4(b+pos,voxelNormal)*vec4(-1,1,1,1);
+	vertices[curVoxel+vertNumber++] = vec4(c+pos,voxelNormal)*vec4(1,-1,1,1);
+	vertices[curVoxel+vertNumber++] = vec4(b+pos,voxelNormal)*vec4(-1,1,1,1);
+	vertices[curVoxel+vertNumber++] = vec4(d+pos,voxelNormal)*vec4(-1,-1,1,1);
+	vertices[curVoxel+vertNumber++] = vec4(c+pos,voxelNormal)*vec4(1,-1,1,1);
 }
 
 //Called at the start of the draw cycle

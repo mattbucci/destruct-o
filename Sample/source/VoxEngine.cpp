@@ -48,9 +48,7 @@ int main(int argc, char** argv)
 	
 	//Start GLEW for windows/linux/OSX
 #ifndef __MOBILE__
-#ifdef WIN32
 	glewExperimental = GL_TRUE;
-#endif
 	GLenum res = glewInit();
 	if (res != GLEW_OK) {
 		cout << glewGetString(GLEW_VERSION) << ", Error: " << glewGetErrorString(res) << "\n";

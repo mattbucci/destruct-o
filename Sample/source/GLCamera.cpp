@@ -18,7 +18,7 @@ void GLCamera::CopyMatricies(mat4 * viewMatrix, mat4 * projectionMatrix) {
 }
 
 void GLCamera::SetViewMatrix(mat4 viewMatrix) {
-	this->viewMatrix = viewMatrix;
+	this->viewMatrix = viewMatrix;	
 }
 
 //Apply the camera projection/view matrix
