@@ -39,11 +39,13 @@ using namespace std;
 #undef UNICODE
 #endif
 
+#include <GL/glew.h>
+
 //Opengl3 for nonwindows platforms
 #ifndef WIN32
 //for OSX
 #ifdef __APPLE__
-#include <OpenGL/gl3.h>
+//#include <OpenGL/gl3.h>
 //Prevent SDL from using gl.h
 #define __gl_h_
 #endif
@@ -67,8 +69,10 @@ using namespace std;
 
 //GLEW (should be replaced)
 #ifdef WIN32
-#include <GL/glew.h>
+
 #endif
+
+
 
 //SDL 2
 #ifndef __ANDROID__

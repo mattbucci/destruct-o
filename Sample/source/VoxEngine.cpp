@@ -19,8 +19,8 @@ int main(int argc, char** argv)
 	/* Request opengl 3.2 context.
 	 * SDL doesn't have the ability to choose which profile at this time of writing,
 	 * but it should default to the core profile */
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
  
 	/* Turn on double buffering with a 24bit Z buffer.
 	 * You may need to change this to 16 or 32 for your system */
@@ -44,8 +44,8 @@ int main(int argc, char** argv)
 	SDL_GLContext maincontext = SDL_GL_CreateContext(displayWindow);
 	
 	//Start GLEW for windows 32
-#ifdef WIN32
-	glewExperimental = GL_TRUE; 
+#ifndef __MOBILE__
+	//glewExperimental = GL_TRUE;
 	GLenum res = glewInit();
 	if (res != GLEW_OK) {
 		cout << glewGetString(GLEW_VERSION) << ", Error: " << glewGetErrorString(res) << "\n";
