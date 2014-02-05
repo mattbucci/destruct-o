@@ -9,8 +9,10 @@ file(GLOB VoxEngine_SRC
 add_executable(VoxEngine ${VoxEngine_SRC})
 
 IF (${WIN32})
-	include_directories("../includes/glew")
+	
 ENDIF (${WIN32})
+
+include_directories("../includes/glew")
 
 include_directories("../includes/glm-0.9.4.4")
 include_directories("../includes/SDL")
@@ -28,7 +30,8 @@ IF (${APPLE})
 	target_link_libraries(VoxEngine ${SDL})
 	target_link_libraries(VoxEngine ${SDL_TTF})
 	target_link_libraries(VoxEngine ${OPENGL})
-
+	get_filename_component(CGLEW "../libs/osx/glew/" ABSOLUTE)
+	target_link_libraries(VoxEngine ${CGLEW}/libGLEW.a)
 
 	set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvm.clang.1_0")
 	set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++0x")
