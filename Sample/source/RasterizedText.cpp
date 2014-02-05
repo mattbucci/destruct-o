@@ -100,6 +100,10 @@ string RasterizedText::Text() {
 //Draw the rasterized text (must use 2d shader)
 void RasterizedText::Draw(GL2DProgram * shader) {
 
+	//Check that there's something to draw
+	if (text == "")
+		return;
+
 	//Mark textures as enabled in the shader
 	shader->EnableTexture(true);
 

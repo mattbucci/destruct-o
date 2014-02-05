@@ -24,10 +24,11 @@ GLProgram::GLProgram(string vertexShaderPath, string fragmentShaderPath, string 
 	//Check if linking was successful
 	glGetProgramiv ( programId, GL_LINK_STATUS, &linked );
 	if ( !linked ) { 
-		cout << "Shader Linker Error:\n";
+		
 		GLint size;
 		glGetProgramiv (  programId, GL_INFO_LOG_LENGTH, &size );
 		string msg; msg.resize(size);
+		cout << "Shader Linker Error: [" << size << "]\n";
 		glGetProgramInfoLog (  programId, size, NULL, &msg[0] );
 		cout << msg << "\n";
 
@@ -44,6 +45,10 @@ GLProgram::GLProgram(string vertexShaderPath, string fragmentShaderPath, string 
 		if (msg.length() > 5)
 			cout << "Shader warnings:\n" << msg << "\n";
 	}
+	GLint uniforms;
+	glGetProgramiv ( programId, GL_ATTACHED_SHADERS, &linked );
+	glGetProgramiv ( programId, GL_ACTIVE_UNIFORMS, &uniforms );
+	cout << linked << " shaders were attached successfully using " << uniforms << " uniforms\n";
 }
 GLProgram::~GLProgram() {
 	if (programId > 0) {

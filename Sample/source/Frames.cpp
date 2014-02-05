@@ -17,6 +17,8 @@ void Frames::BuildSystemList() {
 	//TODO: Move this to the class so it is claned up properly
 	ShaderGroup * shaders = new ShaderGroup();
 
+	cout << "Building systems list...";
+
 	//Build each frame
 	systems[FRAME_MAINMENU] = new BaseFrame(shaders);
 	//Set initial frame  

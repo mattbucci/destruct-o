@@ -5,9 +5,9 @@ void Button::OnMousePress(vec2 mousePos, int button, bool down) {
 	if (down) {
 		color = clickColor;
 		useNinePatch(VisualInterface.NPButtonDown);
-		OnButtonPress();
 	}
 	else {
+		OnButtonPress();
 		color = hoverColor;
 		useNinePatch(VisualInterface.NPButtonHover);
 	}

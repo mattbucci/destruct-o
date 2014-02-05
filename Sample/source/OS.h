@@ -12,5 +12,13 @@ public:
 	//Returns the current time in seconds
 	static double Now(void);
 private:
+#ifdef  _WIN32
+	//For windows 
+	//the number of ticks in a second
 	static long long performanceFrequency;
+#else
+	//For unix (OSX/Android/linux)
+	//the starting time in seconds of the app
+	static long long startTimeSeconds;
+#endif
 };

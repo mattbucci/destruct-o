@@ -35,5 +35,8 @@ void GL2DProgram::SetWidthHeight(float width, float height) {
 }
 
 void GL2DProgram::EnableTexture(bool enable) {
+	//A hack to force correct texture (shouldn't be necessary?)
+	glUniform1i( glGetUniformLocation( programId, "basic_texture"), 0);
+	//Enable the texture in the shader
 	glUniform1f(textureEnabled,(enable) ? 1.0f : 0.0f);
 }

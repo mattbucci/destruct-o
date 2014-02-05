@@ -24,12 +24,17 @@ class VoxelSystem {
 	unsigned int verticeCount;
 	//The texture used for voxels
 	GLuint textureId;
+	//A debug counter for the number of voxels rendered last frame
+	int voxelCount;
 public:
 	VoxelSystem();
 	~VoxelSystem();
 
 	//Attempt to load a tile from disc
 	bool LoadTile(string tileName);
+
+	//Get the number of voxels drawn last frame
+	int GetLastVoxelCount();
 
 	//Draw the voxels in a region
 	//atx,aty and tox, toy define two corners of the rectangle

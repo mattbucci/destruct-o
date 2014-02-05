@@ -8,7 +8,7 @@
 ControlBase::ControlBase() {
 	color = vec4(0,0,0,0);
 	pressedKey = -1;
-	debugDisplayOn = false;
+	AddChild(&Debug);
 }
 
 void ControlBase::DestroyRequestedObjects() {
@@ -88,26 +88,3 @@ void ControlBase::RequestControlDestroyed(Control * toDestroy) {
 		toDelete.insert(toDestroy);
 }
 
-
-void ControlBase::DebugEnableDebugDisplay(bool display) {
-	if (debugDisplayOn == display)
-		return;
-	debugDisplayOn = display;
-	if (display) {
-		debugFps = new Label(0,0,"FPS: ?");
-		//debugFps->textSize = 30;
-		//debugFps->colorText = vec4(1,1,0,1);
-		AddChild(debugFps);
-	}
-	else {
-		delete debugFps;
-	}
-}
-void ControlBase::DebugSetFPS(float fps){
-	if (!debugDisplayOn)
-		return;
-
-	stringstream ss;
-	ss << "FPS: " << (int)fps;
-	debugFps->SetText(ss.str());
-}

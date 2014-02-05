@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "GLShader.h"
 
-#include <fstream>
+
 
 GLShader::GLShader(const GLShader & other) {
 	//Doesn't do anything. Exists to stop use
@@ -14,23 +14,24 @@ GLShader & GLShader::operator=(const GLShader & other) {
 //Attempts to compile in constructor
 GLShader::GLShader(string filename,GLenum shaderType) {
 	vector<char> fileContents;
-	ifstream file(filename.c_str(),ios::binary);
+	SDL_RWops *file = SDL_RWFromFile(filename.c_str(), "r"); 
 	
 	shaderId = -1;
 
-	if (!file.is_open()) {
+	if (!file) {
 		cout << "Failed to open shader file \"" << filename << "\""; 
 		return;
 	}
 
-	//Read all the contents
-	while (!file.eof()) {
-		char byte;
-		file.get(byte);
+	//Read all the contents (byte by byte is slow, but shader files are small)
+	char byte;
+	while (SDL_RWread(file, &byte, 1, 1) > 0) {
 		fileContents.push_back(byte);
 	}
 
-	//Null ternimate
+	SDL_RWclose(file); 
+
+	//Null terminate
 	fileContents.push_back(0);
 
 	//Build shader
@@ -58,7 +59,7 @@ GLShader::GLShader(string filename,GLenum shaderType) {
 
 	if ( !compiled )
 	{ 
-		cout << "Failed to compile shader file \"" << filename << "\":\n";
+		cout << "[0] Failed to compile shader file \"" << filename << "\":\n";
 		cout << msg << "\n";
 
 		//Cleanup
@@ -67,11 +68,11 @@ GLShader::GLShader(string filename,GLenum shaderType) {
 		return;
 	}
 	else if (msg.length() > 5) {
-		cout << "Compiled shader file \"" << filename << "\" with warnings:\n"; 
+		cout << "[1] Compiled shader file \"" << filename << "\" with warnings:\n"; 
 		cout << msg << "\n";
 	}
 	else
-		cout << "Compiled shader file \"" << filename << "\"\n"; 
+		cout << "[2] Compiled shader file \"" << filename << "\"\n"; 
 }
 GLShader::~GLShader() {
 	if (shaderId > 0) {

@@ -2,8 +2,6 @@
 #include "stdafx.h"
 #include "OS.h"
 
-long long OS::performanceFrequency = 0;
-
 //These are universal
 void OS::WaitUntil(double until) {
 	while (OS::Now() < until) {
@@ -16,6 +14,7 @@ void OS::WaitUntil(double until) {
 
 #ifdef  _WIN32
 #include <Windows.h>
+long long OS::performanceFrequency = 0;
 
 double OS::Now(void) {
 	if (performanceFrequency == 0) {
@@ -43,11 +42,19 @@ void OS::SleepTime(double seconds) {
 
 //UNIX stuff
 #include <sys/time.h>
+
+long long OS::startTimeSeconds = -1;
+
 double OS::Now(void) {
 	struct timeval tv;
 	struct timezone tz;
+
 	gettimeofday(&tv,&tz);
-	return (double)tv.tv_sec+(double)tv.tv_usec/(1000.0*1000.0);
+
+	if (startTimeSeconds < 0)
+		startTimeSeconds = tv.tv_sec;
+
+	return (double)(tv.tv_sec-startTimeSeconds)+(double)tv.tv_usec/(1000.0*1000.0);
 }
 
 void OS::SleepTime(double seconds) {

@@ -11,6 +11,7 @@
 #include "OS.h"
 
 BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
+	cout << "\t Constructing base frame\n";
 	//Build the dialog shader
 	GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/vsh_interface.glsl","Interface/Shaders/fsh_interface.glsl");
 	if (!shaders2d->Valid()) 
@@ -78,7 +79,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	};
 	wm->AddControl(windowButton);
 	
-
+	cout << "\t Finished base frame\n";
 }
 BaseFrame::~BaseFrame() {
 
@@ -113,8 +114,8 @@ void BaseFrame::Draw(double width, double height) {
 	viewPortSize = vec2(width,height);
 	vec2 userPosition = vec2(camera.Position());
 	float userAngle = camera.Rotation();
-	static const float rectHalfWidth = 30.0f; //Half the width of the rectangle
-	static const float rectHeight = 100.0f; //the full length of the rectangle
+	static const float rectHalfWidth = 10.0f; //Half the width of the rectangle
+	static const float rectHeight = 30.0f; //the full length of the rectangle
 	static const float rectHalfDiagonal =(float)( M_PI/2.0f-atan2(rectHeight,rectHalfWidth)); //The angle of the diagonal (to the center of the width side)
 	static const float rectDiagonalLength = sqrt(rectHalfWidth*rectHalfWidth+rectHeight*rectHeight);
 	vec2 testPoints[4] = {
@@ -141,7 +142,6 @@ void BaseFrame::Draw(double width, double height) {
 	minPoint = glm::max(vec2(),minPoint);
 	maxPoint = glm::min(mapExtents-vec2(1,1),maxPoint);
 
-
 	//Startup 3d rendering
 	//Enable the 2d shader for interface drawing
 	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
@@ -151,15 +151,16 @@ void BaseFrame::Draw(double width, double height) {
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
 	glDisable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//Draw the frame
 	//camera draw also sets up world light
 	camera.Draw(shaders3d);
 	voxels.Draw(shaders3d,camera.Position(),(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);
 	
+	//Update the voxel debug counter
+	Controls.Debug.Voxels = voxels.GetLastVoxelCount();
+
 	//Call the parent draw to draw interface
 	GameSystem::Draw(width,height);
 }

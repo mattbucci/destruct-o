@@ -7,6 +7,7 @@
 #include "InterfaceGlobals.h"
 #include "OS.h"
 
+
 SDL_Renderer* displayRenderer;
 
 //Game entry point
@@ -73,36 +74,59 @@ int main(int argc, char** argv)
 	//Populate the list of game systems
 	Frames::BuildSystemList();
 
-	glClearColor(0.0f,0.0f,0.0f,1.0f);
-
+	
+	bool continueGameLoop = true;
 	//The game loop begins
-	while (1) {
-		//Poll for events
-		SDL_Event event;
-		int eventPolled = SDL_PollEvent(&event);
-		//Right now this is rather wastefull, rebuild this event queue every time
+	while (continueGameLoop) {
+		//Determine the width,height of the draw frame
+		//also used for unscaling touch events
+		int width, height;
+		SDL_GetWindowSize(displayWindow,&width,&height);
 		vector<InputEvent> eventQueue;
-		if (eventPolled) {
-			//Convert sdl event to InputEvent
-			switch (event.type) {
-			case SDL_KEYDOWN:
-				eventQueue.push_back(InputEvent(InputEvent::KeyboardDown,OS::Now(),event.key.keysym.sym));
-				break;
-			case SDL_KEYUP:
-				eventQueue.push_back(InputEvent(InputEvent::KeyboardUp,OS::Now(),event.key.keysym.sym));
-				break;
-			case SDL_MOUSEBUTTONDOWN:
-				eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),event.button.x,event.button.y));
-				break;
-			case SDL_MOUSEBUTTONUP:
-				eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),event.button.x,event.button.y));
-				break;
-			case SDL_MOUSEMOTION:
-				eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),event.motion.x,event.motion.y));
-				break;
+		
+		//You can poll up to 20 events per frame
+		//we don't want to take all day though
+		for (int i = 0; i < 20; i++) {
+			//Poll for events
+			SDL_Event event;
+			int eventPolled = SDL_PollEvent(&event);
+		
+			if (eventPolled) {
+				//Convert sdl event to InputEvent
+				switch (event.type) {
+				case SDL_KEYDOWN:
+					eventQueue.push_back(InputEvent(InputEvent::KeyboardDown,OS::Now(),event.key.keysym.sym));
+					break;
+				case SDL_KEYUP:
+					eventQueue.push_back(InputEvent(InputEvent::KeyboardUp,OS::Now(),event.key.keysym.sym));
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),event.button.x,event.button.y));
+					break;
+				case SDL_MOUSEBUTTONUP:
+					eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),event.button.x,event.button.y));
+					break;
+				case SDL_MOUSEMOTION:
+					eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),event.motion.x,event.motion.y));
+					break;
+				case SDL_FINGERMOTION:
+					//cout << "MOVED: " << event.tfinger.x << "," << event.tfinger.y << "\n";
+					eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),event.tfinger.x*width,event.tfinger.y*height));
+					break;
+				case SDL_FINGERUP:
+					eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),event.tfinger.x*width,event.tfinger.y*height));
+					break;
+				case SDL_FINGERDOWN:
+					eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),event.tfinger.x*width,event.tfinger.y*height));
+					break;
+				case SDL_QUIT:
+					//Stops the next iteration of the game loop
+					continueGameLoop = false;
+					break;
+				}
 			}
-			//We do this outside the switch statement so we can break out of the while loop
-			if (event.type == SDL_QUIT)
+			else
+				//No more events
 				break;
 		}
 			
@@ -110,9 +134,10 @@ int main(int argc, char** argv)
 		//Update the frame simulation (very broken)
 		CurrentSystem->Update(0,0,eventQueue);
 		//Run the frame draw
-		glClearColor ( 1.0, 0.0, 0.0, 1.0 );
 		glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-		CurrentSystem->Draw(800,600);
+		//Draw
+		CurrentSystem->Draw((double)width,(double)height);
+
 		/* Swap our back buffer to the front */
 		SDL_GL_SwapWindow(displayWindow);
 

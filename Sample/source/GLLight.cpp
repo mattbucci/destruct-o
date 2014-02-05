@@ -31,10 +31,10 @@ void GLLight::Reset() {
 //Apply the lighting
 void GLLight::Apply() {
 	//If in debug make sure uniforms are declared
-	_ASSERTE(uniformLightColor>= 0);
+	/*_ASSERTE(uniformLightColor>= 0);
 	_ASSERTE(uniformLightComponents >= 0);
 	_ASSERTE(uniformLightIntensity >= 0);
-	_ASSERTE(uniformLightCoords >= 0);
+	_ASSERTE(uniformLightCoords >= 0);*/
 
 	//Send the lighting values to the gpu shader
 	glUniform3f(uniformLightIntensity,intensities.x,intensities.y,intensities.z);

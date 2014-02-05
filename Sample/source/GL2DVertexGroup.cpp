@@ -42,20 +42,20 @@ vec2 & GL2DVertexGroup::xat(const int index) {
 }
 
 
-void GL2DVertexGroup::Draw() {
+void GL2DVertexGroup::Draw(GL2DProgram * shader) {
 
 	//If there are no vertices, abort
 	if (vertexCount == 0)
 		return;
 
 	//positions
-	glVertexAttribPointer ( 0, 2, GL_FLOAT, GL_FALSE, 0, vertices );
-	glEnableVertexAttribArray ( 0 );
+	glVertexAttribPointer ( shader->AttributePosition(), 2, GL_FLOAT, GL_FALSE, 0, vertices );
+	glEnableVertexAttribArray ( shader->AttributePosition() );
 
 
 	// texture coordinates
-	glVertexAttribPointer ( 1, 2, GL_FLOAT, GL_FALSE, 0, vertexTextureCoords );
-	glEnableVertexAttribArray ( 1 );
+	glVertexAttribPointer ( shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, 0, vertexTextureCoords );
+	glEnableVertexAttribArray ( shader->AttributeTexture() );
 	
    
 	glDrawArrays( gltype, 0, vertexCount );

@@ -62,7 +62,7 @@ void GameSystem::Draw(double width, double height) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Update debug data before draw
-	Controls.DebugSetFPS(fpsCount.GetFps());
+	Controls.Debug.Fps = fpsCount.GetFps();
 
 	//Draw the window
 	Controls.Draw(shaders2d,Rect(0,0,(float)width,(float)height));

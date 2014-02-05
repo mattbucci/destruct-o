@@ -7,6 +7,7 @@
 
 Font::Font(string fontPath, int fontSize) {
 	sdlfont = NULL;
+	fontHeight = fontSize;
 	//Load font
 	sdlfont = TTF_OpenFont(fontPath.c_str(),fontSize);
 	if (!sdlfont) {
@@ -15,7 +16,6 @@ Font::Font(string fontPath, int fontSize) {
 	}
 
 	TTF_SetFontHinting(sdlfont, TTF_HINTING_LIGHT);
-	fontHeight = fontSize;
 }
 Font::~Font() {
 	//Destroy font

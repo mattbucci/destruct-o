@@ -11,9 +11,12 @@ VoxelSystem::VoxelSystem() {
 	vertices = NULL;
 	//Generate the opengl buffers representing this vertex group
 	//will also need a buffer for textures in the future
-	//glGenBuffers(1,&vertexBuffer);
-	//glGenVertexArrays(1,&vertexArray);
+#ifndef __MOBILE__
+	glGenBuffers(1,&vertexBuffer);
+	glGenVertexArrays(1,&vertexArray);
+#endif
 
+	voxelCount = 0;
 	verticeCount = 0;
 	vertices = new vec4[36];
 }
@@ -38,6 +41,7 @@ bool VoxelSystem::LoadTile(string tileName) {
 		//Error
 		return false;
 	}
+
 	
 	//I should have moved the png->texture into a utility library
 	//later...
@@ -52,6 +56,7 @@ bool VoxelSystem::LoadTile(string tileName) {
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
 
+	cout << "Cached tile texture <" << textureWidth << "," << textureHeight << "> with id " << textureId << "\n";
 
 	return true;
 }
@@ -59,12 +64,12 @@ bool VoxelSystem::LoadTile(string tileName) {
 void VoxelSystem::pushSide(vec3 pos, vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d, int & vertNumber,int materialId) {
 	//The 4th float in each vector is a vertex id mixed with the material id
 	//and is used to generate normals and texture coordinates on the gpu
-	vertices[vertNumber++] = vec4(a+pos,(float)(vertNumber+materialId*1000));
-	vertices[vertNumber++] = vec4(b+pos,(float)(vertNumber+materialId*1000));
-	vertices[vertNumber++] = vec4(c+pos,(float)(vertNumber+materialId*1000));
-	vertices[vertNumber++] = vec4(b+pos,(float)(vertNumber+materialId*1000));
-	vertices[vertNumber++] = vec4(d+pos,(float)(vertNumber+materialId*1000));
-	vertices[vertNumber++] = vec4(c+pos,(float)(vertNumber+materialId*1000));
+	vertices[vertNumber++] = vec4(a+pos,(float)(vertNumber+materialId*100));
+	vertices[vertNumber++] = vec4(b+pos,(float)(vertNumber+materialId*100));
+	vertices[vertNumber++] = vec4(c+pos,(float)(vertNumber+materialId*100));
+	vertices[vertNumber++] = vec4(b+pos,(float)(vertNumber+materialId*100));
+	vertices[vertNumber++] = vec4(d+pos,(float)(vertNumber+materialId*100));
+	vertices[vertNumber++] = vec4(c+pos,(float)(vertNumber+materialId*100));
 }
 
 void VoxelSystem::pushVoxel(vec3 pos,int materialId, int & vertNumber) {
@@ -88,8 +93,19 @@ void VoxelSystem::pushVoxel(vec3 pos,int materialId, int & vertNumber) {
 	//Front
 	pushSide(pos,vec3(0,-1,0),vec3(0,0,0),vec3(1,0,0),vec3(0,0,1),vec3(1,0,1),vertNumber,materialId);
 
+	//Keep track of the voxel count for debug purposes
+	voxelCount++;
+
+#ifdef __MOBILE__
+	//Push voxel to gpu
+	glEnableVertexAttribArray ( 0 );
+	glVertexAttribPointer ( 0, 4, GL_FLOAT, GL_FALSE, 0, vertices );
+	
+	//Draw voxel
+	glDrawArrays( GL_TRIANGLES, 0, 36 );
+#else
 	//Rebind the array to bring them into the current context
-	/*glBindVertexArray ( vertexArray );
+	glBindVertexArray ( vertexArray );
 
 	//Push voxel to gpu
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
@@ -98,7 +114,8 @@ void VoxelSystem::pushVoxel(vec3 pos,int materialId, int & vertNumber) {
 	glVertexAttribPointer ( 0, 4, GL_FLOAT, GL_FALSE, 0, 0 );
 	
 	//Draw voxel
-	glDrawArrays( GL_TRIANGLES, 0, 36 );*/
+	glDrawArrays( GL_TRIANGLES, 0, 36 );
+#endif
 }
 
 //Draw the voxels in a region
@@ -109,10 +126,12 @@ void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int 
 	_ASSERTE(toy < (int)tileHeight);
 
 	//Enable voxel texture
+	glActiveTexture (GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D,textureId);
 
 	int vertNumber = 0;
-
+	voxelCount = 0;
+	
 	for (int y = aty; y <= toy; y++) {
 		//It is important for x to be the inner loop
 		//so consecutive operations access contiguous memory
@@ -137,4 +156,8 @@ int VoxelSystem::GetWidth() {
 //Get map height
 int VoxelSystem::GetHeight() {
 	return tileHeight;
+}
+
+int VoxelSystem::GetLastVoxelCount() {
+	return voxelCount;
 }

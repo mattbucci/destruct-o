@@ -25,6 +25,9 @@
 
 using namespace std;
 
+//For android or any other platform which requires it
+//this converts "cout" into an actually loggable format
+#include "AuxLogger.h"
 
 //Define assert for non windows based platforms
 #ifndef _ASSERTE

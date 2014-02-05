@@ -1,9 +1,15 @@
 package org.libsdl.app;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 import android.app.*;
 import android.content.*;
+import android.content.res.AssetManager;
 import android.view.*;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
@@ -19,7 +25,7 @@ import android.hardware.*;
 
 /**
     SDL Activity
-*/
+*/ 
 public class SDLActivity extends Activity {
     private static final String TAG = "SDL";
 
@@ -57,16 +63,26 @@ public class SDLActivity extends Activity {
         
         // So we can call stuff from static callbacks
         mSingleton = this;
-
+        
+        //Copy assets
+        //copyFileOrDir("");
+        AssetManager assetManager = getResources().getAssets();
+        try {
+			assetManager.openFd("Interface/Fonts/times.ttf");
+			Log.e("tag", "No exception!");
+		} catch (IOException e) {
+			Log.e("tag", "I/O Exception", e);
+		}
+        //
+         
         // Set up the surface
-        mSurface = new SDLSurface(getApplication());
+        mSurface = new SDLSurface(getApplication()); 
 
-        mLayout = new AbsoluteLayout(this);
+        mLayout = new AbsoluteLayout(this); 
         mLayout.addView(mSurface);
 
         setContentView(mLayout);
     }
-
     // Events
     @Override
     protected void onPause() {
