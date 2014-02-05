@@ -7,21 +7,8 @@
 
 VoxelSystem::VoxelSystem() {
 	tileWidth = tileHeight = 0;
-	//Build the vertex/buffer array
-	vertices = NULL;
-	//Generate the opengl buffers representing this vertex group
-	//will also need a buffer for textures in the future
-#ifndef __MOBILE__
-	glGenBuffers(1,&vertexBuffer);
-	glGenVertexArrays(1,&vertexArray);
-#endif
-
-	voxelCount = 0;
-	verticeCount = 0;
-	vertices = new vec4[36];
 }
 VoxelSystem::~VoxelSystem() {
-
 }
 
 //Attempt to load a tile from disc
@@ -42,7 +29,6 @@ bool VoxelSystem::LoadTile(string tileName) {
 		return false;
 	}
 
-	
 	//I should have moved the png->texture into a utility library
 	//later...
 	glGenTextures( 1, &textureId );
@@ -61,63 +47,6 @@ bool VoxelSystem::LoadTile(string tileName) {
 	return true;
 }
 
-void VoxelSystem::pushSide(vec3 pos, vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d, int & vertNumber,int materialId) {
-	//The 4th float in each vector is a vertex id mixed with the material id
-	//and is used to generate normals and texture coordinates on the gpu
-	vertices[vertNumber++] = vec4(a+pos,(float)(vertNumber+materialId*100));
-	vertices[vertNumber++] = vec4(b+pos,(float)(vertNumber+materialId*100));
-	vertices[vertNumber++] = vec4(c+pos,(float)(vertNumber+materialId*100));
-	vertices[vertNumber++] = vec4(b+pos,(float)(vertNumber+materialId*100));
-	vertices[vertNumber++] = vec4(d+pos,(float)(vertNumber+materialId*100));
-	vertices[vertNumber++] = vec4(c+pos,(float)(vertNumber+materialId*100));
-}
-
-void VoxelSystem::pushVoxel(vec3 pos,int materialId, int & vertNumber) {
-
-	//So the original plan was to use one buffer that's why we have vertNumber
-	//but I ran out of time
-	vertNumber = 0;
-
-	//A cube
-
-	//Top
-	pushSide(pos,vec3(0,0,1),vec3(0,0,1),vec3(0,1,1),vec3(1,0,1),vec3(1,1,1),vertNumber,materialId);
-	//Bottom
-	pushSide(pos,vec3(0,0,-1),vec3(0,0,0),vec3(0,1,0),vec3(1,0,0),vec3(1,1,0),vertNumber,materialId);
-	//Left
-	pushSide(pos,vec3(1,0,0),vec3(1,0,0),vec3(1,1,0),vec3(1,0,1),vec3(1,1,1),vertNumber,materialId);
-	//Right
-	pushSide(pos,vec3(-1,0,0),vec3(0,0,0),vec3(0,1,0),vec3(0,0,1),vec3(0,1,1),vertNumber,materialId);
-	//Back
-	pushSide(pos,vec3(0,1,0),vec3(0,1,0),vec3(0,1,1),vec3(1,1,0),vec3(1,1,1),vertNumber,materialId);
-	//Front
-	pushSide(pos,vec3(0,-1,0),vec3(0,0,0),vec3(1,0,0),vec3(0,0,1),vec3(1,0,1),vertNumber,materialId);
-
-	//Keep track of the voxel count for debug purposes
-	voxelCount++;
-
-#ifdef __MOBILE__
-	//Push voxel to gpu
-	glEnableVertexAttribArray ( 0 );
-	glVertexAttribPointer ( 0, 4, GL_FLOAT, GL_FALSE, 0, vertices );
-	
-	//Draw voxel
-	glDrawArrays( GL_TRIANGLES, 0, 36 );
-#else
-	//Rebind the array to bring them into the current context
-	glBindVertexArray ( vertexArray );
-
-	//Push voxel to gpu
-	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
-	glBufferData ( GL_ARRAY_BUFFER, 36*sizeof(vec4), vertices, GL_DYNAMIC_READ );
-	glEnableVertexAttribArray ( 0 );
-	glVertexAttribPointer ( 0, 4, GL_FLOAT, GL_FALSE, 0, 0 );
-	
-	//Draw voxel
-	glDrawArrays( GL_TRIANGLES, 0, 36 );
-#endif
-}
-
 //Draw the voxels in a region
 void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int tox, int toy) {
 	_ASSERTE(atx >= 0);
@@ -132,6 +61,8 @@ void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int 
 	int vertNumber = 0;
 	voxelCount = 0;
 	
+	renderer.startDraw(shader);
+
 	for (int y = aty; y <= toy; y++) {
 		//It is important for x to be the inner loop
 		//so consecutive operations access contiguous memory
@@ -144,9 +75,13 @@ void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int 
 
 			//For now use raw tile % 2 to map all tiles to be within the 2 valid materials
 			//that i've made
-			pushVoxel(pos,rawTile[pixelNumber+1] % 2,vertNumber);
+			//pushVoxel(pos,rawTile[pixelNumber+1] % 2,vertNumber);
+			renderer.pushVoxel(shader,pos,rawTile[pixelNumber+1] % 2);
+			voxelCount++;
 		}
 	}
+
+	renderer.finishDraw(shader);
 }
 
 //Get map width
@@ -161,3 +96,149 @@ int VoxelSystem::GetHeight() {
 int VoxelSystem::GetLastVoxelCount() {
 	return voxelCount;
 }
+
+
+//Render system follows:
+#ifdef __ANDROID__
+//TODO: Do this render system (use the old method with the new class)
+
+#else
+VoxelSystem::InstancedRenderSystem::InstancedRenderSystem() {
+	glGenBuffers(1,&vertexBuffer);
+	glGenBuffers(1,&textureBuffer);
+	glGenBuffers(1,&normalBuffer);
+	glGenBuffers(1,&positionBuffer);
+	glGenVertexArrays(1,&vertexArray);
+
+	bufferedVoxels = 0;
+	vertices = new vec3[36];
+	textureCoordinates = new vec2[36];
+	normals = new vec3[36];
+	positions = new vec4[INSTANCE_RENDER_SWEEP];
+
+	//Build the cube just this once
+	int vertNumber = 0;
+
+	//A cube
+
+	//Top
+	pushSide(vec3(0,0,1),vec3(0,0,1),vec3(0,1,1),vec3(1,0,1),vec3(1,1,1),vertNumber);
+	//Bottom
+	pushSide(vec3(0,0,-1),vec3(0,0,0),vec3(0,1,0),vec3(1,0,0),vec3(1,1,0),vertNumber);
+	//Left
+	pushSide(vec3(1,0,0),vec3(1,0,0),vec3(1,1,0),vec3(1,0,1),vec3(1,1,1),vertNumber);
+	//Right
+	pushSide(vec3(-1,0,0),vec3(0,0,0),vec3(0,1,0),vec3(0,0,1),vec3(0,1,1),vertNumber);
+	//Back
+	pushSide(vec3(0,1,0),vec3(0,1,0),vec3(0,1,1),vec3(1,1,0),vec3(1,1,1),vertNumber);
+	//Front
+	pushSide(vec3(0,-1,0),vec3(0,0,0),vec3(1,0,0),vec3(0,0,1),vec3(1,0,1),vertNumber);
+
+	//Generate the sequential indices
+	for (int i = 0; i < 36; i++)
+		indices.push_back(i);
+
+	allocated = false;
+}
+
+VoxelSystem::InstancedRenderSystem::~InstancedRenderSystem() {
+	delete [] vertices;
+	delete [] textureCoordinates;
+	delete [] normals;
+	delete [] positions;
+}
+
+void VoxelSystem::InstancedRenderSystem::pushSide(vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d, int & vertNumber) {
+	normals[vertNumber] = normal;
+	textureCoordinates[vertNumber] = vec2(0,0);
+	vertices[vertNumber++] = a;
+	normals[vertNumber] = normal;
+	textureCoordinates[vertNumber] = vec2(1,0);
+	vertices[vertNumber++] = b;
+	normals[vertNumber] = normal;
+	textureCoordinates[vertNumber] = vec2(0,1);
+	vertices[vertNumber++] = c;
+	normals[vertNumber] = normal;
+	textureCoordinates[vertNumber] = vec2(1,0);
+	vertices[vertNumber++] = b;
+	normals[vertNumber] = normal;
+	textureCoordinates[vertNumber] = vec2(1,1);
+	vertices[vertNumber++] = d;
+	normals[vertNumber] = normal;
+	textureCoordinates[vertNumber] = vec2(0,1);
+	vertices[vertNumber++] = c;
+}
+
+//Called at the start of the draw cycle
+//pushes the cube vertices/normals/texture coordinates to the gpu
+void VoxelSystem::InstancedRenderSystem::startDraw(GL3DProgram * shader) {
+	//Only run gpu allocation code once
+	if (allocated)
+		return;
+
+	allocated = true;
+
+	//Allocate the space for the gpu buffers now
+	//and send the static data
+	//Rebind the array to bring them into the current context
+	glBindVertexArray ( vertexArray );
+
+	//Push voxel to gpu
+	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
+	glBufferData ( GL_ARRAY_BUFFER, 36*sizeof(vec3), vertices, GL_STATIC_READ );
+	glEnableVertexAttribArray ( shader->AttributeVertex() );
+	glVertexAttribPointer ( shader->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, 0, 0 );
+
+	glBindBuffer ( GL_ARRAY_BUFFER, textureBuffer );
+	glBufferData ( GL_ARRAY_BUFFER, 36*sizeof(vec2), textureCoordinates, GL_STATIC_READ );
+	glEnableVertexAttribArray ( shader->AttributeTexture() );
+	glVertexAttribPointer ( shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, 0, 0 );
+	
+	glBindBuffer ( GL_ARRAY_BUFFER, normalBuffer );
+	glBufferData ( GL_ARRAY_BUFFER, 36*sizeof(vec3), normals, GL_STATIC_READ );
+	glEnableVertexAttribArray ( shader->AttributeNormal() );
+	glVertexAttribPointer ( shader->AttributeNormal(), 3, GL_FLOAT, GL_FALSE, 0, 0 );
+	//Allocate space for positions
+	glBindBuffer ( GL_ARRAY_BUFFER, positionBuffer );
+	glBufferData ( GL_ARRAY_BUFFER, INSTANCE_RENDER_SWEEP*sizeof(vec4), positions, GL_DYNAMIC_READ );
+	glEnableVertexAttribArray ( shader->AttributePosition() );
+	glVertexAttribPointer ( shader->AttributePosition(), 4, GL_FLOAT, GL_FALSE, 0, 0 );	
+}
+
+void VoxelSystem::InstancedRenderSystem::draw(GL3DProgram * shader) {
+
+	glBindVertexArray ( vertexArray );
+	glBindBuffer ( GL_ARRAY_BUFFER, positionBuffer );
+	glBufferSubData ( GL_ARRAY_BUFFER, 0,INSTANCE_RENDER_SWEEP*sizeof(vec4), positions );
+	glEnableVertexAttribArray ( shader->AttributePosition() );
+	glVertexAttribPointer ( shader->AttributePosition(), 4, GL_FLOAT, GL_FALSE, 0, 0 );	
+
+	//The position is per-instance
+	//everything else is per-vertex
+	glVertexAttribDivisor(shader->AttributeNormal(),0);
+	glVertexAttribDivisor(shader->AttributePosition(),1);
+	glVertexAttribDivisor(shader->AttributeTexture(),0);
+	glVertexAttribDivisor(shader->AttributeVertex(),0);
+
+	glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, &indices[0], bufferedVoxels);
+	//All buffered voxels now drawn
+	bufferedVoxels = 0;
+}
+
+//Add a voxel and maybe draw
+//Called per voxel
+void VoxelSystem::InstancedRenderSystem::pushVoxel(GL3DProgram * shader, vec3 pos,int materialId) {
+	positions[bufferedVoxels++] = vec4(pos,(float)materialId);
+
+	if (bufferedVoxels == INSTANCE_RENDER_SWEEP) {
+		draw(shader);
+	}
+}
+
+//Called at the end of the draw cycle
+//draws any undrawn voxels
+void VoxelSystem::InstancedRenderSystem::finishDraw(GL3DProgram * shader) {
+	if (bufferedVoxels > 0)
+		draw(shader);
+}
+#endif

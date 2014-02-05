@@ -12,8 +12,6 @@ GL2DProgram::GL2DProgram(string vertexShaderPath, string fragmentShaderPath) :
 	widthUniform = glGetUniformLocation(programId,"uWidth");
 	heightUniform = glGetUniformLocation(programId,"uHeight");
 
-	glBindAttribLocation(programId, 0, "vPos");
-	glBindAttribLocation(programId, 1, "vTex");
 	attributeIndexTexture = glGetAttribLocation(programId,"vTex");
 	attributeIndexPosition = glGetAttribLocation(programId,"vPos");
 }

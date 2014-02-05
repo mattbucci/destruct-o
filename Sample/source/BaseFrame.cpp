@@ -114,8 +114,8 @@ void BaseFrame::Draw(double width, double height) {
 	viewPortSize = vec2(width,height);
 	vec2 userPosition = vec2(camera.Position());
 	float userAngle = camera.Rotation();
-	static const float rectHalfWidth = 10.0f; //Half the width of the rectangle
-	static const float rectHeight = 30.0f; //the full length of the rectangle
+	static const float rectHalfWidth = 20.0f; //Half the width of the rectangle
+	static const float rectHeight = 200.0f; //the full length of the rectangle
 	static const float rectHalfDiagonal =(float)( M_PI/2.0f-atan2(rectHeight,rectHalfWidth)); //The angle of the diagonal (to the center of the width side)
 	static const float rectDiagonalLength = sqrt(rectHalfWidth*rectHalfWidth+rectHeight*rectHeight);
 	vec2 testPoints[4] = {
