@@ -27,8 +27,8 @@ int main(int argc, char** argv)
 
 #ifndef __MOBILE__
 	//Build us a state of the art context
-	displayWindow = BuildSDLContext(3,3);
-	OpenglVersion = 33;
+	displayWindow = BuildSDLContext(3,1);
+	OpenglVersion = 31;
 #endif
 	//If that fails, try for something less state of the art
 	if (displayWindow == NULL) {
@@ -58,8 +58,8 @@ int main(int argc, char** argv)
 	//Copied from some glue initiation code
 	fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 
-	if (GLEW_VERSION_3_3)
-		cout << "Glew says opengl 3.3 is supported\n";
+	if (GLEW_VERSION_3_1)
+		cout << "Glew says opengl 3.1 is supported\n";
 
 #endif
 

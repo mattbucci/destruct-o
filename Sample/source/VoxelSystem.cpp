@@ -18,7 +18,7 @@ VoxelSystem::VoxelSystem() {
 		break;
 //Android can't use instanced rendering so its not even an option
 #ifndef __ANDROID__
-	case 33:
+	case 31:
 		renderer = new InstancedVoxelRenderSystem();
 		break;
 #endif

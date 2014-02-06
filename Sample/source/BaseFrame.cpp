@@ -13,14 +13,14 @@
 BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	cout << "\t Constructing base frame\n";
 	//Load the shaders appropriate for the opengl version being used
-	if (OpenglVersion == 33) {
+	if (OpenglVersion == 31) {
 		//Build the dialog shader
-		GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl33/vsh_interface.glsl","Interface/Shaders/glsl33/fsh_interface.glsl");
+		GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl31/vsh_interface.glsl","Interface/Shaders/glsl31/fsh_interface.glsl");
 		if (!shaders2d->Valid()) 
 			cout << "Failed to build opengl program\n";
 		shaders->AddShader(shaders2d,"2d");
 		//Build the voxel shader
-		GL3DProgram * shaders3d = new GL3DProgram("Interface/Shaders/glsl33/vsh_3d.glsl","Interface/Shaders/glsl33/fsh_3d.glsl");
+		GL3DProgram * shaders3d = new GL3DProgram("Interface/Shaders/glsl31/vsh_3d.glsl","Interface/Shaders/glsl31/fsh_3d.glsl");
 		if (!shaders3d->Valid()) 
 			cout << "Failed to build opengl program\n";
 		shaders->AddShader(shaders3d,"3d");
