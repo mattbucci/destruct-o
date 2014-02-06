@@ -90,4 +90,6 @@ GLLight & GLLighting::operator[](const int lightId) {
 	case 2:
 		return c;
 	}
+	//Shouldn't happen
+	return c;
 }

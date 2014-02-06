@@ -109,13 +109,13 @@ int main(int argc, char** argv)
 					eventQueue.push_back(InputEvent(InputEvent::KeyboardUp,OS::Now(),event.key.keysym.sym));
 					break;
 				case SDL_MOUSEBUTTONDOWN:
-					eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),event.button.x,event.button.y));
+					eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),(float)event.button.x,(float)event.button.y));
 					break;
 				case SDL_MOUSEBUTTONUP:
-					eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),event.button.x,event.button.y));
+					eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),(float)event.button.x,(float)event.button.y));
 					break;
 				case SDL_MOUSEMOTION:
-					eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),event.motion.x,event.motion.y));
+					eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),(float)event.motion.x,(float)event.motion.y));
 					break;
 				case SDL_FINGERMOTION:
 					//cout << "MOVED: " << event.tfinger.x << "," << event.tfinger.y << "\n";

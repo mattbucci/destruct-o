@@ -37,7 +37,7 @@ void GameCamera::Draw(GL3DProgram * shaders) {
 	shaders->Lights.Enable(1);
 	shaders->Lights[0].SetColor(vec3(1,1,1));
 	shaders->Lights[0].SetIntensity(0,0,0); //The sun shines infinitely long
-	shaders->Lights[0].SetComponents(.4,1,1,20);
+	shaders->Lights[0].SetComponents(.4f,1,1,20);
 	shaders->Lights[0].SetLocation(shaders->Model.TransformVector(vec3(-200000,-200000,400000)));
 	shaders->Lights.Apply();
 
@@ -65,7 +65,7 @@ static void unproject(vec3 win,mat4 modelView, mat4 projection, GLint * viewport
 	//fail quietly
 	if (out.w == 0.0f)
 		return;
-	out.w = 1.0/out.w;
+	out.w = 1.0f/out.w;
 	projected->x = out.x*out.w;
 	projected->y = out.y*out.w;
 	projected->z = out.z*out.w;
@@ -162,31 +162,11 @@ vec3 GameCamera::Position() {
 }
 
 void GameCamera::AOA(float angle) {
-	angleOfAttack = angle*M_PI/180.0;
+	angleOfAttack = (float)(angle*M_PI/180.0);
 }
 
 void GameCamera::Update(double drawDelta,set<int> currentlyPressedKeys) {
 	static const float speed = (float)((1/.03)*10);
 	double now = OS::Now();
 
-	
-	if (cameraControlEnabled) {
-		//Only continue if user control of the camera is enabled
-		if (currentlyPressedKeys.find(25856) != currentlyPressedKeys.end()) {
-			//Pushing up
-			cameraPosition.y+=drawDelta*speed;
-		}
-		if (currentlyPressedKeys.find(26368) != currentlyPressedKeys.end()) {
-			//Pushing down
-			cameraPosition.y-=drawDelta*speed;
-		}
-		if (currentlyPressedKeys.find(26112) != currentlyPressedKeys.end()) {
-			//Pushing right
-			cameraPosition.x+=drawDelta*speed;
-		}
-		if (currentlyPressedKeys.find(25600) != currentlyPressedKeys.end()) {
-			//Pushing left
-			cameraPosition.x-=drawDelta*speed;
-		}
-	}
 }

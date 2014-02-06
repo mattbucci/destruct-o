@@ -66,7 +66,7 @@ void GLLight::SetColor(vec3 color) {
 
 //Set the intensities of the different components of the light to be 0-1
 void GLLight::SetComponents(float ambient, float diffuse, float specular, float specularWidth) {
-	this->components = vec4(ambient,diffuse,specular,max<float>(.1,specularWidth));
+	this->components = vec4(ambient,diffuse,specular,max<float>(.1f,specularWidth));
 }
 
 void GLLight::SetLocation(vec3 coordinates) {

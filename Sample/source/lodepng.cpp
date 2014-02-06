@@ -368,7 +368,7 @@ unsigned lodepng_load_file(unsigned char** out, size_t* outsize, const char* fil
 
   /*get filesize:*/
   SDL_RWseek(file , 0 , RW_SEEK_END);
-  size = SDL_RWtell(file);
+  size = (long)SDL_RWtell(file);
   SDL_RWseek(file,0,RW_SEEK_SET);
 
   /*read contents of the file into the vector*/
@@ -6039,7 +6039,7 @@ void load_file(std::vector<unsigned char>& buffer, const std::string& filename)
 
   /*get filesize:*/
   SDL_RWseek(file , 0 , RW_SEEK_END);
-  size = SDL_RWtell(file);
+  size = (long)SDL_RWtell(file);
   SDL_RWseek(file,0,RW_SEEK_SET);
 
   /*read contents of the file into the vector*/
