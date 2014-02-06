@@ -32,7 +32,7 @@ int main(int argc, char** argv)
 #endif
 	//If that fails, try for something less state of the art
 	if (displayWindow == NULL) {
-		displayWindow = BuildSDLContext(2,0,1.1f);
+		displayWindow = BuildSDLContext(2,0,0.0f);
 		OpenglVersion = 20;
 	}
 
@@ -195,13 +195,16 @@ SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion, floa
 	
 	//Get glsl version
 	char * versionString = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
-	//For some reason (I blame glew) glGetString returns NULL sometimes
-	if (versionString == NULL) 
-		cout << "GLSL version check failed, lets just hope we have a recent enough one...\n";
+	//This function can fail to return a proper version string
+	//in a bunch of different annoying and creative ways. (Even on computers
+	//with good GLSL versions)
+	//If the user specified 0 as the requirement, don't even bother checking
+	if ((requiredGLSLVersion <= 0) || (versionString == NULL) || (strlen(versionString) <= 0) || (atof(versionString) <= 0))
+		cout << "GLSL version check failed (or was skipped), lets just hope we have a recent enough one...\n";
 	else {
 		//Verify the version is correct
 		float version = (float)atof(versionString);
-		cout << "Detected GLSL version: " << version << "\n";
+		cout << "Detected GLSL version: " << versionString << " [" << version << "]\n";
 		if (version <= requiredGLSLVersion) {
 			//Fail out, you go tthe opengl version you needed, but not glsl version
 			cout << "GLSL version is insufficient for this opengl context (needs at least " << requiredGLSLVersion << ")\n";

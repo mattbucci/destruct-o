@@ -58,7 +58,7 @@ pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 map
 
 	//Width code is highly experimental and will certainly have to be played with
 	float rectHeight = GetViewDistance(); //the full length of the rectangle
-	float rectHalfWidth = pow(rectHeight/50.0f,2.0f)+rectHeight/5.0f+10.0f; //Half the width of the rectangle
+	float rectHalfWidth = pow(rectHeight/50.0f,2.0f)+rectHeight/5.0f+7.0f; //Half the width of the rectangle
 	float rectHalfDiagonal =(float)( M_PI/2.0f-atan2(rectHeight,rectHalfWidth)); //The angle of the diagonal (to the center of the width side)
 	float rectDiagonalLength = sqrt(rectHalfWidth*rectHalfWidth+rectHeight*rectHeight);
 	vec2 testPoints[4] = {
