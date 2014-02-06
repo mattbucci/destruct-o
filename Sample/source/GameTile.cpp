@@ -25,7 +25,12 @@ GameTile * GameTile::LoadTileFromDisk(string tileImagePath) {
 		return NULL;
 	}
 	cout << "\tLoaded image file, now converting to game tile data.\n";
-
+	return LoadTileFromMemory(tileData,width,height);
+}
+//Load a game tile from memory
+//pending
+GameTile * GameTile::LoadTileFromMemory(const vector<unsigned char> & tileData, unsigned int width, unsigned int height) {
+	cout << "Starting Load of tile from memory\n";
 	GameTile * tile = new GameTile((int)width,(int)height);
 	for (int i = 0; i < tileData.size(); i+= 4) {
 		//Load every RGBA pixel into a tile cell
@@ -60,9 +65,6 @@ GameTile * GameTile::LoadTileFromDisk(string tileImagePath) {
 	cout << "\tTile Load Complete.\n";
 	return tile;
 }
-//Load a game tile from memory
-//pending
-//static GameTile * LoadTileFromMemory(const vector<unsigned char> & tileData, unsigned int tileWidth, unsigned int tileHeight);
 
 //Save the tile to disk
 void GameTile::SaveTile(string saveName) {

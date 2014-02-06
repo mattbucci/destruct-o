@@ -14,7 +14,7 @@ public:
 	static GameTile * LoadTileFromDisk(string tileImagePath);
 	//Load a game tile from memory
 	//pending
-	//static GameTile * LoadTileFromMemory(const vector<unsigned char> & tileData, unsigned int tileWidth, unsigned int tileHeight);
+	static GameTile * LoadTileFromMemory(const vector<unsigned char> & tileData, unsigned int tileWidth, unsigned int tileHeight);
 
 	//Save the tile to disk
 	void SaveTile(string saveName);
