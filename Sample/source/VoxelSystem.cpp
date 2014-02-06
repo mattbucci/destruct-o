@@ -5,12 +5,16 @@
 #include "GL3DProgram.h"
 #include "OS.h"
 
+#include "GameTile.h"
+
 #include "VoxelDrawSystem.h"
 #include "InstancedVoxelRenderSystem.h"
 #include "BasicVoxelRenderSystem.h"
 
 VoxelSystem::VoxelSystem() {
-	tileWidth = tileHeight = 0;
+	//No tile data loaded
+	tileData = NULL;
+
 	//Choose the appropriate render version
 	switch (OpenglVersion){
 	case 20:
@@ -26,19 +30,19 @@ VoxelSystem::VoxelSystem() {
 }
 VoxelSystem::~VoxelSystem() {
 	delete renderer;
+	delete tileData;
 }
 
 //Attempt to load a tile from disc
 bool VoxelSystem::LoadTile(string tileName) {
 	//First load the tile map
-	if (lodepng::decode(rawTile,tileWidth,tileHeight,tileName)) {
-		//Error
+	tileData = GameTile::LoadTileFromDisk(tileName);
+	if (tileData == NULL)
 		return false;
-	}
-	//Next load the voxel textures
+
+	unsigned int textureWidth, textureHeight;
 	vector<unsigned char> image;
-	unsigned int textureWidth;
-	unsigned int textureHeight;
+	
 	//A smart system would have multiple res tiles and would automatically select
 	//one appropriate for the system its running on
 	if (lodepng::decode(image,textureWidth,textureHeight,"terrain/tiles-lowres.png")) {
@@ -68,8 +72,9 @@ bool VoxelSystem::LoadTile(string tileName) {
 void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int tox, int toy) {
 	_ASSERTE(atx >= 0);
 	_ASSERTE(aty >= 0);
-	_ASSERTE(tox < (int)tileWidth);
-	_ASSERTE(toy < (int)tileHeight);
+	_ASSERTE(tileData != NULL);
+	_ASSERTE(tox < (int)tileData->Width);
+	_ASSERTE(toy < (int)tileData->Height);
 
 	//Enable voxel texture
 	glActiveTexture (GL_TEXTURE0);
@@ -79,21 +84,28 @@ void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int 
 	
 	renderer->startDraw(shader);
 
+	TileCell * cells = tileData->Cells;
+
 	for (int y = aty; y <= toy; y++) {
 		//It is important for x to be the inner loop
 		//so consecutive operations access contiguous memory
 		//(though performance will probably be poor anyways)
 		for (int x = atx; x <= tox; x++) {
-			//Lookup pixel number
-			int pixelNumber = (tileWidth*y+x)*4;
+			//Lookup cell to render
+			TileCell & cell = cells[tileData->Width*y+x];
+
 			//Get position
-			vec3 pos = vec3(x,y,rawTile[pixelNumber]/10);
+			vec3 pos = vec3(x,y,cell.height);
+			char stack = (char)cell.stackHeight;
 
 			//For now use raw tile % 2 to map all tiles to be within the 2 valid materials
 			//that i've made
 			//Note: This is a really bad place for a virtual function call
 			//maybe swap this out in the future
-			renderer->pushVoxel(shader,pos,rawTile[pixelNumber+1] % 2);
+			while (stack-- >= 0) {
+				renderer->pushVoxel(shader,pos,cell.materialId % 2);
+				pos.z--;
+			}
 			voxelCount++;
 		}
 	}
@@ -103,11 +115,11 @@ void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int 
 
 //Get map width
 int VoxelSystem::GetWidth() {
-	return tileWidth;
+	return tileData->Width;
 }
 //Get map height
 int VoxelSystem::GetHeight() {
-	return tileHeight;
+	return tileData->Height;
 }
 
 int VoxelSystem::GetLastVoxelCount() {

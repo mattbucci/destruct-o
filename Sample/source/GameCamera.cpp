@@ -7,7 +7,7 @@
 #endif
 
 GameCamera::GameCamera() {
-	cameraPosition = vec3(1000,1000,10);
+	cameraPosition = vec3(1010,1010,90);
 	angleOfAttack = 20.0f;
 	rotation = 0;
 

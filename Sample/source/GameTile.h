@@ -3,8 +3,10 @@
 
 #include "stdafx.h"
 
+#include "TileCell.h"
+
 class GameTile {
-	GameTile();
+	GameTile(int width, int height);
 public:
 	~GameTile();
 
@@ -14,5 +16,11 @@ public:
 	//pending
 	//static GameTile * LoadTileFromMemory(const vector<unsigned char> & tileData, unsigned int tileWidth, unsigned int tileHeight);
 
-	void SaveTile();
+	//Save the tile to disk
+	void SaveTile(string saveName);
+
+	//Loaded tile information is public for fastest access
+	TileCell * Cells;
+	int Width;
+	int Height;
 };
