@@ -1,0 +1,2 @@
+#define SDL_REVISION "hg-8054:2a38ef3eeabb"
+#define SDL_REVISION_NUMBER 8054
