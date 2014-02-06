@@ -291,7 +291,7 @@ void Listbox::OnMouseScroll(bool scrolledUp) {
 }
 
 Listbox::Listbox() : 
-	selectionShape(4), backgroundShape(4), hoverShape(4),
+	selectionShape(4), hoverShape(4), backgroundShape(4),
 	upShape(3), downShape(3), scrollPosShape(4) {
 
 	//Setup default colors

@@ -2,9 +2,6 @@
 #include "GLLighting.h"
 
 GLLighting::GLLighting(GLuint programId) {
-	if (programId < 0)
-		return;
-
 	//Build the light objects
 	a = GLLight(glGetUniformLocation(programId,"light1_intensity"),
 				glGetUniformLocation(programId,"light1_color"),

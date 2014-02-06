@@ -12,6 +12,8 @@ class GL3DProgram;
 //to draw voxels
 class VoxelDrawSystem {
 public:
+    virtual ~VoxelDrawSystem();
+    
 	//Called at the start of the draw cycle
 	//does nothing in this render system
 	virtual void startDraw(GL3DProgram * shader) = 0;

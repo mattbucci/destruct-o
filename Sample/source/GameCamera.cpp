@@ -166,7 +166,5 @@ void GameCamera::AOA(float angle) {
 }
 
 void GameCamera::Update(double drawDelta,set<int> currentlyPressedKeys) {
-	static const float speed = (float)((1/.03)*10);
-	double now = OS::Now();
 
 }

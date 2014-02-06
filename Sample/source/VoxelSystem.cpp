@@ -75,7 +75,6 @@ void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int 
 	glActiveTexture (GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D,textureId);
 
-	int vertNumber = 0;
 	voxelCount = 0;
 	
 	renderer->startDraw(shader);

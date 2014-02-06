@@ -202,7 +202,6 @@ Control::~Control() {
 }
 
 void Control::drawChildren(GL2DProgram * shaders) {
-	Rect drawRect = position;
 	for (Control* & child : children) {
 		if (!child->visible)
 			continue;
@@ -235,7 +234,7 @@ void Control::sendToFront() {
 			return;*/
 
 		//locate the index this control is at in the parent
-		int originalIndex;
+		int originalIndex = -1;
 		for (unsigned int i = 0; i < parent->children.size(); i++) {
 			if (parent->children[i] == this) {
 				originalIndex = i;
@@ -253,7 +252,7 @@ void Control::sendToFront() {
 void Control::sendToBack() {
 	if (parent != NULL) {
 		//locate the index this control is at in the parent
-		int originalIndex;
+		int originalIndex = -1;
 		for (unsigned int i = 0; i < parent->children.size(); i++) {
 			if (parent->children[i] == this) {
 				originalIndex = i;

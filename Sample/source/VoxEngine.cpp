@@ -15,7 +15,7 @@ int OpenglVersion;
 
 //This should be encapsualted in a class, but... here it is
 //returns NULL if that context couldn't be constructed
-SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion);
+SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion, float requiredGLSLVersion);
 
 //Game entry point
 int main(int argc, char** argv)
@@ -27,12 +27,12 @@ int main(int argc, char** argv)
 
 #ifndef __MOBILE__
 	//Build us a state of the art context
-	displayWindow = BuildSDLContext(3,1);
+	displayWindow = BuildSDLContext(3,1,1.4);
 	OpenglVersion = 31;
 #endif
 	//If that fails, try for something less state of the art
 	if (displayWindow == NULL) {
-		displayWindow = BuildSDLContext(2,0);
+		displayWindow = BuildSDLContext(2,0,1.1);
 		OpenglVersion = 20;
 	}
 
@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 
 
 	/* Create our opengl context and attach it to our window */
-	SDL_GLContext maincontext = SDL_GL_CreateContext(displayWindow);
+	SDL_GL_CreateContext(displayWindow);
 	
 	//Start GLEW for windows/linux/OSX
 #ifndef __MOBILE__
@@ -162,7 +162,7 @@ int main(int argc, char** argv)
 
 
 //returns NULL if that context couldn't be constructed
-SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion) {
+SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion, float requiredGLSLVersion) {
 	//FROM: http://www.opengl.org/wiki/Tutorial1:_Creating_a_Cross_Platform_OpenGL_3.2_Context_in_SDL_(C_/_SDL)
 	//First try opengl 3.3
 	/* Request opengl 3.3 context.
@@ -170,6 +170,7 @@ SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion) {
 	 * but it should default to the core profile */
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, openglMajorVersion);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, openglMinorVersion);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
  
 	/* Turn on double buffering with a 24bit Z buffer.
 	 * You may need to change this to 16 or 32 for your system */
@@ -191,5 +192,15 @@ SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion) {
 	}
 	else
 		cout << "Built context with opengl version: " << openglMajorVersion << "." << openglMinorVersion << "\n";
+    
+    //Get glsl version
+    float version = atof((char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
+    cout << "Detected GLSL version: " << version << "\n";
+    if (version <= requiredGLSLVersion) {
+        //Fail out, you go tthe opengl version you needed, but not glsl version
+        cout << "GLSL version is insufficient for this opengl context (needs at least " << requiredGLSLVersion << ")\n";
+		SDL_DestroyWindow(displayWindow);
+		return NULL;
+    }
 	return displayWindow;
 }
