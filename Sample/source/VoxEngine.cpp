@@ -66,6 +66,7 @@ int main(int argc, char** argv)
 	//Setup sensible basics for opengl
 	glEnable ( GL_DEPTH_TEST );
 	glDepthFunc(GL_LEQUAL);
+	glClearColor(.5,.5,.5,1.0);
 
 	//Enable basic alpha blending
 	glEnable(GL_BLEND);

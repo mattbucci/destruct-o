@@ -11,8 +11,8 @@ class Sprite;
 class ShaderGroup;
 
 class GameSystem {
-	FPSCounter fpsCount;
 protected:
+	FPSCounter fpsCount;
 	set<int> currentlyPressedKeys;
 	ShaderGroup * shaders;
 

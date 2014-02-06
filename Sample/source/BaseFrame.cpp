@@ -119,45 +119,6 @@ void BaseFrame::Draw(double width, double height) {
 	camera.Rotation((float)((OS::Now()/30.0)*2.0f*M_PI));
 
 
-	//New strategy for determining draw box
-	//Create a rectangle with the user on the bottom center, with the top of the rectangle
-	//far away from the user in his view direction
-	//Use the points of this rotated rectangle
-	//to choose a min/max point of the voxel draw rectangle
-
-	
-	//First determine visible extents by testing all corners
-	viewPortSize = vec2(width,height);
-	vec2 userPosition = vec2(camera.Position());
-	float userAngle = camera.Rotation();
-	static const float rectHalfWidth = 10.0f; //Half the width of the rectangle
-	static const float rectHeight = 30.0f; //the full length of the rectangle
-	static const float rectHalfDiagonal =(float)( M_PI/2.0f-atan2(rectHeight,rectHalfWidth)); //The angle of the diagonal (to the center of the width side)
-	static const float rectDiagonalLength = sqrt(rectHalfWidth*rectHalfWidth+rectHeight*rectHeight);
-	vec2 testPoints[4] = {
-		//Use the edges of a rectangle with the viewer in the bottom center
-		//First the bottom left
-		userPosition + vec2(cos(M_PI/2.0f+userAngle),sin(M_PI/2.0f+userAngle))*rectHalfWidth,
-		//Next bottom right
-		userPosition + vec2(cos(-M_PI/2.0f+userAngle),sin(-M_PI/2.0f+userAngle))*rectHalfWidth,
-		//Top Left
-		userPosition + vec2(cos(rectHalfDiagonal+userAngle),sin(rectHalfDiagonal+userAngle))*rectDiagonalLength,
-		//Top Right
-		userPosition + vec2(cos(-rectHalfDiagonal+userAngle),sin(-rectHalfDiagonal+userAngle))*rectDiagonalLength,
-	};
-	vec2 minPoint = mapExtents;
-	vec2 maxPoint = vec2(0,0);
-	for (int i = 0; i < 4; i++) {
-		minPoint = glm::min(minPoint,testPoints[i]);
-		maxPoint = glm::max(maxPoint,testPoints[i]);
-	}
-
-	minPoint = glm::floor(minPoint);
-	maxPoint = glm::ceil(maxPoint);
-	//Limit points to valid ranges (vec2() creates a zero vector)
-	minPoint = glm::max(vec2(),minPoint);
-	maxPoint = glm::min(mapExtents-vec2(1,1),maxPoint);
-
 	//Startup 3d rendering
 	//Enable the 2d shader for interface drawing
 	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
@@ -169,6 +130,15 @@ void BaseFrame::Draw(double width, double height) {
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//Compute view distance and handle fog
+	viewDistance.CalculateAndApply(shaders3d,fpsCount.GetFps());
+	shaders3d->Fog.SetFogColor(vec4(.5,.5,.5,1.0));
+	//Calculate voxel draw rectangle
+	pair<vec2,vec2> drawRectangle = viewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(camera.Position()),camera.Rotation());
+	vec2 minPoint = drawRectangle.first;
+	vec2 maxPoint = drawRectangle.second;
+
 	//Draw the frame
 	//camera draw also sets up world light
 	camera.Draw(shaders3d);
