@@ -5,6 +5,7 @@
 #include "VoxelSystem.h"
 #include "GameCamera.h"
 #include "ViewDistanceCalc.h"
+
 class BaseFrame : public GameSystem {
 	GameCamera camera;
 	VoxelSystem voxels;

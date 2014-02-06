@@ -12,12 +12,12 @@ ErrorWindow::ErrorWindow(string title, string error) : Window(Rect(0,0,300,160),
 	errorMessage.SetMaxWidth(260);
 	errorMessage.SetText(error); //Reset text so wordwrap functions
 	this->position.Height = errorMessage.position.Height+80;
-	okButton.CBClicked = [this]() {
+	Subscribe<void()>(&okButton.EventClicked,[this]() {
 		//Queue yoruself for destruction
 		CurrentSystem->Controls.RequestControlDestroyed(this);
 		if (OnOk)
 			OnOk();
-	};
+	});
 	//Add your inner controls
 	AddChild(&okButton);
 	AddChild(&errorMessage);

@@ -4,8 +4,9 @@
 #include "Control.h"
 #include "Shape.h"
 #include "RasterizedText.h"
+#include "GameEventSubscriber.h"
 
-class Window : public Control {
+class Window : public Control, protected GameEventSubscriber {
 
 	//An optional automatically placed title
 	RasterizedText title;

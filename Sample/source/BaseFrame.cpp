@@ -87,12 +87,12 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	Button * windowButton = new Button(Rect(0,-10,100,30),"PRESS ME");
 	windowButton->hPin = Control::CENTER;
 	windowButton->vPin = Control::MAX;
-	windowButton->CBClicked = [window,wm]() {
+	Subscribe<void()>(&windowButton->EventClicked,[window,wm]() {
 		//Make the current window invisible
 		wm->SetVisible(false);
 		//Make the next window visible
 		window->SetVisible(true);
-	};
+	});
 	wm->AddControl(windowButton);
 	
 	cout << "\t Finished base frame\n";

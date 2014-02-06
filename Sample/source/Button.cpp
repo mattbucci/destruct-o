@@ -17,9 +17,9 @@ void Button::OnMouseMove(vec2 mousePos) {
 
 }
 void Button::OnButtonPress() {
-	//Call the callback if one was set
-	if (CBClicked)
-		CBClicked();
+	EventClicked.Fire([](function<void()> eventSubscriber){
+		eventSubscriber();
+	});
 }
 void Button::OnMouseLeave() {
 	useNinePatch(VisualInterface.NPButton);

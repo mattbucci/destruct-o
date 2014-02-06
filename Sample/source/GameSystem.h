@@ -4,13 +4,15 @@
 #include "stdafx.h"
 #include "InputEvent.h"
 #include "ControlBase.h"
+#include "GameEventSubscriber.h"
 
 #include "FPSCounter.h"
 
 class Sprite;
 class ShaderGroup;
 
-class GameSystem {
+
+class GameSystem : protected GameEventSubscriber {
 protected:
 	FPSCounter fpsCount;
 	set<int> currentlyPressedKeys;

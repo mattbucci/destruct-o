@@ -2,6 +2,7 @@
 
 #include "Control.h"
 #include "Label.h"
+#include "GameEvent.h"
 
 class Button : public Control {
 	vec4 normalColor;
@@ -21,7 +22,7 @@ public:
 	Button(Rect position, string text);
 	~Button();
 
-	function<void()> CBClicked;
+	GameEvent<void()> EventClicked;
 
 	void SetText(string text);
 //Get
