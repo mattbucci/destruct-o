@@ -73,9 +73,10 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	list->SetEntries(randomCrap);
 	//When the user selects something, change the title to the 
 	//selected item
-	list->CBSelectionChanged = [window](string changedTo) {
-		window->SetTitle(changedTo);
-	};
+	Subscribe<void(Listbox*,int)>(&list->EventSelectionChanged, [window](Listbox* list,int changedTo) {
+		if (changedTo >= 0)
+			window->SetTitle(list->GetEntries()[changedTo]);
+	});
 	window->AddControl(list);
 
 	//Start another window (visible by default)
@@ -87,7 +88,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	Button * windowButton = new Button(Rect(0,-10,100,30),"PRESS ME");
 	windowButton->hPin = Control::CENTER;
 	windowButton->vPin = Control::MAX;
-	Subscribe<void()>(&windowButton->EventClicked,[window,wm]() {
+	Subscribe<void(Button*)>(&windowButton->EventClicked,[window,wm](Button* button) {
 		//Make the current window invisible
 		wm->SetVisible(false);
 		//Make the next window visible

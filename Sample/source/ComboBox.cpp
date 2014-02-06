@@ -61,9 +61,6 @@ void ComboBox::Draw(GL2DProgram * shaders) {
 	}
 }
 
-void ComboBox::OnComboSelect(string selected) {
-
-}
 
 void ComboBox::OnMousePress(vec2 mousePos, int button, bool down) {
 	if (!down)
@@ -73,7 +70,9 @@ void ComboBox::OnMousePress(vec2 mousePos, int button, bool down) {
 		int selected = (int)(lastMousePos.y/position.Height);
 		if (selected > 0) {
 			selectedEntry = entries[selected-1];
-			OnComboSelect(selectedEntry);
+			EventSelectionChanged.Fire([this,selected](function<void(ComboBox*,int)> member){
+				member(this,selected);
+			});
 		}
 	}
 	

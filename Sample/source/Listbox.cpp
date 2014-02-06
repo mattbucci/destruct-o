@@ -257,16 +257,17 @@ void Listbox::OnMousePress(vec2 mousePos, int button, bool down) {
 			return;
 		else {
 			selected = hoveringOver;
-			OnListSelected(entries[selected]);
+			OnListSelected();
 		}
 			
 	}
 		
 }
 
-void Listbox::OnListSelected(string selected) {
-	if (CBSelectionChanged)
-		CBSelectionChanged(selected);
+void Listbox::OnListSelected() {
+	EventSelectionChanged.Fire([this](function<void(Listbox*,int)> subscriber) {
+		subscriber(this,this->selected);
+	});
 }
 
 void Listbox::OnMouseMove(vec2 mousePos) {

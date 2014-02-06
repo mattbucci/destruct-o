@@ -17,8 +17,8 @@ void Button::OnMouseMove(vec2 mousePos) {
 
 }
 void Button::OnButtonPress() {
-	EventClicked.Fire([](function<void()> eventSubscriber){
-		eventSubscriber();
+	EventClicked.Fire([this](function<void(Button*)> eventSubscriber){
+		eventSubscriber(this);
 	});
 }
 void Button::OnMouseLeave() {

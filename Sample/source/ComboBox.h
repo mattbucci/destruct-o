@@ -5,6 +5,7 @@
 #include "Shape.h"
 #include "Font.h"
 #include "RasterizedText.h"
+#include "GameEvent.h"
 
 class ComboBox : public Control {
 
@@ -33,12 +34,11 @@ protected:
 	//override to change height if opened
 	virtual void recalculatePosition() override;
 
-	virtual void OnComboSelect(string selected);
 public:
 	ComboBox(float x, float y, float width, float height);
 	~ComboBox();
 
-
+	GameEvent<void(ComboBox*,int)> EventSelectionChanged;
 
 	void AddComboEntry(string entry);
 	void RemoveComboEntry(string entry);

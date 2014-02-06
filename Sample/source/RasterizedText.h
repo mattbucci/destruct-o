@@ -30,6 +30,9 @@ public:
 	//Cleanup the gl texture
 	~RasterizedText();
 
+	//Change the text (automatically re-rasterizes)
+	void SetText(string text);
+
 	//Get the original text
 	string Text();
 

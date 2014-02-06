@@ -112,7 +112,7 @@ void Label::SetMaxWidth(float maxWidth) {
 void Label::SetText(string text) {
 	//Only update if it changed
 	if (this->text.Text() != text)
-		this->text = RasterizedText(text,VisualInterface.FontControlText,VisualInterface.ColorControlText);
+		this->text.SetText(text);
 	//apply wordwrap
 	applyWordwrap();
 	//Recalculate label size instantly

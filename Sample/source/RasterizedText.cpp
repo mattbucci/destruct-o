@@ -5,11 +5,12 @@
 //Rasterize text for drawing
 RasterizedText::RasterizedText(string text, Font * font, vec4 color) : GL2DVertexGroup(GL_TRIANGLE_STRIP,4) {
 	this->text = text;
-	if (text == "")
-		return;
-
+	this->textureId = 0;
 	this->font = font;
 	this->color = color;
+
+	if (text == "")
+		return;
 	rasterize();
 }
 //Build empty rasterized text
@@ -19,11 +20,12 @@ RasterizedText::RasterizedText() : GL2DVertexGroup(GL_TRIANGLE_STRIP,4) {
 //For copying
 RasterizedText::RasterizedText(const RasterizedText & original) : GL2DVertexGroup(GL_TRIANGLE_STRIP,4) {
 	text = original.text;
-	if (text == "")
-		return;
-
 	font = original.font;
 	color = original.color;
+	this->textureId = 0;
+
+	if (text == "")
+		return;
 	rasterize();
 }
 RasterizedText & RasterizedText::operator=(const RasterizedText & original) {
@@ -31,20 +33,19 @@ RasterizedText & RasterizedText::operator=(const RasterizedText & original) {
 		//Cleanup existing texture data
 		glDeleteTextures(1,&textureId);
 	}
+
 	text = original.text;
-	if (text == "")
-		return *this;
-
-
 	font = original.font;
 	color = original.color;
-	rasterize();
+
+	if (text != "")
+		rasterize();
 
 	return *this;
 }
 
 RasterizedText::~RasterizedText() {
-	if (text != "") {
+	if (textureId > 0) {
 		//Cleanup existing texture data
 		glDeleteTextures(1,&textureId);
 	}
@@ -74,7 +75,18 @@ void RasterizedText::rasterize() {
 
 	//Convert the surface to a gltexture
 	glEnable(GL_TEXTURE_2D);
+	if (textureId != 0)
+		glDeleteTextures(1,&textureId);
 	glGenTextures(1, &textureId);
+	/*//Generate a texture if you haven't already
+	if (textureId == 0) {
+		cout << "NewTexture: " << textureId << "\n";
+		
+	}
+	else {
+		cout << "NewTexture: " << textureId << "\n";
+	}*/
+		
 	glBindTexture(GL_TEXTURE_2D, textureId);
 
 		
@@ -90,6 +102,12 @@ void RasterizedText::rasterize() {
 
 	//Cleanup surface
 	SDL_FreeSurface(surface);
+}
+
+void RasterizedText::SetText(string text) {
+	this->text = text;
+	if (text != "")
+		rasterize();
 }
 
 //Get the original text

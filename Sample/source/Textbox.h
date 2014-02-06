@@ -7,6 +7,8 @@
 #include "Shape.h"
 #include "RasterizedText.h"
 
+#include "GameEvent.h"
+
 class Textbox : public Control {
 	int cursorPos;
 
@@ -43,7 +45,7 @@ public:
 
 	//Happens when text in the textbox is changed
 	//string is the new contents of the textbox
-	function<void(string)> CBTextChanged;
+	GameEvent<void(Textbox*,string)> EventTextChanged;
 
 	void SetText(string text);
 	void SetMaxLength(int length);

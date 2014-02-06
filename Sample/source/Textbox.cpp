@@ -100,8 +100,9 @@ void Textbox::OnMouseEnter() {
 }
 
 void Textbox::OnTextChange(string newText) {
-	if (CBTextChanged)
-		CBTextChanged(newText);
+	EventTextChanged.Fire([this,newText](function<void(Textbox*,string)> subscriber) {
+		subscriber(this,newText);
+	});
 }
 
 void Textbox::OnKeyPress(int key) {

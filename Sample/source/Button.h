@@ -22,7 +22,7 @@ public:
 	Button(Rect position, string text);
 	~Button();
 
-	GameEvent<void()> EventClicked;
+	GameEvent<void(Button*)> EventClicked;
 
 	void SetText(string text);
 //Get

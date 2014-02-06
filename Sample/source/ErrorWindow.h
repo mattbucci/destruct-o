@@ -5,6 +5,8 @@
 #include "Button.h"
 #include "Label.h"
 
+#include "GameEvent.h"
+
 //A window witha  title, an error message, and an ok button
 //automatically destroys itself when ok is pressed
 class ErrorWindow : public Window {
@@ -12,7 +14,7 @@ class ErrorWindow : public Window {
 	Label errorMessage;
 public:
 
-	function<void()> OnOk;
+	GameEvent<void(ErrorWindow*)> EventOkPressed;
 
 	ErrorWindow(string title, string error);
 	~ErrorWindow();

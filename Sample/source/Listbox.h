@@ -4,6 +4,8 @@
 #include "Shape.h"
 #include "RasterizedText.h"
 
+#include "GameEvent.h"
+
 class Listbox : public Control {
 	//The data contained in the listbox
 	int selected;
@@ -58,7 +60,7 @@ protected:
 	void OnMouseEnter();
 	void OnMouseScroll(bool scrolledUp);
 
-	void OnListSelected(string selected);
+	void OnListSelected();
 public:
 	Listbox();
 	~Listbox();
@@ -76,5 +78,5 @@ public:
 
 	//When the current selection changes
 	//returns the string representing the selection
-	function<void(string)> CBSelectionChanged;
+	GameEvent<void(Listbox*,int)> EventSelectionChanged;
 };
