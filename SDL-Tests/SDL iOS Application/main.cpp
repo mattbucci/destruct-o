@@ -21,7 +21,8 @@ private:
     SDL_Window*   _window;
     SDL_GLContext _context;
     
-    glm::mat4     VP;
+    // View matrices
+    glm::mat4     projection;
     
     // Buffers
     GLuint        cube;
@@ -29,6 +30,9 @@ private:
     
     // Shader
     OpenWorlds::GL::Program *shader;
+    
+    // Uniforms
+    GLuint        viewProjectUniform;
     
     // Variable to keep track of immediate fps
     Uint32 frameCounter;
@@ -73,7 +77,7 @@ public:
         
         // Compile the shader
         shader = new OpenWorlds::GL::Program(defaultResourceDirectory() + "/Shader.vsh", defaultResourceDirectory() + "/Shader.fsh");
-        glUseProgram(shader->nativeHandle());
+        viewProjectUniform = glGetUniformLocation(shader->nativeHandle(), "VP");
         
         // Set the perspective matrix
         float FoV    = 75.0f;
@@ -82,9 +86,7 @@ public:
         float zFar   = 500.0f;
         
         // Create the model-view-projection matrix
-        glm::mat4 projection = glm::perspective(FoV, aspect, zNear, zFar);
-        glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, -15.f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        VP = projection * view;
+        projection = glm::perspective(FoV, aspect, zNear, zFar);
         
         // Create the vertex array object and the buffers
         glGenVertexArraysOES(1, &cube);
@@ -115,14 +117,14 @@ public:
         glVertexAttribPointer(attribute_texcoords, 2, GL_FLOAT, GL_FALSE, sizeof(Vector2), 0);
         
         // MVP matricies
-        GLuint attribute_mvp = glGetAttribLocation(shader->nativeHandle(), "MVP");
+        GLuint attribute_m = glGetAttribLocation(shader->nativeHandle(), "M");
         glBindBuffer(GL_ARRAY_BUFFER, buffers[3]);
-        glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * 16) * 125, NULL, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, (sizeof(float) * 16) * (201 * 201), NULL, GL_DYNAMIC_DRAW);
         for(int i = 0; i < 4; i++)
         {
-            glEnableVertexAttribArray(attribute_mvp + i);
-            glVertexAttribPointer(attribute_mvp + i, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 16, (const GLvoid *)(sizeof(float) * i * 4));
-            glVertexAttribDivisorEXT(attribute_mvp + i, 1);
+            glEnableVertexAttribArray(attribute_m + i);
+            glVertexAttribPointer(attribute_m + i, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 16, (const GLvoid *)(sizeof(float) * i * 4));
+            glVertexAttribDivisorEXT(attribute_m + i, 1);
         }
         
         // Load the index buffer
@@ -134,20 +136,15 @@ public:
         
         // Initial state
         glBindBuffer(GL_ARRAY_BUFFER, buffers[3]);
-        for(int i = -2; i <= 2; i++)
+        for(int i = -50; i <= 50; i++)
         {
-            for(int j = -2; j <= 2; j++)
+            for(int j = -50; j <= 50; j++)
             {
-                for(int k = 0; k < 5; k++)
-                {
-                    // Build the MVP matrix
-                    glm::mat4 model = glm::mat4(1.0f);
-                    model = glm::translate(model, glm::vec3(5 * i, 5 * j, 5 * k));
-                    model = VP * model;
-                    
-                    // Substitute the date
-                    glBufferSubData(GL_ARRAY_BUFFER, ((25 * k) + (5 * (j + 2)) + (i + 2)) * (sizeof(float) * 16), (sizeof(float) * 16), &model[0][0]);
-                }
+                // Build the MVP matrix
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(i * 1.1, 0, j * 1.1));
+                
+                // Substitute the date
+                glBufferSubData(GL_ARRAY_BUFFER, ((101 * (j + 50)) + (i + 50)) * (sizeof(float) * 16), (sizeof(float) * 16), &model[0][0]);
             }
         }
         
@@ -176,25 +173,12 @@ public:
             frameCounter = 0;
         }
         
-        // Calculate the set of matricies
-        glBindBuffer(GL_ARRAY_BUFFER, buffers[3]);
-        for(int i = -2; i <= 2; i++)
-        {
-            for(int j = -2; j <= 2; j++)
-            {
-                for(int k = 0; k < 5; k++)
-                {
-                    // Build the MVP matrix
-                    glm::mat4 model = glm::mat4(1.0f);
-                    model = glm::translate(model, glm::vec3(5 * i, 5 * j, 5 * k));
-                    model = glm::rotate(model, angle, glm::vec3(1.0f, 1.0f, 0.0f));
-                    model = VP * model;
-                    
-                    // Substitute the date
-                    glBufferSubData(GL_ARRAY_BUFFER, ((25 * k) + (5 * (j + 2)) + (i + 2)) * (sizeof(float) * 16), (sizeof(float) * 16), &model[0][0]);
-                }
-            }
-        }
+        // Update the viewProjection matrix
+        glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(10.0f * sin(angle), 0.0f, 10.0f * cos(angle)), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 VP = projection * view;
+        
+        // Update the view projection matrix in the shader
+        glUniformMatrix4fv(viewProjectUniform, 1, GL_FALSE, &VP[0][0]);
         
         // Clear the OpenGL buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -206,14 +190,14 @@ public:
         glUseProgram(shader->nativeHandle());
         
         // Draw the cube
-        glDrawElementsInstancedEXT(GL_TRIANGLES, sizeof(cube_elements)/sizeof(cube_elements[0]), GL_UNSIGNED_BYTE, 0, 125);
+        glDrawElementsInstancedEXT(GL_TRIANGLES, sizeof(cube_elements)/sizeof(cube_elements[0]), GL_UNSIGNED_BYTE, 0, 101 * 101);
         
         // Swap screen buffers
         SDL_GL_SwapWindow(_window);
         
         // Increment the frame counter
         frameCounter++;
-        angle += 1.0f;
+        angle += (1.0f / 2.0f) * ((M_PI) / 180.0f);
     }
 };
 

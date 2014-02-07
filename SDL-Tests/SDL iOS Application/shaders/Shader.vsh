@@ -8,10 +8,10 @@ attribute vec4 NormalIn;
 attribute vec2 UVIn;
 
 // Model view matrix
-attribute mat4 MVP;
+attribute mat4 M;
 
-// The model - view - project matrix, doesn't make sense to do tons of un-necessary math
-//uniform mat4 MVP;
+// view - project matrix, doesn't make sense to do tons of un-necessary math
+uniform mat4 VP;
 
 // Output vertex normal
 varying highp vec4 Normal;
@@ -29,5 +29,5 @@ void main (void)
     Normal = NormalIn;
     
     // Position is the projection matrix multiplied by the position
-    gl_Position = MVP * Position;
+    gl_Position = VP * M * Position;
 }

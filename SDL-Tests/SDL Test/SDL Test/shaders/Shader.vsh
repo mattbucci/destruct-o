@@ -9,11 +9,11 @@ layout (location = 1) in vec4 NormalIn;
 // Texture coordinate
 layout (location = 2) in vec2 UVIn;
 
-// Model view matrix
-layout (location = 3) in mat4 MVP;
+// The model matrix
+layout (location = 3) in mat4 M;
 
-// The model - view - project matrix, doesn't make sense to do tons of un-necessary math
-//uniform mat4 MVP;
+// This is the view projection matrix, as its a lot more likely to change than the model matrix
+uniform mat4 VP;
 
 // Output vertex normal
 out vec4 Normal;
@@ -31,5 +31,5 @@ void main (void)
     Normal = NormalIn;
     
     // Position is the projection matrix multiplied by the position
-    gl_Position = MVP * Position;
+    gl_Position = VP * M * Position;
 }

@@ -9,7 +9,12 @@
 #ifndef __OpenWorlds_GL_includes__
 #define __OpenWorlds_GL_includes__
 
+#ifdef __MACOSX__
+#include <SDL2/SDL_opengl.h>
 
+#elif __IPHONEOS__
 #include <SDL2/SDL_opengles2.h>
+
+#endif
 
 #endif

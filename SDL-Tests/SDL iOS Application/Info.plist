@@ -57,5 +57,7 @@
 			<string>{320, 480}</string>
 		</dict>
 	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array/>
 </dict>
 </plist>
