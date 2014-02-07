@@ -66,7 +66,7 @@ using namespace std;
 #include <SDL/SDL.h>
 
 //SDL 2
-#if !(defined __ANDROID__) && !(defined __IPHONEOS)
+#if !(defined __ANDROID__) && !(defined __IPHONEOS__)
 #include <SDL/SDL_opengl.h>
 #else
 #include <SDL/SDL_opengles2.h>

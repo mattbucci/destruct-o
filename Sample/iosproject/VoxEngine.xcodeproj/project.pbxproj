@@ -7,8 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F136298C18A597CD0006A8BB /* SDL2_ttf_simulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F136298A18A597CD0006A8BB /* SDL2_ttf_simulator.a */; };
+		F136298D18A597CD0006A8BB /* SDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F136298B18A597CD0006A8BB /* SDL2_ttf.a */; };
+		F136298F18A599CC0006A8BB /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F136298E18A599CC0006A8BB /* OpenGLES.framework */; };
+		F136299118A599E20006A8BB /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F136299018A599E20006A8BB /* CoreAudio.framework */; };
+		F136299318A599F60006A8BB /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F136299218A599F60006A8BB /* CoreMedia.framework */; };
+		F136299518A59A050006A8BB /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F136299418A59A050006A8BB /* AudioToolbox.framework */; };
+		F136299B18A59BB40006A8BB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1989FD918A58C3900A5165E /* CoreGraphics.framework */; };
+		F136299C18A59BE70006A8BB /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F136299918A59B780006A8BB /* QuartzCore.framework */; };
 		F1989FD818A58C3900A5165E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1989FD718A58C3900A5165E /* Foundation.framework */; };
-		F1989FDA18A58C3900A5165E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1989FD918A58C3900A5165E /* CoreGraphics.framework */; };
 		F1989FDC18A58C3900A5165E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1989FDB18A58C3900A5165E /* UIKit.framework */; };
 		F1989FE218A58C3900A5165E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F1989FE018A58C3900A5165E /* InfoPlist.strings */; };
 		F1989FEA18A58C3900A5165E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1989FE918A58C3900A5165E /* Images.xcassets */; };
@@ -65,9 +72,19 @@
 		F198A0A718A58DAD00A5165E /* VoxelSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F198A07018A58DAD00A5165E /* VoxelSystem.cpp */; };
 		F198A0A818A58DAD00A5165E /* VoxEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F198A07218A58DAD00A5165E /* VoxEngine.cpp */; };
 		F198A0A918A58DAD00A5165E /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F198A07318A58DAD00A5165E /* Window.cpp */; };
+		F198A0AE18A58FBB00A5165E /* libSDL2-simulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F198A0AC18A58FBB00A5165E /* libSDL2-simulator.a */; };
+		F198A0AF18A58FBB00A5165E /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F198A0AD18A58FBB00A5165E /* libSDL2.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F136298A18A597CD0006A8BB /* SDL2_ttf_simulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = SDL2_ttf_simulator.a; path = libs/SDL/SDL2_ttf_simulator.a; sourceTree = "<group>"; };
+		F136298B18A597CD0006A8BB /* SDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = SDL2_ttf.a; path = libs/SDL/SDL2_ttf.a; sourceTree = "<group>"; };
+		F136298E18A599CC0006A8BB /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		F136299018A599E20006A8BB /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		F136299218A599F60006A8BB /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		F136299418A59A050006A8BB /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		F136299618A59A0D0006A8BB /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
+		F136299918A59B780006A8BB /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		F1989FD418A58C3900A5165E /* VoxEngine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoxEngine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1989FD718A58C3900A5165E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F1989FD918A58C3900A5165E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -187,6 +204,8 @@
 		F198A07218A58DAD00A5165E /* VoxEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VoxEngine.cpp; path = ../../source/VoxEngine.cpp; sourceTree = "<group>"; };
 		F198A07318A58DAD00A5165E /* Window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Window.cpp; path = ../../source/Window.cpp; sourceTree = "<group>"; };
 		F198A07418A58DAD00A5165E /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Window.h; path = ../../source/Window.h; sourceTree = "<group>"; };
+		F198A0AC18A58FBB00A5165E /* libSDL2-simulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSDL2-simulator.a"; path = "libs/SDL/libSDL2-simulator.a"; sourceTree = "<group>"; };
+		F198A0AD18A58FBB00A5165E /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = libs/SDL/libSDL2.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,7 +213,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1989FDA18A58C3900A5165E /* CoreGraphics.framework in Frameworks */,
+				F198A0AE18A58FBB00A5165E /* libSDL2-simulator.a in Frameworks */,
+				F198A0AF18A58FBB00A5165E /* libSDL2.a in Frameworks */,
+				F136298C18A597CD0006A8BB /* SDL2_ttf_simulator.a in Frameworks */,
+				F136298D18A597CD0006A8BB /* SDL2_ttf.a in Frameworks */,
+				F136299C18A59BE70006A8BB /* QuartzCore.framework in Frameworks */,
+				F136299B18A59BB40006A8BB /* CoreGraphics.framework in Frameworks */,
+				F136299118A599E20006A8BB /* CoreAudio.framework in Frameworks */,
+				F136299518A59A050006A8BB /* AudioToolbox.framework in Frameworks */,
+				F136299318A599F60006A8BB /* CoreMedia.framework in Frameworks */,
+				F136298F18A599CC0006A8BB /* OpenGLES.framework in Frameworks */,
 				F1989FDC18A58C3900A5165E /* UIKit.framework in Frameworks */,
 				F1989FD818A58C3900A5165E /* Foundation.framework in Frameworks */,
 			);
@@ -224,6 +252,16 @@
 		F1989FD618A58C3900A5165E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F136298A18A597CD0006A8BB /* SDL2_ttf_simulator.a */,
+				F136298B18A597CD0006A8BB /* SDL2_ttf.a */,
+				F198A0AD18A58FBB00A5165E /* libSDL2.a */,
+				F198A0AC18A58FBB00A5165E /* libSDL2-simulator.a */,
+				F136299918A59B780006A8BB /* QuartzCore.framework */,
+				F136299618A59A0D0006A8BB /* AudioUnit.framework */,
+				F136299418A59A050006A8BB /* AudioToolbox.framework */,
+				F136299218A599F60006A8BB /* CoreMedia.framework */,
+				F136299018A599E20006A8BB /* CoreAudio.framework */,
+				F136298E18A599CC0006A8BB /* OpenGLES.framework */,
 				F1989FD718A58C3900A5165E /* Foundation.framework */,
 				F1989FD918A58C3900A5165E /* CoreGraphics.framework */,
 				F1989FDB18A58C3900A5165E /* UIKit.framework */,
@@ -513,7 +551,7 @@
 		F1989FFE18A58C3900A5165E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++11";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -548,13 +586,14 @@
 				OTHER_CFLAGS = "-D__IPHONEOS__";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "libs ../includes/glm-0.9.4.4";
 			};
 			name = Debug;
 		};
 		F1989FFF18A58C3900A5165E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++11";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -583,6 +622,7 @@
 				OTHER_CFLAGS = "-D__IPHONEOS__";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "libs ../includes/glm-0.9.4.4";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -595,6 +635,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VoxEngine/VoxEngine-Prefix.pch";
 				INFOPLIST_FILE = "VoxEngine/VoxEngine-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/nathaniel/main-client/Sample/iosproject/libs/SDL",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -608,6 +652,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VoxEngine/VoxEngine-Prefix.pch";
 				INFOPLIST_FILE = "VoxEngine/VoxEngine-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/nathaniel/main-client/Sample/iosproject/libs/SDL",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
