@@ -22,12 +22,11 @@ int main(int argc, char** argv)
 {
 	SDL_Init(SDL_INIT_VIDEO);
 
-
 	SDL_Window * displayWindow = NULL;
 
 #ifndef __MOBILE__
 	//Build us a state of the art context
-	displayWindow = BuildSDLContext(3,1,1.4f);
+	displayWindow = BuildSDLContext(3,2,1.4f);
 	OpenglVersion = 31;
 #endif
 	//If that fails, try for something less state of the art
@@ -41,11 +40,7 @@ int main(int argc, char** argv)
 		SDL_Quit();
 		return -5;
 	}
-
-
-	/* Create our opengl context and attach it to our window */
-	SDL_GL_CreateContext(displayWindow);
-	
+    
 	//Start GLEW for windows/linux/OSX
 #ifndef __MOBILE__
 	glewExperimental = GL_TRUE;
@@ -163,30 +158,32 @@ int main(int argc, char** argv)
 
 //returns NULL if that context couldn't be constructed
 SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion, float requiredGLSLVersion) {
-	//FROM: http://www.opengl.org/wiki/Tutorial1:_Creating_a_Cross_Platform_OpenGL_3.2_Context_in_SDL_(C_/_SDL)
-	//First try opengl 3.3
-	/* Request opengl 3.3 context.
-	 * SDL doesn't have the ability to choose which profile at this time of writing,
-	 * but it should default to the core profile */
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, openglMajorVersion);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, openglMinorVersion);
-#ifndef __MOBILE__
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    // Request double buffering
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    
+    // Request a 32 bit depth buffer
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+    
+    // Request 32 bit color buffer (RGBA8888)
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+    
+    // Request OpenGL 3.2
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, openglMajorVersion);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, openglMinorVersion);
+#ifndef __ANDROID__
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
- 
-	/* Turn on double buffering with a 24bit Z buffer.
-	 * You may need to change this to 16 or 32 for your system */
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
 
 	SDL_Window* displayWindow;
 	
 	SDL_RendererInfo displayRendererInfo;
-	SDL_CreateWindowAndRenderer(800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN, &displayWindow, &displayRenderer);
-	SDL_GetRendererInfo(displayRenderer, &displayRendererInfo);
-	/*TODO: Check that we have OpenGL */
-	if ((displayRendererInfo.flags & SDL_RENDERER_ACCELERATED) == 0 || 
+	displayWindow = SDL_CreateWindow("Sample",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+	/*SDL_GetRendererInfo(displayRenderer, &displayRendererInfo);
+	if ((displayRendererInfo.flags & SDL_RENDERER_ACCELERATED) == 0 ||
 		(displayRendererInfo.flags & SDL_RENDERER_TARGETTEXTURE) == 0) {
 		cout << "Failed to build context with opengl version: " << openglMajorVersion << "." << openglMinorVersion << "\n";
 		SDL_DestroyWindow(displayWindow);
@@ -194,7 +191,10 @@ SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion, floa
 	}
 	else
 		cout << "Built context with opengl version: " << openglMajorVersion << "." << openglMinorVersion << "\n";
+     */
 	
+    SDL_GL_CreateContext(displayWindow);
+    
 	//Get glsl version
 	char * versionString = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 	//This function can fail to return a proper version string

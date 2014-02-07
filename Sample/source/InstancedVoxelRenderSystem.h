@@ -18,6 +18,7 @@ class InstancedVoxelRenderSystem : public VoxelDrawSystem {
 	GLuint vertexBuffer;
 	GLuint textureBuffer;
 	GLuint normalBuffer;
+    GLuint indexBuffer;
 	//Used for instanced positions
 	GLuint positionBuffer;
 

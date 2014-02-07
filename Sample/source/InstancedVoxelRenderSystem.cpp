@@ -9,6 +9,7 @@ InstancedVoxelRenderSystem::InstancedVoxelRenderSystem() {
 	glGenBuffers(1,&textureBuffer);
 	glGenBuffers(1,&normalBuffer);
 	glGenBuffers(1,&positionBuffer);
+    glGenBuffers(1,&indexBuffer);
 	glGenVertexArrays(1,&vertexArray);
 
 	bufferedVoxels = 0;
@@ -109,7 +110,11 @@ void InstancedVoxelRenderSystem::startDraw(GL3DProgram * shader) {
 	glBindBuffer ( GL_ARRAY_BUFFER, positionBuffer );
 	glBufferData ( GL_ARRAY_BUFFER, INSTANCE_RENDER_SWEEP*sizeof(vec4), positions, GL_DYNAMIC_READ );
 	glEnableVertexAttribArray ( shader->AttributePosition() );
-	glVertexAttribPointer ( shader->AttributePosition(), 4, GL_FLOAT, GL_FALSE, 0, 0 );	
+	glVertexAttribPointer ( shader->AttributePosition(), 4, GL_FLOAT, GL_FALSE, 0, 0 );
+    
+    //Push indices (not necessary on windows... for some reason?
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,36,&indices[0],GL_STATIC_DRAW);
 }
 
 void InstancedVoxelRenderSystem::draw(GL3DProgram * shader) {
@@ -127,7 +132,8 @@ void InstancedVoxelRenderSystem::draw(GL3DProgram * shader) {
 	glVertexAttribDivisor(shader->AttributeTexture(),0);
 	glVertexAttribDivisor(shader->AttributeVertex(),0);
 
-	glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, &indices[0], bufferedVoxels);
+	glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0, bufferedVoxels);
+
 	//All buffered voxels now drawn
 	bufferedVoxels = 0;
 }
