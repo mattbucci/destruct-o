@@ -188,6 +188,7 @@ int RenderThread(void* userdata)
     Uint32 frameCounter = 0;
     Uint32 priorTicks = SDL_GetTicks();
     float  angle = 0.0f;
+    //GLfloat *workspace = new GLfloat[(16 * 201 * 201)];
     
     // Swap windows
     while( !done )
@@ -204,12 +205,21 @@ int RenderThread(void* userdata)
             frameCounter = 0;
         }
         
-        // Update the viewProjection matrix
-        glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(10.0f * sin(angle), 0.0f, 10.0f * cos(angle)), glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4 VP = projection * view;
-        
-        // Update the view projection matrix in the shader
-        glUniformMatrix4fv(viewProjectUniform, 1, GL_FALSE, &VP[0][0]);
+        // Initial state
+        /*glBindBuffer(GL_ARRAY_BUFFER, buffers[3]);
+        for(int i = -100; i <= 100; i++)
+        {
+            for(int j = -100; j <= 100; j++)
+            {
+                // Build the MVP matrix
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(i * 1.1, 0, j * 1.1));
+                
+                // Substitute the date
+                //glBufferSubData(GL_ARRAY_BUFFER, ((201 * (j + 100)) + (i + 100)) * (sizeof(float) * 16), (sizeof(float) * 16), &model[0][0]);
+                std::memcpy(workspace + (((201 * (j + 100)) + (i + 100)) * 16), &model[0][0], sizeof(GLfloat) * 16);
+            }
+        }
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 16 * 201 * 201, workspace);*/
         
         // Clear the OpenGL buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -219,6 +229,11 @@ int RenderThread(void* userdata)
         
         // Use the program
         glUseProgram(shader.nativeHandle());
+        
+        // Update the viewProjection matrix, change the shader uniform
+        glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(10.0f * sin(angle), 0.0f, 10.0f * cos(angle)), glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 VP = projection * view;
+        glUniformMatrix4fv(viewProjectUniform, 1, GL_FALSE, &VP[0][0]);
         
         // Draw the cube
         glDrawElementsInstanced(GL_TRIANGLES, sizeof(cube_elements)/sizeof(cube_elements[0]), GL_UNSIGNED_BYTE, 0, 201 * 201);
