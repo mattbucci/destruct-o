@@ -1,8 +1,3 @@
-#ifndef GL_ES
-#define highp
-#define lowp
-#define mediump
-#endif
 
 attribute vec2 vPos;
 attribute vec2 vTex;

@@ -1,9 +1,4 @@
 
-#ifndef GL_ES
-#define highp
-#define lowp
-#define mediump
-#endif
 
 //The vertex coordinate
 attribute highp vec4 vPos;

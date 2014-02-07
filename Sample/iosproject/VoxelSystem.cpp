@@ -8,7 +8,6 @@
 #include "GameTile.h"
 
 #include "VoxelDrawSystem.h"
-#include "InstancedVoxelRenderSystem.h"
 #include "BasicVoxelRenderSystem.h"
 
 VoxelSystem::VoxelSystem() {
@@ -20,12 +19,6 @@ VoxelSystem::VoxelSystem() {
 	case 20:
 		renderer = new BasicVoxelRenderSystem();
 		break;
-//Android can't use instanced rendering so its not even an option
-#ifndef __ANDROID__
-	case 31:
-		renderer = new InstancedVoxelRenderSystem();
-		break;
-#endif
 	}
 }
 VoxelSystem::~VoxelSystem() {

@@ -25,9 +25,8 @@ using namespace std;
 
 //Define mobile platforms
 //iOS would also go here
-#ifdef __ANDROID__
+
 #define __MOBILE__
-#endif
 
 //For android or any other platform which requires it
 //this converts "cout" into an actually loggable format
@@ -43,34 +42,10 @@ using namespace std;
 #undef UNICODE
 #endif
 
-#ifndef __MOBILE__
-#include <GL/glew.h>
-#endif
-
-//GLEW now handles all of opengl
-#ifndef WIN32
-//for OSX
-#ifdef __APPLE__
-//Prevent SDL from using gl.h
-#define __gl_h_
-#endif
-//For Android
-#ifdef __ANDROID__
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#include <GLES2/gl2platform.h>
-#endif
-#endif
 
 
-#include <SDL/SDL.h>
-
-//SDL 2
-#ifndef __ANDROID__
-#include <SDL/SDL_opengl.h>
-#else
-#include <SDL/SDL_opengles2.h>
-#endif
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengles2.h>
 
 //GLM
 #include <glm/glm.hpp>

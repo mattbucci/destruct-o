@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include "GL2DProgram.h"
-#include <SDL/SDL_ttf.h>
+#include <SDL_ttf.h>
 
 
 class Letter;

@@ -1,20 +1,15 @@
-#ifndef GL_ES
-#define highp
-#define lowp
-#define mediump
-#endif
 
-varying mediump vec4 fragmentData;
+varying highp vec4 fragmentData;
 
 //1 for yes, 0 for no
-uniform mediump float textureEnabled;
+uniform highp float textureEnabled;
 
 //Clipping region defined as X1,Y1,X2,Y2 
 //X1 = -1 if no clipping region enabled
-uniform mediump vec4 clippingRegion;
+uniform vec4 clippingRegion;
  
 //Color of material
-uniform mediump vec4 uColor; 
+uniform vec4 uColor;
 
 //Texture input, by default binds to "0"
 uniform sampler2D basic_texture;
@@ -26,7 +21,7 @@ void main() {
 	if ((clippingRegion.x >= 0.0) && ((sFragmentCords.x < clippingRegion.x) || (sFragmentCords.x > clippingRegion.z)
 			|| (sFragmentCords.y < clippingRegion.y) || (sFragmentCords.y > clippingRegion.w))) {
 			 
-		gl_FragColor = vec4(1.0,0.0,0.0,0.0); //If outside the clipping region paint transparency
+		gl_FragColor = highp vec4(1.0,0.0,0.0,0.0); //If outside the clipping region paint transparency
 	}
 	else if (textureEnabled >= 1.0) { 
 		mediump vec4 texel = texture2D(basic_texture, pos,0.0);

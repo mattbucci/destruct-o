@@ -29,8 +29,8 @@ bool Listbox::drawScrollButton(GL2DProgram * shaders,bool isTop) {
 			retValue = true;
 			drawColor = highlightColor;
 		}
-		else
-			drawColor = (highlightColor+barColor)/2.0;
+		else{}
+			//drawColor = (highlightColor+barColor)/2.0;
 	}
 	else
 		drawColor = barColor;
@@ -107,8 +107,8 @@ void Listbox::drawScrollBar(GL2DProgram * shaders) {
 			drawColor = highlightColor;
 			lastScrollPos = lastMousePos;
 		}
-		else
-			drawColor = (highlightColor+barColor)/2.0;
+		else{}
+			//drawColor = (highlightColor+barColor)/2.0;
 	}
 	else
 		drawColor = barColor;

@@ -6,7 +6,7 @@
 //needs to make a special case for android
 
 BasicVoxelRenderSystem::BasicVoxelRenderSystem() {
-#ifndef __ANDROID__
+#ifndef __MOBILE__
 	glGenBuffers(1,&vertexBuffer);
 	glGenVertexArrays(1,&vertexArray);
 #endif
@@ -18,7 +18,7 @@ BasicVoxelRenderSystem::BasicVoxelRenderSystem() {
 
 BasicVoxelRenderSystem::~BasicVoxelRenderSystem() {
 	delete [] vertices;
-#ifndef __ANDROID__
+#ifndef __MOBILE__
 	glDeleteBuffers(1,&vertexBuffer);
 	glDeleteVertexArrays(1,&vertexArray);
 #endif
@@ -47,7 +47,7 @@ void BasicVoxelRenderSystem::startDraw(GL3DProgram * shader) {
 
 	allocated = true;
 	glEnableVertexAttribArray ( 0 );
-#ifndef __ANDROID__
+#ifndef __MOBILE__
 	//Allocate the space for the gpu buffers now
 	//and send the static data
 	//Rebind the array to bring them into the current context
@@ -63,7 +63,7 @@ void BasicVoxelRenderSystem::startDraw(GL3DProgram * shader) {
 
 void BasicVoxelRenderSystem::draw(GL3DProgram * shader) {
 	glEnableVertexAttribArray ( 0 );
-#ifndef __ANDROID__
+#ifndef __MOBILE__
 	glBindVertexArray ( vertexArray );
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
 	glBufferSubData ( GL_ARRAY_BUFFER, 0,bufferedVoxels*36*sizeof(vec4), vertices );
