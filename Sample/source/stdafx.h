@@ -25,7 +25,7 @@ using namespace std;
 
 //Define mobile platforms
 //iOS would also go here
-#ifdef __ANDROID__
+#if (defined __ANDROID__) || (defined __IPHONEOS__)
 #define __MOBILE__
 #endif
 
@@ -66,7 +66,7 @@ using namespace std;
 #include <SDL/SDL.h>
 
 //SDL 2
-#ifndef __ANDROID__
+#if !(defined __ANDROID__) && !(defined __IPHONEOS)
 #include <SDL/SDL_opengl.h>
 #else
 #include <SDL/SDL_opengles2.h>
