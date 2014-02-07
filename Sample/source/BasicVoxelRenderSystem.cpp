@@ -8,11 +8,7 @@
 BasicVoxelRenderSystem::BasicVoxelRenderSystem() {
 #ifndef __ANDROID__
 	glGenBuffers(1,&vertexBuffer);
-#if (defined __IPHONEOS__)
-    glGenVertexArraysOES(1, &vertexArray);
-#else
 	glGenVertexArrays(1,&vertexArray);
-#endif
 #endif
 	bufferedVoxels = 0;
 	vertices = new vec4[36*VOXEL_RENDER_SWEEP];
@@ -24,11 +20,7 @@ BasicVoxelRenderSystem::~BasicVoxelRenderSystem() {
 	delete [] vertices;
 #ifndef __ANDROID__
 	glDeleteBuffers(1,&vertexBuffer);
-#if (defined __IPHONEOS__)
-    glDeleteVertexArraysOES(1, &vertexArray);
-#else
 	glDeleteVertexArrays(1,&vertexArray);
-#endif
 #endif
 }
 
@@ -59,11 +51,7 @@ void BasicVoxelRenderSystem::startDraw(GL3DProgram * shader) {
 	//Allocate the space for the gpu buffers now
 	//and send the static data
 	//Rebind the array to bring them into the current context
-#if (defined __IPHONEOS__)
-    glBindVertexArrayOES(vertexArray);
-#else
 	glBindVertexArray ( vertexArray );
-#endif
 
 	//Allocate space
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
@@ -76,11 +64,7 @@ void BasicVoxelRenderSystem::startDraw(GL3DProgram * shader) {
 void BasicVoxelRenderSystem::draw(GL3DProgram * shader) {
 	glEnableVertexAttribArray ( 0 );
 #ifndef __ANDROID__
-#if (defined __IPHONEOS__)
-    glBindVertexArrayOES(vertexArray);
-#else
 	glBindVertexArray ( vertexArray );
-#endif
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
 	glBufferSubData ( GL_ARRAY_BUFFER, 0,bufferedVoxels*36*sizeof(vec4), vertices );
 	glEnableVertexAttribArray ( shader->AttributePosition() );

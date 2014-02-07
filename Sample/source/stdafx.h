@@ -66,11 +66,16 @@ using namespace std;
 #include <SDL/SDL.h>
 
 //SDL 2
-#if !(defined __ANDROID__) && !(defined __IPHONEOS__)
+#ifndef __MOBILE__
 #include <SDL/SDL_opengl.h>
 #else
 #include <SDL/SDL_opengles2.h>
+//Apple's custom extensions
+#ifdef __IPHONEOS__
+#include "IOSGL.h"
 #endif
+#endif
+
 
 //GLM
 #include <glm/glm.hpp>

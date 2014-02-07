@@ -3,8 +3,8 @@
 #include "GLModel.h"
 #include "GL2DProgram.h"
 
-//For opengl es
-#ifdef __MOBILE__
+//For opengl es without extensions
+#ifdef __ANDROID__
 
 //Build the arrays to create the vertex group
 GL2DVertexGroup::GL2DVertexGroup(GLenum gltype, int vertexCount) {
