@@ -6,6 +6,7 @@
 #include "GameSystem.h"
 #include "InterfaceGlobals.h"
 #include "OS.h"
+#include "VoxEngine.h"
 
 
 SDL_Renderer* displayRenderer;
@@ -13,13 +14,31 @@ SDL_Renderer* displayRenderer;
 //A variable which at runtime can be used to figure out what version is running
 int OpenglVersion;
 
-//This should be encapsualted in a class, but... here it is
-//returns NULL if that context couldn't be constructed
-SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion, float requiredGLSLVersion);
+//Static values within the VoxEngine class
+//Becomes false when SDL_Quit is found
+bool VoxEngine::continueGameLoop;
 
-//Game entry point
+//The delta between computer time (OS::Now()) and 
+//game simulation time
+double VoxEngine::gameEventDelta;
+
+//The current time in the simulation loop
+//always starts at 0.0
+double VoxEngine::gameSimulationTime = 0.0;
+
+//The current size of the window
+int VoxEngine::curWidth;
+int VoxEngine::curHeight;
+
+//Program entry point
 int main(int argc, char** argv)
 {
+	VoxEngine::Start();
+	return 0;
+}
+
+//Game entry point
+void VoxEngine::Start() {
 	SDL_Init(SDL_INIT_VIDEO);
 
 	SDL_Window * displayWindow = NULL;
@@ -38,16 +57,17 @@ int main(int argc, char** argv)
 	if (displayWindow == NULL) {
 		cout << "Failed to open any opengl context on this device. Your device is too out dated, sorry.\n";
 		SDL_Quit();
-		return -5;
+		return;
 	}
-    
+	
 	//Start GLEW for windows/linux/OSX
 #ifndef __MOBILE__
 	glewExperimental = GL_TRUE;
 	GLenum res = glewInit();
 	if (res != GLEW_OK) {
 		cout << glewGetString(GLEW_VERSION) << ", Error: " << glewGetErrorString(res) << "\n";
-		return -1;
+		SDL_Quit();
+		return;
 	}
 
 	//Copied from some glue initiation code
@@ -77,16 +97,64 @@ int main(int argc, char** argv)
 	//Populate the list of game systems
 	Frames::BuildSystemList();
 
-	
-	bool continueGameLoop = true;
+	continueGameLoop = true;
+	//Get the current window size
+	SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
+
+	//Mark the simulation starting time
+	gameSimulationTime = 0.0;
+	gameEventDelta = gameSimulationTime-OS::Now();
+
 	//The game loop begins
 	while (continueGameLoop) {
-		//Determine the width,height of the draw frame
-		//also used for unscaling touch events
-		int width, height;
-		SDL_GetWindowSize(displayWindow,&width,&height);
-		vector<InputEvent> eventQueue;
-		
+
+		//Jump ahead detection, if the simulation loop
+		//is behind more than 2 seconds, assume the application
+		//was paused for some reason (break point)
+		//and jump the time up, so that it seems like no time passed
+		//at all
+		if (((OS::Now()+gameEventDelta) - gameSimulationTime) >= 2.0) {
+			//Do jump ahead
+			cout << "Note: performed jumpahead from " << gameEventDelta;
+			gameEventDelta = gameSimulationTime-OS::Now();
+			cout << " to " << gameEventDelta << "\n";
+		}
+
+		//While you're behind on physics frames catch up
+		//If you become more behind during calculation
+		//we continue anyways, so that frames are drawn sometimes
+		//even if they fall behind a bit
+		double timeDifference = (OS::Now()+gameEventDelta)-gameSimulationTime;
+		while (timeDifference >= SIMULATION_TIME) {
+			timeDifference -= SIMULATION_TIME;
+			//Run the simulation
+			//Read events
+			vector<InputEvent> eventQueue;
+			ProcessEvents(eventQueue);
+			//Simulate actions
+			CurrentSystem->Update(0,0,eventQueue);
+			//Update the simulation time
+			gameSimulationTime += SIMULATION_TIME;
+		}
+
+		//Run the frame draw
+		glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		//Draw
+		CurrentSystem->Draw((double)curWidth,(double)curHeight);
+
+		/* Swap our back buffer to the front */
+		SDL_GL_SwapWindow(displayWindow);
+
+		//Update the current system selection
+		//if a swap was requested during one of the updates
+		//it will happen now
+		Frames::UpdateAliveFrame();
+	}
+
+	SDL_Quit();
+}
+
+void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 		//You can poll up to 20 events per frame
 		//we don't want to take all day though
 		for (int i = 0; i < 20; i++) {
@@ -97,6 +165,7 @@ int main(int argc, char** argv)
 			if (eventPolled) {
 				//Convert sdl event to InputEvent
 				switch (event.type) {
+				//Handle input events
 				case SDL_KEYDOWN:
 					eventQueue.push_back(InputEvent(InputEvent::KeyboardDown,OS::Now(),event.key.keysym.sym));
 					break;
@@ -114,13 +183,24 @@ int main(int argc, char** argv)
 					break;
 				case SDL_FINGERMOTION:
 					//cout << "MOVED: " << event.tfinger.x << "," << event.tfinger.y << "\n";
-					eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),event.tfinger.x*width,event.tfinger.y*height));
+					eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight));
 					break;
 				case SDL_FINGERUP:
-					eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),event.tfinger.x*width,event.tfinger.y*height));
+					eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight));
 					break;
 				case SDL_FINGERDOWN:
-					eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),event.tfinger.x*width,event.tfinger.y*height));
+					eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight));
+					break;
+				//Handle events which directly effect the operation of the game engine
+				case SDL_WINDOWEVENT: 
+					//Window events have their own set of things that could happen
+					switch (event.window.event) {
+					case SDL_WINDOWEVENT_RESIZED:
+						curWidth = event.window.data1;
+						curHeight = event.window.data2;
+						glViewport(0,0,curWidth,curHeight);
+						break;
+					}
 					break;
 				case SDL_QUIT:
 					//Stops the next iteration of the game loop
@@ -132,69 +212,54 @@ int main(int argc, char** argv)
 				//No more events
 				break;
 		}
-			
-
-		//Update the frame simulation (very broken)
-		CurrentSystem->Update(0,0,eventQueue);
-		//Run the frame draw
-		glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-		//Draw
-		CurrentSystem->Draw((double)width,(double)height);
-
-		/* Swap our back buffer to the front */
-		SDL_GL_SwapWindow(displayWindow);
-
-		//Update the current system
-		Frames::UpdateAliveFrame();
-	}
-
-	SDL_Quit();
-	
-	return 0;
 }
 
 
-
-
 //returns NULL if that context couldn't be constructed
-SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion, float requiredGLSLVersion) {
-    // Request double buffering
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    
-    // Request a 32 bit depth buffer
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
-    
-    // Request 32 bit color buffer (RGBA8888)
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-    
-    // Request OpenGL 3.2
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, openglMajorVersion);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, openglMinorVersion);
+SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVersion, float requiredGLSLVersion) {
+	// Request double buffering
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	
+	// Request a 32 bit depth buffer
+#if (defined __ANDROID__) || (defined WIN32)
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+#else
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+#endif
+
+	
+	// Request 32 bit color buffer (RGBA8888)
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+	
+	// Request OpenGL 3.2
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, openglMajorVersion);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, openglMinorVersion);
 #ifndef __ANDROID__
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
 
 
 	SDL_Window* displayWindow;
 	
 	SDL_RendererInfo displayRendererInfo;
-	displayWindow = SDL_CreateWindow("Sample",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-	/*SDL_GetRendererInfo(displayRenderer, &displayRendererInfo);
+#ifndef WIN32
+	displayWindow = SDL_CreateWindow("Sample",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+#else
+	SDL_CreateWindowAndRenderer(800,600,SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE,&displayWindow,&displayRenderer);
+	SDL_GetRendererInfo(displayRenderer, &displayRendererInfo);
 	if ((displayRendererInfo.flags & SDL_RENDERER_ACCELERATED) == 0 ||
 		(displayRendererInfo.flags & SDL_RENDERER_TARGETTEXTURE) == 0) {
 		cout << "Failed to build context with opengl version: " << openglMajorVersion << "." << openglMinorVersion << "\n";
 		SDL_DestroyWindow(displayWindow);
 		return NULL;
 	}
-	else
-		cout << "Built context with opengl version: " << openglMajorVersion << "." << openglMinorVersion << "\n";
-     */
+#endif
+	cout << "Built context with opengl version: " << openglMajorVersion << "." << openglMinorVersion << "\n";
+	SDL_GL_CreateContext(displayWindow);
 	
-    SDL_GL_CreateContext(displayWindow);
-    
 	//Get glsl version
 	char * versionString = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 	//This function can fail to return a proper version string

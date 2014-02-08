@@ -6,7 +6,7 @@ class Font;
 class NinePatchBinary;
 
 class InterfaceGlobals {
-	friend int main(int argc, char* argv[]);
+	friend class VoxEngine;
 	//Build all the defaults
 	void init();
 

@@ -2,8 +2,6 @@
 
 #include "stdafx.h"
 
-#define SIMULATION_TIME .025
-//again SDL defines "main" why?!
 
 class GameSystem;
 
@@ -24,7 +22,7 @@ class Frames {
 	static void UpdateAliveFrame();
 
 	//So that main can call the above functions
-	friend int main(int argc, char* argv[]);
+	friend class VoxEngine;
 public:
 	//The list of current systems
 	enum Systems {
