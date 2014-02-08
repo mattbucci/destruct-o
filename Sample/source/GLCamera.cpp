@@ -2,8 +2,8 @@
 #include "GLCamera.h"
 
 GLCamera::GLCamera(GLint uniformViewMatrix, GLint uniformProjectionMatrix) {
-	_ASSERTE(uniformProjectionMatrix > 0);
-	_ASSERTE(uniformViewMatrix > 0);
+	_ASSERTE(uniformProjectionMatrix >= 0);
+	_ASSERTE(uniformViewMatrix >= 0);
 
 	this->uniformViewMatrix = uniformViewMatrix;
 	this->uniformProjectionMatrix = uniformProjectionMatrix;
