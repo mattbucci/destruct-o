@@ -29,10 +29,6 @@ using namespace std;
 #define __MOBILE__
 #endif
 
-//For android or any other platform which requires it
-//this converts "cout" into an actually loggable format
-#include "AuxLogger.h"
-
 //Define assert for non windows based platforms
 #ifndef _ASSERTE
 #define _ASSERTE assert
@@ -75,6 +71,11 @@ using namespace std;
 #include "IOSGL.h"
 #endif
 #endif
+
+//For android or any other platform which requires it
+//this converts "cout" into an actually loggable format
+//Must be included after SDL
+#include "AuxLogger.h"
 
 
 //GLM

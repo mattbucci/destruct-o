@@ -637,7 +637,7 @@
 				INFOPLIST_FILE = "VoxEngine/VoxEngine-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/nathaniel/main-client/Sample/iosproject/libs/SDL",
+					libs/SDL,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -654,7 +654,7 @@
 				INFOPLIST_FILE = "VoxEngine/VoxEngine-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/Users/nathaniel/main-client/Sample/iosproject/libs/SDL",
+					libs/SDL,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

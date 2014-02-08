@@ -3,7 +3,7 @@
 //so lets assume opengl es 2, and use all of apple's extensions
 
 #define glDeleteVertexArrays glDeleteVertexArraysOES
-#define glBindVertexArray glDeleteVertexArraysOES
+#define glBindVertexArray glBindVertexArrayOES
 #define glGenVertexArrays glGenVertexArraysOES
 
 #define glVertexAttribDivisor glVertexAttribDivisorEXT

@@ -88,9 +88,9 @@ GL2DVertexGroup::GL2DVertexGroup(GLenum gltype, int vertexCount) {
 	//Buffer junk data (doesn't matter if data is uninitialized)
 	//This allows the allocation to happen once
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
-	glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(vec2), vertices, GL_DYNAMIC_READ );
+	glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(vec2), vertices, GL_DYNAMIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER, textureBuffer ); 
-	glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(vec2), vertexTextureCoords, GL_DYNAMIC_READ );
+	glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(vec2), vertexTextureCoords, GL_DYNAMIC_DRAW );
 }
 
 void GL2DVertexGroup::ResizeVertexGroup(int newSize) {
@@ -108,9 +108,9 @@ void GL2DVertexGroup::ResizeVertexGroup(int newSize) {
 	//Buffer junk data (doesn't matter if data is uninitialized)
 	//This allows the allocation to happen once
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
-	glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(vec2), vertices, GL_DYNAMIC_READ );
+	glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(vec2), vertices, GL_DYNAMIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER, textureBuffer ); 
-	glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(vec2), vertexTextureCoords, GL_DYNAMIC_READ );
+	glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(vec2), vertexTextureCoords, GL_DYNAMIC_DRAW );
 }
 
 GL2DVertexGroup::~GL2DVertexGroup() {
