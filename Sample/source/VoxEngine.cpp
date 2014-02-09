@@ -7,6 +7,7 @@
 #include "InterfaceGlobals.h"
 #include "OS.h"
 #include "VoxEngine.h"
+#include "LoadingScreen.h"
 
 
 SDL_Renderer* displayRenderer;
@@ -96,7 +97,31 @@ void VoxEngine::Start() {
 	VisualInterface.init();
 	//Populate the list of game systems
 	Frames::BuildSystemList();
+	//Do game initial load
+	//at this point we're going to enter a really fast draw loop
+	//and show our please wait dialog
+	{
+		LoadingScreen load;
+		//Assume one of the frames constructed the 2d shader
+		GL2DProgram * shader = (GL2DProgram*)Frames::shaders.GetShader("2d");
 
+		glActiveTexture(GL_TEXTURE0);
+
+		while (!Frames::loadingComplete) {
+			//Run the frame draw
+			glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+			//Pump events even though we ignore them
+			SDL_PumpEvents();
+			//Check window size
+			SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
+			//render the loading screen
+			load.Draw(curWidth,curHeight,shader);
+			SDL_GL_SwapWindow(displayWindow);
+		}
+	}
+
+
+	//Start up game
 	continueGameLoop = true;
 	//Get the current window size
 	SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
@@ -132,7 +157,7 @@ void VoxEngine::Start() {
 			vector<InputEvent> eventQueue;
 			ProcessEvents(eventQueue);
 			//Simulate actions
-			CurrentSystem->Update(0,0,eventQueue);
+			CurrentSystem->Update(SIMULATION_TIME,gameSimulationTime,eventQueue);
 			//Update the simulation time
 			gameSimulationTime += SIMULATION_TIME;
 		}
@@ -144,6 +169,7 @@ void VoxEngine::Start() {
 
 		/* Swap our back buffer to the front */
 		SDL_GL_SwapWindow(displayWindow);
+	
 
 		//Update the current system selection
 		//if a swap was requested during one of the updates

@@ -4,6 +4,7 @@
 #include "ShaderGroup.h"
 //Frames
 #include "BaseFrame.h"
+#include <thread>
 
 //The current system
 GameSystem * CurrentSystem = NULL;
@@ -11,18 +12,34 @@ GameSystem * CurrentSystem = NULL;
 //The integer reference
 int Frames::currentSystem;
 map<int,GameSystem*> Frames::systems;
+bool Frames::loadingComplete;
+ShaderGroup Frames::shaders;
 
 //Build the initial system list. Should be called by main()
 void Frames::BuildSystemList() {
-	//TODO: Move this to the class so it is claned up properly
-	ShaderGroup * shaders = new ShaderGroup();
 
 	cout << "Building systems list...";
 
 	//Build each frame
-	systems[FRAME_MAINMENU] = new BaseFrame(shaders);
+	systems[FRAME_MAINMENU] = new BaseFrame(&shaders);
+
+
+
+
 	//Set initial frame  
 	SetSystem(FRAME_MAINMENU);
+	//Start deferred loading on another thread
+	loadingComplete = false;
+	//Thread starts immediately
+	thread thr([](){
+		//Start each system
+		for (auto system : systems)
+			system.second->Build();
+		//Mark the system list as loaded
+		loadingComplete = true;
+	});
+	//Thread will automatically cleanup on end
+	thr.detach();
 }
 //If during the last sim frame the current system was changed
 //enact the change now

@@ -30,6 +30,13 @@ public:
 
 	ControlBase Controls;
 
+	//This is called right after all frames are constructed
+	//but before any frames start running
+	//it runs from a separate thread so do NOT do any opengl calls!
+	//should be used for all heavy performance intensive loading
+	//it is only called once
+	virtual void Build();
+
 	//When this frame starts running this will be called
 	virtual void OnFrameFocus();
 	//When this frame stops running this will be called

@@ -16,7 +16,7 @@ void ViewDistanceCalc::CalculateAndApply(GL3DProgram * shader,float currentFPS) 
 	//How long the visual learning rate is
 	const static int maxFrameLearn = 400;
 	//Target frame rates
-	const float maxFrameRate = 45;
+	const float maxFrameRate = 55;
 	//This should be a bit higher than what you actually want
 	const float acceptableFrameRate = 35;
 	framesDrawn++;
