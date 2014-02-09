@@ -105,6 +105,8 @@ void VoxEngine::Start() {
 		//Assume one of the frames constructed the 2d shader
 		GL2DProgram * shader = (GL2DProgram*)Frames::shaders.GetShader("2d");
 
+		glActiveTexture(GL_TEXTURE0);
+
 		while (!Frames::loadingComplete) {
 			//Run the frame draw
 			glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -155,7 +157,7 @@ void VoxEngine::Start() {
 			vector<InputEvent> eventQueue;
 			ProcessEvents(eventQueue);
 			//Simulate actions
-			CurrentSystem->Update(0,0,eventQueue);
+			CurrentSystem->Update(SIMULATION_TIME,gameSimulationTime,eventQueue);
 			//Update the simulation time
 			gameSimulationTime += SIMULATION_TIME;
 		}
