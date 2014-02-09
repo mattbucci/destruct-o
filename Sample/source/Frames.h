@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 
+#include "ShaderGroup.h"
 
 class GameSystem;
 
@@ -14,9 +15,16 @@ class Frames {
 	//These systems do all of the actual work
 	static int currentSystem; //System starts at 0
 	static map<int,GameSystem*> systems;
+	//Deferred loading is not completed by default
+	static bool loadingComplete;
+	static ShaderGroup shaders;
 
 	//Build the initial system list. Should be called by main()
+	//Also starts deferred loading of the systems
+	//check for when loadingComplete is true
+	//before the game starts
 	static void BuildSystemList();
+
 	//If during the last sim frame the current system was changed
 	//enact the change now
 	static void UpdateAliveFrame();

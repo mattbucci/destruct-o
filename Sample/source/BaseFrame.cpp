@@ -39,11 +39,6 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	}
 
 
-	//Load the sample tile
-	if (!voxels.LoadTile("basic-h.png")) {
-		cout << "Failed to load voxel tile\n";
-	}
-
 	//Build the sample dialog 
 	//Build a window that says "On Top"
 	Window * window = new Window(Rect(0,0,200,400),"On Bottom");
@@ -100,6 +95,13 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 }
 BaseFrame::~BaseFrame() {
 
+}
+
+void BaseFrame::Build() {
+	//Load the sample tile
+	if (!voxels.LoadTile("basic-h.png")) {
+		cout << "Failed to load voxel tile\n";
+	}
 }
 
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {

@@ -14,6 +14,9 @@ public:
 	BaseFrame(ShaderGroup * shaders);
 	~BaseFrame();
 
+	//for notes on Build() see GameSystem::Build()
+	void Build() override;
+
 	//Override update to remove FPS control
 	//provided by the game system
 	virtual bool Update(double delta,double now, vector<InputEvent> inputEvents);

@@ -27,28 +27,14 @@ VoxelSystem::VoxelSystem() {
 		break;
 #endif
 	}
-}
-VoxelSystem::~VoxelSystem() {
-	delete renderer;
-	delete tileData;
-}
 
-//Attempt to load a tile from disc
-bool VoxelSystem::LoadTile(string tileName) {
-	//First load the tile map
-	tileData = GameTile::LoadTileFromDisk(tileName);
-	if (tileData == NULL)
-		return false;
-
+	//Load the tile textures
 	unsigned int textureWidth, textureHeight;
 	vector<unsigned char> image;
-	
+
 	//A smart system would have multiple res tiles and would automatically select
 	//one appropriate for the system its running on
-	if (lodepng::decode(image,textureWidth,textureHeight,"terrain/tiles-lowres.png")) {
-		//Error
-		return false;
-	}
+	lodepng::decode(image,textureWidth,textureHeight,"terrain/tiles-lowres.png");
 
 	//I should have moved the png->texture into a utility library
 	//later...
@@ -63,7 +49,18 @@ bool VoxelSystem::LoadTile(string tileName) {
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
 
-	cout << "Cached tile texture <" << textureWidth << "," << textureHeight << "> with id " << textureId << "\n";
+}
+VoxelSystem::~VoxelSystem() {
+	delete renderer;
+	delete tileData;
+}
+
+//Attempt to load a tile from disc
+bool VoxelSystem::LoadTile(string tileName) {
+	//First load the tile map
+	tileData = GameTile::LoadTileFromDisk(tileName);
+	if (tileData == NULL)
+		return false;
 
 	return true;
 }

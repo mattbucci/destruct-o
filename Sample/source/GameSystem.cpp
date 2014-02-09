@@ -14,6 +14,10 @@ GameSystem::~GameSystem() {
 
 }
 
+void GameSystem::Build() {
+
+}
+
 void GameSystem::passEventsToControl(vector<InputEvent> inputEvents) {
 	//Process key events
 	for (InputEvent & event : inputEvents) {
