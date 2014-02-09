@@ -17,8 +17,12 @@ LoadingScreen::LoadingScreen() : GL2DVertexGroup(GL_TRIANGLE_STRIP,4) {
 	//Load the texture
 	unsigned int textureWidth, textureHeight;
 	vector<unsigned char> image;
-	lodepng::decode(image,textureWidth,textureHeight,"loading.png");
-
+	unsigned error = lodepng::decode(image,textureWidth,textureHeight,"loading.png");
+    if(error)
+    {
+        SDL_Log("Lodepng error (%u) - %s", error, lodepng_error_text(error));
+    }
+    
 	//I should have moved the png->texture into a utility library
 	//later...
 	glGenTextures( 1, &textureId );
