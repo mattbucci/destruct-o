@@ -99,7 +99,7 @@ BaseFrame::~BaseFrame() {
 
 void BaseFrame::Build() {
 	//Load the sample tile
-	if (!voxels.LoadTile("basic-h.png")) {
+	if (!Voxels.LoadTile("basic-h.png")) {
 		cout << "Failed to load voxel tile\n";
 	}
 }
@@ -115,11 +115,11 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 void BaseFrame::Draw(double width, double height) {
 	vec2 viewPortSize = vec2((float)width,(float)height);
 	//Save size in camera as well (for unprojection)
-	camera.UpdateViewSize(viewPortSize);
-	vec2 mapExtents = vec2(voxels.GetWidth(),voxels.GetHeight());
+	Camera.UpdateViewSize(viewPortSize);
+	vec2 mapExtents = vec2(Voxels.GetWidth(),Voxels.GetHeight());
 
 	//Rotate camera
-	camera.Rotation((float)((OS::Now()/30.0)*2.0f*M_PI));
+	//Camera.Rotation((float)((OS::Now()/30.0)*2.0f*M_PI));
 
 
 	//Startup 3d rendering
@@ -135,20 +135,20 @@ void BaseFrame::Draw(double width, double height) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Compute view distance and handle fog
-	viewDistance.CalculateAndApply(shaders3d,fpsCount.GetFps());
+	ViewDistance.CalculateAndApply(shaders3d,fpsCount.GetFps());
 	shaders3d->Fog.SetFogColor(vec4(.5,.5,.5,1.0));
 	//Calculate voxel draw rectangle
-	pair<vec2,vec2> drawRectangle = viewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(camera.Position()),camera.Rotation());
+	/*pair<vec2,vec2> drawRectangle = viewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(camera.Position()),camera.Rotation());
 	vec2 minPoint = drawRectangle.first;
 	vec2 maxPoint = drawRectangle.second;
 
 	//Draw the frame
 	//camera draw also sets up world light
-	camera.Draw(shaders3d);
-	voxels.Draw(shaders3d,camera.Position(),(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);
+	Camera.Draw(shaders3d);
+	Voxels.Draw(shaders3d,camera.Position(),(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);*/
 	
 	//Update the voxel debug counter
-	Controls.Debug.Voxels = voxels.GetLastVoxelCount();
+	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
 
 	//Call the parent draw to draw interface
 	GameSystem::Draw(width,height);

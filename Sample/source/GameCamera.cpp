@@ -7,11 +7,7 @@
 #endif
 
 GameCamera::GameCamera() {
-	cameraPosition = vec3(1010,1010,90);
-	angleOfAttack = 20.0f;
-	rotation = 0;
-
-	cameraControlEnabled = true;
+	
 }
 
 void GameCamera::UpdateViewSize(vec2 viewSize) {
@@ -19,14 +15,7 @@ void GameCamera::UpdateViewSize(vec2 viewSize) {
 }
 
 void GameCamera::Draw(GL3DProgram * shaders) {
-	//float offset = (float)(1000.0*OS::Now()/10000.0)*2.0f*M_PI;
-
-	//Build a camera matrix to apply to the camera vector
-	vec3 cameraVector = vec3(cos(rotation),sin(rotation),-.25);
-
-	//Calculate camera position without z
-	vec3 pos = vec3(cameraPosition.x,cameraPosition.y,cameraPosition.z);
-	shaders->Camera.SetCameraPosition(pos,pos+cameraVector,vec3(0,0,1));
+	shaders->Camera.SetCameraPosition(position,position+direction,vec3(0,0,1));
 	//IF YOU CHANGE NEAR/FAR CLIPPING PLANE, PLEASE CHANGE UNPROJECT (below) AS WELL
 	shaders->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,1,1000); //width/height
 	shaders->Camera.Apply();
@@ -44,6 +33,20 @@ void GameCamera::Draw(GL3DProgram * shaders) {
 	//Copy matrices for unproject
 	shaders->Camera.CopyMatricies(&lastViewMatrix,&lastProjectionMatrix);
 	lastModelMatrix = shaders->Model.GetMatrix();
+}
+
+//Move the camera view point
+void GameCamera::SetCameraView(vec3 position, vec3 direction) {
+	this->position = position;
+	this->direction = direction;
+}
+//get camera position
+vec3 GameCamera::GetPosition() {
+	return position;
+}
+//get camera direction
+vec3 GameCamera::GetDirection() {
+	return direction;
 }
 
 //Cut's dependency on gluUnproject
@@ -112,11 +115,6 @@ double CalculateIntersectionDistance(vec3 rayStart, vec3 rayDirection, vec3 plan
 	return topPart/bottomPart;
 }
 
-pair<vec2,vec2> GameCamera::FindExtents(float minZ, float maxZ) {
-	//STUB!
-	_ASSERTE(false);
-	return pair<vec2,vec2>(); 
-}
 
 vec2 GameCamera::UnprojectToGround(vec2 pos, float groundHeight) {
 	pair<vec3,vec3> unprojected = Unproject(pos);
@@ -144,27 +142,4 @@ vec2 GameCamera::UnprojectToGround(vec2 pos, float groundHeight) {
 	vec3 loc = unprojected.first + unprojected.second*(float)dist;
 	//z has to be zero since the plane has point 0,0,0
 	return vec2(loc.x,loc.y);
-}
-
-void GameCamera::Rotation(float rotation) {
-	this->rotation = rotation;
-}
-
-float GameCamera::Rotation() {
-	return rotation;
-}
-
-void GameCamera::Position(vec3 pos) {
-	cameraPosition = pos;
-}
-vec3 GameCamera::Position() {
-	return cameraPosition;
-}
-
-void GameCamera::AOA(float angle) {
-	angleOfAttack = (float)(angle*M_PI/180.0);
-}
-
-void GameCamera::Update(double drawDelta,set<int> currentlyPressedKeys) {
-
 }
