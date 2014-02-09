@@ -34,9 +34,11 @@ IF (${APPLE})
 	target_link_libraries(VoxEngine ${CGLEW}/libGLEW.a)
 
 	set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvm.clang.1_0")
-	set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++0x")
+	set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11")
 	set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
-
+	
+	# Needed for performing Makefile build on OS X, as above parameters are Xcode specific
+	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++11 -stdlib=libc++ -g -Wall")
 ENDIF (${APPLE})
 
 #An attempt to copy the needed files over on run, doesn't work right now
