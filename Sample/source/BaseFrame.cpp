@@ -26,6 +26,19 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 		shaders->AddShader(shaders3d,"3d");
 	}
 	else {
+#if (defined __IPHONEOS__)
+        //Build the dialog shader
+        GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl_ios/vsh_interface.glsl","Interface/Shaders/glsl_ios/fsh_interface.glsl");
+        if (!shaders2d->Valid())
+            cout << "Failed to build opengl program\n";
+        shaders->AddShader(shaders2d,"2d");
+        
+        //Build the voxel shader
+        GL3DProgram * shaders3d = new GL3DProgram("Interface/Shaders/glsl_ios/vsh_3d.glsl","Interface/Shaders/glsl_ios/fsh_3d.glsl");
+        if (!shaders3d->Valid())
+            cout << "Failed to build opengl program\n";
+        shaders->AddShader(shaders3d,"3d");
+#else
 		//Build the dialog shader
 		GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl11/vsh_interface.glsl","Interface/Shaders/glsl11/fsh_interface.glsl");
 		if (!shaders2d->Valid()) 
@@ -36,8 +49,9 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 		if (!shaders3d->Valid()) 
 			cout << "Failed to build opengl program\n";
 		shaders->AddShader(shaders3d,"3d");
+        
+#endif
 	}
-
 
 	//Load the sample tile
 	if (!voxels.LoadTile("basic-h.png")) {

@@ -74,6 +74,10 @@
 		F198A0A918A58DAD00A5165E /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F198A07318A58DAD00A5165E /* Window.cpp */; };
 		F198A0AE18A58FBB00A5165E /* libSDL2-simulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F198A0AC18A58FBB00A5165E /* libSDL2-simulator.a */; };
 		F198A0AF18A58FBB00A5165E /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F198A0AD18A58FBB00A5165E /* libSDL2.a */; };
+		F1C6999218A728FC00442752 /* basic-h.png in Resources */ = {isa = PBXBuildFile; fileRef = F1C6998E18A728FC00442752 /* basic-h.png */; };
+		F1C6999318A728FC00442752 /* Interface in Resources */ = {isa = PBXBuildFile; fileRef = F1C6998F18A728FC00442752 /* Interface */; };
+		F1C6999418A728FC00442752 /* loading.png in Resources */ = {isa = PBXBuildFile; fileRef = F1C6999018A728FC00442752 /* loading.png */; };
+		F1C6999518A728FC00442752 /* terrain in Resources */ = {isa = PBXBuildFile; fileRef = F1C6999118A728FC00442752 /* terrain */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -206,6 +210,10 @@
 		F198A07418A58DAD00A5165E /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Window.h; path = ../../source/Window.h; sourceTree = "<group>"; };
 		F198A0AC18A58FBB00A5165E /* libSDL2-simulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSDL2-simulator.a"; path = "libs/SDL/libSDL2-simulator.a"; sourceTree = "<group>"; };
 		F198A0AD18A58FBB00A5165E /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = libs/SDL/libSDL2.a; sourceTree = "<group>"; };
+		F1C6998E18A728FC00442752 /* basic-h.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "basic-h.png"; path = "../source/game/basic-h.png"; sourceTree = "<group>"; };
+		F1C6998F18A728FC00442752 /* Interface */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Interface; path = ../source/game/Interface; sourceTree = "<group>"; };
+		F1C6999018A728FC00442752 /* loading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = loading.png; path = ../source/game/loading.png; sourceTree = "<group>"; };
+		F1C6999118A728FC00442752 /* terrain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = terrain; path = ../source/game/terrain; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -234,6 +242,7 @@
 		F1989FCB18A58C3900A5165E = {
 			isa = PBXGroup;
 			children = (
+				F1C6998518A7187800442752 /* Resources */,
 				F1989FDD18A58C3900A5165E /* VoxEngine */,
 				F1989FDE18A58C3900A5165E /* Supporting Files */,
 				F1989FD618A58C3900A5165E /* Frameworks */,
@@ -415,6 +424,17 @@
 			name = src;
 			sourceTree = "<group>";
 		};
+		F1C6998518A7187800442752 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F1C6998F18A728FC00442752 /* Interface */,
+				F1C6999118A728FC00442752 /* terrain */,
+				F1C6998E18A728FC00442752 /* basic-h.png */,
+				F1C6999018A728FC00442752 /* loading.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -466,7 +486,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1C6999518A728FC00442752 /* terrain in Resources */,
+				F1C6999418A728FC00442752 /* loading.png in Resources */,
+				F1C6999218A728FC00442752 /* basic-h.png in Resources */,
 				F1989FE218A58C3900A5165E /* InfoPlist.strings in Resources */,
+				F1C6999318A728FC00442752 /* Interface in Resources */,
 				F1989FEA18A58C3900A5165E /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
