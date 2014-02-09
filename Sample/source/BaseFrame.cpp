@@ -77,7 +77,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	//Start another window (visible by default)
 	Window * wm = new Window(Rect(0,0,300,300),"HELLO =)");
 	wm->hPin = wm->vPin = Control::CENTER;
-	Controls.AddWindow(wm);
+	//Controls.AddWindow(wm);
 	//Add a button to this window that when pressed
 	//switches which window is visible
 	Button * windowButton = new Button(Rect(0,-10,100,30),"PRESS ME");
@@ -91,6 +91,9 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	});
 	wm->AddControl(windowButton);
 	
+	//Put this here for now
+	FirstPerson.Enable(true);
+
 	cout << "\t Finished base frame\n";
 }
 BaseFrame::~BaseFrame() {
@@ -108,6 +111,9 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	//Issue events to dialog
 	//Run the dialog system and monitor pressed keys
 	passEventsToControl(inputEvents);
+
+	//Update the looking direction
+	FirstPerson.UpdateLookingDirection(currentlyPressedKeys,inputEvents);
 
 	return true;
 }
@@ -137,15 +143,20 @@ void BaseFrame::Draw(double width, double height) {
 	//Compute view distance and handle fog
 	ViewDistance.CalculateAndApply(shaders3d,fpsCount.GetFps());
 	shaders3d->Fog.SetFogColor(vec4(.5,.5,.5,1.0));
+
+	//We add 1.5 to ground level. This assumes the person is 5ft between the ground
+	//and his eye line
+	vec3 pos = vec3(100,100,Voxels.GetPositionHeight(vec2(100,100))+1.5);
 	//Calculate voxel draw rectangle
-	/*pair<vec2,vec2> drawRectangle = viewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(camera.Position()),camera.Rotation());
+	pair<vec2,vec2> drawRectangle = ViewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(pos),FirstPerson.GetAngleVector().x/180.0f*M_PI);
 	vec2 minPoint = drawRectangle.first;
 	vec2 maxPoint = drawRectangle.second;
 
 	//Draw the frame
 	//camera draw also sets up world light
+	Camera.SetCameraView(pos,FirstPerson.GetLookVector());
 	Camera.Draw(shaders3d);
-	Voxels.Draw(shaders3d,camera.Position(),(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);*/
+	Voxels.Draw(shaders3d,pos,(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);
 	
 	//Update the voxel debug counter
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();

@@ -127,8 +127,11 @@ void VoxEngine::Start() {
 	SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
 
 	//Mark the simulation starting time
-	gameSimulationTime = 0.0;
+	//Start the simulation one update loop into the past
+	//this gurantees at least one update is run before the first Draw()
+	gameSimulationTime = 0;
 	gameEventDelta = gameSimulationTime-OS::Now();
+	gameSimulationTime = -SIMULATION_TIME;
 
 	//The game loop begins
 	while (continueGameLoop) {
@@ -206,6 +209,9 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 					break;
 				case SDL_MOUSEMOTION:
 					eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),(float)event.motion.x,(float)event.motion.y));
+					//Add in the relative motion information
+					eventQueue.back().RelX = (float)event.motion.xrel;
+					eventQueue.back().RelY = (float)event.motion.yrel;
 					break;
 				case SDL_FINGERMOTION:
 					//cout << "MOVED: " << event.tfinger.x << "," << event.tfinger.y << "\n";

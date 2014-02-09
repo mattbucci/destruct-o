@@ -6,6 +6,7 @@
 #include "GameCamera.h"
 #include "ViewDistanceCalc.h"
 #include "ActorSystem.h"
+#include "FirstPersonMode.h"
 
 class BaseFrame : public GameSystem {
 
@@ -19,6 +20,7 @@ public:
 	VoxelSystem Voxels;
 	ViewDistanceCalc ViewDistance;
 	ActorSystem Actors;
+	FirstPersonMode FirstPerson;
 
 	//for notes on Build() see GameSystem::Build()
 	void Build() override;
