@@ -7,7 +7,7 @@
 
 //Defines how many instances will be rendered (max) per
 //draw call
-#define INSTANCE_RENDER_SWEEP 200
+#define INSTANCE_RENDER_SWEEP 50000
 class InstancedVoxelRenderSystem : public VoxelDrawSystem {
 	//Push a side of the cube
 	//Only used during initial construction of the cube during the construction of the instanced render system

@@ -10,6 +10,9 @@
 
 class BaseFrame : public GameSystem {
 
+    
+    GLint uniformModelView;
+    GLint uniformModelViewProjection;
 public:
 	BaseFrame(ShaderGroup * shaders);
 	~BaseFrame();

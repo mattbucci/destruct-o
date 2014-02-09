@@ -115,6 +115,7 @@ void VoxEngine::Start() {
 			//Check window size
 			SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
 			//render the loading screen
+            glViewport(0, 0, curWidth, curHeight);
 			load.Draw(curWidth,curHeight,shader);
 			SDL_GL_SwapWindow(displayWindow);
 		}
@@ -269,17 +270,19 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 	// Request OpenGL 3.2
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, openglMajorVersion);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, openglMinorVersion);
-#ifndef __ANDROID__
+#if !(defined __ANDROID__) && !(defined __IPHONEOS__)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
 
 
 	SDL_Window* displayWindow;
-	
+#if (defined __MOBILE__)
+    // On mobile, create a fullscreen display the size of the device's screen
+    SDL_DisplayMode displayMode;
+    SDL_GetDisplayMode(0, 0, &displayMode);
+	displayWindow = SDL_CreateWindow("Sample",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, displayMode.w, displayMode.h, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN);
+#elif (defined WIN32)
 	SDL_RendererInfo displayRendererInfo;
-#ifndef WIN32
-	displayWindow = SDL_CreateWindow("Sample",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-#else
 	SDL_CreateWindowAndRenderer(800,600,SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE,&displayWindow,&displayRenderer);
 	SDL_GetRendererInfo(displayRenderer, &displayRendererInfo);
 	if ((displayRendererInfo.flags & SDL_RENDERER_ACCELERATED) == 0 ||
@@ -288,7 +291,10 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 		SDL_DestroyWindow(displayWindow);
 		return NULL;
 	}
+#else
+	displayWindow = SDL_CreateWindow("Sample",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 #endif
+    
 	cout << "Built context with opengl version: " << openglMajorVersion << "." << openglMinorVersion << "\n";
 	SDL_GL_CreateContext(displayWindow);
 	

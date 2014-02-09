@@ -11,7 +11,8 @@ void GLModel::Reset() {
 	modelMatrix[0] = mat4();
 }
 void GLModel::Apply(){
-	_ASSERTE(model >= 0);
+    // Setting a non-existant uniform causes no issues, shader may take a precalculated matrix series and not need this parameter
+	//_ASSERTE(model >= 0);
 	glUniformMatrix4fv(model,1,false,(float*)&modelMatrix[stackPosition]);
 }
 

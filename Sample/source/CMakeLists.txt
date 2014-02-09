@@ -8,22 +8,22 @@ file(GLOB VoxEngine_SRC
 
 add_executable(VoxEngine ${VoxEngine_SRC})
 
-IF (${WIN32})
+IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	
-ENDIF (${WIN32})
+ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 include_directories("../includes/glew")
 
 include_directories("../includes/glm-0.9.4.4")
 include_directories("../includes/SDL")
 
-IF (${WIN32})
+IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	target_link_libraries(VoxEngine "../libs/windows/glew/glew32")
 	target_link_libraries(VoxEngine "../libs/windows/SDL/SDL2")
 	target_link_libraries(VoxEngine "../libs/windows/SDL2_ttf-2.0.12/SDL2_ttf")
 	target_link_libraries(VoxEngine "opengl32.lib")
-ENDIF (${WIN32})
-IF (${APPLE})
+ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	find_library(SDL NAMES sdl2)
 	find_library(SDL_TTF NAMES sdl2_ttf)
 	find_library(OPENGL NAMES OpenGL)
@@ -34,10 +34,12 @@ IF (${APPLE})
 	target_link_libraries(VoxEngine ${CGLEW}/libGLEW.a)
 
 	set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvm.clang.1_0")
-	set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++0x")
+	set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11")
 	set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
-
-ENDIF (${APPLE})
+	
+	# Needed for performing Makefile build on OS X, as above parameters are Xcode specific
+	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++11 -stdlib=libc++ -g -Wall")
+ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 #An attempt to copy the needed files over on run, doesn't work right now
 #add_custom_command(TARGET MyTarget PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/game/Interface $<TARGET_FILE_DIR:MyTarget>)
