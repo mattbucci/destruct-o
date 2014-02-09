@@ -78,6 +78,7 @@
 		F1C6999318A728FC00442752 /* Interface in Resources */ = {isa = PBXBuildFile; fileRef = F1C6998F18A728FC00442752 /* Interface */; };
 		F1C6999418A728FC00442752 /* loading.png in Resources */ = {isa = PBXBuildFile; fileRef = F1C6999018A728FC00442752 /* loading.png */; };
 		F1C6999518A728FC00442752 /* terrain in Resources */ = {isa = PBXBuildFile; fileRef = F1C6999118A728FC00442752 /* terrain */; };
+		F1C6999818A743F400442752 /* LoadingScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1C6999718A743F400442752 /* LoadingScreen.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -214,6 +215,8 @@
 		F1C6998F18A728FC00442752 /* Interface */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Interface; path = ../source/game/Interface; sourceTree = "<group>"; };
 		F1C6999018A728FC00442752 /* loading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = loading.png; path = ../source/game/loading.png; sourceTree = "<group>"; };
 		F1C6999118A728FC00442752 /* terrain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = terrain; path = ../source/game/terrain; sourceTree = "<group>"; };
+		F1C6999618A743E600442752 /* LoadingScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LoadingScreen.h; path = ../../source/LoadingScreen.h; sourceTree = "<group>"; };
+		F1C6999718A743F400442752 /* LoadingScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoadingScreen.cpp; path = ../../source/LoadingScreen.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -342,6 +345,7 @@
 				F198A04E18A58DAD00A5165E /* Label.h */,
 				F198A04F18A58DAD00A5165E /* Letter.h */,
 				F198A05118A58DAD00A5165E /* Listbox.h */,
+				F1C6999618A743E600442752 /* LoadingScreen.h */,
 				F198A05318A58DAD00A5165E /* lodepng.h */,
 				F198A05518A58DAD00A5165E /* MaxDistanceFog.h */,
 				F198A05718A58DAD00A5165E /* NinePatchBinary.h */,
@@ -403,6 +407,7 @@
 				F198A04B18A58DAD00A5165E /* InterfaceGlobals.cpp */,
 				F198A04D18A58DAD00A5165E /* Label.cpp */,
 				F198A05018A58DAD00A5165E /* Listbox.cpp */,
+				F1C6999718A743F400442752 /* LoadingScreen.cpp */,
 				F198A05218A58DAD00A5165E /* lodepng.cpp */,
 				F198A05418A58DAD00A5165E /* MaxDistanceFog.cpp */,
 				F198A05618A58DAD00A5165E /* NinePatchBinary.cpp */,
@@ -548,6 +553,7 @@
 				F198A08118A58DAD00A5165E /* GameCamera.cpp in Sources */,
 				F198A08D18A58DAD00A5165E /* GLLight.cpp in Sources */,
 				F198A07A18A58DAD00A5165E /* Control.cpp in Sources */,
+				F1C6999818A743F400442752 /* LoadingScreen.cpp in Sources */,
 				F198A0A318A58DAD00A5165E /* Textbox.cpp in Sources */,
 				F198A07C18A58DAD00A5165E /* DebugWindow.cpp in Sources */,
 				F198A08618A58DAD00A5165E /* GameTile.cpp in Sources */,
