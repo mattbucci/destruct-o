@@ -2,8 +2,11 @@
 #include "GLCamera.h"
 
 GLCamera::GLCamera(GLint uniformViewMatrix, GLint uniformProjectionMatrix) {
-	_ASSERTE(uniformProjectionMatrix >= 0);
-	_ASSERTE(uniformViewMatrix >= 0);
+	// Disabled because setting a nonexistant uniform will not cause an issue on any of the platforms we've tested (yes even iOS).
+    // Only reason i disabled them is because I don't want to screw the existing code, and some shaders may take one or neither of
+    // these in favor of precalculated matrices
+    //_ASSERTE(uniformProjectionMatrix >= 0);
+	//_ASSERTE(uniformViewMatrix >= 0);
 
 	this->uniformViewMatrix = uniformViewMatrix;
 	this->uniformProjectionMatrix = uniformProjectionMatrix;

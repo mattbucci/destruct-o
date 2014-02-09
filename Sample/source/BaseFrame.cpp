@@ -52,7 +52,11 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
         
 #endif
 	}
-
+    
+    // Get the 3D shader program
+	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
+    uniformModelView = glGetUniformLocation(shaders3d->GetId(), "MV");
+    uniformModelViewProjection = glGetUniformLocation(shaders3d->GetId(), "MVP");
 
 	//Build the sample dialog 
 	//Build a window that says "On Top"
@@ -160,6 +164,20 @@ void BaseFrame::Draw(double width, double height) {
 	//Draw the frame
 	//camera draw also sets up world light
 	camera.Draw(shaders3d);
+    
+    // Use precalculated modelview and modelviewprojection matricies
+    mat4 viewMatrix, projectionMatrix;
+    shaders3d->Camera.CopyMatricies(&viewMatrix, &projectionMatrix);
+    
+    // Calculate matricies
+    mat4 modelViewMatrix = viewMatrix * shaders3d->Model.GetMatrix();
+    mat4 modelViewProjectionMatrix = projectionMatrix * modelViewMatrix;
+    
+    // Assign to shader
+    glUniformMatrix4fv(uniformModelView, 1, GL_FALSE, (const GLfloat *)&modelViewMatrix);
+    glUniformMatrix4fv(uniformModelViewProjection, 1, GL_FALSE, (const GLfloat *)&modelViewProjectionMatrix);
+    
+    // Draw voxels
 	voxels.Draw(shaders3d,camera.Position(),(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);
 	
 	//Update the voxel debug counter

@@ -10,6 +10,9 @@ class BaseFrame : public GameSystem {
 	GameCamera camera;
 	VoxelSystem voxels;
 	ViewDistanceCalc viewDistance;
+    
+    GLint uniformModelView;
+    GLint uniformModelViewProjection;
 public:
 	BaseFrame(ShaderGroup * shaders);
 	~BaseFrame();
