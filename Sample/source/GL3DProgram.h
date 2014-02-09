@@ -2,9 +2,10 @@
 #pragma once
 #include "GLCamera.h"
 #include "GLProgram.h"
-#include "GLModel.h"
+#include "GLCombinedModel.h"
 #include "GLLighting.h"
 #include "MaxDistanceFog.h"
+#include "GLCombinedMatrix.h"
 //#include "GLMaterialManager.h"
 
 class GL3DProgram : public GLProgram {
@@ -17,11 +18,13 @@ class GL3DProgram : public GLProgram {
 	GLint attributeIndexNormal;
 	GLint attributeIndexPosition;
 
+
+	GLCombinedMatrix cmatrix;
 public:
 	GL3DProgram(string vertexShaderPath, string fragmentShaderPath);
 
 	GLLighting Lights;
-	GLModel Model;
+	GLCombinedModel Model;
 	GLCamera Camera;
 	MaxDistanceFog Fog;
 	//I've elected for manual management of textures

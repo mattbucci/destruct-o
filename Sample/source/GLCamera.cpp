@@ -1,15 +1,9 @@
 #include "stdafx.h"
 #include "GLCamera.h"
+#include "GLCombinedMatrix.h"
 
-GLCamera::GLCamera(GLint uniformViewMatrix, GLint uniformProjectionMatrix) {
-	// Disabled because setting a nonexistant uniform will not cause an issue on any of the platforms we've tested (yes even iOS).
-    // Only reason i disabled them is because I don't want to screw the existing code, and some shaders may take one or neither of
-    // these in favor of precalculated matrices
-    //_ASSERTE(uniformProjectionMatrix >= 0);
-	//_ASSERTE(uniformViewMatrix >= 0);
-
-	this->uniformViewMatrix = uniformViewMatrix;
-	this->uniformProjectionMatrix = uniformProjectionMatrix;
+GLCamera::GLCamera(GLCombinedMatrix * cmatrix) {
+	this->cmatrix = cmatrix;
 }
 	
 
@@ -27,8 +21,9 @@ void GLCamera::SetViewMatrix(mat4 viewMatrix) {
 //Apply the camera projection/view matrix
 void GLCamera::Apply() {
 	//Apply the matrices to the shaders
-	glUniformMatrix4fv(uniformViewMatrix,1,GL_FALSE,(const GLfloat*)&viewMatrix);
-	glUniformMatrix4fv(uniformProjectionMatrix,1,GL_FALSE,(const GLfloat*)&projectionMatrix);
+	cmatrix->View = viewMatrix;
+	cmatrix->Projection = projectionMatrix;
+	cmatrix->Apply();
 }
 
 //Reset the view and projection matrix to the identity matrix
@@ -39,24 +34,6 @@ void GLCamera::Reset() {
 
 //Set the camera position in the world. Up vector defaults to 0,0,1
 void GLCamera::SetCameraPosition(vec3 cameraPos, vec3 target, vec3 upVector) {
-	/*viewMatrix = mat4();
-	viewMatrix[3].x = -cameraPos.z;
-	viewMatrix[3].y = -cameraPos.y;
-	viewMatrix[3].z = -cameraPos.x;
-
-	vec3 forwardVector = cameraZAxis = glm::normalize(target-cameraPos);
-	vec3 rightVector = glm::normalize(glm::cross(forwardVector,upVector));
-	upVector = glm::cross(rightVector,forwardVector);
-	
-	viewMatrix[0].x = rightVector.x;
-	viewMatrix[1].x = rightVector.y;
-	viewMatrix[2].x = rightVector.z;
-	viewMatrix[0].y = upVector.x;
-	viewMatrix[1].y = upVector.y;
-	viewMatrix[2].y = upVector.z;
-	viewMatrix[0].z = -forwardVector.x;
-	viewMatrix[1].z = -forwardVector.y;
-	viewMatrix[2].z = -forwardVector.z;*/
 
 	vec3 zaxis = cameraZAxis = glm::normalize(cameraPos - target);
 	vec3 xaxis = glm::normalize(glm::cross(upVector,zaxis));
@@ -73,19 +50,6 @@ vec3 GLCamera::GetZAxis() {
 	return cameraZAxis;
 }
 
-/*
-   float top = znear * tanf ( fovy/2.0f );
-   float left = -top * aspect;
-
-   float w = -left-left; // width
-   float h = top+top;    // height
-   float z = zfar-znear; // znear and zfar are > 0
-
-   setl1 (    (2*znear)/w,           0,                 0,  0 );
-   setl2 (              0, (2*znear)/h,                 0,  0 );
-   setl3 (              0,           0,   -(zfar+znear)/z, -1 );
-   setl4 (              0,           0, -(2*zfar*znear)/z,  0 );
-*/
 
 //Change the frustrum matrix to the given values
 void GLCamera::SetFrustrum(float verticalFOV, float aspectRatio, float nearDistance, float farDistance) {

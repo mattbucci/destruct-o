@@ -27,17 +27,17 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	}
 	else {
 #if (defined __IPHONEOS__)
-        //Build the dialog shader
-        GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl_ios/vsh_interface.glsl","Interface/Shaders/glsl_ios/fsh_interface.glsl");
-        if (!shaders2d->Valid())
-            cout << "Failed to build opengl program\n";
-        shaders->AddShader(shaders2d,"2d");
-        
-        //Build the voxel shader
-        GL3DProgram * shaders3d = new GL3DProgram("Interface/Shaders/glsl_ios/vsh_3d.glsl","Interface/Shaders/glsl_ios/fsh_3d.glsl");
-        if (!shaders3d->Valid())
-            cout << "Failed to build opengl program\n";
-        shaders->AddShader(shaders3d,"3d");
+		//Build the dialog shader
+		GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl_ios/vsh_interface.glsl","Interface/Shaders/glsl_ios/fsh_interface.glsl");
+		if (!shaders2d->Valid())
+			cout << "Failed to build opengl program\n";
+		shaders->AddShader(shaders2d,"2d");
+		
+		//Build the voxel shader
+		GL3DProgram * shaders3d = new GL3DProgram("Interface/Shaders/glsl_ios/vsh_3d.glsl","Interface/Shaders/glsl_ios/fsh_3d.glsl");
+		if (!shaders3d->Valid())
+			cout << "Failed to build opengl program\n";
+		shaders->AddShader(shaders3d,"3d");
 #else
 		//Build the dialog shader
 		GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl11/vsh_interface.glsl","Interface/Shaders/glsl11/fsh_interface.glsl");
@@ -49,14 +49,14 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 		if (!shaders3d->Valid()) 
 			cout << "Failed to build opengl program\n";
 		shaders->AddShader(shaders3d,"3d");
-        
+		
 #endif
 	}
-    
-    // Get the 3D shader program
+	
+	// Get the 3D shader program
 	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
-    uniformModelView = glGetUniformLocation(shaders3d->GetId(), "MV");
-    uniformModelViewProjection = glGetUniformLocation(shaders3d->GetId(), "MVP");
+	uniformModelView = glGetUniformLocation(shaders3d->GetId(), "MV");
+	uniformModelViewProjection = glGetUniformLocation(shaders3d->GetId(), "MVP");
 
 	//Build the sample dialog 
 	//Build a window that says "On Top"
@@ -176,20 +176,10 @@ void BaseFrame::Draw(double width, double height) {
 	Camera.SetCameraView(pos,FirstPerson.GetLookVector());
 	Camera.Draw(shaders3d);
 	Voxels.Draw(shaders3d,pos,(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);
-    
-    // Use precalculated modelview and modelviewprojection matricies
-    mat4 viewMatrix, projectionMatrix;
-    shaders3d->Camera.CopyMatricies(&viewMatrix, &projectionMatrix);
-    
-    // Calculate matricies
-    mat4 modelViewMatrix = viewMatrix * shaders3d->Model.GetMatrix();
-    mat4 modelViewProjectionMatrix = projectionMatrix * modelViewMatrix;
-    
-    // Assign to shader
-    glUniformMatrix4fv(uniformModelView, 1, GL_FALSE, (const GLfloat *)&modelViewMatrix);
-    glUniformMatrix4fv(uniformModelViewProjection, 1, GL_FALSE, (const GLfloat *)&modelViewProjectionMatrix);
-    
-    // Draw voxels
+	
+
+	
+	// Draw voxels
 	
 	//Update the voxel debug counter
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();

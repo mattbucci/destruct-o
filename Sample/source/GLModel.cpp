@@ -11,7 +11,7 @@ void GLModel::Reset() {
 	modelMatrix[0] = mat4();
 }
 void GLModel::Apply(){
-    // Setting a non-existant uniform causes no issues, shader may take a precalculated matrix series and not need this parameter
+	// Setting a non-existant uniform causes no issues, shader may take a precalculated matrix series and not need this parameter
 	//_ASSERTE(model >= 0);
 	glUniformMatrix4fv(model,1,false,(float*)&modelMatrix[stackPosition]);
 }
@@ -93,17 +93,6 @@ GLModel & GLModel::Project(vec3 direction, vec3 pointOnPlane, vec3 planeNormal) 
 
 	vec3 trans = direction*glm::dot(pointOnPlane,planeNormal);
 	proj[3] = vec4(trans,glm::dot(direction,planeNormal));
-
-	/*
-	mat4 xx = glm::translate(-20.0f,0.0f,0.0f);
-	proj = xx * proj;
-
-	//Test it out
-	vec4 a = vec4(1,1,1,1);
-	vec4 b = vec4(5,0,2,1);
-	a = proj*a;
-	b = proj*b;
-	*/
 
 	modelMatrix[stackPosition] *= proj;
 
