@@ -28,6 +28,10 @@ public:
 	//Get the number of voxels drawn last frame
 	int GetLastVoxelCount();
 
+	//Get the height of a specific position
+	//all positions acceptable
+	float GetPositionHeight(vec2 pos);
+
 	//Draw the voxels in a region
 	//atx,aty and tox, toy define two corners of the rectangle
 	//of voxels which will be rendered

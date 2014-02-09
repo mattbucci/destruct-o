@@ -65,6 +65,25 @@ bool VoxelSystem::LoadTile(string tileName) {
 	return true;
 }
 
+//When the voxel system calculates position height
+//it will have to check which tile the position is in
+//in the future. For now only one tile is loaded
+float VoxelSystem::GetPositionHeight(vec2 pos) {
+	//The height where there is no tiles
+	//right now causes the player to fall
+	//because that's fun?
+	static const float floorHeight = -1000.0f;
+
+	if ((pos.x < 0) || (pos.y < 0))
+		return floorHeight;
+
+	if ((pos.x >= tileData->Width) || (pos.x >= tileData->Height))
+		return floorHeight;
+
+	//Player is within the set of valid tiles
+	return tileData->GetHeight(pos);
+}
+
 //Draw the voxels in a region
 void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int tox, int toy) {
 	_ASSERTE(atx >= 0);
