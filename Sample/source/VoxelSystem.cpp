@@ -62,12 +62,22 @@ bool VoxelSystem::LoadTile(string tileName) {
 	TerrainGen t = TerrainGen();
 	int wid = 1024; int hei = 1024;
 	t.setSeed(2);
-	t.setTileScale(0.5, 0.5);
+	t.setTileScale(1, 1);
 	t.setTileSize(wid, hei);
 
 	//Generate Terrain Tile
 	unsigned char* rawtile = t.generateTile(0, 0);
-	vector<unsigned char> tile(rawtile, rawtile + (wid * hei));
+
+	//Create and Fill Terrain Data Vector
+	vector<unsigned char> tile;
+	int s = wid * hei;
+	tile.resize(s * 4);
+	for(int i = 0; i < s; i++) {
+		tile[(i*4)] = rawtile[i];
+		tile[(i*4) + 1] = 0;
+		tile[(i*4) + 2] = 0;
+		tile[(i*4) + 3] = 0;
+	}
 
 	//Free Terrain Tile Memory
 	free(rawtile);
