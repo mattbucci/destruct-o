@@ -30,7 +30,7 @@ GameTile * GameTile::LoadTileFromDisk(string tileImagePath) {
 //Load a game tile from memory
 //pending
 GameTile * GameTile::LoadTileFromMemory(const vector<unsigned char> & tileData, unsigned int width, unsigned int height) {
-	_ASSERTE(tileData.size() != (width*height*4));
+	_ASSERTE(tileData.size() == (width*height*4));
 	cout << "Starting Load of tile from memory\n";
 	GameTile * tile = new GameTile((int)width,(int)height);
 	for (unsigned int i = 0; i < tileData.size(); i+= 4) {
