@@ -3,6 +3,7 @@
 #include "GL2DProgram.h"
 #include "GL3DProgram.h"
 #include "ShaderGroup.h"
+#include "ActorPlayer.h"
 
 #include "Window.h"
 #include "Button.h"
@@ -80,6 +81,13 @@ BaseFrame::~BaseFrame() {
 
 }
 
+void BaseFrame::OnFrameFocus() {
+	//Build actors, right now just the player
+	player = new ActorPlayer();
+	//The player autoregisters himself with the actor system
+	//we do not need to do that by hand
+}
+
 void BaseFrame::Build() {
 	//Load the sample tile
 	if (!Voxels.LoadTile("basic-h.png")) {
@@ -94,6 +102,12 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 
 	//Update the looking direction
 	FirstPerson.UpdateLookingDirection(currentlyPressedKeys,inputEvents);
+
+	//The player is the only actor which reads input
+	player->ReadInput(inputEvents);
+
+	//Update actors
+	Actors.Update(delta,now);
 
 	return true;
 }
@@ -123,7 +137,9 @@ void BaseFrame::Draw(double width, double height) {
 
 	//We add 1.5 to ground level. This assumes the person is 5ft between the ground
 	//and his eye line
-	vec3 pos = vec3(100.5,100.5,Voxels.GetPositionHeight(vec2(100.5,100.5))+3);
+	vec3 pos = player->GetPosition();
+	//The player is 3 height right now
+	pos.z += 2.5;
 	//Calculate voxel draw rectangle
 	pair<vec2,vec2> drawRectangle = ViewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(pos),FirstPerson.GetAngleVector().x/180.0f*M_PI);
 	vec2 minPoint = drawRectangle.first;

@@ -131,6 +131,8 @@ void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int 
 			vec3 pos = vec3(x,y,cell.height);
 			char stack = (char)cell.stackHeight;
 
+			voxelCount += stack+1;
+
 			//For now use raw tile % 2 to map all tiles to be within the 2 valid materials
 			//that i've made
 			//Note: This is a really bad place for a virtual function call
@@ -139,7 +141,6 @@ void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int 
 				renderer->pushVoxel(shader,pos,cell.materialId % 2);
 				pos.z--;
 			}
-			voxelCount++;
 		}
 	}
 

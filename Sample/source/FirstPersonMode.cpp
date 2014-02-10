@@ -15,7 +15,10 @@ vec3 FirstPersonMode::GetLookVector() {
 //Get the movement vector for the direction and magnitude
 //the player is currently moving. Magnitude is between 0 (not moving) and 1 (moving full speed)
 vec2 FirstPersonMode::GetMoveVector() {
-	return moveVector;
+	//Rotate the move vector
+	//by the facing position
+	//Currently uses a mat4 which is a total waste of CPU, but whatever
+	return vec2(glm::rotate(aggregateMouseVector.x,vec3(0,0,1))*vec4(moveVector,0,0));
 }
 
 vec2 FirstPersonMode::GetAngleVector() {
