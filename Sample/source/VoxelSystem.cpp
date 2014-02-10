@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "VoxelSystem.h"
 #include "lodepng.h"
+#include "TerrainGen.h"
 
 #include "GL3DProgram.h"
 #include "OS.h"
@@ -57,8 +58,17 @@ VoxelSystem::~VoxelSystem() {
 
 //Attempt to load a tile from disc
 bool VoxelSystem::LoadTile(string tileName) {
+	TerrainGen t = TerrainGen();
+	int wid = 1024; int hei = 1024;
+	t.setSeed(2);
+	t.setTileScale(0.5, 0.5);
+	t.setTileSize(wid, hei);
+	unsigned char* tilea = t.generateTile(0, 0);
+	vector<unsigned char> tile(tilea, tilea + (wid * hei));
+	tileData = GameTile::LoadTileFromMemory(tile, wid, hei);
+
 	//First load the tile map
-	tileData = GameTile::LoadTileFromDisk(tileName);
+	//tileData = GameTile::LoadTileFromDisk(tileName);
 	if (tileData == NULL)
 		return false;
 
