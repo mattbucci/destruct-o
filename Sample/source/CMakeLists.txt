@@ -15,12 +15,14 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     include_directories("../includes/SDL")
     include_directories("../includes/glew")
     include_directories("../includes/glm-0.9.4.4")
+	include_directories("../includes/libnoise")
 
     # Windows Libraries
     target_link_libraries(VoxEngine "../libs/windows/glew/glew32")
     target_link_libraries(VoxEngine "../libs/windows/SDL/SDL2")
     target_link_libraries(VoxEngine "../libs/windows/SDL2_ttf-2.0.12/SDL2_ttf")
     target_link_libraries(VoxEngine "opengl32.lib")
+	target_link_libraries(VoxEngine "../libs/windows/libnoise/libnoise")
 
 ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
