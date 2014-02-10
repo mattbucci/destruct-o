@@ -74,6 +74,7 @@ void RasterizedText::rasterize() {
 	SDL_Surface* surface = font->DrawToSurface(color,text);
 
 	//Convert the surface to a gltexture
+	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
 	if (textureId != 0)
 		glDeleteTextures(1,&textureId);
@@ -130,7 +131,8 @@ void RasterizedText::Draw(GL2DProgram * shader) {
 	//Set white color so the color isn't blended
 	shader->SetColor(vec4(1,1,1,1));
 
-	glActiveTexture (GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_TEXTURE_2D);
 	//Bind texture
 	glBindTexture(GL_TEXTURE_2D,textureId);
 	

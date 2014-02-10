@@ -21,7 +21,12 @@ public:
 
 	double at;
 	EventType Event;
+	//Used in mouse events
 	float MouseX;
 	float MouseY;
+	//Used in MOUSE_MOVE only!!!
+	float RelX;
+	float RelY;
+	//Used in key events
 	int Key;
 };

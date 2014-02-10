@@ -43,7 +43,7 @@ public:
 	virtual void OnFrameLeave();
 
 	//When this frame is in focus these will happen
-	//Update happens every SIMULATION_TIME  (.025s right now, which is 25ms)
+	//Update happens every SIMULATION_TIME  (.01s right now, which is 10ms)
 	//actually simulation update doesn't happen at all right now
 	virtual bool Update(double delta,double now, vector<InputEvent> inputEvents);
 	//Draw happens whenever possible

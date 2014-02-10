@@ -52,7 +52,13 @@ void VoxEngine::Start() {
 	//If that fails, try for something less state of the art
 	if (displayWindow == NULL) {
 		displayWindow = BuildSDLContext(2,0,0.0f);
+		
+#ifdef __IPHONEOS__
+		//For iOS, globally force the newer opengl version
+		OpenglVersion = 31;
+#else
 		OpenglVersion = 20;
+#endif
 	}
 
 	if (displayWindow == NULL) {
@@ -103,7 +109,7 @@ void VoxEngine::Start() {
 	{
 		LoadingScreen load;
 		//Assume one of the frames constructed the 2d shader
-		GL2DProgram * shader = (GL2DProgram*)Frames::shaders.GetShader("2d");
+		GL2DProgram * shader = (GL2DProgram*)Frames::shaders->GetShader("2d");
 
 		glActiveTexture(GL_TEXTURE0);
 
@@ -115,7 +121,7 @@ void VoxEngine::Start() {
 			//Check window size
 			SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
 			//render the loading screen
-            glViewport(0, 0, curWidth, curHeight);
+			glViewport(0, 0, curWidth, curHeight);
 			load.Draw(curWidth,curHeight,shader);
 			SDL_GL_SwapWindow(displayWindow);
 		}
@@ -128,8 +134,11 @@ void VoxEngine::Start() {
 	SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
 
 	//Mark the simulation starting time
-	gameSimulationTime = 0.0;
+	//Start the simulation one update loop into the past
+	//this gurantees at least one update is run before the first Draw()
+	gameSimulationTime = 0;
 	gameEventDelta = gameSimulationTime-OS::Now();
+	gameSimulationTime = -SIMULATION_TIME;
 
 	//The game loop begins
 	while (continueGameLoop) {
@@ -207,6 +216,9 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 					break;
 				case SDL_MOUSEMOTION:
 					eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),(float)event.motion.x,(float)event.motion.y));
+					//Add in the relative motion information
+					eventQueue.back().RelX = (float)event.motion.xrel;
+					eventQueue.back().RelY = (float)event.motion.yrel;
 					break;
 				case SDL_FINGERMOTION:
 					//cout << "MOVED: " << event.tfinger.x << "," << event.tfinger.y << "\n";
@@ -264,16 +276,16 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 	// Request OpenGL 3.2
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, openglMajorVersion);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, openglMinorVersion);
-#if !(defined __ANDROID__) && !(defined __IPHONEOS__)
+#ifndef __MOBILE__
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
 
 
 	SDL_Window* displayWindow;
 #if (defined __MOBILE__)
-    // On mobile, create a fullscreen display the size of the device's screen
-    SDL_DisplayMode displayMode;
-    SDL_GetDisplayMode(0, 0, &displayMode);
+	// On mobile, create a fullscreen display the size of the device's screen
+	SDL_DisplayMode displayMode;
+	SDL_GetDisplayMode(0, 0, &displayMode);
 	displayWindow = SDL_CreateWindow("Sample",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, displayMode.w, displayMode.h, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_FULLSCREEN);
 #elif (defined WIN32)
 	SDL_RendererInfo displayRendererInfo;
@@ -288,7 +300,7 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 #else
 	displayWindow = SDL_CreateWindow("Sample",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 #endif
-    
+	
 	cout << "Built context with opengl version: " << openglMajorVersion << "." << openglMinorVersion << "\n";
 	SDL_GL_CreateContext(displayWindow);
 	

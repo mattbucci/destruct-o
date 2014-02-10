@@ -13,15 +13,17 @@ GameSystem * CurrentSystem = NULL;
 int Frames::currentSystem;
 map<int,GameSystem*> Frames::systems;
 bool Frames::loadingComplete;
-ShaderGroup Frames::shaders;
+ShaderGroup * Frames::shaders;
 
 //Build the initial system list. Should be called by main()
 void Frames::BuildSystemList() {
-
+	//The shader group builds the shaders now
+	//so it can only be built when the opengl context is ready
+	shaders = new ShaderGroup();
 	cout << "Building systems list...";
 
 	//Build each frame
-	systems[FRAME_MAINMENU] = new BaseFrame(&shaders);
+	systems[FRAME_MAINMENU] = new BaseFrame(shaders);
 
 
 

@@ -12,51 +12,12 @@
 
 BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	cout << "\t Constructing base frame\n";
-	//Load the shaders appropriate for the opengl version being used
-	if (OpenglVersion == 31) {
-		//Build the dialog shader
-		GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl31/vsh_interface.glsl","Interface/Shaders/glsl31/fsh_interface.glsl");
-		if (!shaders2d->Valid()) 
-			cout << "Failed to build opengl program\n";
-		shaders->AddShader(shaders2d,"2d");
-		//Build the voxel shader
-		GL3DProgram * shaders3d = new GL3DProgram("Interface/Shaders/glsl31/vsh_3d.glsl","Interface/Shaders/glsl31/fsh_3d.glsl");
-		if (!shaders3d->Valid()) 
-			cout << "Failed to build opengl program\n";
-		shaders->AddShader(shaders3d,"3d");
-	}
-	else {
-#if (defined __IPHONEOS__)
-        //Build the dialog shader
-        GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl_ios/vsh_interface.glsl","Interface/Shaders/glsl_ios/fsh_interface.glsl");
-        if (!shaders2d->Valid())
-            cout << "Failed to build opengl program\n";
-        shaders->AddShader(shaders2d,"2d");
-        
-        //Build the voxel shader
-        GL3DProgram * shaders3d = new GL3DProgram("Interface/Shaders/glsl_ios/vsh_3d.glsl","Interface/Shaders/glsl_ios/fsh_3d.glsl");
-        if (!shaders3d->Valid())
-            cout << "Failed to build opengl program\n";
-        shaders->AddShader(shaders3d,"3d");
-#else
-		//Build the dialog shader
-		GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl11/vsh_interface.glsl","Interface/Shaders/glsl11/fsh_interface.glsl");
-		if (!shaders2d->Valid()) 
-			cout << "Failed to build opengl program\n";
-		shaders->AddShader(shaders2d,"2d");
-		//Build the voxel shader
-		GL3DProgram * shaders3d = new GL3DProgram("Interface/Shaders/glsl11/vsh_3d.glsl","Interface/Shaders/glsl11/fsh_3d.glsl");
-		if (!shaders3d->Valid()) 
-			cout << "Failed to build opengl program\n";
-		shaders->AddShader(shaders3d,"3d");
-        
-#endif
-	}
-    
-    // Get the 3D shader program
+
+	
+	// Get the 3D shader program
 	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
-    uniformModelView = glGetUniformLocation(shaders3d->GetId(), "MV");
-    uniformModelViewProjection = glGetUniformLocation(shaders3d->GetId(), "MVP");
+	uniformModelView = glGetUniformLocation(shaders3d->GetId(), "MV");
+	uniformModelViewProjection = glGetUniformLocation(shaders3d->GetId(), "MVP");
 
 	//Build the sample dialog 
 	//Build a window that says "On Top"
@@ -96,7 +57,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	//Start another window (visible by default)
 	Window * wm = new Window(Rect(0,0,300,300),"HELLO =)");
 	wm->hPin = wm->vPin = Control::CENTER;
-	Controls.AddWindow(wm);
+	//Controls.AddWindow(wm);
 	//Add a button to this window that when pressed
 	//switches which window is visible
 	Button * windowButton = new Button(Rect(0,-10,100,30),"PRESS ME");
@@ -110,6 +71,9 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	});
 	wm->AddControl(windowButton);
 	
+	//Put this here for now
+	FirstPerson.Enable(true);
+
 	cout << "\t Finished base frame\n";
 }
 BaseFrame::~BaseFrame() {
@@ -118,7 +82,7 @@ BaseFrame::~BaseFrame() {
 
 void BaseFrame::Build() {
 	//Load the sample tile
-	if (!voxels.LoadTile("basic-h.png")) {
+	if (!Voxels.LoadTile("basic-h.png")) {
 		cout << "Failed to load voxel tile\n";
 	}
 }
@@ -128,17 +92,17 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	//Run the dialog system and monitor pressed keys
 	passEventsToControl(inputEvents);
 
+	//Update the looking direction
+	FirstPerson.UpdateLookingDirection(currentlyPressedKeys,inputEvents);
+
 	return true;
 }
 
 void BaseFrame::Draw(double width, double height) {
 	vec2 viewPortSize = vec2((float)width,(float)height);
 	//Save size in camera as well (for unprojection)
-	camera.UpdateViewSize(viewPortSize);
-	vec2 mapExtents = vec2(voxels.GetWidth(),voxels.GetHeight());
-
-	//Rotate camera
-	camera.Rotation((float)((OS::Now()/30.0)*2.0f*M_PI));
+	Camera.UpdateViewSize(viewPortSize);
+	vec2 mapExtents = vec2(Voxels.GetWidth(),Voxels.GetHeight());
 
 
 	//Startup 3d rendering
@@ -154,34 +118,29 @@ void BaseFrame::Draw(double width, double height) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Compute view distance and handle fog
-	viewDistance.CalculateAndApply(shaders3d,fpsCount.GetFps());
+	ViewDistance.CalculateAndApply(shaders3d,fpsCount.GetFps());
 	shaders3d->Fog.SetFogColor(vec4(.5,.5,.5,1.0));
+
+	//We add 1.5 to ground level. This assumes the person is 5ft between the ground
+	//and his eye line
+	vec3 pos = vec3(100,100,Voxels.GetPositionHeight(vec2(100,100))+20);
 	//Calculate voxel draw rectangle
-	pair<vec2,vec2> drawRectangle = viewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(camera.Position()),camera.Rotation());
+	pair<vec2,vec2> drawRectangle = ViewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(pos),FirstPerson.GetAngleVector().x/180.0f*M_PI);
 	vec2 minPoint = drawRectangle.first;
 	vec2 maxPoint = drawRectangle.second;
 
 	//Draw the frame
 	//camera draw also sets up world light
-	camera.Draw(shaders3d);
-    
-    // Use precalculated modelview and modelviewprojection matricies
-    mat4 viewMatrix, projectionMatrix;
-    shaders3d->Camera.CopyMatricies(&viewMatrix, &projectionMatrix);
-    
-    // Calculate matricies
-    mat4 modelViewMatrix = viewMatrix * shaders3d->Model.GetMatrix();
-    mat4 modelViewProjectionMatrix = projectionMatrix * modelViewMatrix;
-    
-    // Assign to shader
-    glUniformMatrix4fv(uniformModelView, 1, GL_FALSE, (const GLfloat *)&modelViewMatrix);
-    glUniformMatrix4fv(uniformModelViewProjection, 1, GL_FALSE, (const GLfloat *)&modelViewProjectionMatrix);
-    
-    // Draw voxels
-	voxels.Draw(shaders3d,camera.Position(),(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);
+	Camera.SetCameraView(pos,FirstPerson.GetLookVector());
+	Camera.Draw(shaders3d);
+	Voxels.Draw(shaders3d,pos,(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);
+	
+
+	
+	// Draw voxels
 	
 	//Update the voxel debug counter
-	Controls.Debug.Voxels = voxels.GetLastVoxelCount();
+	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
 
 	//Call the parent draw to draw interface
 	GameSystem::Draw(width,height);

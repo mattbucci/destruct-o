@@ -19,6 +19,10 @@ public:
 	//Save the tile to disk
 	void SaveTile(string saveName);
 
+	//Get the height of a position within this tile
+	//don't call for positions outside of the tile
+	float GetHeight(vec2 pos);
+
 	//Loaded tile information is public for fastest access
 	TileCell * Cells;
 	int Width;

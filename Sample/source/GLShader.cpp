@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "GLShader.h"
-
+#include "GLCommonShaderFile.h"
 
 
 GLShader::GLShader(const GLShader & other) {
@@ -12,7 +12,7 @@ GLShader & GLShader::operator=(const GLShader & other) {
 }
 
 //Attempts to compile in constructor
-GLShader::GLShader(string filename,GLenum shaderType) {
+GLShader::GLShader(GLCommonShaderFile * commonShader, string filename,GLenum shaderType) {
 	vector<char> fileContents;
 	SDL_RWops *file = SDL_RWFromFile(filename.c_str(), "r"); 
 	
@@ -22,7 +22,7 @@ GLShader::GLShader(string filename,GLenum shaderType) {
 		cout << "Failed to open shader file \"" << filename << "\""; 
 		return;
 	}
-
+	
 	//Read all the contents (byte by byte is slow, but shader files are small)
 	char byte;
 	while (SDL_RWread(file, &byte, 1, 1) > 0) {
@@ -36,7 +36,12 @@ GLShader::GLShader(string filename,GLenum shaderType) {
 
 	//Build shader
 	shaderId = glCreateShader(shaderType);
-	char * cstring = &fileContents.front();
+	//Copy the virtual shader
+	vector<char> virtualShader = commonShader->GetShaderText();
+	//Tack the loaded shader to the end of the virtual shader
+	virtualShader.insert(virtualShader.end(),fileContents.begin(),fileContents.end());
+
+	char * cstring = &virtualShader.front();
 	glShaderSource(shaderId,1,(const GLchar**)&cstring,NULL);
 
 	if (shaderId <= 0) {

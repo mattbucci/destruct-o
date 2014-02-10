@@ -32,7 +32,7 @@ GameTile * GameTile::LoadTileFromDisk(string tileImagePath) {
 GameTile * GameTile::LoadTileFromMemory(const vector<unsigned char> & tileData, unsigned int width, unsigned int height) {
 	cout << "Starting Load of tile from memory\n";
 	GameTile * tile = new GameTile((int)width,(int)height);
-	for (int i = 0; i < tileData.size(); i+= 4) {
+	for (unsigned int i = 0; i < tileData.size(); i+= 4) {
 		//Load every RGBA pixel into a tile cell
 		tile->Cells[i/4].height = tileData[i+0];
 		tile->Cells[i/4].materialId = tileData[i+1];
@@ -64,6 +64,16 @@ GameTile * GameTile::LoadTileFromMemory(const vector<unsigned char> & tileData, 
 	}
 	cout << "\tTile Load Complete.\n";
 	return tile;
+}
+
+float GameTile::GetHeight(vec2 pos) {
+	_ASSERTE((pos.x >= 0) && (pos.y >= 0));
+	_ASSERTE((pos.x < (float)Width) && (pos.y < (float)Height));
+	//First lookup which tile the position is in
+	int tileX = (int)floor(pos.x);
+	int tileY = (int)floor(pos.y);
+	//Now get the height of that tile
+	return Cells[tileY*Width+tileX].height;
 }
 
 //Save the tile to disk

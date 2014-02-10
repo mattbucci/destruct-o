@@ -2,14 +2,15 @@
 #pragma once
 #include "stdafx.h"
 
+class GLCombinedMatrix;
+
 class GLCamera {
 	mat4 viewMatrix;
 	mat4 projectionMatrix;
-	GLint uniformViewMatrix;
-	GLint uniformProjectionMatrix;
 	vec3 cameraZAxis;
+	GLCombinedMatrix * cmatrix;
 public:
-	GLCamera(GLint uniformViewMatrix, GLint uniformProjectionMatrix);
+	GLCamera(GLCombinedMatrix * cmatrix);
 	
 	//Copy the view or projection matrices the camera is using
 	//point may be NULL to not copy that value

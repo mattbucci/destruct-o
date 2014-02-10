@@ -2,8 +2,8 @@
 #include "GL2DProgram.h"
 
 
-GL2DProgram::GL2DProgram(string vertexShaderPath, string fragmentShaderPath) : 
-	GLProgram(vertexShaderPath,fragmentShaderPath),
+GL2DProgram::GL2DProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath) : 
+	GLProgram(commonShader,vertexShaderPath,fragmentShaderPath),
 	Model(glGetUniformLocation(programId,"uModel")),
 	Clipping(glGetUniformLocation(programId,"clippingRegion")) {
 
