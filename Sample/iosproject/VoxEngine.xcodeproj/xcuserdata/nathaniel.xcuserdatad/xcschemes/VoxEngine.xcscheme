@@ -28,16 +28,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F1989FEE18A58C3900A5165E"
-               BuildableName = "VoxEngineTests.xctest"
-               BlueprintName = "VoxEngineTests"
-               ReferencedContainer = "container:VoxEngine.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
