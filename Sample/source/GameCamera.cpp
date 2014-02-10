@@ -17,7 +17,7 @@ void GameCamera::UpdateViewSize(vec2 viewSize) {
 void GameCamera::Draw(GL3DProgram * shaders) {
 	shaders->Camera.SetCameraPosition(position,position+direction,vec3(0,0,1));
 	//IF YOU CHANGE NEAR/FAR CLIPPING PLANE, PLEASE CHANGE UNPROJECT (below) AS WELL
-	shaders->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,1,1000); //width/height
+	shaders->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25,1000); //width/height
 	shaders->Camera.Apply();
 
 
@@ -77,7 +77,7 @@ static void unproject(vec3 win,mat4 modelView, mat4 projection, GLint * viewport
 
 pair<vec3,vec3> GameCamera::Unproject(vec2 pos) {
 	//First unproject two points, near and far clipping plane
-	vec3 vnear = vec3(pos.x,pos.y,10);
+	vec3 vnear = vec3(pos.x,pos.y,.25);
 	vec3 vfar = vec3(pos.x,pos.y,2000);
 	GLint view[4];
 	mat4 modelview = lastViewMatrix * lastModelMatrix;

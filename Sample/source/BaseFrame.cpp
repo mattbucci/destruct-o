@@ -123,7 +123,7 @@ void BaseFrame::Draw(double width, double height) {
 
 	//We add 1.5 to ground level. This assumes the person is 5ft between the ground
 	//and his eye line
-	vec3 pos = vec3(100,100,Voxels.GetPositionHeight(vec2(100,100))+20);
+	vec3 pos = vec3(100.5,100.5,Voxels.GetPositionHeight(vec2(100.5,100.5))+3);
 	//Calculate voxel draw rectangle
 	pair<vec2,vec2> drawRectangle = ViewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(pos),FirstPerson.GetAngleVector().x/180.0f*M_PI);
 	vec2 minPoint = drawRectangle.first;
