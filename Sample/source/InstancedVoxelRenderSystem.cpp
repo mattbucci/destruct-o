@@ -60,22 +60,22 @@ InstancedVoxelRenderSystem::~InstancedVoxelRenderSystem() {
 
 void InstancedVoxelRenderSystem::pushSide(vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d, int & vertNumber) {
 	normals[vertNumber] = normal;
-	textureCoordinates[vertNumber] = vec2(0,0);
+	textureCoordinates[vertNumber] = vec2(0.05,0.05);
 	vertices[vertNumber++] = a;
 	normals[vertNumber] = normal;
-	textureCoordinates[vertNumber] = vec2(1,0);
+	textureCoordinates[vertNumber] = vec2(.95,0.05);
 	vertices[vertNumber++] = b;
 	normals[vertNumber] = normal;
-	textureCoordinates[vertNumber] = vec2(0,1);
+	textureCoordinates[vertNumber] = vec2(0.05,.95);
 	vertices[vertNumber++] = c;
 	normals[vertNumber] = normal;
-	textureCoordinates[vertNumber] = vec2(1,0);
+	textureCoordinates[vertNumber] = vec2(.95,0.05);
 	vertices[vertNumber++] = b;
 	normals[vertNumber] = normal;
-	textureCoordinates[vertNumber] = vec2(1,1);
+	textureCoordinates[vertNumber] = vec2(.95,.95);
 	vertices[vertNumber++] = d;
 	normals[vertNumber] = normal;
-	textureCoordinates[vertNumber] = vec2(0,1);
+	textureCoordinates[vertNumber] = vec2(.05,.95);
 	vertices[vertNumber++] = c;
 }
 
