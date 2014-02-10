@@ -37,6 +37,7 @@ void GameCamera::Draw(GL3DProgram * shaders) {
 
 //Move the camera view point
 void GameCamera::SetCameraView(vec3 position, vec3 direction) {
+	_ASSERTE(direction != vec3());
 	this->position = position;
 	this->direction = direction;
 }

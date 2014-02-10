@@ -21,7 +21,7 @@ class GL3DProgram : public GLProgram {
 
 	GLCombinedMatrix cmatrix;
 public:
-	GL3DProgram(string vertexShaderPath, string fragmentShaderPath);
+	GL3DProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath);
 
 	GLLighting Lights;
 	GLCombinedModel Model;

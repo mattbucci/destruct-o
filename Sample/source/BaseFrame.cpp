@@ -12,46 +12,7 @@
 
 BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	cout << "\t Constructing base frame\n";
-	//Load the shaders appropriate for the opengl version being used
-	if (OpenglVersion == 31) {
-		//Build the dialog shader
-		GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl31/vsh_interface.glsl","Interface/Shaders/glsl31/fsh_interface.glsl");
-		if (!shaders2d->Valid()) 
-			cout << "Failed to build opengl program\n";
-		shaders->AddShader(shaders2d,"2d");
-		//Build the voxel shader
-		GL3DProgram * shaders3d = new GL3DProgram("Interface/Shaders/glsl31/vsh_3d.glsl","Interface/Shaders/glsl31/fsh_3d.glsl");
-		if (!shaders3d->Valid()) 
-			cout << "Failed to build opengl program\n";
-		shaders->AddShader(shaders3d,"3d");
-	}
-	else {
-#if (defined __IPHONEOS__)
-		//Build the dialog shader
-		GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl_ios/vsh_interface.glsl","Interface/Shaders/glsl_ios/fsh_interface.glsl");
-		if (!shaders2d->Valid())
-			cout << "Failed to build opengl program\n";
-		shaders->AddShader(shaders2d,"2d");
-		
-		//Build the voxel shader
-		GL3DProgram * shaders3d = new GL3DProgram("Interface/Shaders/glsl_ios/vsh_3d.glsl","Interface/Shaders/glsl_ios/fsh_3d.glsl");
-		if (!shaders3d->Valid())
-			cout << "Failed to build opengl program\n";
-		shaders->AddShader(shaders3d,"3d");
-#else
-		//Build the dialog shader
-		GL2DProgram * shaders2d = new GL2DProgram("Interface/Shaders/glsl11/vsh_interface.glsl","Interface/Shaders/glsl11/fsh_interface.glsl");
-		if (!shaders2d->Valid()) 
-			cout << "Failed to build opengl program\n";
-		shaders->AddShader(shaders2d,"2d");
-		//Build the voxel shader
-		GL3DProgram * shaders3d = new GL3DProgram("Interface/Shaders/glsl11/vsh_3d.glsl","Interface/Shaders/glsl11/fsh_3d.glsl");
-		if (!shaders3d->Valid()) 
-			cout << "Failed to build opengl program\n";
-		shaders->AddShader(shaders3d,"3d");
-		
-#endif
-	}
+
 	
 	// Get the 3D shader program
 	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
@@ -143,9 +104,6 @@ void BaseFrame::Draw(double width, double height) {
 	Camera.UpdateViewSize(viewPortSize);
 	vec2 mapExtents = vec2(Voxels.GetWidth(),Voxels.GetHeight());
 
-	//Rotate camera
-	//Camera.Rotation((float)((OS::Now()/30.0)*2.0f*M_PI));
-
 
 	//Startup 3d rendering
 	//Enable the 2d shader for interface drawing
@@ -165,7 +123,7 @@ void BaseFrame::Draw(double width, double height) {
 
 	//We add 1.5 to ground level. This assumes the person is 5ft between the ground
 	//and his eye line
-	vec3 pos = vec3(100,100,Voxels.GetPositionHeight(vec2(100,100))+1.5);
+	vec3 pos = vec3(100,100,Voxels.GetPositionHeight(vec2(100,100))+20);
 	//Calculate voxel draw rectangle
 	pair<vec2,vec2> drawRectangle = ViewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(pos),FirstPerson.GetAngleVector().x/180.0f*M_PI);
 	vec2 minPoint = drawRectangle.first;

@@ -2,12 +2,12 @@
 #include "GLProgram.h"
 #include "GLShader.h"
 
-GLProgram::GLProgram(string vertexShaderPath, string fragmentShaderPath, string geometryShaderPath) {
-	vertexShader = new GLShader(vertexShaderPath,GL_VERTEX_SHADER);
-	fragmentShader = new GLShader(fragmentShaderPath,GL_FRAGMENT_SHADER);
+GLProgram::GLProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath, string geometryShaderPath) {
+	vertexShader = new GLShader(commonShader,vertexShaderPath,GL_VERTEX_SHADER);
+	fragmentShader = new GLShader(commonShader,fragmentShaderPath,GL_FRAGMENT_SHADER);
 #ifndef __MOBILE__
 	if (geometryShaderPath.length() > 0) 
-		geometryShader = new GLShader(geometryShaderPath,GL_GEOMETRY_SHADER);
+		geometryShader = new GLShader(commonShader,geometryShaderPath,GL_GEOMETRY_SHADER);
 	else
 #endif
 		geometryShader = NULL;

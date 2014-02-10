@@ -2,6 +2,8 @@
 #pragma once
 #include "stdafx.h"
 #include "GLCamera.h"
+
+class GLCommonShaderFile;
 class GLShader;
 
 class GLProgram {
@@ -13,7 +15,7 @@ protected:
 
 	int programId;
 public:
-	GLProgram(string vertexShaderPath, string fragmentShaderPath, string geometryShaderPath = "");
+	GLProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath, string geometryShaderPath = "");
 	virtual ~GLProgram();
 
 	virtual	void UseProgram(void);

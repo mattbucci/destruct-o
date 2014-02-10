@@ -1,6 +1,8 @@
 
 #include "stdafx.h"
 
+class GLCommonShaderFile;
+
 class GLShader {
 	//No copying
 	GLShader(const GLShader & other);
@@ -10,7 +12,7 @@ class GLShader {
 	friend class GLProgram;
 public:
 	//Attempts to compile in constructor
-	GLShader(string filename,GLenum shaderType);
+	GLShader(GLCommonShaderFile * commonShader, string filename,GLenum shaderType);
 	~GLShader();
 
 	//Deterime if compile was successful

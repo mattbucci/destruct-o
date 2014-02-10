@@ -60,7 +60,7 @@ void FirstPersonMode::UpdateLookingDirection(set<int> pressedKeys, vector<InputE
 			
 	}
 	//No update at this time
-	if (mouseDeltaSum == vec2())
+	if ((mouseDeltaSum == vec2()) && (aggregateMouseVector != vec2()))
 		return;
 	//Now use the current mouse delta to build an aggregate
 	aggregateMouseVector += mouseDeltaSum*vec2(mouseXSensitivity,mouseYSensitivity);

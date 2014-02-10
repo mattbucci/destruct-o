@@ -17,7 +17,7 @@ class Frames {
 	static map<int,GameSystem*> systems;
 	//Deferred loading is not completed by default
 	static bool loadingComplete;
-	static ShaderGroup shaders;
+	static ShaderGroup * shaders;
 
 	//Build the initial system list. Should be called by main()
 	//Also starts deferred loading of the systems

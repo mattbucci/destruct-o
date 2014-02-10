@@ -13,7 +13,7 @@ class GL2DProgram : public GLProgram {
 	GLint attributeIndexPosition;
 	GLint attributeIndexTexture;
 public:
-	GL2DProgram(string vertexShaderPath, string fragmentShaderPath);
+	GL2DProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath);
 
 	GLModel Model;
 	GLClipping Clipping;

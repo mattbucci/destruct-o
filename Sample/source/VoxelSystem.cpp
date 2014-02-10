@@ -18,12 +18,7 @@ VoxelSystem::VoxelSystem() {
 	//Choose the appropriate render version
 	switch (OpenglVersion){
 	case 20:
-#if (defined __IPHONEOS__)
-        // Always use instanced renderer on iOS for OpenGL ES 2.0
-        renderer = new InstancedVoxelRenderSystem();
-#else
 		renderer = new BasicVoxelRenderSystem();
-#endif
 		break;
 //Android can't use instanced rendering so its not even an option
 #ifndef __ANDROID__
