@@ -8,7 +8,7 @@
 #include "GameEvent.h"
 
 class ComboBox : public Control {
-
+ 
 	//True if the list of entries is being displayed
 	//otherwise false
 	bool opened;

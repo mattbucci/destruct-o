@@ -17,10 +17,10 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     include_directories("../includes/glm-0.9.4.4")
 
     # Windows Libraries
-	target_link_libraries(VoxEngine "../libs/windows/glew/glew32")
-	target_link_libraries(VoxEngine "../libs/windows/SDL/SDL2")
-	target_link_libraries(VoxEngine "../libs/windows/SDL2_ttf-2.0.12/SDL2_ttf")
-	target_link_libraries(VoxEngine "opengl32.lib")
+    target_link_libraries(VoxEngine "../libs/windows/glew/glew32")
+    target_link_libraries(VoxEngine "../libs/windows/SDL/SDL2")
+    target_link_libraries(VoxEngine "../libs/windows/SDL2_ttf-2.0.12/SDL2_ttf")
+    target_link_libraries(VoxEngine "opengl32.lib")
 
 ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
@@ -30,10 +30,10 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     include_directories("../includes/glm-0.9.4.4")
     include_directories("../includes/glew")
 
-	find_library(SDL NAMES sdl2)
-	find_library(SDL_TTF NAMES sdl2_ttf)
-	find_library(OPENGL NAMES OpenGL)
-	target_link_libraries(VoxEngine ${SDL})
+    find_library(SDL NAMES SDL2)
+    find_library(SDL_TTF NAMES SDL2_ttf)
+    find_library(OPENGL NAMES OpenGL)
+    target_link_libraries(VoxEngine ${SDL})
 	target_link_libraries(VoxEngine ${SDL_TTF})
 	target_link_libraries(VoxEngine ${OPENGL})
 	get_filename_component(CGLEW "../libs/osx/glew/" ABSOLUTE)
@@ -44,8 +44,8 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
 	
 	# Needed for performing Makefile build on OS X, as above parameters are Xcode specific
-
 	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++11 -stdlib=libc++ -g -Wall")
+
 ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 # Are we compiling on Linux?
