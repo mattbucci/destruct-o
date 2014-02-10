@@ -6,6 +6,13 @@ file(GLOB VoxEngine_SRC
 	"*.cpp"
 )
 
+file(GLOB libnoise_src
+    "../includes/libnoise/noise/*.cpp"
+    "../includes/libnoise/noise/model/*.cpp"
+    "../includes/libnoise/noise/module/*.cpp"
+)
+
+# VoxEngine Executable
 add_executable(VoxEngine ${VoxEngine_SRC})
 
 # Are we compiling on Window?
@@ -15,20 +22,20 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     include_directories("../includes/SDL")
     include_directories("../includes/glew")
     include_directories("../includes/glm-0.9.4.4")
-	include_directories("../includes/libnoise")
+    include_directories("../includes/libnoise")
 
     # Windows Libraries
     target_link_libraries(VoxEngine "../libs/windows/glew/glew32")
     target_link_libraries(VoxEngine "../libs/windows/SDL/SDL2")
     target_link_libraries(VoxEngine "../libs/windows/SDL2_ttf-2.0.12/SDL2_ttf")
     target_link_libraries(VoxEngine "opengl32.lib")
-	target_link_libraries(VoxEngine "../libs/windows/libnoise/libnoise")
+    target_link_libraries(VoxEngine "../libs/windows/libnoise/libnoise")
 
 ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 # Are we compiling on Mac OS X?
 IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    
+
     # Find the SDL2 Framework
     find_library(SDL2_FRAMEWORK NAMES SDL2)
     target_link_libraries(VoxEngine ${SDL2_FRAMEWORK})
@@ -48,6 +55,13 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     
     # Pull in the OpenGL Mathematics Library
     include_directories("../includes/glm-0.9.4.4")
+    
+    # Pull in the noise generation library
+    include_directories("../includes/libnoise")
+    
+    # Need to build libnoise for OS X
+    add_library(noise STATIC ${libnoise_src})
+    target_link_libraries(VoxEngine noise)
 
     # Make sure Xcode uses Clang set for libc++ and c++ version 2011
     set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvm.clang.1_0")
@@ -109,6 +123,14 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     # Discover the include path for the OpenGL Mathematics Library
     find_path(GLM_INCLUDE_DIR NAMES glm/glm.hpp)
     include_directories(${GLM_INCLUDE_DIR})
+    
+    # Well shoot.  Was hoping to avoid this
+    # Pull in the noise generation library
+    include_directories("../includes/libnoise")
+    
+    # Need to build libnoise for Linux
+    add_library(noise STATIC ${libnoise_src})
+    target_link_libraries(VoxEngine noise)
 
     # Make a define, only used with Linux.  Also, make sure we use c++11
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__LINUX__")
