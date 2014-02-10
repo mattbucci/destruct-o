@@ -39,9 +39,9 @@ GLShader::GLShader(GLCommonShaderFile * commonShader, string filename,GLenum sha
 	//Copy the virtual shader
 	vector<char> virtualShader;
     if (shaderType == GL_VERTEX_SHADER)
-        commonShader->GetVertexShaderText();
+        virtualShader = commonShader->GetVertexShaderText();
     else
-        commonShader->GetFragmentShaderText();
+        virtualShader = commonShader->GetFragmentShaderText();
 	//Tack the loaded shader to the end of the virtual shader
 	virtualShader.insert(virtualShader.end(),fileContents.begin(),fileContents.end());
 
