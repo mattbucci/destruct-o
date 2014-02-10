@@ -3,7 +3,8 @@
 #include "stdafx.h"
 
 class GLCommonShaderFile {
-	vector<char> virtualShaderFile;
+	vector<char> virtualShaderFileV;
+    vector<char> virtualShaderFileF;
 	//The length in lines
 	int virtualShaderLength;
 public:
@@ -16,6 +17,7 @@ public:
 	int GetShaderLineCount();
 
 	//Get the text of the virtual shader
-	vector<char> GetShaderText();
+	vector<char> GetFragmentShaderText();
+    vector<char> GetVertexShaderText();
 
 };

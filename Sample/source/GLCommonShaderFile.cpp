@@ -23,10 +23,11 @@ GLCommonShaderFile::GLCommonShaderFile(string path) {
 
 	//Build the rest of a shader using a stringstream
 	stringstream virtualShader;
+    string versionString = "";
 	//Decide the version to force
 #ifndef __IPHONEOS__
 	if (OpenglVersion == 31)
-		virtualShader << "#version 140\n";
+		versionString = "#version 140\n";
 #endif
 	//Add in all OS specifies
 #ifdef WIN32
@@ -48,16 +49,30 @@ GLCommonShaderFile::GLCommonShaderFile(string path) {
 	virtualShader << string(&fileContents.front(),fileContents.size());
 	//Now shove it all into a string and then a vector
 	string vs = virtualShader.str();
-	virtualShaderFile.resize(vs.size());
+    //First create the vertex shader file
+    string textVertexShader = versionString + "#define VERTEX_SHADER\n" + vs;
+	virtualShaderFileV.resize(textVertexShader.size());
 	//Also count lines
 	virtualShaderLength = 0;
-	for (unsigned int i = 0; i < vs.size(); i++) {
-		virtualShaderFile[i] = vs[i];
-		if (vs[i] == '\n')
+	for (unsigned int i = 0; i < textVertexShader.size(); i++) {
+		virtualShaderFileV[i] = textVertexShader[i];
+		if (textVertexShader[i] == '\n')
 			virtualShaderLength++;
 	}
 	//all done
-	cout << "Built common shader with " << virtualShaderLength << " lines of text.\n";
+	cout << "Built vertex common shader with " << virtualShaderLength << " lines of text.\n";
+    //Next build the fragment shader file
+    string textFragmentShader = versionString + "#define FRAGMENT_SHADER\n" + vs;
+	virtualShaderFileF.resize(textFragmentShader.size());
+	//Also count lines
+	virtualShaderLength = 0;
+	for (unsigned int i = 0; i < textFragmentShader.size(); i++) {
+		virtualShaderFileF[i] = textFragmentShader[i];
+		if (textFragmentShader[i] == '\n')
+			virtualShaderLength++;
+	}
+	//all done
+	cout << "Built fragment common shader with " << virtualShaderLength << " lines of text.\n";
 }
 GLCommonShaderFile::~GLCommonShaderFile() {
 
@@ -69,6 +84,10 @@ int GLCommonShaderFile::GetShaderLineCount() {
 }
 
 //Get the text of the virtual shader
-vector<char> GLCommonShaderFile::GetShaderText() {
-	return virtualShaderFile;
+vector<char> GLCommonShaderFile::GetFragmentShaderText() {
+	return virtualShaderFileF;
+}
+//Get the text of the virtual shader
+vector<char> GLCommonShaderFile::GetVertexShaderText() {
+	return virtualShaderFileV;
 }
