@@ -248,7 +248,7 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	
 	// Request a 32 bit depth buffer
-#if (defined __ANDROID__) || (defined WIN32)
+#if (defined __ANDROID__) || (defined WIN32) || (defined __LINUX__)
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 #else
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);

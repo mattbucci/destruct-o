@@ -59,13 +59,13 @@ using namespace std;
 #endif
 
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 //SDL 2
 #ifndef __MOBILE__
-#include <SDL/SDL_opengl.h>
+#include <SDL2/SDL_opengl.h>
 #else
-#include <SDL/SDL_opengles2.h>
+#include <SDL2/SDL_opengles2.h>
 //Apple's custom extensions
 #ifdef __IPHONEOS__
 #include "IOSGL.h"
