@@ -58,13 +58,20 @@ VoxelSystem::~VoxelSystem() {
 
 //Attempt to load a tile from disc
 bool VoxelSystem::LoadTile(string tileName) {
+	//Init Terrain Generator
 	TerrainGen t = TerrainGen();
 	int wid = 1024; int hei = 1024;
 	t.setSeed(2);
 	t.setTileScale(0.5, 0.5);
 	t.setTileSize(wid, hei);
-	unsigned char* tilea = t.generateTile(0, 0);
-	vector<unsigned char> tile(tilea, tilea + (wid * hei));
+
+	//Generate Terrain Tile
+	unsigned char* rawtile = t.generateTile(0, 0);
+	vector<unsigned char> tile(rawtile, rawtile + (wid * hei));
+
+	//Free Terrain Tile Memory
+	free(rawtile);
+
 	tileData = GameTile::LoadTileFromMemory(tile, wid, hei);
 
 	//First load the tile map
