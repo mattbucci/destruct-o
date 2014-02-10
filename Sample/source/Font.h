@@ -2,8 +2,13 @@
 
 #include "stdafx.h"
 #include "GL2DProgram.h"
-#include <SDL/SDL_ttf.h>
 
+// If we are compiling on Mac OS X, use a different SDL2_ttf header, for we use the SDL2_ttf framework
+#if (defined __APPLE__) && !(defined __IPHONEOS__)
+#include <SDL2_ttf/SDL_ttf.h>
+#else
+#include <SDL2/SDL_ttf.h>
+#endif
 
 class Letter;
 class GLTexture;

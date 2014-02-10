@@ -33,10 +33,7 @@ void OS::SleepTime(double seconds) {
 
 #else
 
-#ifdef __APPLE__
-#include <unistd.h>
-#endif
-#ifdef __ANDROID__
+#if (defined __APPLE__) || (defined __ANDROID__) || (defined __LINUX__)
 #include <unistd.h>
 #endif
 
