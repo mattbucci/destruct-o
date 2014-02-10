@@ -17,8 +17,13 @@ BaseFrame * Actor::Game() {
 }
 
 //Update this actor with the delta and current time
-void Actor::Update(double delta, double now) {
+void Actor::Update(float delta, float now) {
+	velocity += acceleration*delta;
+	position += velocity*delta;
+}
 
+vec3 Actor::GetPosition() {
+	return position;
 }
 
 //Draw this actor

@@ -8,8 +8,10 @@
 #include "ActorSystem.h"
 #include "FirstPersonMode.h"
 
-class BaseFrame : public GameSystem {
+class ActorPlayer;
 
+class BaseFrame : public GameSystem {
+	ActorPlayer * player;
 	
 	GLint uniformModelView;
 	GLint uniformModelViewProjection;
@@ -27,6 +29,9 @@ public:
 
 	//for notes on Build() see GameSystem::Build()
 	void Build() override;
+
+	//Build basic entities (such as the player)
+	void OnFrameFocus() override;
 
 	//Override update to remove FPS control
 	//provided by the game system
