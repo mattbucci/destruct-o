@@ -28,8 +28,9 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_link_libraries(VoxEngine "../libs/windows/glew/glew32")
     target_link_libraries(VoxEngine "../libs/windows/SDL/SDL2")
     target_link_libraries(VoxEngine "../libs/windows/SDL2_ttf-2.0.12/SDL2_ttf")
-    target_link_libraries(VoxEngine "opengl32.lib")
+    target_link_libraries(VoxEngine "../libs/windows/SDL2_mixer-2.0.0/SDL2_mixer")
     target_link_libraries(VoxEngine "../libs/windows/libnoise/libnoise")
+    target_link_libraries(VoxEngine "opengl32.lib")
 
 ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
@@ -43,6 +44,10 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # Find the SDL2_ttf Framework
     find_library(SDL2_TTF_FRAMEWORK NAMES SDL2_ttf)
     target_link_libraries(VoxEngine ${SDL2_TTF_FRAMEWORK})
+
+    # Find the SDL2_mixer Framework
+    find_library(SDL2_MIXER_FRAMEWORK NAMES SDL2_mixer)
+    target_link_libraries(VoxEngine ${SDL2_MIXER_FRAMEWORK})
     
     # Find the OpenGL Framework
     find_library(OPENGL_FRAMEWORK NAMES OpenGL)
@@ -88,6 +93,7 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     #
     # Simple Direct Media Layer (requires 2.0.0 or greater) - http://libsdl.org/download-2.0.php
     # Truetype Font Library for SDL (requires 2.0.12 or greater) - http://www.libsdl.org/projects/SDL_ttf/
+    # Audio Mixer Library for SDL (requires 2.0.0 or greater)
     #
     # A graphics card and driver supporting at least OpenGL 2.0, recommended 3.3+
     #
@@ -107,6 +113,12 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     include_directories(${SDL_TTF_INCLUDE_DIR})
     find_library(SDL_TTF_LIBRARY NAMES SDL2_ttf)
     target_link_libraries(VoxEngine ${SDL_TTF_LIBRARY})
+
+    # Discover include path and library for the SDL2_mixer library
+    find_path(SDL_MIXER_INCLUDE_DIR NAMES SDL2/SDL_mixer.h)
+    include_directories(${SDL_MIXER_INCLUDE_DIR})
+    find_library(SDL_MIXER_LIBRARY NAMES SDL2_mixer)
+    target_link_libraries(VoxEngine ${SDL_MIXER_LIBRARY})
 
     # Discover the include path and library for the system OpenGL Library
     find_path(OPENGL_INCLUDE_DIR NAMES GL/gl.h)
