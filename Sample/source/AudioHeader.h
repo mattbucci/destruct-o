@@ -8,8 +8,17 @@
 
 #ifndef Audio_Test_AudioHeader_h
 #define Audio_Test_AudioHeader_h
+
+// Include the potentially precompiled header
+#include "stdafx.h"
+
+// Include SDL2_mixer
+#if (defined __MACOSX__)
 #include <SDL2_mixer/SDL_mixer.h>
-#include <SDL2/SDL.h>
+#else
+#include <SDL2/SDL_mixer.h>
+#endif
+
 #include <map>
 #include <string>
 #include <sstream>
@@ -21,7 +30,8 @@
 using namespace std;
 
 //sudo event, to be overridden by anthony's code during production
-struct event{
+struct event
+{
     uint32_t id;
     string type;
 };
