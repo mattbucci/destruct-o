@@ -220,8 +220,9 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 					eventQueue.back().RelX = (float)event.motion.xrel;
 					eventQueue.back().RelY = (float)event.motion.yrel;
 					break;
+				#ifdef __MOBILE__
 				case SDL_FINGERMOTION:
-					//cout << "MOVED: " << event.tfinger.x << "," << event.tfinger.y << "\n";
+					cout << "MOVED: " << event.tfinger.x << "," << event.tfinger.y << "\n";
 					eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight));
 					break;
 				case SDL_FINGERUP:
@@ -230,6 +231,7 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 				case SDL_FINGERDOWN:
 					eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight));
 					break;
+				#endif
 				//Handle events which directly effect the operation of the game engine
 				case SDL_WINDOWEVENT: 
 					//Window events have their own set of things that could happen
