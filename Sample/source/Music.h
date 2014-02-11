@@ -8,13 +8,13 @@
 
 #ifndef __Audio_Test__Music__
 #define __Audio_Test__Music__
-#include "AudioHeader.h"
 
+#include "AudioHeader.h"
 
 class Music {
 private:
-    uint8_t volume = 100;
-    uint8_t sceneintensity = 0;
+    uint8_t volume;
+    uint8_t sceneintensity;
     struct track{
         uint8_t intensity;
         string trackname;

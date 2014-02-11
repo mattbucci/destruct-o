@@ -19,13 +19,8 @@
 #include <SDL2/SDL_mixer.h>
 #endif
 
-#include <map>
-#include <string>
 #include <sstream>
-#include <cstdio>
 #include <fstream>
-#include <vector>
-#include <list>
 
 using namespace std;
 

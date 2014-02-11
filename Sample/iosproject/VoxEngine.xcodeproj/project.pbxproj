@@ -42,78 +42,12 @@
 		F11C7F1818A8A7F9004BC84B /* translatepoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135180A18A8A5D60078FDA4 /* translatepoint.cpp */; };
 		F11C7F1918A8A7F9004BC84B /* turbulence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135180B18A8A5D60078FDA4 /* turbulence.cpp */; };
 		F11C7F1A18A8A7F9004BC84B /* voronoi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135180C18A8A5D60078FDA4 /* voronoi.cpp */; };
-		F13517A118A8A53A0078FDA4 /* Actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135171E18A8A53A0078FDA4 /* Actor.cpp */; };
-		F13517A218A8A53A0078FDA4 /* ActorPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135172018A8A53A0078FDA4 /* ActorPlayer.cpp */; };
-		F13517A318A8A53A0078FDA4 /* ActorSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135172218A8A53A0078FDA4 /* ActorSystem.cpp */; };
-		F13517A418A8A53A0078FDA4 /* AuxLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135172418A8A53A0078FDA4 /* AuxLogger.cpp */; };
-		F13517A518A8A53A0078FDA4 /* BaseFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135172618A8A53A0078FDA4 /* BaseFrame.cpp */; };
-		F13517A618A8A53A0078FDA4 /* BasicVoxelRenderSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135172818A8A53A0078FDA4 /* BasicVoxelRenderSystem.cpp */; };
-		F13517A718A8A53A0078FDA4 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135172A18A8A53A0078FDA4 /* Button.cpp */; };
-		F13517A818A8A53A0078FDA4 /* ComboBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135172C18A8A53A0078FDA4 /* ComboBox.cpp */; };
-		F13517A918A8A53A0078FDA4 /* Control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135172E18A8A53A0078FDA4 /* Control.cpp */; };
-		F13517AA18A8A53A0078FDA4 /* ControlBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135173018A8A53A0078FDA4 /* ControlBase.cpp */; };
-		F13517AB18A8A53A0078FDA4 /* DebugWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135173218A8A53A0078FDA4 /* DebugWindow.cpp */; };
-		F13517AC18A8A53A0078FDA4 /* ErrorWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135173418A8A53A0078FDA4 /* ErrorWindow.cpp */; };
-		F13517AD18A8A53A0078FDA4 /* FirstPersonMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135173618A8A53A0078FDA4 /* FirstPersonMode.cpp */; };
-		F13517AE18A8A53A0078FDA4 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135173818A8A53A0078FDA4 /* Font.cpp */; };
-		F13517AF18A8A53A0078FDA4 /* FPSCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135173A18A8A53A0078FDA4 /* FPSCounter.cpp */; };
-		F13517B018A8A53A0078FDA4 /* Frames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135173C18A8A53A0078FDA4 /* Frames.cpp */; };
-		F13517B118A8A53A0078FDA4 /* GameCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135173E18A8A53A0078FDA4 /* GameCamera.cpp */; };
-		F13517B218A8A53A0078FDA4 /* GameEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135174018A8A53A0078FDA4 /* GameEvent.cpp */; };
-		F13517B318A8A53A0078FDA4 /* GameEventSubscriber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135174318A8A53A0078FDA4 /* GameEventSubscriber.cpp */; };
-		F13517B418A8A53A0078FDA4 /* GameSave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135174518A8A53A0078FDA4 /* GameSave.cpp */; };
-		F13517B518A8A53A0078FDA4 /* GameSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135174718A8A53A0078FDA4 /* GameSystem.cpp */; };
-		F13517B618A8A53A0078FDA4 /* GameTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135174918A8A53A0078FDA4 /* GameTile.cpp */; };
-		F13517B718A8A53A0078FDA4 /* GL2DProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135174B18A8A53A0078FDA4 /* GL2DProgram.cpp */; };
-		F13517B818A8A53A0078FDA4 /* GL2DVertexGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135174D18A8A53A0078FDA4 /* GL2DVertexGroup.cpp */; };
-		F13517B918A8A53A0078FDA4 /* GL3DProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135174F18A8A53A0078FDA4 /* GL3DProgram.cpp */; };
-		F13517BA18A8A53A0078FDA4 /* GLCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135175118A8A53A0078FDA4 /* GLCamera.cpp */; };
-		F13517BB18A8A53A0078FDA4 /* GLClipping.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135175318A8A53A0078FDA4 /* GLClipping.cpp */; };
-		F13517BC18A8A53A0078FDA4 /* GLCombinedMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135175518A8A53A0078FDA4 /* GLCombinedMatrix.cpp */; };
-		F13517BD18A8A53A0078FDA4 /* GLCombinedModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135175718A8A53A0078FDA4 /* GLCombinedModel.cpp */; };
-		F13517BE18A8A53A0078FDA4 /* GLCommonShaderFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135175918A8A53A0078FDA4 /* GLCommonShaderFile.cpp */; };
-		F13517BF18A8A53A0078FDA4 /* GLFrameBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135175B18A8A53A0078FDA4 /* GLFrameBuffer.cpp */; };
-		F13517C018A8A53A0078FDA4 /* GLLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135175D18A8A53A0078FDA4 /* GLLight.cpp */; };
-		F13517C118A8A53A0078FDA4 /* GLLighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135175F18A8A53A0078FDA4 /* GLLighting.cpp */; };
-		F13517C218A8A53A0078FDA4 /* GLModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135176218A8A53A0078FDA4 /* GLModel.cpp */; };
-		F13517C318A8A53A0078FDA4 /* GLProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135176418A8A53A0078FDA4 /* GLProgram.cpp */; };
-		F13517C418A8A53A0078FDA4 /* GLShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135176618A8A53A0078FDA4 /* GLShader.cpp */; };
-		F13517C518A8A53A0078FDA4 /* GObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135176918A8A53A0078FDA4 /* GObject.cpp */; };
-		F13517C618A8A53A0078FDA4 /* InputEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135176B18A8A53A0078FDA4 /* InputEvent.cpp */; };
-		F13517C718A8A53A0078FDA4 /* InstancedVoxelRenderSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135176D18A8A53A0078FDA4 /* InstancedVoxelRenderSystem.cpp */; };
-		F13517C818A8A53A0078FDA4 /* InterfaceGlobals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135176F18A8A53A0078FDA4 /* InterfaceGlobals.cpp */; };
-		F13517C918A8A53A0078FDA4 /* Label.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135177218A8A53A0078FDA4 /* Label.cpp */; };
-		F13517CA18A8A53A0078FDA4 /* Listbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135177518A8A53A0078FDA4 /* Listbox.cpp */; };
-		F13517CB18A8A53A0078FDA4 /* LoadingScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135177718A8A53A0078FDA4 /* LoadingScreen.cpp */; };
-		F13517CC18A8A53A0078FDA4 /* lodepng.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135177918A8A53A0078FDA4 /* lodepng.cpp */; };
-		F13517CD18A8A53A0078FDA4 /* MaxDistanceFog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135177B18A8A53A0078FDA4 /* MaxDistanceFog.cpp */; };
-		F13517CE18A8A53A0078FDA4 /* NinePatchBinary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135177D18A8A53A0078FDA4 /* NinePatchBinary.cpp */; };
-		F13517CF18A8A53A0078FDA4 /* noiseutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135177F18A8A53A0078FDA4 /* noiseutils.cpp */; };
-		F13517D018A8A53A0078FDA4 /* OS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135178118A8A53A0078FDA4 /* OS.cpp */; };
-		F13517D118A8A53A0078FDA4 /* RasterizedText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135178318A8A53A0078FDA4 /* RasterizedText.cpp */; };
-		F13517D218A8A53A0078FDA4 /* Rect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135178518A8A53A0078FDA4 /* Rect.cpp */; };
-		F13517D318A8A53A0078FDA4 /* ReflectionData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135178718A8A53A0078FDA4 /* ReflectionData.cpp */; };
-		F13517D418A8A53A0078FDA4 /* ShaderGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135178A18A8A53A0078FDA4 /* ShaderGroup.cpp */; };
-		F13517D518A8A53A0078FDA4 /* Shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135178C18A8A53A0078FDA4 /* Shape.cpp */; };
-		F13517D618A8A53A0078FDA4 /* stdafx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135178E18A8A53A0078FDA4 /* stdafx.cpp */; };
-		F13517D718A8A53A0078FDA4 /* TerrainGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135179018A8A53A0078FDA4 /* TerrainGen.cpp */; };
-		F13517D818A8A53A0078FDA4 /* Textbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135179218A8A53A0078FDA4 /* Textbox.cpp */; };
-		F13517D918A8A53A0078FDA4 /* Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135179518A8A53A0078FDA4 /* Utilities.cpp */; };
-		F13517DA18A8A53A0078FDA4 /* ViewDistanceCalc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135179718A8A53A0078FDA4 /* ViewDistanceCalc.cpp */; };
-		F13517DB18A8A53A0078FDA4 /* VoxelDrawSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135179918A8A53A0078FDA4 /* VoxelDrawSystem.cpp */; };
-		F13517DC18A8A53A0078FDA4 /* VoxelSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135179B18A8A53A0078FDA4 /* VoxelSystem.cpp */; };
-		F13517DD18A8A53A0078FDA4 /* VoxEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135179D18A8A53A0078FDA4 /* VoxEngine.cpp */; };
-		F13517DE18A8A53A0078FDA4 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F135179F18A8A53A0078FDA4 /* Window.cpp */; };
 		F136298F18A599CC0006A8BB /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F136298E18A599CC0006A8BB /* OpenGLES.framework */; };
 		F136299118A599E20006A8BB /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F136299018A599E20006A8BB /* CoreAudio.framework */; };
 		F136299318A599F60006A8BB /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F136299218A599F60006A8BB /* CoreMedia.framework */; };
 		F136299518A59A050006A8BB /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F136299418A59A050006A8BB /* AudioToolbox.framework */; };
 		F136299B18A59BB40006A8BB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1989FD918A58C3900A5165E /* CoreGraphics.framework */; };
 		F136299C18A59BE70006A8BB /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F136299918A59B780006A8BB /* QuartzCore.framework */; };
-		F1362A5D18A86FCE0006A8BB /* libSDL2-simulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1362A5918A86FCE0006A8BB /* libSDL2-simulator.a */; };
-		F1362A5E18A86FCE0006A8BB /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1362A5A18A86FCE0006A8BB /* libSDL2.a */; };
-		F1362A5F18A86FCE0006A8BB /* SDL2_ttf_simulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1362A5B18A86FCE0006A8BB /* SDL2_ttf_simulator.a */; };
-		F1362A6018A86FCE0006A8BB /* SDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1362A5C18A86FCE0006A8BB /* SDL2_ttf.a */; };
 		F1989FD818A58C3900A5165E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1989FD718A58C3900A5165E /* Foundation.framework */; };
 		F1989FDC18A58C3900A5165E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1989FDB18A58C3900A5165E /* UIKit.framework */; };
 		F1989FE218A58C3900A5165E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F1989FE018A58C3900A5165E /* InfoPlist.strings */; };
@@ -122,140 +56,80 @@
 		F1C6999318A728FC00442752 /* Interface in Resources */ = {isa = PBXBuildFile; fileRef = F1C6998F18A728FC00442752 /* Interface */; };
 		F1C6999418A728FC00442752 /* loading.png in Resources */ = {isa = PBXBuildFile; fileRef = F1C6999018A728FC00442752 /* loading.png */; };
 		F1C6999518A728FC00442752 /* terrain in Resources */ = {isa = PBXBuildFile; fileRef = F1C6999118A728FC00442752 /* terrain */; };
+		F1E65A9718AA0BA300A799C9 /* libSDL2_mixer-simulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1E65A9118AA0BA300A799C9 /* libSDL2_mixer-simulator.a */; };
+		F1E65A9818AA0BA300A799C9 /* libSDL2_mixer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1E65A9218AA0BA300A799C9 /* libSDL2_mixer.a */; };
+		F1E65A9918AA0BA300A799C9 /* libSDL2_ttf-simulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1E65A9318AA0BA300A799C9 /* libSDL2_ttf-simulator.a */; };
+		F1E65A9A18AA0BA300A799C9 /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1E65A9418AA0BA300A799C9 /* libSDL2_ttf.a */; };
+		F1E65A9B18AA0BA300A799C9 /* libSDL2-simulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1E65A9518AA0BA300A799C9 /* libSDL2-simulator.a */; };
+		F1E65A9C18AA0BA300A799C9 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1E65A9618AA0BA300A799C9 /* libSDL2.a */; };
+		F1E65B2718AA0C2B00A799C9 /* Actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65A9D18AA0C2B00A799C9 /* Actor.cpp */; };
+		F1E65B2818AA0C2B00A799C9 /* ActorPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65A9F18AA0C2B00A799C9 /* ActorPlayer.cpp */; };
+		F1E65B2918AA0C2B00A799C9 /* ActorSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AA118AA0C2B00A799C9 /* ActorSystem.cpp */; };
+		F1E65B2A18AA0C2B00A799C9 /* Audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AA318AA0C2B00A799C9 /* Audio.cpp */; };
+		F1E65B2B18AA0C2B00A799C9 /* AuxLogger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AA618AA0C2B00A799C9 /* AuxLogger.cpp */; };
+		F1E65B2C18AA0C2B00A799C9 /* BaseFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AA818AA0C2B00A799C9 /* BaseFrame.cpp */; };
+		F1E65B2D18AA0C2B00A799C9 /* BasicVoxelRenderSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AAA18AA0C2B00A799C9 /* BasicVoxelRenderSystem.cpp */; };
+		F1E65B2E18AA0C2B00A799C9 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AAC18AA0C2B00A799C9 /* Button.cpp */; };
+		F1E65B2F18AA0C2B00A799C9 /* ComboBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AAE18AA0C2B00A799C9 /* ComboBox.cpp */; };
+		F1E65B3018AA0C2B00A799C9 /* Control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AB018AA0C2B00A799C9 /* Control.cpp */; };
+		F1E65B3118AA0C2B00A799C9 /* ControlBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AB218AA0C2B00A799C9 /* ControlBase.cpp */; };
+		F1E65B3218AA0C2B00A799C9 /* DebugWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AB418AA0C2B00A799C9 /* DebugWindow.cpp */; };
+		F1E65B3318AA0C2B00A799C9 /* Effect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AB618AA0C2B00A799C9 /* Effect.cpp */; };
+		F1E65B3418AA0C2B00A799C9 /* ErrorWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AB818AA0C2B00A799C9 /* ErrorWindow.cpp */; };
+		F1E65B3518AA0C2B00A799C9 /* FirstPersonMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65ABA18AA0C2B00A799C9 /* FirstPersonMode.cpp */; };
+		F1E65B3618AA0C2B00A799C9 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65ABC18AA0C2B00A799C9 /* Font.cpp */; };
+		F1E65B3718AA0C2B00A799C9 /* FPSCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65ABE18AA0C2B00A799C9 /* FPSCounter.cpp */; };
+		F1E65B3818AA0C2B00A799C9 /* Frames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AC018AA0C2B00A799C9 /* Frames.cpp */; };
+		F1E65B3918AA0C2B00A799C9 /* GameCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AC218AA0C2B00A799C9 /* GameCamera.cpp */; };
+		F1E65B3A18AA0C2B00A799C9 /* GameEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AC418AA0C2B00A799C9 /* GameEvent.cpp */; };
+		F1E65B3B18AA0C2B00A799C9 /* GameEventSubscriber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AC718AA0C2B00A799C9 /* GameEventSubscriber.cpp */; };
+		F1E65B3C18AA0C2B00A799C9 /* GameSave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AC918AA0C2B00A799C9 /* GameSave.cpp */; };
+		F1E65B3D18AA0C2B00A799C9 /* GameSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65ACB18AA0C2B00A799C9 /* GameSystem.cpp */; };
+		F1E65B3E18AA0C2B00A799C9 /* GameTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65ACD18AA0C2B00A799C9 /* GameTile.cpp */; };
+		F1E65B3F18AA0C2B00A799C9 /* GL2DProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65ACF18AA0C2B00A799C9 /* GL2DProgram.cpp */; };
+		F1E65B4018AA0C2B00A799C9 /* GL2DVertexGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AD118AA0C2B00A799C9 /* GL2DVertexGroup.cpp */; };
+		F1E65B4118AA0C2B00A799C9 /* GL3DProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AD318AA0C2B00A799C9 /* GL3DProgram.cpp */; };
+		F1E65B4218AA0C2B00A799C9 /* GLCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AD518AA0C2B00A799C9 /* GLCamera.cpp */; };
+		F1E65B4318AA0C2B00A799C9 /* GLClipping.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AD718AA0C2B00A799C9 /* GLClipping.cpp */; };
+		F1E65B4418AA0C2B00A799C9 /* GLCombinedMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AD918AA0C2B00A799C9 /* GLCombinedMatrix.cpp */; };
+		F1E65B4518AA0C2B00A799C9 /* GLCombinedModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65ADB18AA0C2B00A799C9 /* GLCombinedModel.cpp */; };
+		F1E65B4618AA0C2B00A799C9 /* GLCommonShaderFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65ADD18AA0C2B00A799C9 /* GLCommonShaderFile.cpp */; };
+		F1E65B4718AA0C2B00A799C9 /* GLFrameBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65ADF18AA0C2B00A799C9 /* GLFrameBuffer.cpp */; };
+		F1E65B4818AA0C2B00A799C9 /* GLLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AE118AA0C2B00A799C9 /* GLLight.cpp */; };
+		F1E65B4918AA0C2B00A799C9 /* GLLighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AE318AA0C2B00A799C9 /* GLLighting.cpp */; };
+		F1E65B4A18AA0C2B00A799C9 /* GLModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AE618AA0C2B00A799C9 /* GLModel.cpp */; };
+		F1E65B4B18AA0C2B00A799C9 /* GLProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AE818AA0C2B00A799C9 /* GLProgram.cpp */; };
+		F1E65B4C18AA0C2B00A799C9 /* GLShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AEA18AA0C2B00A799C9 /* GLShader.cpp */; };
+		F1E65B4D18AA0C2B00A799C9 /* GObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AED18AA0C2B00A799C9 /* GObject.cpp */; };
+		F1E65B4E18AA0C2B00A799C9 /* InputEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AEF18AA0C2B00A799C9 /* InputEvent.cpp */; };
+		F1E65B4F18AA0C2B00A799C9 /* InstancedVoxelRenderSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AF118AA0C2B00A799C9 /* InstancedVoxelRenderSystem.cpp */; };
+		F1E65B5018AA0C2B00A799C9 /* InterfaceGlobals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AF318AA0C2B00A799C9 /* InterfaceGlobals.cpp */; };
+		F1E65B5118AA0C2B00A799C9 /* Label.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AF618AA0C2B00A799C9 /* Label.cpp */; };
+		F1E65B5218AA0C2B00A799C9 /* Listbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AF918AA0C2B00A799C9 /* Listbox.cpp */; };
+		F1E65B5318AA0C2B00A799C9 /* LoadingScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AFB18AA0C2B00A799C9 /* LoadingScreen.cpp */; };
+		F1E65B5418AA0C2B00A799C9 /* lodepng.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AFD18AA0C2B00A799C9 /* lodepng.cpp */; };
+		F1E65B5518AA0C2B00A799C9 /* MaxDistanceFog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65AFF18AA0C2B00A799C9 /* MaxDistanceFog.cpp */; };
+		F1E65B5618AA0C2B00A799C9 /* Music.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B0118AA0C2B00A799C9 /* Music.cpp */; };
+		F1E65B5718AA0C2B00A799C9 /* NinePatchBinary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B0318AA0C2B00A799C9 /* NinePatchBinary.cpp */; };
+		F1E65B5818AA0C2B00A799C9 /* noiseutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B0518AA0C2B00A799C9 /* noiseutils.cpp */; };
+		F1E65B5918AA0C2B00A799C9 /* OS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B0718AA0C2B00A799C9 /* OS.cpp */; };
+		F1E65B5A18AA0C2B00A799C9 /* RasterizedText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B0918AA0C2B00A799C9 /* RasterizedText.cpp */; };
+		F1E65B5B18AA0C2B00A799C9 /* Rect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B0B18AA0C2B00A799C9 /* Rect.cpp */; };
+		F1E65B5C18AA0C2B00A799C9 /* ReflectionData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B0D18AA0C2B00A799C9 /* ReflectionData.cpp */; };
+		F1E65B5D18AA0C2B00A799C9 /* ShaderGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B1018AA0C2B00A799C9 /* ShaderGroup.cpp */; };
+		F1E65B5E18AA0C2B00A799C9 /* Shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B1218AA0C2B00A799C9 /* Shape.cpp */; };
+		F1E65B5F18AA0C2B00A799C9 /* stdafx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B1418AA0C2B00A799C9 /* stdafx.cpp */; };
+		F1E65B6018AA0C2B00A799C9 /* TerrainGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B1618AA0C2B00A799C9 /* TerrainGen.cpp */; };
+		F1E65B6118AA0C2B00A799C9 /* Textbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B1818AA0C2B00A799C9 /* Textbox.cpp */; };
+		F1E65B6218AA0C2B00A799C9 /* Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B1B18AA0C2B00A799C9 /* Utilities.cpp */; };
+		F1E65B6318AA0C2B00A799C9 /* ViewDistanceCalc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B1D18AA0C2B00A799C9 /* ViewDistanceCalc.cpp */; };
+		F1E65B6418AA0C2B00A799C9 /* VoxelDrawSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B1F18AA0C2B00A799C9 /* VoxelDrawSystem.cpp */; };
+		F1E65B6518AA0C2B00A799C9 /* VoxelSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B2118AA0C2B00A799C9 /* VoxelSystem.cpp */; };
+		F1E65B6618AA0C2B00A799C9 /* VoxEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B2318AA0C2B00A799C9 /* VoxEngine.cpp */; };
+		F1E65B6718AA0C2B00A799C9 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B2518AA0C2B00A799C9 /* Window.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		F135171E18A8A53A0078FDA4 /* Actor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Actor.cpp; path = ../../source/Actor.cpp; sourceTree = "<group>"; };
-		F135171F18A8A53A0078FDA4 /* Actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Actor.h; path = ../../source/Actor.h; sourceTree = "<group>"; };
-		F135172018A8A53A0078FDA4 /* ActorPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorPlayer.cpp; path = ../../source/ActorPlayer.cpp; sourceTree = "<group>"; };
-		F135172118A8A53A0078FDA4 /* ActorPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorPlayer.h; path = ../../source/ActorPlayer.h; sourceTree = "<group>"; };
-		F135172218A8A53A0078FDA4 /* ActorSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorSystem.cpp; path = ../../source/ActorSystem.cpp; sourceTree = "<group>"; };
-		F135172318A8A53A0078FDA4 /* ActorSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorSystem.h; path = ../../source/ActorSystem.h; sourceTree = "<group>"; };
-		F135172418A8A53A0078FDA4 /* AuxLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AuxLogger.cpp; path = ../../source/AuxLogger.cpp; sourceTree = "<group>"; };
-		F135172518A8A53A0078FDA4 /* AuxLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AuxLogger.h; path = ../../source/AuxLogger.h; sourceTree = "<group>"; };
-		F135172618A8A53A0078FDA4 /* BaseFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaseFrame.cpp; path = ../../source/BaseFrame.cpp; sourceTree = "<group>"; };
-		F135172718A8A53A0078FDA4 /* BaseFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseFrame.h; path = ../../source/BaseFrame.h; sourceTree = "<group>"; };
-		F135172818A8A53A0078FDA4 /* BasicVoxelRenderSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BasicVoxelRenderSystem.cpp; path = ../../source/BasicVoxelRenderSystem.cpp; sourceTree = "<group>"; };
-		F135172918A8A53A0078FDA4 /* BasicVoxelRenderSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BasicVoxelRenderSystem.h; path = ../../source/BasicVoxelRenderSystem.h; sourceTree = "<group>"; };
-		F135172A18A8A53A0078FDA4 /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Button.cpp; path = ../../source/Button.cpp; sourceTree = "<group>"; };
-		F135172B18A8A53A0078FDA4 /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Button.h; path = ../../source/Button.h; sourceTree = "<group>"; };
-		F135172C18A8A53A0078FDA4 /* ComboBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ComboBox.cpp; path = ../../source/ComboBox.cpp; sourceTree = "<group>"; };
-		F135172D18A8A53A0078FDA4 /* ComboBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ComboBox.h; path = ../../source/ComboBox.h; sourceTree = "<group>"; };
-		F135172E18A8A53A0078FDA4 /* Control.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Control.cpp; path = ../../source/Control.cpp; sourceTree = "<group>"; };
-		F135172F18A8A53A0078FDA4 /* Control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Control.h; path = ../../source/Control.h; sourceTree = "<group>"; };
-		F135173018A8A53A0078FDA4 /* ControlBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ControlBase.cpp; path = ../../source/ControlBase.cpp; sourceTree = "<group>"; };
-		F135173118A8A53A0078FDA4 /* ControlBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ControlBase.h; path = ../../source/ControlBase.h; sourceTree = "<group>"; };
-		F135173218A8A53A0078FDA4 /* DebugWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DebugWindow.cpp; path = ../../source/DebugWindow.cpp; sourceTree = "<group>"; };
-		F135173318A8A53A0078FDA4 /* DebugWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DebugWindow.h; path = ../../source/DebugWindow.h; sourceTree = "<group>"; };
-		F135173418A8A53A0078FDA4 /* ErrorWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ErrorWindow.cpp; path = ../../source/ErrorWindow.cpp; sourceTree = "<group>"; };
-		F135173518A8A53A0078FDA4 /* ErrorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ErrorWindow.h; path = ../../source/ErrorWindow.h; sourceTree = "<group>"; };
-		F135173618A8A53A0078FDA4 /* FirstPersonMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FirstPersonMode.cpp; path = ../../source/FirstPersonMode.cpp; sourceTree = "<group>"; };
-		F135173718A8A53A0078FDA4 /* FirstPersonMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FirstPersonMode.h; path = ../../source/FirstPersonMode.h; sourceTree = "<group>"; };
-		F135173818A8A53A0078FDA4 /* Font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Font.cpp; path = ../../source/Font.cpp; sourceTree = "<group>"; };
-		F135173918A8A53A0078FDA4 /* Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Font.h; path = ../../source/Font.h; sourceTree = "<group>"; };
-		F135173A18A8A53A0078FDA4 /* FPSCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FPSCounter.cpp; path = ../../source/FPSCounter.cpp; sourceTree = "<group>"; };
-		F135173B18A8A53A0078FDA4 /* FPSCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FPSCounter.h; path = ../../source/FPSCounter.h; sourceTree = "<group>"; };
-		F135173C18A8A53A0078FDA4 /* Frames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Frames.cpp; path = ../../source/Frames.cpp; sourceTree = "<group>"; };
-		F135173D18A8A53A0078FDA4 /* Frames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Frames.h; path = ../../source/Frames.h; sourceTree = "<group>"; };
-		F135173E18A8A53A0078FDA4 /* GameCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameCamera.cpp; path = ../../source/GameCamera.cpp; sourceTree = "<group>"; };
-		F135173F18A8A53A0078FDA4 /* GameCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameCamera.h; path = ../../source/GameCamera.h; sourceTree = "<group>"; };
-		F135174018A8A53A0078FDA4 /* GameEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameEvent.cpp; path = ../../source/GameEvent.cpp; sourceTree = "<group>"; };
-		F135174118A8A53A0078FDA4 /* GameEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameEvent.h; path = ../../source/GameEvent.h; sourceTree = "<group>"; };
-		F135174218A8A53A0078FDA4 /* GameEventInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameEventInterface.h; path = ../../source/GameEventInterface.h; sourceTree = "<group>"; };
-		F135174318A8A53A0078FDA4 /* GameEventSubscriber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameEventSubscriber.cpp; path = ../../source/GameEventSubscriber.cpp; sourceTree = "<group>"; };
-		F135174418A8A53A0078FDA4 /* GameEventSubscriber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameEventSubscriber.h; path = ../../source/GameEventSubscriber.h; sourceTree = "<group>"; };
-		F135174518A8A53A0078FDA4 /* GameSave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameSave.cpp; path = ../../source/GameSave.cpp; sourceTree = "<group>"; };
-		F135174618A8A53A0078FDA4 /* GameSave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameSave.h; path = ../../source/GameSave.h; sourceTree = "<group>"; };
-		F135174718A8A53A0078FDA4 /* GameSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameSystem.cpp; path = ../../source/GameSystem.cpp; sourceTree = "<group>"; };
-		F135174818A8A53A0078FDA4 /* GameSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameSystem.h; path = ../../source/GameSystem.h; sourceTree = "<group>"; };
-		F135174918A8A53A0078FDA4 /* GameTile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameTile.cpp; path = ../../source/GameTile.cpp; sourceTree = "<group>"; };
-		F135174A18A8A53A0078FDA4 /* GameTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameTile.h; path = ../../source/GameTile.h; sourceTree = "<group>"; };
-		F135174B18A8A53A0078FDA4 /* GL2DProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GL2DProgram.cpp; path = ../../source/GL2DProgram.cpp; sourceTree = "<group>"; };
-		F135174C18A8A53A0078FDA4 /* GL2DProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GL2DProgram.h; path = ../../source/GL2DProgram.h; sourceTree = "<group>"; };
-		F135174D18A8A53A0078FDA4 /* GL2DVertexGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GL2DVertexGroup.cpp; path = ../../source/GL2DVertexGroup.cpp; sourceTree = "<group>"; };
-		F135174E18A8A53A0078FDA4 /* GL2DVertexGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GL2DVertexGroup.h; path = ../../source/GL2DVertexGroup.h; sourceTree = "<group>"; };
-		F135174F18A8A53A0078FDA4 /* GL3DProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GL3DProgram.cpp; path = ../../source/GL3DProgram.cpp; sourceTree = "<group>"; };
-		F135175018A8A53A0078FDA4 /* GL3DProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GL3DProgram.h; path = ../../source/GL3DProgram.h; sourceTree = "<group>"; };
-		F135175118A8A53A0078FDA4 /* GLCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLCamera.cpp; path = ../../source/GLCamera.cpp; sourceTree = "<group>"; };
-		F135175218A8A53A0078FDA4 /* GLCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLCamera.h; path = ../../source/GLCamera.h; sourceTree = "<group>"; };
-		F135175318A8A53A0078FDA4 /* GLClipping.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLClipping.cpp; path = ../../source/GLClipping.cpp; sourceTree = "<group>"; };
-		F135175418A8A53A0078FDA4 /* GLClipping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLClipping.h; path = ../../source/GLClipping.h; sourceTree = "<group>"; };
-		F135175518A8A53A0078FDA4 /* GLCombinedMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLCombinedMatrix.cpp; path = ../../source/GLCombinedMatrix.cpp; sourceTree = "<group>"; };
-		F135175618A8A53A0078FDA4 /* GLCombinedMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLCombinedMatrix.h; path = ../../source/GLCombinedMatrix.h; sourceTree = "<group>"; };
-		F135175718A8A53A0078FDA4 /* GLCombinedModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLCombinedModel.cpp; path = ../../source/GLCombinedModel.cpp; sourceTree = "<group>"; };
-		F135175818A8A53A0078FDA4 /* GLCombinedModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLCombinedModel.h; path = ../../source/GLCombinedModel.h; sourceTree = "<group>"; };
-		F135175918A8A53A0078FDA4 /* GLCommonShaderFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLCommonShaderFile.cpp; path = ../../source/GLCommonShaderFile.cpp; sourceTree = "<group>"; };
-		F135175A18A8A53A0078FDA4 /* GLCommonShaderFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLCommonShaderFile.h; path = ../../source/GLCommonShaderFile.h; sourceTree = "<group>"; };
-		F135175B18A8A53A0078FDA4 /* GLFrameBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLFrameBuffer.cpp; path = ../../source/GLFrameBuffer.cpp; sourceTree = "<group>"; };
-		F135175C18A8A53A0078FDA4 /* GLFrameBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLFrameBuffer.h; path = ../../source/GLFrameBuffer.h; sourceTree = "<group>"; };
-		F135175D18A8A53A0078FDA4 /* GLLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLLight.cpp; path = ../../source/GLLight.cpp; sourceTree = "<group>"; };
-		F135175E18A8A53A0078FDA4 /* GLLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLLight.h; path = ../../source/GLLight.h; sourceTree = "<group>"; };
-		F135175F18A8A53A0078FDA4 /* GLLighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLLighting.cpp; path = ../../source/GLLighting.cpp; sourceTree = "<group>"; };
-		F135176018A8A53A0078FDA4 /* GLLighting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLLighting.h; path = ../../source/GLLighting.h; sourceTree = "<group>"; };
-		F135176118A8A53A0078FDA4 /* GLLightProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLLightProgram.h; path = ../../source/GLLightProgram.h; sourceTree = "<group>"; };
-		F135176218A8A53A0078FDA4 /* GLModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLModel.cpp; path = ../../source/GLModel.cpp; sourceTree = "<group>"; };
-		F135176318A8A53A0078FDA4 /* GLModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLModel.h; path = ../../source/GLModel.h; sourceTree = "<group>"; };
-		F135176418A8A53A0078FDA4 /* GLProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLProgram.cpp; path = ../../source/GLProgram.cpp; sourceTree = "<group>"; };
-		F135176518A8A53A0078FDA4 /* GLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLProgram.h; path = ../../source/GLProgram.h; sourceTree = "<group>"; };
-		F135176618A8A53A0078FDA4 /* GLShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLShader.cpp; path = ../../source/GLShader.cpp; sourceTree = "<group>"; };
-		F135176718A8A53A0078FDA4 /* GLShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLShader.h; path = ../../source/GLShader.h; sourceTree = "<group>"; };
-		F135176818A8A53A0078FDA4 /* GLTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLTriangle.h; path = ../../source/GLTriangle.h; sourceTree = "<group>"; };
-		F135176918A8A53A0078FDA4 /* GObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GObject.cpp; path = ../../source/GObject.cpp; sourceTree = "<group>"; };
-		F135176A18A8A53A0078FDA4 /* GObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GObject.h; path = ../../source/GObject.h; sourceTree = "<group>"; };
-		F135176B18A8A53A0078FDA4 /* InputEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputEvent.cpp; path = ../../source/InputEvent.cpp; sourceTree = "<group>"; };
-		F135176C18A8A53A0078FDA4 /* InputEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputEvent.h; path = ../../source/InputEvent.h; sourceTree = "<group>"; };
-		F135176D18A8A53A0078FDA4 /* InstancedVoxelRenderSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InstancedVoxelRenderSystem.cpp; path = ../../source/InstancedVoxelRenderSystem.cpp; sourceTree = "<group>"; };
-		F135176E18A8A53A0078FDA4 /* InstancedVoxelRenderSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstancedVoxelRenderSystem.h; path = ../../source/InstancedVoxelRenderSystem.h; sourceTree = "<group>"; };
-		F135176F18A8A53A0078FDA4 /* InterfaceGlobals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InterfaceGlobals.cpp; path = ../../source/InterfaceGlobals.cpp; sourceTree = "<group>"; };
-		F135177018A8A53A0078FDA4 /* InterfaceGlobals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterfaceGlobals.h; path = ../../source/InterfaceGlobals.h; sourceTree = "<group>"; };
-		F135177118A8A53A0078FDA4 /* IOSGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOSGL.h; path = ../../source/IOSGL.h; sourceTree = "<group>"; };
-		F135177218A8A53A0078FDA4 /* Label.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Label.cpp; path = ../../source/Label.cpp; sourceTree = "<group>"; };
-		F135177318A8A53A0078FDA4 /* Label.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Label.h; path = ../../source/Label.h; sourceTree = "<group>"; };
-		F135177418A8A53A0078FDA4 /* Letter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Letter.h; path = ../../source/Letter.h; sourceTree = "<group>"; };
-		F135177518A8A53A0078FDA4 /* Listbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Listbox.cpp; path = ../../source/Listbox.cpp; sourceTree = "<group>"; };
-		F135177618A8A53A0078FDA4 /* Listbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Listbox.h; path = ../../source/Listbox.h; sourceTree = "<group>"; };
-		F135177718A8A53A0078FDA4 /* LoadingScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoadingScreen.cpp; path = ../../source/LoadingScreen.cpp; sourceTree = "<group>"; };
-		F135177818A8A53A0078FDA4 /* LoadingScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoadingScreen.h; path = ../../source/LoadingScreen.h; sourceTree = "<group>"; };
-		F135177918A8A53A0078FDA4 /* lodepng.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lodepng.cpp; path = ../../source/lodepng.cpp; sourceTree = "<group>"; };
-		F135177A18A8A53A0078FDA4 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lodepng.h; path = ../../source/lodepng.h; sourceTree = "<group>"; };
-		F135177B18A8A53A0078FDA4 /* MaxDistanceFog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MaxDistanceFog.cpp; path = ../../source/MaxDistanceFog.cpp; sourceTree = "<group>"; };
-		F135177C18A8A53A0078FDA4 /* MaxDistanceFog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaxDistanceFog.h; path = ../../source/MaxDistanceFog.h; sourceTree = "<group>"; };
-		F135177D18A8A53A0078FDA4 /* NinePatchBinary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NinePatchBinary.cpp; path = ../../source/NinePatchBinary.cpp; sourceTree = "<group>"; };
-		F135177E18A8A53A0078FDA4 /* NinePatchBinary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NinePatchBinary.h; path = ../../source/NinePatchBinary.h; sourceTree = "<group>"; };
-		F135177F18A8A53A0078FDA4 /* noiseutils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = noiseutils.cpp; path = ../../source/noiseutils.cpp; sourceTree = "<group>"; };
-		F135178018A8A53A0078FDA4 /* noiseutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = noiseutils.h; path = ../../source/noiseutils.h; sourceTree = "<group>"; };
-		F135178118A8A53A0078FDA4 /* OS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OS.cpp; path = ../../source/OS.cpp; sourceTree = "<group>"; };
-		F135178218A8A53A0078FDA4 /* OS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OS.h; path = ../../source/OS.h; sourceTree = "<group>"; };
-		F135178318A8A53A0078FDA4 /* RasterizedText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RasterizedText.cpp; path = ../../source/RasterizedText.cpp; sourceTree = "<group>"; };
-		F135178418A8A53A0078FDA4 /* RasterizedText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RasterizedText.h; path = ../../source/RasterizedText.h; sourceTree = "<group>"; };
-		F135178518A8A53A0078FDA4 /* Rect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Rect.cpp; path = ../../source/Rect.cpp; sourceTree = "<group>"; };
-		F135178618A8A53A0078FDA4 /* Rect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rect.h; path = ../../source/Rect.h; sourceTree = "<group>"; };
-		F135178718A8A53A0078FDA4 /* ReflectionData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ReflectionData.cpp; path = ../../source/ReflectionData.cpp; sourceTree = "<group>"; };
-		F135178818A8A53A0078FDA4 /* ReflectionData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ReflectionData.h; path = ../../source/ReflectionData.h; sourceTree = "<group>"; };
-		F135178918A8A53A0078FDA4 /* Resource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Resource.h; path = ../../source/Resource.h; sourceTree = "<group>"; };
-		F135178A18A8A53A0078FDA4 /* ShaderGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderGroup.cpp; path = ../../source/ShaderGroup.cpp; sourceTree = "<group>"; };
-		F135178B18A8A53A0078FDA4 /* ShaderGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderGroup.h; path = ../../source/ShaderGroup.h; sourceTree = "<group>"; };
-		F135178C18A8A53A0078FDA4 /* Shape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Shape.cpp; path = ../../source/Shape.cpp; sourceTree = "<group>"; };
-		F135178D18A8A53A0078FDA4 /* Shape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Shape.h; path = ../../source/Shape.h; sourceTree = "<group>"; };
-		F135178E18A8A53A0078FDA4 /* stdafx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stdafx.cpp; path = ../../source/stdafx.cpp; sourceTree = "<group>"; };
-		F135178F18A8A53A0078FDA4 /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stdafx.h; path = ../../source/stdafx.h; sourceTree = "<group>"; };
-		F135179018A8A53A0078FDA4 /* TerrainGen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TerrainGen.cpp; path = ../../source/TerrainGen.cpp; sourceTree = "<group>"; };
-		F135179118A8A53A0078FDA4 /* TerrainGen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TerrainGen.h; path = ../../source/TerrainGen.h; sourceTree = "<group>"; };
-		F135179218A8A53A0078FDA4 /* Textbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Textbox.cpp; path = ../../source/Textbox.cpp; sourceTree = "<group>"; };
-		F135179318A8A53A0078FDA4 /* Textbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Textbox.h; path = ../../source/Textbox.h; sourceTree = "<group>"; };
-		F135179418A8A53A0078FDA4 /* TileCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileCell.h; path = ../../source/TileCell.h; sourceTree = "<group>"; };
-		F135179518A8A53A0078FDA4 /* Utilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Utilities.cpp; path = ../../source/Utilities.cpp; sourceTree = "<group>"; };
-		F135179618A8A53A0078FDA4 /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utilities.h; path = ../../source/Utilities.h; sourceTree = "<group>"; };
-		F135179718A8A53A0078FDA4 /* ViewDistanceCalc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewDistanceCalc.cpp; path = ../../source/ViewDistanceCalc.cpp; sourceTree = "<group>"; };
-		F135179818A8A53A0078FDA4 /* ViewDistanceCalc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewDistanceCalc.h; path = ../../source/ViewDistanceCalc.h; sourceTree = "<group>"; };
-		F135179918A8A53A0078FDA4 /* VoxelDrawSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VoxelDrawSystem.cpp; path = ../../source/VoxelDrawSystem.cpp; sourceTree = "<group>"; };
-		F135179A18A8A53A0078FDA4 /* VoxelDrawSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VoxelDrawSystem.h; path = ../../source/VoxelDrawSystem.h; sourceTree = "<group>"; };
-		F135179B18A8A53A0078FDA4 /* VoxelSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VoxelSystem.cpp; path = ../../source/VoxelSystem.cpp; sourceTree = "<group>"; };
-		F135179C18A8A53A0078FDA4 /* VoxelSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VoxelSystem.h; path = ../../source/VoxelSystem.h; sourceTree = "<group>"; };
-		F135179D18A8A53A0078FDA4 /* VoxEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VoxEngine.cpp; path = ../../source/VoxEngine.cpp; sourceTree = "<group>"; };
-		F135179E18A8A53A0078FDA4 /* VoxEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VoxEngine.h; path = ../../source/VoxEngine.h; sourceTree = "<group>"; };
-		F135179F18A8A53A0078FDA4 /* Window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Window.cpp; path = ../../source/Window.cpp; sourceTree = "<group>"; };
-		F13517A018A8A53A0078FDA4 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Window.h; path = ../../source/Window.h; sourceTree = "<group>"; };
 		F13517E418A8A5A20078FDA4 /* latlon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = latlon.cpp; path = ../../includes/libnoise/noise/latlon.cpp; sourceTree = "<group>"; };
 		F13517E518A8A5A20078FDA4 /* noisegen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = noisegen.cpp; path = ../../includes/libnoise/noise/noisegen.cpp; sourceTree = "<group>"; };
 		F13517E818A8A5AF0078FDA4 /* cylinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cylinder.cpp; path = ../../includes/libnoise/noise/model/cylinder.cpp; sourceTree = "<group>"; };
@@ -297,10 +171,6 @@
 		F136299418A59A050006A8BB /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		F136299618A59A0D0006A8BB /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		F136299918A59B780006A8BB /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		F1362A5918A86FCE0006A8BB /* libSDL2-simulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSDL2-simulator.a"; path = "libs/SDL2/libSDL2-simulator.a"; sourceTree = "<group>"; };
-		F1362A5A18A86FCE0006A8BB /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = libs/SDL2/libSDL2.a; sourceTree = "<group>"; };
-		F1362A5B18A86FCE0006A8BB /* SDL2_ttf_simulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = SDL2_ttf_simulator.a; path = libs/SDL2/SDL2_ttf_simulator.a; sourceTree = "<group>"; };
-		F1362A5C18A86FCE0006A8BB /* SDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = SDL2_ttf.a; path = libs/SDL2/SDL2_ttf.a; sourceTree = "<group>"; };
 		F1989FD418A58C3900A5165E /* VoxEngine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoxEngine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1989FD718A58C3900A5165E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F1989FD918A58C3900A5165E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -313,6 +183,150 @@
 		F1C6998F18A728FC00442752 /* Interface */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Interface; path = ../source/game/Interface; sourceTree = "<group>"; };
 		F1C6999018A728FC00442752 /* loading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = loading.png; path = ../source/game/loading.png; sourceTree = "<group>"; };
 		F1C6999118A728FC00442752 /* terrain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = terrain; path = ../source/game/terrain; sourceTree = "<group>"; };
+		F1E65A9118AA0BA300A799C9 /* libSDL2_mixer-simulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSDL2_mixer-simulator.a"; path = "../libs/ios/SDL2/libSDL2_mixer-simulator.a"; sourceTree = "<group>"; };
+		F1E65A9218AA0BA300A799C9 /* libSDL2_mixer.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_mixer.a; path = ../libs/ios/SDL2/libSDL2_mixer.a; sourceTree = "<group>"; };
+		F1E65A9318AA0BA300A799C9 /* libSDL2_ttf-simulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSDL2_ttf-simulator.a"; path = "../libs/ios/SDL2/libSDL2_ttf-simulator.a"; sourceTree = "<group>"; };
+		F1E65A9418AA0BA300A799C9 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../libs/ios/SDL2/libSDL2_ttf.a; sourceTree = "<group>"; };
+		F1E65A9518AA0BA300A799C9 /* libSDL2-simulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSDL2-simulator.a"; path = "../libs/ios/SDL2/libSDL2-simulator.a"; sourceTree = "<group>"; };
+		F1E65A9618AA0BA300A799C9 /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = ../libs/ios/SDL2/libSDL2.a; sourceTree = "<group>"; };
+		F1E65A9D18AA0C2B00A799C9 /* Actor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Actor.cpp; path = ../../source/Actor.cpp; sourceTree = "<group>"; };
+		F1E65A9E18AA0C2B00A799C9 /* Actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Actor.h; path = ../../source/Actor.h; sourceTree = "<group>"; };
+		F1E65A9F18AA0C2B00A799C9 /* ActorPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorPlayer.cpp; path = ../../source/ActorPlayer.cpp; sourceTree = "<group>"; };
+		F1E65AA018AA0C2B00A799C9 /* ActorPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorPlayer.h; path = ../../source/ActorPlayer.h; sourceTree = "<group>"; };
+		F1E65AA118AA0C2B00A799C9 /* ActorSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActorSystem.cpp; path = ../../source/ActorSystem.cpp; sourceTree = "<group>"; };
+		F1E65AA218AA0C2B00A799C9 /* ActorSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActorSystem.h; path = ../../source/ActorSystem.h; sourceTree = "<group>"; };
+		F1E65AA318AA0C2B00A799C9 /* Audio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Audio.cpp; path = ../../source/Audio.cpp; sourceTree = "<group>"; };
+		F1E65AA418AA0C2B00A799C9 /* Audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Audio.h; path = ../../source/Audio.h; sourceTree = "<group>"; };
+		F1E65AA518AA0C2B00A799C9 /* AudioHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioHeader.h; path = ../../source/AudioHeader.h; sourceTree = "<group>"; };
+		F1E65AA618AA0C2B00A799C9 /* AuxLogger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AuxLogger.cpp; path = ../../source/AuxLogger.cpp; sourceTree = "<group>"; };
+		F1E65AA718AA0C2B00A799C9 /* AuxLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AuxLogger.h; path = ../../source/AuxLogger.h; sourceTree = "<group>"; };
+		F1E65AA818AA0C2B00A799C9 /* BaseFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaseFrame.cpp; path = ../../source/BaseFrame.cpp; sourceTree = "<group>"; };
+		F1E65AA918AA0C2B00A799C9 /* BaseFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseFrame.h; path = ../../source/BaseFrame.h; sourceTree = "<group>"; };
+		F1E65AAA18AA0C2B00A799C9 /* BasicVoxelRenderSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BasicVoxelRenderSystem.cpp; path = ../../source/BasicVoxelRenderSystem.cpp; sourceTree = "<group>"; };
+		F1E65AAB18AA0C2B00A799C9 /* BasicVoxelRenderSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BasicVoxelRenderSystem.h; path = ../../source/BasicVoxelRenderSystem.h; sourceTree = "<group>"; };
+		F1E65AAC18AA0C2B00A799C9 /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Button.cpp; path = ../../source/Button.cpp; sourceTree = "<group>"; };
+		F1E65AAD18AA0C2B00A799C9 /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Button.h; path = ../../source/Button.h; sourceTree = "<group>"; };
+		F1E65AAE18AA0C2B00A799C9 /* ComboBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ComboBox.cpp; path = ../../source/ComboBox.cpp; sourceTree = "<group>"; };
+		F1E65AAF18AA0C2B00A799C9 /* ComboBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ComboBox.h; path = ../../source/ComboBox.h; sourceTree = "<group>"; };
+		F1E65AB018AA0C2B00A799C9 /* Control.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Control.cpp; path = ../../source/Control.cpp; sourceTree = "<group>"; };
+		F1E65AB118AA0C2B00A799C9 /* Control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Control.h; path = ../../source/Control.h; sourceTree = "<group>"; };
+		F1E65AB218AA0C2B00A799C9 /* ControlBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ControlBase.cpp; path = ../../source/ControlBase.cpp; sourceTree = "<group>"; };
+		F1E65AB318AA0C2B00A799C9 /* ControlBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ControlBase.h; path = ../../source/ControlBase.h; sourceTree = "<group>"; };
+		F1E65AB418AA0C2B00A799C9 /* DebugWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DebugWindow.cpp; path = ../../source/DebugWindow.cpp; sourceTree = "<group>"; };
+		F1E65AB518AA0C2B00A799C9 /* DebugWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DebugWindow.h; path = ../../source/DebugWindow.h; sourceTree = "<group>"; };
+		F1E65AB618AA0C2B00A799C9 /* Effect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Effect.cpp; path = ../../source/Effect.cpp; sourceTree = "<group>"; };
+		F1E65AB718AA0C2B00A799C9 /* Effect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effect.h; path = ../../source/Effect.h; sourceTree = "<group>"; };
+		F1E65AB818AA0C2B00A799C9 /* ErrorWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ErrorWindow.cpp; path = ../../source/ErrorWindow.cpp; sourceTree = "<group>"; };
+		F1E65AB918AA0C2B00A799C9 /* ErrorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ErrorWindow.h; path = ../../source/ErrorWindow.h; sourceTree = "<group>"; };
+		F1E65ABA18AA0C2B00A799C9 /* FirstPersonMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FirstPersonMode.cpp; path = ../../source/FirstPersonMode.cpp; sourceTree = "<group>"; };
+		F1E65ABB18AA0C2B00A799C9 /* FirstPersonMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FirstPersonMode.h; path = ../../source/FirstPersonMode.h; sourceTree = "<group>"; };
+		F1E65ABC18AA0C2B00A799C9 /* Font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Font.cpp; path = ../../source/Font.cpp; sourceTree = "<group>"; };
+		F1E65ABD18AA0C2B00A799C9 /* Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Font.h; path = ../../source/Font.h; sourceTree = "<group>"; };
+		F1E65ABE18AA0C2B00A799C9 /* FPSCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FPSCounter.cpp; path = ../../source/FPSCounter.cpp; sourceTree = "<group>"; };
+		F1E65ABF18AA0C2B00A799C9 /* FPSCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FPSCounter.h; path = ../../source/FPSCounter.h; sourceTree = "<group>"; };
+		F1E65AC018AA0C2B00A799C9 /* Frames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Frames.cpp; path = ../../source/Frames.cpp; sourceTree = "<group>"; };
+		F1E65AC118AA0C2B00A799C9 /* Frames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Frames.h; path = ../../source/Frames.h; sourceTree = "<group>"; };
+		F1E65AC218AA0C2B00A799C9 /* GameCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameCamera.cpp; path = ../../source/GameCamera.cpp; sourceTree = "<group>"; };
+		F1E65AC318AA0C2B00A799C9 /* GameCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameCamera.h; path = ../../source/GameCamera.h; sourceTree = "<group>"; };
+		F1E65AC418AA0C2B00A799C9 /* GameEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameEvent.cpp; path = ../../source/GameEvent.cpp; sourceTree = "<group>"; };
+		F1E65AC518AA0C2B00A799C9 /* GameEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameEvent.h; path = ../../source/GameEvent.h; sourceTree = "<group>"; };
+		F1E65AC618AA0C2B00A799C9 /* GameEventInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameEventInterface.h; path = ../../source/GameEventInterface.h; sourceTree = "<group>"; };
+		F1E65AC718AA0C2B00A799C9 /* GameEventSubscriber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameEventSubscriber.cpp; path = ../../source/GameEventSubscriber.cpp; sourceTree = "<group>"; };
+		F1E65AC818AA0C2B00A799C9 /* GameEventSubscriber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameEventSubscriber.h; path = ../../source/GameEventSubscriber.h; sourceTree = "<group>"; };
+		F1E65AC918AA0C2B00A799C9 /* GameSave.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameSave.cpp; path = ../../source/GameSave.cpp; sourceTree = "<group>"; };
+		F1E65ACA18AA0C2B00A799C9 /* GameSave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameSave.h; path = ../../source/GameSave.h; sourceTree = "<group>"; };
+		F1E65ACB18AA0C2B00A799C9 /* GameSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameSystem.cpp; path = ../../source/GameSystem.cpp; sourceTree = "<group>"; };
+		F1E65ACC18AA0C2B00A799C9 /* GameSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameSystem.h; path = ../../source/GameSystem.h; sourceTree = "<group>"; };
+		F1E65ACD18AA0C2B00A799C9 /* GameTile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameTile.cpp; path = ../../source/GameTile.cpp; sourceTree = "<group>"; };
+		F1E65ACE18AA0C2B00A799C9 /* GameTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameTile.h; path = ../../source/GameTile.h; sourceTree = "<group>"; };
+		F1E65ACF18AA0C2B00A799C9 /* GL2DProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GL2DProgram.cpp; path = ../../source/GL2DProgram.cpp; sourceTree = "<group>"; };
+		F1E65AD018AA0C2B00A799C9 /* GL2DProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GL2DProgram.h; path = ../../source/GL2DProgram.h; sourceTree = "<group>"; };
+		F1E65AD118AA0C2B00A799C9 /* GL2DVertexGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GL2DVertexGroup.cpp; path = ../../source/GL2DVertexGroup.cpp; sourceTree = "<group>"; };
+		F1E65AD218AA0C2B00A799C9 /* GL2DVertexGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GL2DVertexGroup.h; path = ../../source/GL2DVertexGroup.h; sourceTree = "<group>"; };
+		F1E65AD318AA0C2B00A799C9 /* GL3DProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GL3DProgram.cpp; path = ../../source/GL3DProgram.cpp; sourceTree = "<group>"; };
+		F1E65AD418AA0C2B00A799C9 /* GL3DProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GL3DProgram.h; path = ../../source/GL3DProgram.h; sourceTree = "<group>"; };
+		F1E65AD518AA0C2B00A799C9 /* GLCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLCamera.cpp; path = ../../source/GLCamera.cpp; sourceTree = "<group>"; };
+		F1E65AD618AA0C2B00A799C9 /* GLCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLCamera.h; path = ../../source/GLCamera.h; sourceTree = "<group>"; };
+		F1E65AD718AA0C2B00A799C9 /* GLClipping.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLClipping.cpp; path = ../../source/GLClipping.cpp; sourceTree = "<group>"; };
+		F1E65AD818AA0C2B00A799C9 /* GLClipping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLClipping.h; path = ../../source/GLClipping.h; sourceTree = "<group>"; };
+		F1E65AD918AA0C2B00A799C9 /* GLCombinedMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLCombinedMatrix.cpp; path = ../../source/GLCombinedMatrix.cpp; sourceTree = "<group>"; };
+		F1E65ADA18AA0C2B00A799C9 /* GLCombinedMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLCombinedMatrix.h; path = ../../source/GLCombinedMatrix.h; sourceTree = "<group>"; };
+		F1E65ADB18AA0C2B00A799C9 /* GLCombinedModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLCombinedModel.cpp; path = ../../source/GLCombinedModel.cpp; sourceTree = "<group>"; };
+		F1E65ADC18AA0C2B00A799C9 /* GLCombinedModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLCombinedModel.h; path = ../../source/GLCombinedModel.h; sourceTree = "<group>"; };
+		F1E65ADD18AA0C2B00A799C9 /* GLCommonShaderFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLCommonShaderFile.cpp; path = ../../source/GLCommonShaderFile.cpp; sourceTree = "<group>"; };
+		F1E65ADE18AA0C2B00A799C9 /* GLCommonShaderFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLCommonShaderFile.h; path = ../../source/GLCommonShaderFile.h; sourceTree = "<group>"; };
+		F1E65ADF18AA0C2B00A799C9 /* GLFrameBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLFrameBuffer.cpp; path = ../../source/GLFrameBuffer.cpp; sourceTree = "<group>"; };
+		F1E65AE018AA0C2B00A799C9 /* GLFrameBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLFrameBuffer.h; path = ../../source/GLFrameBuffer.h; sourceTree = "<group>"; };
+		F1E65AE118AA0C2B00A799C9 /* GLLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLLight.cpp; path = ../../source/GLLight.cpp; sourceTree = "<group>"; };
+		F1E65AE218AA0C2B00A799C9 /* GLLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLLight.h; path = ../../source/GLLight.h; sourceTree = "<group>"; };
+		F1E65AE318AA0C2B00A799C9 /* GLLighting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLLighting.cpp; path = ../../source/GLLighting.cpp; sourceTree = "<group>"; };
+		F1E65AE418AA0C2B00A799C9 /* GLLighting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLLighting.h; path = ../../source/GLLighting.h; sourceTree = "<group>"; };
+		F1E65AE518AA0C2B00A799C9 /* GLLightProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLLightProgram.h; path = ../../source/GLLightProgram.h; sourceTree = "<group>"; };
+		F1E65AE618AA0C2B00A799C9 /* GLModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLModel.cpp; path = ../../source/GLModel.cpp; sourceTree = "<group>"; };
+		F1E65AE718AA0C2B00A799C9 /* GLModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLModel.h; path = ../../source/GLModel.h; sourceTree = "<group>"; };
+		F1E65AE818AA0C2B00A799C9 /* GLProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLProgram.cpp; path = ../../source/GLProgram.cpp; sourceTree = "<group>"; };
+		F1E65AE918AA0C2B00A799C9 /* GLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLProgram.h; path = ../../source/GLProgram.h; sourceTree = "<group>"; };
+		F1E65AEA18AA0C2B00A799C9 /* GLShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLShader.cpp; path = ../../source/GLShader.cpp; sourceTree = "<group>"; };
+		F1E65AEB18AA0C2B00A799C9 /* GLShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLShader.h; path = ../../source/GLShader.h; sourceTree = "<group>"; };
+		F1E65AEC18AA0C2B00A799C9 /* GLTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLTriangle.h; path = ../../source/GLTriangle.h; sourceTree = "<group>"; };
+		F1E65AED18AA0C2B00A799C9 /* GObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GObject.cpp; path = ../../source/GObject.cpp; sourceTree = "<group>"; };
+		F1E65AEE18AA0C2B00A799C9 /* GObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GObject.h; path = ../../source/GObject.h; sourceTree = "<group>"; };
+		F1E65AEF18AA0C2B00A799C9 /* InputEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputEvent.cpp; path = ../../source/InputEvent.cpp; sourceTree = "<group>"; };
+		F1E65AF018AA0C2B00A799C9 /* InputEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputEvent.h; path = ../../source/InputEvent.h; sourceTree = "<group>"; };
+		F1E65AF118AA0C2B00A799C9 /* InstancedVoxelRenderSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InstancedVoxelRenderSystem.cpp; path = ../../source/InstancedVoxelRenderSystem.cpp; sourceTree = "<group>"; };
+		F1E65AF218AA0C2B00A799C9 /* InstancedVoxelRenderSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstancedVoxelRenderSystem.h; path = ../../source/InstancedVoxelRenderSystem.h; sourceTree = "<group>"; };
+		F1E65AF318AA0C2B00A799C9 /* InterfaceGlobals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InterfaceGlobals.cpp; path = ../../source/InterfaceGlobals.cpp; sourceTree = "<group>"; };
+		F1E65AF418AA0C2B00A799C9 /* InterfaceGlobals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterfaceGlobals.h; path = ../../source/InterfaceGlobals.h; sourceTree = "<group>"; };
+		F1E65AF518AA0C2B00A799C9 /* IOSGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IOSGL.h; path = ../../source/IOSGL.h; sourceTree = "<group>"; };
+		F1E65AF618AA0C2B00A799C9 /* Label.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Label.cpp; path = ../../source/Label.cpp; sourceTree = "<group>"; };
+		F1E65AF718AA0C2B00A799C9 /* Label.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Label.h; path = ../../source/Label.h; sourceTree = "<group>"; };
+		F1E65AF818AA0C2B00A799C9 /* Letter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Letter.h; path = ../../source/Letter.h; sourceTree = "<group>"; };
+		F1E65AF918AA0C2B00A799C9 /* Listbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Listbox.cpp; path = ../../source/Listbox.cpp; sourceTree = "<group>"; };
+		F1E65AFA18AA0C2B00A799C9 /* Listbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Listbox.h; path = ../../source/Listbox.h; sourceTree = "<group>"; };
+		F1E65AFB18AA0C2B00A799C9 /* LoadingScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoadingScreen.cpp; path = ../../source/LoadingScreen.cpp; sourceTree = "<group>"; };
+		F1E65AFC18AA0C2B00A799C9 /* LoadingScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoadingScreen.h; path = ../../source/LoadingScreen.h; sourceTree = "<group>"; };
+		F1E65AFD18AA0C2B00A799C9 /* lodepng.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lodepng.cpp; path = ../../source/lodepng.cpp; sourceTree = "<group>"; };
+		F1E65AFE18AA0C2B00A799C9 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = lodepng.h; path = ../../source/lodepng.h; sourceTree = "<group>"; };
+		F1E65AFF18AA0C2B00A799C9 /* MaxDistanceFog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MaxDistanceFog.cpp; path = ../../source/MaxDistanceFog.cpp; sourceTree = "<group>"; };
+		F1E65B0018AA0C2B00A799C9 /* MaxDistanceFog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaxDistanceFog.h; path = ../../source/MaxDistanceFog.h; sourceTree = "<group>"; };
+		F1E65B0118AA0C2B00A799C9 /* Music.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Music.cpp; path = ../../source/Music.cpp; sourceTree = "<group>"; };
+		F1E65B0218AA0C2B00A799C9 /* Music.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Music.h; path = ../../source/Music.h; sourceTree = "<group>"; };
+		F1E65B0318AA0C2B00A799C9 /* NinePatchBinary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NinePatchBinary.cpp; path = ../../source/NinePatchBinary.cpp; sourceTree = "<group>"; };
+		F1E65B0418AA0C2B00A799C9 /* NinePatchBinary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NinePatchBinary.h; path = ../../source/NinePatchBinary.h; sourceTree = "<group>"; };
+		F1E65B0518AA0C2B00A799C9 /* noiseutils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = noiseutils.cpp; path = ../../source/noiseutils.cpp; sourceTree = "<group>"; };
+		F1E65B0618AA0C2B00A799C9 /* noiseutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = noiseutils.h; path = ../../source/noiseutils.h; sourceTree = "<group>"; };
+		F1E65B0718AA0C2B00A799C9 /* OS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OS.cpp; path = ../../source/OS.cpp; sourceTree = "<group>"; };
+		F1E65B0818AA0C2B00A799C9 /* OS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OS.h; path = ../../source/OS.h; sourceTree = "<group>"; };
+		F1E65B0918AA0C2B00A799C9 /* RasterizedText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RasterizedText.cpp; path = ../../source/RasterizedText.cpp; sourceTree = "<group>"; };
+		F1E65B0A18AA0C2B00A799C9 /* RasterizedText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RasterizedText.h; path = ../../source/RasterizedText.h; sourceTree = "<group>"; };
+		F1E65B0B18AA0C2B00A799C9 /* Rect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Rect.cpp; path = ../../source/Rect.cpp; sourceTree = "<group>"; };
+		F1E65B0C18AA0C2B00A799C9 /* Rect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rect.h; path = ../../source/Rect.h; sourceTree = "<group>"; };
+		F1E65B0D18AA0C2B00A799C9 /* ReflectionData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ReflectionData.cpp; path = ../../source/ReflectionData.cpp; sourceTree = "<group>"; };
+		F1E65B0E18AA0C2B00A799C9 /* ReflectionData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ReflectionData.h; path = ../../source/ReflectionData.h; sourceTree = "<group>"; };
+		F1E65B0F18AA0C2B00A799C9 /* Resource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Resource.h; path = ../../source/Resource.h; sourceTree = "<group>"; };
+		F1E65B1018AA0C2B00A799C9 /* ShaderGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShaderGroup.cpp; path = ../../source/ShaderGroup.cpp; sourceTree = "<group>"; };
+		F1E65B1118AA0C2B00A799C9 /* ShaderGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShaderGroup.h; path = ../../source/ShaderGroup.h; sourceTree = "<group>"; };
+		F1E65B1218AA0C2B00A799C9 /* Shape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Shape.cpp; path = ../../source/Shape.cpp; sourceTree = "<group>"; };
+		F1E65B1318AA0C2B00A799C9 /* Shape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Shape.h; path = ../../source/Shape.h; sourceTree = "<group>"; };
+		F1E65B1418AA0C2B00A799C9 /* stdafx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stdafx.cpp; path = ../../source/stdafx.cpp; sourceTree = "<group>"; };
+		F1E65B1518AA0C2B00A799C9 /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stdafx.h; path = ../../source/stdafx.h; sourceTree = "<group>"; };
+		F1E65B1618AA0C2B00A799C9 /* TerrainGen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TerrainGen.cpp; path = ../../source/TerrainGen.cpp; sourceTree = "<group>"; };
+		F1E65B1718AA0C2B00A799C9 /* TerrainGen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TerrainGen.h; path = ../../source/TerrainGen.h; sourceTree = "<group>"; };
+		F1E65B1818AA0C2B00A799C9 /* Textbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Textbox.cpp; path = ../../source/Textbox.cpp; sourceTree = "<group>"; };
+		F1E65B1918AA0C2B00A799C9 /* Textbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Textbox.h; path = ../../source/Textbox.h; sourceTree = "<group>"; };
+		F1E65B1A18AA0C2B00A799C9 /* TileCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileCell.h; path = ../../source/TileCell.h; sourceTree = "<group>"; };
+		F1E65B1B18AA0C2B00A799C9 /* Utilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Utilities.cpp; path = ../../source/Utilities.cpp; sourceTree = "<group>"; };
+		F1E65B1C18AA0C2B00A799C9 /* Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utilities.h; path = ../../source/Utilities.h; sourceTree = "<group>"; };
+		F1E65B1D18AA0C2B00A799C9 /* ViewDistanceCalc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewDistanceCalc.cpp; path = ../../source/ViewDistanceCalc.cpp; sourceTree = "<group>"; };
+		F1E65B1E18AA0C2B00A799C9 /* ViewDistanceCalc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewDistanceCalc.h; path = ../../source/ViewDistanceCalc.h; sourceTree = "<group>"; };
+		F1E65B1F18AA0C2B00A799C9 /* VoxelDrawSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VoxelDrawSystem.cpp; path = ../../source/VoxelDrawSystem.cpp; sourceTree = "<group>"; };
+		F1E65B2018AA0C2B00A799C9 /* VoxelDrawSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VoxelDrawSystem.h; path = ../../source/VoxelDrawSystem.h; sourceTree = "<group>"; };
+		F1E65B2118AA0C2B00A799C9 /* VoxelSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VoxelSystem.cpp; path = ../../source/VoxelSystem.cpp; sourceTree = "<group>"; };
+		F1E65B2218AA0C2B00A799C9 /* VoxelSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VoxelSystem.h; path = ../../source/VoxelSystem.h; sourceTree = "<group>"; };
+		F1E65B2318AA0C2B00A799C9 /* VoxEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VoxEngine.cpp; path = ../../source/VoxEngine.cpp; sourceTree = "<group>"; };
+		F1E65B2418AA0C2B00A799C9 /* VoxEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VoxEngine.h; path = ../../source/VoxEngine.h; sourceTree = "<group>"; };
+		F1E65B2518AA0C2B00A799C9 /* Window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Window.cpp; path = ../../source/Window.cpp; sourceTree = "<group>"; };
+		F1E65B2618AA0C2B00A799C9 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Window.h; path = ../../source/Window.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -320,10 +334,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1362A5D18A86FCE0006A8BB /* libSDL2-simulator.a in Frameworks */,
-				F1362A5E18A86FCE0006A8BB /* libSDL2.a in Frameworks */,
-				F1362A5F18A86FCE0006A8BB /* SDL2_ttf_simulator.a in Frameworks */,
-				F1362A6018A86FCE0006A8BB /* SDL2_ttf.a in Frameworks */,
+				F1E65A9C18AA0BA300A799C9 /* libSDL2.a in Frameworks */,
+				F1E65A9A18AA0BA300A799C9 /* libSDL2_ttf.a in Frameworks */,
+				F1E65A9818AA0BA300A799C9 /* libSDL2_mixer.a in Frameworks */,
+				F1E65A9B18AA0BA300A799C9 /* libSDL2-simulator.a in Frameworks */,
+				F1E65A9918AA0BA300A799C9 /* libSDL2_ttf-simulator.a in Frameworks */,
+				F1E65A9718AA0BA300A799C9 /* libSDL2_mixer-simulator.a in Frameworks */,
 				F136299C18A59BE70006A8BB /* QuartzCore.framework in Frameworks */,
 				F136299B18A59BB40006A8BB /* CoreGraphics.framework in Frameworks */,
 				F136299118A599E20006A8BB /* CoreAudio.framework in Frameworks */,
@@ -412,10 +428,12 @@
 		F1989FD618A58C3900A5165E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F1362A5918A86FCE0006A8BB /* libSDL2-simulator.a */,
-				F1362A5A18A86FCE0006A8BB /* libSDL2.a */,
-				F1362A5B18A86FCE0006A8BB /* SDL2_ttf_simulator.a */,
-				F1362A5C18A86FCE0006A8BB /* SDL2_ttf.a */,
+				F1E65A9618AA0BA300A799C9 /* libSDL2.a */,
+				F1E65A9418AA0BA300A799C9 /* libSDL2_ttf.a */,
+				F1E65A9218AA0BA300A799C9 /* libSDL2_mixer.a */,
+				F1E65A9518AA0BA300A799C9 /* libSDL2-simulator.a */,
+				F1E65A9318AA0BA300A799C9 /* libSDL2_ttf-simulator.a */,
+				F1E65A9118AA0BA300A799C9 /* libSDL2_mixer-simulator.a */,
 				F136299918A59B780006A8BB /* QuartzCore.framework */,
 				F136299618A59A0D0006A8BB /* AudioUnit.framework */,
 				F136299418A59A050006A8BB /* AudioToolbox.framework */,
@@ -432,137 +450,144 @@
 		F1989FDD18A58C3900A5165E /* VoxEngine */ = {
 			isa = PBXGroup;
 			children = (
-				F135171E18A8A53A0078FDA4 /* Actor.cpp */,
-				F135171F18A8A53A0078FDA4 /* Actor.h */,
-				F135172018A8A53A0078FDA4 /* ActorPlayer.cpp */,
-				F135172118A8A53A0078FDA4 /* ActorPlayer.h */,
-				F135172218A8A53A0078FDA4 /* ActorSystem.cpp */,
-				F135172318A8A53A0078FDA4 /* ActorSystem.h */,
-				F135172418A8A53A0078FDA4 /* AuxLogger.cpp */,
-				F135172518A8A53A0078FDA4 /* AuxLogger.h */,
-				F135172618A8A53A0078FDA4 /* BaseFrame.cpp */,
-				F135172718A8A53A0078FDA4 /* BaseFrame.h */,
-				F135172818A8A53A0078FDA4 /* BasicVoxelRenderSystem.cpp */,
-				F135172918A8A53A0078FDA4 /* BasicVoxelRenderSystem.h */,
-				F135172A18A8A53A0078FDA4 /* Button.cpp */,
-				F135172B18A8A53A0078FDA4 /* Button.h */,
-				F135172C18A8A53A0078FDA4 /* ComboBox.cpp */,
-				F135172D18A8A53A0078FDA4 /* ComboBox.h */,
-				F135172E18A8A53A0078FDA4 /* Control.cpp */,
-				F135172F18A8A53A0078FDA4 /* Control.h */,
-				F135173018A8A53A0078FDA4 /* ControlBase.cpp */,
-				F135173118A8A53A0078FDA4 /* ControlBase.h */,
-				F135173218A8A53A0078FDA4 /* DebugWindow.cpp */,
-				F135173318A8A53A0078FDA4 /* DebugWindow.h */,
-				F135173418A8A53A0078FDA4 /* ErrorWindow.cpp */,
-				F135173518A8A53A0078FDA4 /* ErrorWindow.h */,
-				F135173618A8A53A0078FDA4 /* FirstPersonMode.cpp */,
-				F135173718A8A53A0078FDA4 /* FirstPersonMode.h */,
-				F135173818A8A53A0078FDA4 /* Font.cpp */,
-				F135173918A8A53A0078FDA4 /* Font.h */,
-				F135173A18A8A53A0078FDA4 /* FPSCounter.cpp */,
-				F135173B18A8A53A0078FDA4 /* FPSCounter.h */,
-				F135173C18A8A53A0078FDA4 /* Frames.cpp */,
-				F135173D18A8A53A0078FDA4 /* Frames.h */,
-				F135173E18A8A53A0078FDA4 /* GameCamera.cpp */,
-				F135173F18A8A53A0078FDA4 /* GameCamera.h */,
-				F135174018A8A53A0078FDA4 /* GameEvent.cpp */,
-				F135174118A8A53A0078FDA4 /* GameEvent.h */,
-				F135174218A8A53A0078FDA4 /* GameEventInterface.h */,
-				F135174318A8A53A0078FDA4 /* GameEventSubscriber.cpp */,
-				F135174418A8A53A0078FDA4 /* GameEventSubscriber.h */,
-				F135174518A8A53A0078FDA4 /* GameSave.cpp */,
-				F135174618A8A53A0078FDA4 /* GameSave.h */,
-				F135174718A8A53A0078FDA4 /* GameSystem.cpp */,
-				F135174818A8A53A0078FDA4 /* GameSystem.h */,
-				F135174918A8A53A0078FDA4 /* GameTile.cpp */,
-				F135174A18A8A53A0078FDA4 /* GameTile.h */,
-				F135174B18A8A53A0078FDA4 /* GL2DProgram.cpp */,
-				F135174C18A8A53A0078FDA4 /* GL2DProgram.h */,
-				F135174D18A8A53A0078FDA4 /* GL2DVertexGroup.cpp */,
-				F135174E18A8A53A0078FDA4 /* GL2DVertexGroup.h */,
-				F135174F18A8A53A0078FDA4 /* GL3DProgram.cpp */,
-				F135175018A8A53A0078FDA4 /* GL3DProgram.h */,
-				F135175118A8A53A0078FDA4 /* GLCamera.cpp */,
-				F135175218A8A53A0078FDA4 /* GLCamera.h */,
-				F135175318A8A53A0078FDA4 /* GLClipping.cpp */,
-				F135175418A8A53A0078FDA4 /* GLClipping.h */,
-				F135175518A8A53A0078FDA4 /* GLCombinedMatrix.cpp */,
-				F135175618A8A53A0078FDA4 /* GLCombinedMatrix.h */,
-				F135175718A8A53A0078FDA4 /* GLCombinedModel.cpp */,
-				F135175818A8A53A0078FDA4 /* GLCombinedModel.h */,
-				F135175918A8A53A0078FDA4 /* GLCommonShaderFile.cpp */,
-				F135175A18A8A53A0078FDA4 /* GLCommonShaderFile.h */,
-				F135175B18A8A53A0078FDA4 /* GLFrameBuffer.cpp */,
-				F135175C18A8A53A0078FDA4 /* GLFrameBuffer.h */,
-				F135175D18A8A53A0078FDA4 /* GLLight.cpp */,
-				F135175E18A8A53A0078FDA4 /* GLLight.h */,
-				F135175F18A8A53A0078FDA4 /* GLLighting.cpp */,
-				F135176018A8A53A0078FDA4 /* GLLighting.h */,
-				F135176118A8A53A0078FDA4 /* GLLightProgram.h */,
-				F135176218A8A53A0078FDA4 /* GLModel.cpp */,
-				F135176318A8A53A0078FDA4 /* GLModel.h */,
-				F135176418A8A53A0078FDA4 /* GLProgram.cpp */,
-				F135176518A8A53A0078FDA4 /* GLProgram.h */,
-				F135176618A8A53A0078FDA4 /* GLShader.cpp */,
-				F135176718A8A53A0078FDA4 /* GLShader.h */,
-				F135176818A8A53A0078FDA4 /* GLTriangle.h */,
-				F135176918A8A53A0078FDA4 /* GObject.cpp */,
-				F135176A18A8A53A0078FDA4 /* GObject.h */,
-				F135176B18A8A53A0078FDA4 /* InputEvent.cpp */,
-				F135176C18A8A53A0078FDA4 /* InputEvent.h */,
-				F135176D18A8A53A0078FDA4 /* InstancedVoxelRenderSystem.cpp */,
-				F135176E18A8A53A0078FDA4 /* InstancedVoxelRenderSystem.h */,
-				F135176F18A8A53A0078FDA4 /* InterfaceGlobals.cpp */,
-				F135177018A8A53A0078FDA4 /* InterfaceGlobals.h */,
-				F135177118A8A53A0078FDA4 /* IOSGL.h */,
-				F135177218A8A53A0078FDA4 /* Label.cpp */,
-				F135177318A8A53A0078FDA4 /* Label.h */,
-				F135177418A8A53A0078FDA4 /* Letter.h */,
-				F135177518A8A53A0078FDA4 /* Listbox.cpp */,
-				F135177618A8A53A0078FDA4 /* Listbox.h */,
-				F135177718A8A53A0078FDA4 /* LoadingScreen.cpp */,
-				F135177818A8A53A0078FDA4 /* LoadingScreen.h */,
-				F135177918A8A53A0078FDA4 /* lodepng.cpp */,
-				F135177A18A8A53A0078FDA4 /* lodepng.h */,
-				F135177B18A8A53A0078FDA4 /* MaxDistanceFog.cpp */,
-				F135177C18A8A53A0078FDA4 /* MaxDistanceFog.h */,
-				F135177D18A8A53A0078FDA4 /* NinePatchBinary.cpp */,
-				F135177E18A8A53A0078FDA4 /* NinePatchBinary.h */,
-				F135177F18A8A53A0078FDA4 /* noiseutils.cpp */,
-				F135178018A8A53A0078FDA4 /* noiseutils.h */,
-				F135178118A8A53A0078FDA4 /* OS.cpp */,
-				F135178218A8A53A0078FDA4 /* OS.h */,
-				F135178318A8A53A0078FDA4 /* RasterizedText.cpp */,
-				F135178418A8A53A0078FDA4 /* RasterizedText.h */,
-				F135178518A8A53A0078FDA4 /* Rect.cpp */,
-				F135178618A8A53A0078FDA4 /* Rect.h */,
-				F135178718A8A53A0078FDA4 /* ReflectionData.cpp */,
-				F135178818A8A53A0078FDA4 /* ReflectionData.h */,
-				F135178918A8A53A0078FDA4 /* Resource.h */,
-				F135178A18A8A53A0078FDA4 /* ShaderGroup.cpp */,
-				F135178B18A8A53A0078FDA4 /* ShaderGroup.h */,
-				F135178C18A8A53A0078FDA4 /* Shape.cpp */,
-				F135178D18A8A53A0078FDA4 /* Shape.h */,
-				F135178E18A8A53A0078FDA4 /* stdafx.cpp */,
-				F135178F18A8A53A0078FDA4 /* stdafx.h */,
-				F135179018A8A53A0078FDA4 /* TerrainGen.cpp */,
-				F135179118A8A53A0078FDA4 /* TerrainGen.h */,
-				F135179218A8A53A0078FDA4 /* Textbox.cpp */,
-				F135179318A8A53A0078FDA4 /* Textbox.h */,
-				F135179418A8A53A0078FDA4 /* TileCell.h */,
-				F135179518A8A53A0078FDA4 /* Utilities.cpp */,
-				F135179618A8A53A0078FDA4 /* Utilities.h */,
-				F135179718A8A53A0078FDA4 /* ViewDistanceCalc.cpp */,
-				F135179818A8A53A0078FDA4 /* ViewDistanceCalc.h */,
-				F135179918A8A53A0078FDA4 /* VoxelDrawSystem.cpp */,
-				F135179A18A8A53A0078FDA4 /* VoxelDrawSystem.h */,
-				F135179B18A8A53A0078FDA4 /* VoxelSystem.cpp */,
-				F135179C18A8A53A0078FDA4 /* VoxelSystem.h */,
-				F135179D18A8A53A0078FDA4 /* VoxEngine.cpp */,
-				F135179E18A8A53A0078FDA4 /* VoxEngine.h */,
-				F135179F18A8A53A0078FDA4 /* Window.cpp */,
-				F13517A018A8A53A0078FDA4 /* Window.h */,
+				F1E65A9D18AA0C2B00A799C9 /* Actor.cpp */,
+				F1E65A9E18AA0C2B00A799C9 /* Actor.h */,
+				F1E65A9F18AA0C2B00A799C9 /* ActorPlayer.cpp */,
+				F1E65AA018AA0C2B00A799C9 /* ActorPlayer.h */,
+				F1E65AA118AA0C2B00A799C9 /* ActorSystem.cpp */,
+				F1E65AA218AA0C2B00A799C9 /* ActorSystem.h */,
+				F1E65AA318AA0C2B00A799C9 /* Audio.cpp */,
+				F1E65AA418AA0C2B00A799C9 /* Audio.h */,
+				F1E65AA518AA0C2B00A799C9 /* AudioHeader.h */,
+				F1E65AA618AA0C2B00A799C9 /* AuxLogger.cpp */,
+				F1E65AA718AA0C2B00A799C9 /* AuxLogger.h */,
+				F1E65AA818AA0C2B00A799C9 /* BaseFrame.cpp */,
+				F1E65AA918AA0C2B00A799C9 /* BaseFrame.h */,
+				F1E65AAA18AA0C2B00A799C9 /* BasicVoxelRenderSystem.cpp */,
+				F1E65AAB18AA0C2B00A799C9 /* BasicVoxelRenderSystem.h */,
+				F1E65AAC18AA0C2B00A799C9 /* Button.cpp */,
+				F1E65AAD18AA0C2B00A799C9 /* Button.h */,
+				F1E65AAE18AA0C2B00A799C9 /* ComboBox.cpp */,
+				F1E65AAF18AA0C2B00A799C9 /* ComboBox.h */,
+				F1E65AB018AA0C2B00A799C9 /* Control.cpp */,
+				F1E65AB118AA0C2B00A799C9 /* Control.h */,
+				F1E65AB218AA0C2B00A799C9 /* ControlBase.cpp */,
+				F1E65AB318AA0C2B00A799C9 /* ControlBase.h */,
+				F1E65AB418AA0C2B00A799C9 /* DebugWindow.cpp */,
+				F1E65AB518AA0C2B00A799C9 /* DebugWindow.h */,
+				F1E65AB618AA0C2B00A799C9 /* Effect.cpp */,
+				F1E65AB718AA0C2B00A799C9 /* Effect.h */,
+				F1E65AB818AA0C2B00A799C9 /* ErrorWindow.cpp */,
+				F1E65AB918AA0C2B00A799C9 /* ErrorWindow.h */,
+				F1E65ABA18AA0C2B00A799C9 /* FirstPersonMode.cpp */,
+				F1E65ABB18AA0C2B00A799C9 /* FirstPersonMode.h */,
+				F1E65ABC18AA0C2B00A799C9 /* Font.cpp */,
+				F1E65ABD18AA0C2B00A799C9 /* Font.h */,
+				F1E65ABE18AA0C2B00A799C9 /* FPSCounter.cpp */,
+				F1E65ABF18AA0C2B00A799C9 /* FPSCounter.h */,
+				F1E65AC018AA0C2B00A799C9 /* Frames.cpp */,
+				F1E65AC118AA0C2B00A799C9 /* Frames.h */,
+				F1E65AC218AA0C2B00A799C9 /* GameCamera.cpp */,
+				F1E65AC318AA0C2B00A799C9 /* GameCamera.h */,
+				F1E65AC418AA0C2B00A799C9 /* GameEvent.cpp */,
+				F1E65AC518AA0C2B00A799C9 /* GameEvent.h */,
+				F1E65AC618AA0C2B00A799C9 /* GameEventInterface.h */,
+				F1E65AC718AA0C2B00A799C9 /* GameEventSubscriber.cpp */,
+				F1E65AC818AA0C2B00A799C9 /* GameEventSubscriber.h */,
+				F1E65AC918AA0C2B00A799C9 /* GameSave.cpp */,
+				F1E65ACA18AA0C2B00A799C9 /* GameSave.h */,
+				F1E65ACB18AA0C2B00A799C9 /* GameSystem.cpp */,
+				F1E65ACC18AA0C2B00A799C9 /* GameSystem.h */,
+				F1E65ACD18AA0C2B00A799C9 /* GameTile.cpp */,
+				F1E65ACE18AA0C2B00A799C9 /* GameTile.h */,
+				F1E65ACF18AA0C2B00A799C9 /* GL2DProgram.cpp */,
+				F1E65AD018AA0C2B00A799C9 /* GL2DProgram.h */,
+				F1E65AD118AA0C2B00A799C9 /* GL2DVertexGroup.cpp */,
+				F1E65AD218AA0C2B00A799C9 /* GL2DVertexGroup.h */,
+				F1E65AD318AA0C2B00A799C9 /* GL3DProgram.cpp */,
+				F1E65AD418AA0C2B00A799C9 /* GL3DProgram.h */,
+				F1E65AD518AA0C2B00A799C9 /* GLCamera.cpp */,
+				F1E65AD618AA0C2B00A799C9 /* GLCamera.h */,
+				F1E65AD718AA0C2B00A799C9 /* GLClipping.cpp */,
+				F1E65AD818AA0C2B00A799C9 /* GLClipping.h */,
+				F1E65AD918AA0C2B00A799C9 /* GLCombinedMatrix.cpp */,
+				F1E65ADA18AA0C2B00A799C9 /* GLCombinedMatrix.h */,
+				F1E65ADB18AA0C2B00A799C9 /* GLCombinedModel.cpp */,
+				F1E65ADC18AA0C2B00A799C9 /* GLCombinedModel.h */,
+				F1E65ADD18AA0C2B00A799C9 /* GLCommonShaderFile.cpp */,
+				F1E65ADE18AA0C2B00A799C9 /* GLCommonShaderFile.h */,
+				F1E65ADF18AA0C2B00A799C9 /* GLFrameBuffer.cpp */,
+				F1E65AE018AA0C2B00A799C9 /* GLFrameBuffer.h */,
+				F1E65AE118AA0C2B00A799C9 /* GLLight.cpp */,
+				F1E65AE218AA0C2B00A799C9 /* GLLight.h */,
+				F1E65AE318AA0C2B00A799C9 /* GLLighting.cpp */,
+				F1E65AE418AA0C2B00A799C9 /* GLLighting.h */,
+				F1E65AE518AA0C2B00A799C9 /* GLLightProgram.h */,
+				F1E65AE618AA0C2B00A799C9 /* GLModel.cpp */,
+				F1E65AE718AA0C2B00A799C9 /* GLModel.h */,
+				F1E65AE818AA0C2B00A799C9 /* GLProgram.cpp */,
+				F1E65AE918AA0C2B00A799C9 /* GLProgram.h */,
+				F1E65AEA18AA0C2B00A799C9 /* GLShader.cpp */,
+				F1E65AEB18AA0C2B00A799C9 /* GLShader.h */,
+				F1E65AEC18AA0C2B00A799C9 /* GLTriangle.h */,
+				F1E65AED18AA0C2B00A799C9 /* GObject.cpp */,
+				F1E65AEE18AA0C2B00A799C9 /* GObject.h */,
+				F1E65AEF18AA0C2B00A799C9 /* InputEvent.cpp */,
+				F1E65AF018AA0C2B00A799C9 /* InputEvent.h */,
+				F1E65AF118AA0C2B00A799C9 /* InstancedVoxelRenderSystem.cpp */,
+				F1E65AF218AA0C2B00A799C9 /* InstancedVoxelRenderSystem.h */,
+				F1E65AF318AA0C2B00A799C9 /* InterfaceGlobals.cpp */,
+				F1E65AF418AA0C2B00A799C9 /* InterfaceGlobals.h */,
+				F1E65AF518AA0C2B00A799C9 /* IOSGL.h */,
+				F1E65AF618AA0C2B00A799C9 /* Label.cpp */,
+				F1E65AF718AA0C2B00A799C9 /* Label.h */,
+				F1E65AF818AA0C2B00A799C9 /* Letter.h */,
+				F1E65AF918AA0C2B00A799C9 /* Listbox.cpp */,
+				F1E65AFA18AA0C2B00A799C9 /* Listbox.h */,
+				F1E65AFB18AA0C2B00A799C9 /* LoadingScreen.cpp */,
+				F1E65AFC18AA0C2B00A799C9 /* LoadingScreen.h */,
+				F1E65AFD18AA0C2B00A799C9 /* lodepng.cpp */,
+				F1E65AFE18AA0C2B00A799C9 /* lodepng.h */,
+				F1E65AFF18AA0C2B00A799C9 /* MaxDistanceFog.cpp */,
+				F1E65B0018AA0C2B00A799C9 /* MaxDistanceFog.h */,
+				F1E65B0118AA0C2B00A799C9 /* Music.cpp */,
+				F1E65B0218AA0C2B00A799C9 /* Music.h */,
+				F1E65B0318AA0C2B00A799C9 /* NinePatchBinary.cpp */,
+				F1E65B0418AA0C2B00A799C9 /* NinePatchBinary.h */,
+				F1E65B0518AA0C2B00A799C9 /* noiseutils.cpp */,
+				F1E65B0618AA0C2B00A799C9 /* noiseutils.h */,
+				F1E65B0718AA0C2B00A799C9 /* OS.cpp */,
+				F1E65B0818AA0C2B00A799C9 /* OS.h */,
+				F1E65B0918AA0C2B00A799C9 /* RasterizedText.cpp */,
+				F1E65B0A18AA0C2B00A799C9 /* RasterizedText.h */,
+				F1E65B0B18AA0C2B00A799C9 /* Rect.cpp */,
+				F1E65B0C18AA0C2B00A799C9 /* Rect.h */,
+				F1E65B0D18AA0C2B00A799C9 /* ReflectionData.cpp */,
+				F1E65B0E18AA0C2B00A799C9 /* ReflectionData.h */,
+				F1E65B0F18AA0C2B00A799C9 /* Resource.h */,
+				F1E65B1018AA0C2B00A799C9 /* ShaderGroup.cpp */,
+				F1E65B1118AA0C2B00A799C9 /* ShaderGroup.h */,
+				F1E65B1218AA0C2B00A799C9 /* Shape.cpp */,
+				F1E65B1318AA0C2B00A799C9 /* Shape.h */,
+				F1E65B1418AA0C2B00A799C9 /* stdafx.cpp */,
+				F1E65B1518AA0C2B00A799C9 /* stdafx.h */,
+				F1E65B1618AA0C2B00A799C9 /* TerrainGen.cpp */,
+				F1E65B1718AA0C2B00A799C9 /* TerrainGen.h */,
+				F1E65B1818AA0C2B00A799C9 /* Textbox.cpp */,
+				F1E65B1918AA0C2B00A799C9 /* Textbox.h */,
+				F1E65B1A18AA0C2B00A799C9 /* TileCell.h */,
+				F1E65B1B18AA0C2B00A799C9 /* Utilities.cpp */,
+				F1E65B1C18AA0C2B00A799C9 /* Utilities.h */,
+				F1E65B1D18AA0C2B00A799C9 /* ViewDistanceCalc.cpp */,
+				F1E65B1E18AA0C2B00A799C9 /* ViewDistanceCalc.h */,
+				F1E65B1F18AA0C2B00A799C9 /* VoxelDrawSystem.cpp */,
+				F1E65B2018AA0C2B00A799C9 /* VoxelDrawSystem.h */,
+				F1E65B2118AA0C2B00A799C9 /* VoxelSystem.cpp */,
+				F1E65B2218AA0C2B00A799C9 /* VoxelSystem.h */,
+				F1E65B2318AA0C2B00A799C9 /* VoxEngine.cpp */,
+				F1E65B2418AA0C2B00A799C9 /* VoxEngine.h */,
+				F1E65B2518AA0C2B00A799C9 /* Window.cpp */,
+				F1E65B2618AA0C2B00A799C9 /* Window.h */,
 			);
 			path = VoxEngine;
 			sourceTree = "<group>";
@@ -657,103 +682,106 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F13517B518A8A53A0078FDA4 /* GameSystem.cpp in Sources */,
-				F13517D318A8A53A0078FDA4 /* ReflectionData.cpp in Sources */,
-				F13517D818A8A53A0078FDA4 /* Textbox.cpp in Sources */,
-				F13517BD18A8A53A0078FDA4 /* GLCombinedModel.cpp in Sources */,
-				F13517BE18A8A53A0078FDA4 /* GLCommonShaderFile.cpp in Sources */,
-				F13517B918A8A53A0078FDA4 /* GL3DProgram.cpp in Sources */,
-				F13517C218A8A53A0078FDA4 /* GLModel.cpp in Sources */,
-				F13517C618A8A53A0078FDA4 /* InputEvent.cpp in Sources */,
-				F13517BC18A8A53A0078FDA4 /* GLCombinedMatrix.cpp in Sources */,
-				F13517A518A8A53A0078FDA4 /* BaseFrame.cpp in Sources */,
-				F13517A418A8A53A0078FDA4 /* AuxLogger.cpp in Sources */,
-				F13517D018A8A53A0078FDA4 /* OS.cpp in Sources */,
-				F13517C018A8A53A0078FDA4 /* GLLight.cpp in Sources */,
-				F13517DD18A8A53A0078FDA4 /* VoxEngine.cpp in Sources */,
-				F13517C518A8A53A0078FDA4 /* GObject.cpp in Sources */,
-				F13517BF18A8A53A0078FDA4 /* GLFrameBuffer.cpp in Sources */,
-				F13517C318A8A53A0078FDA4 /* GLProgram.cpp in Sources */,
-				F13517B318A8A53A0078FDA4 /* GameEventSubscriber.cpp in Sources */,
-				F13517AC18A8A53A0078FDA4 /* ErrorWindow.cpp in Sources */,
-				F13517D118A8A53A0078FDA4 /* RasterizedText.cpp in Sources */,
-				F13517AA18A8A53A0078FDA4 /* ControlBase.cpp in Sources */,
-				F13517DE18A8A53A0078FDA4 /* Window.cpp in Sources */,
-				F13517AB18A8A53A0078FDA4 /* DebugWindow.cpp in Sources */,
-				F13517CA18A8A53A0078FDA4 /* Listbox.cpp in Sources */,
-				F13517A618A8A53A0078FDA4 /* BasicVoxelRenderSystem.cpp in Sources */,
-				F13517DC18A8A53A0078FDA4 /* VoxelSystem.cpp in Sources */,
-				F13517C818A8A53A0078FDA4 /* InterfaceGlobals.cpp in Sources */,
-				F13517B818A8A53A0078FDA4 /* GL2DVertexGroup.cpp in Sources */,
-				F13517AE18A8A53A0078FDA4 /* Font.cpp in Sources */,
-				F13517CB18A8A53A0078FDA4 /* LoadingScreen.cpp in Sources */,
-				F13517C118A8A53A0078FDA4 /* GLLighting.cpp in Sources */,
-				F13517D618A8A53A0078FDA4 /* stdafx.cpp in Sources */,
-				F13517D518A8A53A0078FDA4 /* Shape.cpp in Sources */,
-				F13517B718A8A53A0078FDA4 /* GL2DProgram.cpp in Sources */,
-				F13517D718A8A53A0078FDA4 /* TerrainGen.cpp in Sources */,
-				F13517A718A8A53A0078FDA4 /* Button.cpp in Sources */,
-				F13517CD18A8A53A0078FDA4 /* MaxDistanceFog.cpp in Sources */,
-				F13517AF18A8A53A0078FDA4 /* FPSCounter.cpp in Sources */,
-				F13517B418A8A53A0078FDA4 /* GameSave.cpp in Sources */,
-				F13517DA18A8A53A0078FDA4 /* ViewDistanceCalc.cpp in Sources */,
-				F13517BB18A8A53A0078FDA4 /* GLClipping.cpp in Sources */,
-				F13517DB18A8A53A0078FDA4 /* VoxelDrawSystem.cpp in Sources */,
-				F13517C918A8A53A0078FDA4 /* Label.cpp in Sources */,
-				F13517B018A8A53A0078FDA4 /* Frames.cpp in Sources */,
-				F13517B218A8A53A0078FDA4 /* GameEvent.cpp in Sources */,
-				F13517A218A8A53A0078FDA4 /* ActorPlayer.cpp in Sources */,
-				F13517AD18A8A53A0078FDA4 /* FirstPersonMode.cpp in Sources */,
-				F13517A318A8A53A0078FDA4 /* ActorSystem.cpp in Sources */,
-				F13517B618A8A53A0078FDA4 /* GameTile.cpp in Sources */,
-				F13517D418A8A53A0078FDA4 /* ShaderGroup.cpp in Sources */,
-				F13517BA18A8A53A0078FDA4 /* GLCamera.cpp in Sources */,
-				F13517CF18A8A53A0078FDA4 /* noiseutils.cpp in Sources */,
-				F13517CC18A8A53A0078FDA4 /* lodepng.cpp in Sources */,
-				F13517C418A8A53A0078FDA4 /* GLShader.cpp in Sources */,
-				F13517A818A8A53A0078FDA4 /* ComboBox.cpp in Sources */,
-				F13517A118A8A53A0078FDA4 /* Actor.cpp in Sources */,
-				F13517B118A8A53A0078FDA4 /* GameCamera.cpp in Sources */,
-				F13517CE18A8A53A0078FDA4 /* NinePatchBinary.cpp in Sources */,
-				F13517D918A8A53A0078FDA4 /* Utilities.cpp in Sources */,
-				F13517A918A8A53A0078FDA4 /* Control.cpp in Sources */,
-				F13517C718A8A53A0078FDA4 /* InstancedVoxelRenderSystem.cpp in Sources */,
-				F13517D218A8A53A0078FDA4 /* Rect.cpp in Sources */,
+				F1E65B5D18AA0C2B00A799C9 /* ShaderGroup.cpp in Sources */,
+				F1E65B3718AA0C2B00A799C9 /* FPSCounter.cpp in Sources */,
+				F1E65B3218AA0C2B00A799C9 /* DebugWindow.cpp in Sources */,
+				F1E65B4818AA0C2B00A799C9 /* GLLight.cpp in Sources */,
+				F1E65B5718AA0C2B00A799C9 /* NinePatchBinary.cpp in Sources */,
+				F1E65B5218AA0C2B00A799C9 /* Listbox.cpp in Sources */,
+				F1E65B5918AA0C2B00A799C9 /* OS.cpp in Sources */,
 				F11C7EF818A8A7F9004BC84B /* latlon.cpp in Sources */,
 				F11C7EF918A8A7F9004BC84B /* noisegen.cpp in Sources */,
+				F1E65B2918AA0C2B00A799C9 /* ActorSystem.cpp in Sources */,
+				F1E65B6418AA0C2B00A799C9 /* VoxelDrawSystem.cpp in Sources */,
+				F1E65B3F18AA0C2B00A799C9 /* GL2DProgram.cpp in Sources */,
 				F11C7EFA18A8A7F9004BC84B /* cylinder.cpp in Sources */,
+				F1E65B2B18AA0C2B00A799C9 /* AuxLogger.cpp in Sources */,
+				F1E65B4318AA0C2B00A799C9 /* GLClipping.cpp in Sources */,
 				F11C7EFB18A8A7F9004BC84B /* line.cpp in Sources */,
+				F1E65B4718AA0C2B00A799C9 /* GLFrameBuffer.cpp in Sources */,
+				F1E65B2A18AA0C2B00A799C9 /* Audio.cpp in Sources */,
+				F1E65B5C18AA0C2B00A799C9 /* ReflectionData.cpp in Sources */,
 				F11C7EFC18A8A7F9004BC84B /* plane.cpp in Sources */,
 				F11C7EFD18A8A7F9004BC84B /* sphere.cpp in Sources */,
 				F11C7EFE18A8A7F9004BC84B /* abs.cpp in Sources */,
 				F11C7EFF18A8A7F9004BC84B /* add.cpp in Sources */,
+				F1E65B4B18AA0C2B00A799C9 /* GLProgram.cpp in Sources */,
+				F1E65B2818AA0C2B00A799C9 /* ActorPlayer.cpp in Sources */,
+				F1E65B6618AA0C2B00A799C9 /* VoxEngine.cpp in Sources */,
 				F11C7F0018A8A7F9004BC84B /* billow.cpp in Sources */,
 				F11C7F0118A8A7F9004BC84B /* blend.cpp in Sources */,
 				F11C7F0218A8A7F9004BC84B /* cache.cpp in Sources */,
+				F1E65B5818AA0C2B00A799C9 /* noiseutils.cpp in Sources */,
 				F11C7F0318A8A7F9004BC84B /* checkerboard.cpp in Sources */,
 				F11C7F0418A8A7F9004BC84B /* clamp.cpp in Sources */,
 				F11C7F0518A8A7F9004BC84B /* const.cpp in Sources */,
 				F11C7F0618A8A7F9004BC84B /* curve.cpp in Sources */,
+				F1E65B3E18AA0C2B00A799C9 /* GameTile.cpp in Sources */,
+				F1E65B4E18AA0C2B00A799C9 /* InputEvent.cpp in Sources */,
+				F1E65B6218AA0C2B00A799C9 /* Utilities.cpp in Sources */,
 				F11C7F0718A8A7F9004BC84B /* cylinders.cpp in Sources */,
+				F1E65B2C18AA0C2B00A799C9 /* BaseFrame.cpp in Sources */,
 				F11C7F0818A8A7F9004BC84B /* displace.cpp in Sources */,
+				F1E65B4618AA0C2B00A799C9 /* GLCommonShaderFile.cpp in Sources */,
+				F1E65B5418AA0C2B00A799C9 /* lodepng.cpp in Sources */,
+				F1E65B2F18AA0C2B00A799C9 /* ComboBox.cpp in Sources */,
+				F1E65B6118AA0C2B00A799C9 /* Textbox.cpp in Sources */,
+				F1E65B6518AA0C2B00A799C9 /* VoxelSystem.cpp in Sources */,
 				F11C7F0918A8A7F9004BC84B /* exponent.cpp in Sources */,
+				F1E65B2E18AA0C2B00A799C9 /* Button.cpp in Sources */,
+				F1E65B4A18AA0C2B00A799C9 /* GLModel.cpp in Sources */,
 				F11C7F0A18A8A7F9004BC84B /* invert.cpp in Sources */,
+				F1E65B4918AA0C2B00A799C9 /* GLLighting.cpp in Sources */,
+				F1E65B3018AA0C2B00A799C9 /* Control.cpp in Sources */,
+				F1E65B6718AA0C2B00A799C9 /* Window.cpp in Sources */,
 				F11C7F0B18A8A7F9004BC84B /* max.cpp in Sources */,
+				F1E65B5A18AA0C2B00A799C9 /* RasterizedText.cpp in Sources */,
+				F1E65B5518AA0C2B00A799C9 /* MaxDistanceFog.cpp in Sources */,
+				F1E65B4418AA0C2B00A799C9 /* GLCombinedMatrix.cpp in Sources */,
+				F1E65B4118AA0C2B00A799C9 /* GL3DProgram.cpp in Sources */,
+				F1E65B3918AA0C2B00A799C9 /* GameCamera.cpp in Sources */,
+				F1E65B4018AA0C2B00A799C9 /* GL2DVertexGroup.cpp in Sources */,
 				F11C7F0C18A8A7F9004BC84B /* min.cpp in Sources */,
+				F1E65B3B18AA0C2B00A799C9 /* GameEventSubscriber.cpp in Sources */,
 				F11C7F0D18A8A7F9004BC84B /* modulebase.cpp in Sources */,
+				F1E65B4D18AA0C2B00A799C9 /* GObject.cpp in Sources */,
 				F11C7F0E18A8A7F9004BC84B /* multiply.cpp in Sources */,
 				F11C7F0F18A8A7F9004BC84B /* perlin.cpp in Sources */,
+				F1E65B3D18AA0C2B00A799C9 /* GameSystem.cpp in Sources */,
+				F1E65B3C18AA0C2B00A799C9 /* GameSave.cpp in Sources */,
 				F11C7F1018A8A7F9004BC84B /* power.cpp in Sources */,
+				F1E65B3818AA0C2B00A799C9 /* Frames.cpp in Sources */,
 				F11C7F1118A8A7F9004BC84B /* ridgedmulti.cpp in Sources */,
 				F11C7F1218A8A7F9004BC84B /* rotatepoint.cpp in Sources */,
+				F1E65B3518AA0C2B00A799C9 /* FirstPersonMode.cpp in Sources */,
+				F1E65B2718AA0C2B00A799C9 /* Actor.cpp in Sources */,
+				F1E65B3A18AA0C2B00A799C9 /* GameEvent.cpp in Sources */,
 				F11C7F1318A8A7F9004BC84B /* scalebias.cpp in Sources */,
 				F11C7F1418A8A7F9004BC84B /* scalepoint.cpp in Sources */,
 				F11C7F1518A8A7F9004BC84B /* select.cpp in Sources */,
+				F1E65B3318AA0C2B00A799C9 /* Effect.cpp in Sources */,
+				F1E65B5318AA0C2B00A799C9 /* LoadingScreen.cpp in Sources */,
+				F1E65B5B18AA0C2B00A799C9 /* Rect.cpp in Sources */,
+				F1E65B4F18AA0C2B00A799C9 /* InstancedVoxelRenderSystem.cpp in Sources */,
+				F1E65B6018AA0C2B00A799C9 /* TerrainGen.cpp in Sources */,
 				F11C7F1618A8A7F9004BC84B /* spheres.cpp in Sources */,
+				F1E65B3118AA0C2B00A799C9 /* ControlBase.cpp in Sources */,
+				F1E65B5F18AA0C2B00A799C9 /* stdafx.cpp in Sources */,
 				F11C7F1718A8A7F9004BC84B /* terrace.cpp in Sources */,
+				F1E65B5E18AA0C2B00A799C9 /* Shape.cpp in Sources */,
+				F1E65B2D18AA0C2B00A799C9 /* BasicVoxelRenderSystem.cpp in Sources */,
+				F1E65B5618AA0C2B00A799C9 /* Music.cpp in Sources */,
+				F1E65B3418AA0C2B00A799C9 /* ErrorWindow.cpp in Sources */,
 				F11C7F1818A8A7F9004BC84B /* translatepoint.cpp in Sources */,
+				F1E65B4518AA0C2B00A799C9 /* GLCombinedModel.cpp in Sources */,
+				F1E65B3618AA0C2B00A799C9 /* Font.cpp in Sources */,
+				F1E65B5118AA0C2B00A799C9 /* Label.cpp in Sources */,
 				F11C7F1918A8A7F9004BC84B /* turbulence.cpp in Sources */,
+				F1E65B5018AA0C2B00A799C9 /* InterfaceGlobals.cpp in Sources */,
 				F11C7F1A18A8A7F9004BC84B /* voronoi.cpp in Sources */,
+				F1E65B4218AA0C2B00A799C9 /* GLCamera.cpp in Sources */,
+				F1E65B6318AA0C2B00A799C9 /* ViewDistanceCalc.cpp in Sources */,
+				F1E65B4C18AA0C2B00A799C9 /* GLShader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -793,7 +821,7 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = 1;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -806,11 +834,12 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = ../libs/ios/SDL2;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-D__IPHONEOS__";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "libs ../includes/glm-0.9.4.4 ../includes/libnoise";
+				USER_HEADER_SEARCH_PATHS = "../includes/SDL ../includes/glm-0.9.4.4 ../includes/libnoise";
 			};
 			name = Debug;
 		};
@@ -836,6 +865,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -843,11 +873,12 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = ../libs/ios/SDL2;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-D__IPHONEOS__";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "libs ../includes/glm-0.9.4.4 ../includes/libnoise";
+				USER_HEADER_SEARCH_PATHS = "../includes/SDL ../includes/glm-0.9.4.4 ../includes/libnoise";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -861,10 +892,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VoxEngine/VoxEngine-Prefix.pch";
 				INFOPLIST_FILE = "VoxEngine/VoxEngine-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					libs/SDL2,
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -879,10 +907,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VoxEngine/VoxEngine-Prefix.pch";
 				INFOPLIST_FILE = "VoxEngine/VoxEngine-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					libs/SDL2,
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

@@ -18,7 +18,7 @@
 //Other utilities
 #include <algorithm>
 #include <cassert>
-#include <stdint.h>
+#include <cstdint>
 #include <functional>
 
 using namespace std;
