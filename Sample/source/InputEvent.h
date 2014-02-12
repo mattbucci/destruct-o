@@ -27,6 +27,7 @@ public:
 	//Used in MOUSE_MOVE only!!!
 	float RelX;
 	float RelY;
-	//Used in key events
-	int Key;
+    
+	//Used in key events (freaking SDL defines fingers as a 64 bit signed type)
+	Sint64 Key;
 };

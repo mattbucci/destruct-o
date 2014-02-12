@@ -111,3 +111,10 @@ using glm::quat;
 //3 is 33
 //2 is 20
 extern int OpenglVersion;
+
+// Clamp function
+template <typename T>
+inline float clamp(T x, T a, T b)
+{
+    return x < a ? a : (x > b ? b : x);
+}

@@ -10,7 +10,7 @@ class Label;
 class ControlBase : Control {
 	set<Control*> toDelete;
 	void DestroyRequestedObjects();
-	int pressedKey;
+	Sint64 pressedKey;
 	//lastKeyProcessed determines when a key event was last sent
 	double lastKeyProcessedAt;
 	//First key press is special, it has a long gap after it

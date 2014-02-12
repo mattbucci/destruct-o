@@ -4,13 +4,20 @@
 #include "stdafx.h"
 
 #include "InputEvent.h"
+#include "GL2DProgram.h"
 
-class FirstPersonMode {
+class FirstPersonMode
+{
+protected:
 	vec3 lookVector;
 	vec2 moveVector;
 	//the x,y angles making up the lookVector currently
 	vec2 aggregateMouseVector;
 	bool firstPersonEnabled;
+    
+    // Since the ActorPlayer polls this object per frame, GameEvents don't comply with the way the
+    // rest of the object is implemented
+    bool jumpRequested;
 public:
 	FirstPersonMode();
 	~FirstPersonMode();
@@ -25,13 +32,16 @@ public:
 	//useful for determining if the player is facing something
 	//angle is in degrees
 	vec2 GetAngleVector();
+    
+    // Get if the controller wants to cause the player to jump.  Checking clears the flag
+    bool GetJumpRequested();
 
 	//Enable or disable first person mode on platforms which require this
 	void Enable(bool enableFirstPerson);
 
-	//Update the looking direction based off input events
-	void UpdateLookingDirection(set<int> pressedKeys, vector<InputEvent> input);
+	// Read the input from the user
+	virtual void ReadInput(set<Sint64> pressedKeys, vector<InputEvent> input);
 
 	//In the future this will be used to draw the virtual joysticks on mobile
-	void Draw();
+	virtual void Draw(double width, double height, GL2DProgram * shader);
 };

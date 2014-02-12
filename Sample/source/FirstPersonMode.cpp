@@ -1,8 +1,10 @@
 #include "FirstPersonMode.h"
 
 
-FirstPersonMode::FirstPersonMode() {
+FirstPersonMode::FirstPersonMode()
+{
 	firstPersonEnabled = false;
+    jumpRequested = false;
 }
 FirstPersonMode::~FirstPersonMode() {
 
@@ -25,6 +27,13 @@ vec2 FirstPersonMode::GetAngleVector() {
 	return aggregateMouseVector;
 }
 
+bool FirstPersonMode::GetJumpRequested()
+{
+    bool _t = jumpRequested;
+    jumpRequested = false;
+    return _t;
+}
+
 //Enable or disable first person mode 
 void FirstPersonMode::Enable(bool enableFirstPerson) {
 #ifndef __MOBILE__
@@ -34,8 +43,9 @@ void FirstPersonMode::Enable(bool enableFirstPerson) {
 #endif
 	firstPersonEnabled = enableFirstPerson;
 }
+
 //Update the looking direction based off input events
-void FirstPersonMode::UpdateLookingDirection(set<int> pressedKeys, vector<InputEvent> input) {
+void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> input) {
 	if (!firstPersonEnabled)
 		return;
 
@@ -50,6 +60,13 @@ void FirstPersonMode::UpdateLookingDirection(set<int> pressedKeys, vector<InputE
 		moveVector.y = 1;
 	else if (pressedKeys.find('d') != pressedKeys.end())
 		moveVector.y = -1;
+    
+    // Did the user request jump?
+    if (pressedKeys.find(' ') != pressedKeys.end())
+    {
+        // User requested jump
+        jumpRequested = true;
+    }
 
 	//Sum up the mouse deltas into the current looking vector
 	//Mouse sensitivity constants for now
@@ -70,10 +87,8 @@ void FirstPersonMode::UpdateLookingDirection(set<int> pressedKeys, vector<InputE
 
 	//Limit the aggregate appropriately
 	aggregateMouseVector.x = glm::mod(aggregateMouseVector.x,360.0f);
-	if (aggregateMouseVector.y >= 75)
-		aggregateMouseVector.y = 75;
-	if (aggregateMouseVector.y <= -60)
-		aggregateMouseVector.y = -60;
+    aggregateMouseVector.y = clamp<float>(aggregateMouseVector.y, -60.0f, 75.0f);
+    
 	//Calculate the looking vector from the new aggregate angle vector
 	//this part adapted from a previous FPS engine I wrote, so its a bit contrived
 	float f = aggregateMouseVector.x/180.f*M_PI;
@@ -83,7 +98,9 @@ void FirstPersonMode::UpdateLookingDirection(set<int> pressedKeys, vector<InputE
 	lookVector.z = cos(t);
 	lookVector = glm::normalize(lookVector); //IIRC this isn't necessary
 }
+
 //In the future this will be used to draw the virtual joysticks on mobile
-void FirstPersonMode::Draw() {
+void FirstPersonMode::Draw(double width, double height, GL2DProgram * shader)
+{
 
 }

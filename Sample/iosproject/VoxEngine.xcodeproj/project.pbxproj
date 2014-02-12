@@ -127,6 +127,7 @@
 		F1E65B6518AA0C2B00A799C9 /* VoxelSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B2118AA0C2B00A799C9 /* VoxelSystem.cpp */; };
 		F1E65B6618AA0C2B00A799C9 /* VoxEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B2318AA0C2B00A799C9 /* VoxEngine.cpp */; };
 		F1E65B6718AA0C2B00A799C9 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B2518AA0C2B00A799C9 /* Window.cpp */; };
+		F1E65B6A18AAF56000A799C9 /* FirstPersonModeMobile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B6818AAF56000A799C9 /* FirstPersonModeMobile.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -327,6 +328,8 @@
 		F1E65B2418AA0C2B00A799C9 /* VoxEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VoxEngine.h; path = ../../source/VoxEngine.h; sourceTree = "<group>"; };
 		F1E65B2518AA0C2B00A799C9 /* Window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Window.cpp; path = ../../source/Window.cpp; sourceTree = "<group>"; };
 		F1E65B2618AA0C2B00A799C9 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Window.h; path = ../../source/Window.h; sourceTree = "<group>"; };
+		F1E65B6818AAF56000A799C9 /* FirstPersonModeMobile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FirstPersonModeMobile.cpp; path = ../../source/FirstPersonModeMobile.cpp; sourceTree = "<group>"; };
+		F1E65B6918AAF56000A799C9 /* FirstPersonModeMobile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FirstPersonModeMobile.h; path = ../../source/FirstPersonModeMobile.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -481,6 +484,8 @@
 				F1E65AB918AA0C2B00A799C9 /* ErrorWindow.h */,
 				F1E65ABA18AA0C2B00A799C9 /* FirstPersonMode.cpp */,
 				F1E65ABB18AA0C2B00A799C9 /* FirstPersonMode.h */,
+				F1E65B6818AAF56000A799C9 /* FirstPersonModeMobile.cpp */,
+				F1E65B6918AAF56000A799C9 /* FirstPersonModeMobile.h */,
 				F1E65ABC18AA0C2B00A799C9 /* Font.cpp */,
 				F1E65ABD18AA0C2B00A799C9 /* Font.h */,
 				F1E65ABE18AA0C2B00A799C9 /* FPSCounter.cpp */,
@@ -778,6 +783,7 @@
 				F1E65B5118AA0C2B00A799C9 /* Label.cpp in Sources */,
 				F11C7F1918A8A7F9004BC84B /* turbulence.cpp in Sources */,
 				F1E65B5018AA0C2B00A799C9 /* InterfaceGlobals.cpp in Sources */,
+				F1E65B6A18AAF56000A799C9 /* FirstPersonModeMobile.cpp in Sources */,
 				F11C7F1A18A8A7F9004BC84B /* voronoi.cpp in Sources */,
 				F1E65B4218AA0C2B00A799C9 /* GLCamera.cpp in Sources */,
 				F1E65B6318AA0C2B00A799C9 /* ViewDistanceCalc.cpp in Sources */,

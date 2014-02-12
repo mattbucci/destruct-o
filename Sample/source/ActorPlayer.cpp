@@ -17,7 +17,7 @@ ActorPlayer::~ActorPlayer() {
 
 }
 
-void ActorPlayer::ReadInput(const vector<InputEvent> & events) {
+/*void ActorPlayer::ReadInput(const vector<InputEvent> & events) {
 	for (auto eve : events) {
 		if ((eve.Event == InputEvent::KeyboardDown) && (eve.Key == ' ')) {
 			//Check that the user is on the ground
@@ -29,19 +29,31 @@ void ActorPlayer::ReadInput(const vector<InputEvent> & events) {
 			}
 		}
 	}
-}
-
-
+}*/
 
 //Update the position based off the most recent movement and direction vectors
 void ActorPlayer::Update(float delta, float now) {
 	//Your movement speed is the multiplier right now
-	vec2 playerMotion = Game()->FirstPerson.GetMoveVector()*movementSpeed;
+	vec2 playerMotion = Game()->FirstPerson->GetMoveVector()*movementSpeed;
 	
 	//The side ways velocity is not effected by momentum
 	//isn't that handy
 	velocity.x = playerMotion.x;
 	velocity.y = playerMotion.y;
+    
+    // Lets check if the controller wants us to jump
+    if(Game()->FirstPerson->GetJumpRequested())
+    {
+        // Check that the user is on the ground
+        float posHeight = Game()->Voxels.GetPositionHeight(vec2(position.x,position.y));
+        float relativeHeight = position.z-posHeight;
+        if (relativeHeight <= groundThreshold)
+        {
+            //Apply upwards velocity
+            velocity.z += jumpVelocity;
+        }
+    }
+    
 	//Lets check if you're in the air or on the ground currently
 
 	float posHeight = Game()->Voxels.GetPositionHeight(vec2(position.x,position.y));

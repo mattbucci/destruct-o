@@ -200,53 +200,57 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 		
 			if (eventPolled) {
 				//Convert sdl event to InputEvent
-				switch (event.type) {
-				//Handle input events
-				case SDL_KEYDOWN:
-					eventQueue.push_back(InputEvent(InputEvent::KeyboardDown,OS::Now(),event.key.keysym.sym));
-					break;
-				case SDL_KEYUP:
-					eventQueue.push_back(InputEvent(InputEvent::KeyboardUp,OS::Now(),event.key.keysym.sym));
-					break;
-				case SDL_MOUSEBUTTONDOWN:
-					eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),(float)event.button.x,(float)event.button.y));
-					break;
-				case SDL_MOUSEBUTTONUP:
-					eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),(float)event.button.x,(float)event.button.y));
-					break;
-				case SDL_MOUSEMOTION:
-					eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),(float)event.motion.x,(float)event.motion.y));
-					//Add in the relative motion information
-					eventQueue.back().RelX = (float)event.motion.xrel;
-					eventQueue.back().RelY = (float)event.motion.yrel;
-					break;
-				#ifdef __MOBILE__
-				case SDL_FINGERMOTION:
-					cout << "MOVED: " << event.tfinger.x << "," << event.tfinger.y << "\n";
-					eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight));
-					break;
-				case SDL_FINGERUP:
-					eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight));
-					break;
-				case SDL_FINGERDOWN:
-					eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight));
-					break;
-				#endif
-				//Handle events which directly effect the operation of the game engine
-				case SDL_WINDOWEVENT: 
-					//Window events have their own set of things that could happen
-					switch (event.window.event) {
-					case SDL_WINDOWEVENT_RESIZED:
-						curWidth = event.window.data1;
-						curHeight = event.window.data2;
-						glViewport(0,0,curWidth,curHeight);
-						break;
-					}
-					break;
-				case SDL_QUIT:
-					//Stops the next iteration of the game loop
-					continueGameLoop = false;
-					break;
+				switch (event.type)
+                {
+                    // Handle input events
+#ifdef __MOBILE__
+                    // Mobile only responds to finger events
+                    case SDL_FINGERMOTION:
+                        //cout << "MOVED (" << event.tfinger.fingerId << ") : " << event.tfinger.x << "," << event.tfinger.y << "\n";
+                        eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
+                        break;
+                    case SDL_FINGERUP:
+                        eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
+                        break;
+                    case SDL_FINGERDOWN:
+                        eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
+                        break;
+#else
+                    // Desktop (well, whatever non mobile is called these days) only responds to keyboard and mouse events
+                    case SDL_KEYDOWN:
+                        eventQueue.push_back(InputEvent(InputEvent::KeyboardDown,OS::Now(),event.key.keysym.sym));
+                        break;
+                    case SDL_KEYUP:
+                        eventQueue.push_back(InputEvent(InputEvent::KeyboardUp,OS::Now(),event.key.keysym.sym));
+                        break;
+                    case SDL_MOUSEBUTTONDOWN:
+                        eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),(float)event.button.x,(float)event.button.y, event.button.button));
+                        break;
+                    case SDL_MOUSEBUTTONUP:
+                        eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),(float)event.button.x,(float)event.button.y, event.button.button));
+                        break;
+                    case SDL_MOUSEMOTION:
+                        eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),(float)event.motion.x,(float)event.motion.y, event.button.button));
+                        //Add in the relative motion information
+                        eventQueue.back().RelX = (float)event.motion.xrel;
+                        eventQueue.back().RelY = (float)event.motion.yrel;
+                        break;
+#endif
+                    //Handle events which directly effect the operation of the game engine
+                    case SDL_WINDOWEVENT: 
+                        //Window events have their own set of things that could happen
+                        switch (event.window.event) {
+                        case SDL_WINDOWEVENT_RESIZED:
+                            curWidth = event.window.data1;
+                            curHeight = event.window.data2;
+                            glViewport(0,0,curWidth,curHeight);
+                            break;
+                        }
+                        break;
+                    case SDL_QUIT:
+                        //Stops the next iteration of the game loop
+                        continueGameLoop = false;
+                        break;
 				}
 			}
 			else

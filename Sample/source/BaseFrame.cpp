@@ -72,8 +72,15 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	});
 	wm->AddControl(windowButton);
 	
-	//Put this here for now
-	FirstPerson.Enable(true);
+    // Create the first person controller depending on the current platform
+#ifdef __MOBILE__
+    FirstPerson = (FirstPersonMode *) new FirstPersonModeMobile();
+#else
+    FirstPerson = new FirstPersonMode();
+#endif
+    
+	// Enable the first person controller
+	FirstPerson->Enable(true);
 
 	cout << "\t Finished base frame\n";
 }
@@ -101,10 +108,10 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	passEventsToControl(inputEvents);
 
 	//Update the looking direction
-	FirstPerson.UpdateLookingDirection(currentlyPressedKeys,inputEvents);
+	FirstPerson->ReadInput(currentlyPressedKeys,inputEvents);
 
 	//The player is the only actor which reads input
-	player->ReadInput(inputEvents);
+	//player->ReadInput(inputEvents);
 
 	//Update actors
 	Actors.Update(delta,now);
@@ -141,23 +148,27 @@ void BaseFrame::Draw(double width, double height) {
 	//The player is 3 height right now
 	pos.z += 2.5;
 	//Calculate voxel draw rectangle
-	pair<vec2,vec2> drawRectangle = ViewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(pos),FirstPerson.GetAngleVector().x/180.0f*M_PI);
+	pair<vec2,vec2> drawRectangle = ViewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(pos),FirstPerson->GetAngleVector().x/180.0f*M_PI);
 	vec2 minPoint = drawRectangle.first;
 	vec2 maxPoint = drawRectangle.second;
 
 	//Draw the frame
 	//camera draw also sets up world light
-	Camera.SetCameraView(pos,FirstPerson.GetLookVector());
+	Camera.SetCameraView(pos,FirstPerson->GetLookVector());
 	Camera.Draw(shaders3d);
-	Voxels.Draw(shaders3d,pos,(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);
-	
-
 	
 	// Draw voxels
+	Voxels.Draw(shaders3d,pos,(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);
 	
 	//Update the voxel debug counter
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
-
+    
 	//Call the parent draw to draw interface
 	GameSystem::Draw(width,height);
+    
+    // Draw the UI for joysticks
+	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
+    shaders2d->UseProgram();
+    shaders2d->SetWidthHeight(width, height);
+    FirstPerson->Draw(width, height, shaders2d);
 }

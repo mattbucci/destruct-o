@@ -6,7 +6,9 @@
 #include "GameCamera.h"
 #include "ViewDistanceCalc.h"
 #include "ActorSystem.h"
+
 #include "FirstPersonMode.h"
+#include "FirstPersonModeMobile.h"
 
 class ActorPlayer;
 
@@ -25,7 +27,9 @@ public:
 	VoxelSystem Voxels;
 	ViewDistanceCalc ViewDistance;
 	ActorSystem Actors;
-	FirstPersonMode FirstPerson;
+    
+    // First person mode will either be desktop or mobile variant, so use a pointer
+	FirstPersonMode *FirstPerson;
 
 	//for notes on Build() see GameSystem::Build()
 	void Build() override;

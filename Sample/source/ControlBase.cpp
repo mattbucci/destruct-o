@@ -26,12 +26,12 @@ bool ControlBase::FireEvent(InputEvent event) {
 	bool eventConsumed = false;
 	//Pass an event received from the event system to the control (can be passed to lua)
 	if (event.Event == InputEvent::MouseDown) {
-		Control::OnMousePress(vec2(event.MouseX,event.MouseY),event.Key,true);
+		Control::OnMousePress(vec2(event.MouseX,event.MouseY),(int) event.Key,true);
 		eventConsumed = hasFocusedChild();
 	}
 		
 	else if (event.Event == InputEvent::MouseUp) {
-		Control::OnMousePress(vec2(event.MouseX,event.MouseY),event.Key,false);
+		Control::OnMousePress(vec2(event.MouseX,event.MouseY),(int) event.Key,false);
 		eventConsumed = hasFocusedChild();
 	}
 	else if (event.Event == InputEvent::MouseMove) {
@@ -74,7 +74,7 @@ void ControlBase::Draw(GL2DProgram * prg, Rect size) {
 		else
 			lastKeyProcessedAt += .1;
 		if (keyboardFocusedChild != NULL)
-			keyboardFocusedChild->__OnKeyPress(pressedKey);
+			keyboardFocusedChild->__OnKeyPress((int) pressedKey);
 	}
 	//Send width,height,Control::Draw()
 	this->position.Width = size.Width;

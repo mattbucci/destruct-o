@@ -15,7 +15,7 @@ class ShaderGroup;
 class GameSystem : protected GameEventSubscriber {
 protected:
 	FPSCounter fpsCount;
-	set<int> currentlyPressedKeys;
+	set<Sint64> currentlyPressedKeys;
 	ShaderGroup * shaders;
 
 	//Handle key events, recording held keys and sending events to dialogs
