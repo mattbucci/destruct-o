@@ -52,6 +52,10 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # Find the OpenGL Framework
     find_library(OPENGL_FRAMEWORK NAMES OpenGL)
     target_link_libraries(VoxEngine ${OPENGL_FRAMEWORK})
+    
+    # Find the cURL Framework
+    find_library(CURL_FRAMEWORK NAMES curl)
+    target_link_libraries(VoxEngine ${CURL_FRAMEWORK})
 
     # Pull in the bundled GLEW library
     include_directories("../includes/glew")
@@ -82,7 +86,7 @@ ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
     # Linux is very good with package management and users should understand about the
-    # highly functional system they run on.  Either way, depend on the libraries
+    # highly organized system they run on.  Either way, depend on the libraries
     # being installed on the system.  OpenSuSE 13.1 had all dependecies in its repos
 
     # Required Libraries
@@ -94,6 +98,9 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     # Simple Direct Media Layer (requires 2.0.0 or greater) - http://libsdl.org/download-2.0.php
     # Truetype Font Library for SDL (requires 2.0.12 or greater) - http://www.libsdl.org/projects/SDL_ttf/
     # Audio Mixer Library for SDL (requires 2.0.0 or greater)
+    #
+    # libcurl (version 7.33.0 or greater) - http://curl.haxx.se/libcurl/
+    # libnoise (version 1.0.0 or greater) - http://libnoise.sourceforge.net/
     #
     # A graphics card and driver supporting at least OpenGL 2.0, recommended 3.3+
     #
@@ -135,6 +142,12 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     # Discover the include path for the OpenGL Mathematics Library
     find_path(GLM_INCLUDE_DIR NAMES glm/glm.hpp)
     include_directories(${GLM_INCLUDE_DIR})
+
+    # Discover the include path for lib cURL
+    find_path(CURL_INCLUDE_DIR NAMES curl/curl.h)
+    include_directories(${CURL_INCLUDE_DIR})
+    find_library(CURL_LIBRARY NAMES curl)
+    target_link_libraries(VoxEngine ${CURL_LIBRARY})
     
     # Well shoot.  Was hoping to avoid this
     # Pull in the noise generation library

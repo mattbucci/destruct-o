@@ -56,11 +56,8 @@
 		F1C6999318A728FC00442752 /* Interface in Resources */ = {isa = PBXBuildFile; fileRef = F1C6998F18A728FC00442752 /* Interface */; };
 		F1C6999418A728FC00442752 /* loading.png in Resources */ = {isa = PBXBuildFile; fileRef = F1C6999018A728FC00442752 /* loading.png */; };
 		F1C6999518A728FC00442752 /* terrain in Resources */ = {isa = PBXBuildFile; fileRef = F1C6999118A728FC00442752 /* terrain */; };
-		F1E65A9718AA0BA300A799C9 /* libSDL2_mixer-simulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1E65A9118AA0BA300A799C9 /* libSDL2_mixer-simulator.a */; };
 		F1E65A9818AA0BA300A799C9 /* libSDL2_mixer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1E65A9218AA0BA300A799C9 /* libSDL2_mixer.a */; };
-		F1E65A9918AA0BA300A799C9 /* libSDL2_ttf-simulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1E65A9318AA0BA300A799C9 /* libSDL2_ttf-simulator.a */; };
 		F1E65A9A18AA0BA300A799C9 /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1E65A9418AA0BA300A799C9 /* libSDL2_ttf.a */; };
-		F1E65A9B18AA0BA300A799C9 /* libSDL2-simulator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1E65A9518AA0BA300A799C9 /* libSDL2-simulator.a */; };
 		F1E65A9C18AA0BA300A799C9 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1E65A9618AA0BA300A799C9 /* libSDL2.a */; };
 		F1E65B2718AA0C2B00A799C9 /* Actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65A9D18AA0C2B00A799C9 /* Actor.cpp */; };
 		F1E65B2818AA0C2B00A799C9 /* ActorPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65A9F18AA0C2B00A799C9 /* ActorPlayer.cpp */; };
@@ -128,6 +125,8 @@
 		F1E65B6618AA0C2B00A799C9 /* VoxEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B2318AA0C2B00A799C9 /* VoxEngine.cpp */; };
 		F1E65B6718AA0C2B00A799C9 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B2518AA0C2B00A799C9 /* Window.cpp */; };
 		F1E65B6A18AAF56000A799C9 /* FirstPersonModeMobile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1E65B6818AAF56000A799C9 /* FirstPersonModeMobile.cpp */; };
+		F1ED7BCE18AC687600DC9D69 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1ED7BCD18AC687600DC9D69 /* libcurl.a */; };
+		F1ED7BD018AC6FB400DC9D69 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F1ED7BCF18AC6FB400DC9D69 /* libz.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -184,11 +183,8 @@
 		F1C6998F18A728FC00442752 /* Interface */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Interface; path = ../source/game/Interface; sourceTree = "<group>"; };
 		F1C6999018A728FC00442752 /* loading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = loading.png; path = ../source/game/loading.png; sourceTree = "<group>"; };
 		F1C6999118A728FC00442752 /* terrain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = terrain; path = ../source/game/terrain; sourceTree = "<group>"; };
-		F1E65A9118AA0BA300A799C9 /* libSDL2_mixer-simulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSDL2_mixer-simulator.a"; path = "../libs/ios/SDL2/libSDL2_mixer-simulator.a"; sourceTree = "<group>"; };
 		F1E65A9218AA0BA300A799C9 /* libSDL2_mixer.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_mixer.a; path = ../libs/ios/SDL2/libSDL2_mixer.a; sourceTree = "<group>"; };
-		F1E65A9318AA0BA300A799C9 /* libSDL2_ttf-simulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSDL2_ttf-simulator.a"; path = "../libs/ios/SDL2/libSDL2_ttf-simulator.a"; sourceTree = "<group>"; };
 		F1E65A9418AA0BA300A799C9 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../libs/ios/SDL2/libSDL2_ttf.a; sourceTree = "<group>"; };
-		F1E65A9518AA0BA300A799C9 /* libSDL2-simulator.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libSDL2-simulator.a"; path = "../libs/ios/SDL2/libSDL2-simulator.a"; sourceTree = "<group>"; };
 		F1E65A9618AA0BA300A799C9 /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = ../libs/ios/SDL2/libSDL2.a; sourceTree = "<group>"; };
 		F1E65A9D18AA0C2B00A799C9 /* Actor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Actor.cpp; path = ../../source/Actor.cpp; sourceTree = "<group>"; };
 		F1E65A9E18AA0C2B00A799C9 /* Actor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Actor.h; path = ../../source/Actor.h; sourceTree = "<group>"; };
@@ -330,6 +326,8 @@
 		F1E65B2618AA0C2B00A799C9 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Window.h; path = ../../source/Window.h; sourceTree = "<group>"; };
 		F1E65B6818AAF56000A799C9 /* FirstPersonModeMobile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FirstPersonModeMobile.cpp; path = ../../source/FirstPersonModeMobile.cpp; sourceTree = "<group>"; };
 		F1E65B6918AAF56000A799C9 /* FirstPersonModeMobile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FirstPersonModeMobile.h; path = ../../source/FirstPersonModeMobile.h; sourceTree = "<group>"; };
+		F1ED7BCD18AC687600DC9D69 /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = ../libs/ios/curl/libcurl.a; sourceTree = "<group>"; };
+		F1ED7BCF18AC6FB400DC9D69 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -337,12 +335,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1ED7BD018AC6FB400DC9D69 /* libz.dylib in Frameworks */,
 				F1E65A9C18AA0BA300A799C9 /* libSDL2.a in Frameworks */,
 				F1E65A9A18AA0BA300A799C9 /* libSDL2_ttf.a in Frameworks */,
 				F1E65A9818AA0BA300A799C9 /* libSDL2_mixer.a in Frameworks */,
-				F1E65A9B18AA0BA300A799C9 /* libSDL2-simulator.a in Frameworks */,
-				F1E65A9918AA0BA300A799C9 /* libSDL2_ttf-simulator.a in Frameworks */,
-				F1E65A9718AA0BA300A799C9 /* libSDL2_mixer-simulator.a in Frameworks */,
+				F1ED7BCE18AC687600DC9D69 /* libcurl.a in Frameworks */,
 				F136299C18A59BE70006A8BB /* QuartzCore.framework in Frameworks */,
 				F136299B18A59BB40006A8BB /* CoreGraphics.framework in Frameworks */,
 				F136299118A599E20006A8BB /* CoreAudio.framework in Frameworks */,
@@ -431,12 +428,11 @@
 		F1989FD618A58C3900A5165E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F1ED7BCF18AC6FB400DC9D69 /* libz.dylib */,
 				F1E65A9618AA0BA300A799C9 /* libSDL2.a */,
 				F1E65A9418AA0BA300A799C9 /* libSDL2_ttf.a */,
 				F1E65A9218AA0BA300A799C9 /* libSDL2_mixer.a */,
-				F1E65A9518AA0BA300A799C9 /* libSDL2-simulator.a */,
-				F1E65A9318AA0BA300A799C9 /* libSDL2_ttf-simulator.a */,
-				F1E65A9118AA0BA300A799C9 /* libSDL2_mixer-simulator.a */,
+				F1ED7BCD18AC687600DC9D69 /* libcurl.a */,
 				F136299918A59B780006A8BB /* QuartzCore.framework */,
 				F136299618A59A0D0006A8BB /* AudioUnit.framework */,
 				F136299418A59A050006A8BB /* AudioToolbox.framework */,
@@ -840,12 +836,15 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				LIBRARY_SEARCH_PATHS = ../libs/ios/SDL2;
+				LIBRARY_SEARCH_PATHS = (
+					../libs/ios/SDL2,
+					../libs/ios/curl,
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-D__IPHONEOS__";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "../includes/SDL ../includes/glm-0.9.4.4 ../includes/libnoise";
+				USER_HEADER_SEARCH_PATHS = "../includes/SDL ../includes/glm-0.9.4.4 ../includes/libnoise ../includes/curl/ios";
 			};
 			name = Debug;
 		};
@@ -879,12 +878,15 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				LIBRARY_SEARCH_PATHS = ../libs/ios/SDL2;
+				LIBRARY_SEARCH_PATHS = (
+					../libs/ios/SDL2,
+					../libs/ios/curl,
+				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-D__IPHONEOS__";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "../includes/SDL ../includes/glm-0.9.4.4 ../includes/libnoise";
+				USER_HEADER_SEARCH_PATHS = "../includes/SDL ../includes/glm-0.9.4.4 ../includes/libnoise ../includes/curl/ios";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -898,7 +900,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VoxEngine/VoxEngine-Prefix.pch";
 				INFOPLIST_FILE = "VoxEngine/VoxEngine-Info.plist";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/nathaniel/Desktop/main-client/Sample/libs/ios/curl",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -913,7 +918,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VoxEngine/VoxEngine-Prefix.pch";
 				INFOPLIST_FILE = "VoxEngine/VoxEngine-Info.plist";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/nathaniel/Desktop/main-client/Sample/libs/ios/curl",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
