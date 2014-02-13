@@ -34,7 +34,7 @@ public:
 	vec2 GetAngleVector();
     
     // Get if the controller wants to cause the player to jump.  Checking clears the flag
-    bool GetJumpRequested();
+    bool GetJumpRequested(bool clearFlag = true);
 
 	//Enable or disable first person mode on platforms which require this
 	void Enable(bool enableFirstPerson);

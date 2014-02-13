@@ -15,6 +15,9 @@ SDL_Renderer* displayRenderer;
 //A variable which at runtime can be used to figure out what version is running
 int OpenglVersion;
 
+// The current joystick
+SDL_Joystick *joystick = NULL;
+
 //Static values within the VoxEngine class
 //Becomes false when SDL_Quit is found
 bool VoxEngine::continueGameLoop;
@@ -40,7 +43,7 @@ int main(int argc, char** argv)
 
 //Game entry point
 void VoxEngine::Start() {
-	SDL_Init(SDL_INIT_VIDEO);
+	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
 
 	SDL_Window * displayWindow = NULL;
 
@@ -98,6 +101,38 @@ void VoxEngine::Start() {
 
 	//Attempt to enable vsync (fails on mobile)
 	SDL_GL_SetSwapInterval(1);
+    
+    /* Print information about attached joysticks (actually works on iOS WOOHOO)*/
+    printf("There are %d joystick(s) attached\n", SDL_NumJoysticks());
+    for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+        const char *name = SDL_JoystickNameForIndex(i);
+        printf("Joystick %d: %s\n", i, name ? name : "Unknown Joystick");
+        joystick = SDL_JoystickOpen(i);
+        if (joystick == NULL) {
+            fprintf(stderr, "SDL_JoystickOpen(%d) failed: %s\n", i,
+                    SDL_GetError());
+        } else {
+            char guid[64];
+            SDL_JoystickGetGUIDString(SDL_JoystickGetGUID(joystick),
+                                      guid, sizeof (guid));
+            printf("       axes: %d\n", SDL_JoystickNumAxes(joystick));
+            printf("      balls: %d\n", SDL_JoystickNumBalls(joystick));
+            printf("       hats: %d\n", SDL_JoystickNumHats(joystick));
+            printf("    buttons: %d\n", SDL_JoystickNumButtons(joystick));
+            printf("instance id: %d\n", SDL_JoystickInstanceID(joystick));
+            printf("       guid: %s\n", guid);
+            SDL_JoystickClose(joystick);
+        }
+    }
+    
+    // For now, need a selector for mobile since joystick #0 is the built in accelerometer
+#if !(defined __MOBILE__)
+    if(SDL_NumJoysticks() > 0)
+    {
+        joystick = SDL_JoystickOpen(0);
+        printf("Using joystick = %s\n", SDL_JoystickName(joystick));
+    }
+#endif
 
 	//Initialze the dialog constants
 	VisualInterface.init();
@@ -187,6 +222,9 @@ void VoxEngine::Start() {
 		Frames::UpdateAliveFrame();
 	}
 
+    // close joystick
+    if(joystick) SDL_JoystickClose(joystick);
+    
 	SDL_Quit();
 }
 
@@ -216,13 +254,7 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
                         eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
                         break;
 #else
-                    // Desktop (well, whatever non mobile is called these days) only responds to keyboard and mouse events
-                    case SDL_KEYDOWN:
-                        eventQueue.push_back(InputEvent(InputEvent::KeyboardDown,OS::Now(),event.key.keysym.sym));
-                        break;
-                    case SDL_KEYUP:
-                        eventQueue.push_back(InputEvent(InputEvent::KeyboardUp,OS::Now(),event.key.keysym.sym));
-                        break;
+                        // Desktop (well, whatever non mobile is called these days) only responds to keyboard and mouse events
                     case SDL_MOUSEBUTTONDOWN:
                         eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),(float)event.button.x,(float)event.button.y, event.button.button));
                         break;
@@ -236,6 +268,13 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
                         eventQueue.back().RelY = (float)event.motion.yrel;
                         break;
 #endif
+                    case SDL_KEYDOWN:
+                        eventQueue.push_back(InputEvent(InputEvent::KeyboardDown,OS::Now(),event.key.keysym.sym));
+                        break;
+                    case SDL_KEYUP:
+                        eventQueue.push_back(InputEvent(InputEvent::KeyboardUp,OS::Now(),event.key.keysym.sym));
+                        break;
+                    
                     //Handle events which directly effect the operation of the game engine
                     case SDL_WINDOWEVENT: 
                         //Window events have their own set of things that could happen

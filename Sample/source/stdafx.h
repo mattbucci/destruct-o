@@ -112,6 +112,9 @@ using glm::quat;
 //2 is 20
 extern int OpenglVersion;
 
+// The active joystick
+extern SDL_Joystick *joystick;
+
 // Clamp function
 template <typename T>
 inline float clamp(T x, T a, T b)
