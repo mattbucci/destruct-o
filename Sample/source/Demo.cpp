@@ -59,7 +59,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 			//Fire blocks
 			if (eve.Key == 'f') {
 				PhysicsVoxel * vox = game->Physics.BuildVoxel(playerPos+playerFacing*2.0f);
-				vox->Velocity = game->FirstPerson.GetLookVector()*50.0f;
+				vox->Velocity = game->FirstPerson->GetLookVector()*50.0f;
 			}
 			else if (eve.Key == 'e') {
 				PhysicsVoxel * vox = game->Physics.BuildVoxel(playerPos+vec3(0,0,2));

@@ -181,7 +181,7 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	//Update actors
 	Actors.Update(delta,now);
 
-	demo->OnInput(inputEvents,player->GetPosition(),FirstPerson.GetLookVector());
+	demo->OnInput(inputEvents,player->GetPosition(),FirstPerson->GetLookVector());
 	demo->Update(now,delta);
 
 	//Update physics/Particles
@@ -231,7 +231,7 @@ void BaseFrame::Draw(double width, double height) {
 	Camera.Draw(shaders3d);
 	Physics.Draw(shaders);
 	Particles.Draw(shaders3d);
-	demo->Draw(shaders3d);
+	//demo->Draw(shaders3d);
 	
 	// Draw voxels
 	Voxels.Draw(shaders3d,pos,(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);

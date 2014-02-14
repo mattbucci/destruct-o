@@ -13,7 +13,7 @@
 
 class Effect{
 private:
-    uint8_t volume = 100;
+    uint8_t volume;
     map<string,Mix_Chunk*> effects;
     map<uint32_t,uint16_t> channels;
     bool load_files();
