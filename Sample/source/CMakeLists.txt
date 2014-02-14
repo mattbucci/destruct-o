@@ -57,6 +57,10 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     find_library(CURL_FRAMEWORK NAMES curl)
     target_link_libraries(VoxEngine ${CURL_FRAMEWORK})
 
+    # Fine the noise Framework
+    find_library(NOISE_FRAMEWORK NAMES noise)
+    target_link_libraries(VoxEngine ${NOISE_FRAMEWORK})
+
     # Pull in the bundled GLEW library
     include_directories("../includes/glew")
     get_filename_component(CGLEW "../libs/osx/glew/" ABSOLUTE)
@@ -64,13 +68,6 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     
     # Pull in the OpenGL Mathematics Library
     include_directories("../includes/glm-0.9.4.4")
-    
-    # Pull in the noise generation library
-    include_directories("../includes/libnoise")
-    
-    # Need to build libnoise for OS X
-    add_library(noise STATIC ${libnoise_src})
-    target_link_libraries(VoxEngine noise)
 
     # Make sure Xcode uses Clang set for libc++ and c++ version 2011
     set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvm.clang.1_0")
