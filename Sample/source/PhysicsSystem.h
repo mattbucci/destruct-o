@@ -7,7 +7,8 @@
 
 class ShaderGroup;
 class PhysicsVoxel;
-
+//The voxel system is needed to lookup the height of the terrain
+class VoxelSystem;
 
 #include "stdafx.h"
 
@@ -37,10 +38,15 @@ class PhysicsSystem {
 		vec3 CollisionVector;
 	};
 
+	//A tie to the voxel system used to lookup the terrain height at various points
+	VoxelSystem * voxelSystem;
+
+
+
 	//C style function for performance reasons
 	friend Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxelBPosition);
 public:
-	PhysicsSystem();
+	PhysicsSystem(VoxelSystem * system);
 	~PhysicsSystem();
 
 	//Constructs a voxel at the given coordinate

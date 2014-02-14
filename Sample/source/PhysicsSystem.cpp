@@ -4,12 +4,14 @@
 #include "GL3DProgram.h"
 #include "ShaderGroup.h"
 #include "PhysicsVoxel.h"
+#include "VoxelSystem.h"
 
-PhysicsSystem::PhysicsSystem() {
+PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	lastEmpty = 0;
 	highestFull = 0;
 	//Build a voxel renderer
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
+	voxelSystem = system;
 
 }
 PhysicsSystem::~PhysicsSystem() {
@@ -197,12 +199,71 @@ void PhysicsSystem::Update(double delta, double now) {
 				//Apply additional friction
 				allVoxels[a]->Velocity *= .98;
 			}
+
+
+			//Do ground collisions now
+			//There are (usually) four different tiles you're over
+			vec2 floorTiles[4];
+			floorTiles[0] = glm::floor(vec2(allVoxels[i]->Position));
+			floorTiles[1] = vec2(floor(allVoxels[i]->Position.x),ceil(allVoxels[i]->Position.y));
+			floorTiles[2] = vec2(ceil(allVoxels[i]->Position.x),floor(allVoxels[i]->Position.y));
+			floorTiles[3] = vec2(ceil(allVoxels[i]->Position.x),ceil(allVoxels[i]->Position.y));
+			//This is the direction which points the way the block's velocity/force will be reflected
+			vec3 terrainRejectionDirection = vec3();
+			//If the standard (axis aligned) directions cancel eachother out, use this one instead
+			vec3 roughRejectionDirection = vec3();
+			float penetrationDepth = 0;
+			int penetrationCount = 0;
+			for (int i = 0; i < 4; i++) {
+				//check if the square is under the ground for this grund tile
+				float height = voxelSystem->GetPositionHeight(floorTiles[i]);
+				if ((height+.5) < allVoxels[a]->Position.z)
+					continue;
+				//So the block must be penetrating this block of terrain
+				//time to reject it
+				//simulate a block next to the penetrating voxel
+				Intersection intersectionData = CalculateIntersection(allVoxels[a]->Position,vec3(floorTiles[i],min(height+.5f,allVoxels[a]->Position.z))+vec3(.5,.5,0));
+				//If the depth is < 0 then you're not penetrating quite yet...
+				if (intersectionData.Depth < 0)
+					continue;
+				terrainRejectionDirection += intersectionData.Normal;
+				roughRejectionDirection += intersectionData.CollisionVector;
+				penetrationDepth += intersectionData.Depth;
+				penetrationCount++;
+			}
+			if (penetrationDepth > 0) {
+				//A ground intersection occurred, reject the voxel
+				float directionLength = glm::length(terrainRejectionDirection);
+				if (directionLength < .01)
+					terrainRejectionDirection = glm::normalize(roughRejectionDirection);
+				else if (penetrationCount == 4)
+					//If intersecting everything than the only way out is up
+					terrainRejectionDirection = vec3(0,0,1);
+				else
+					//Otherwise normalize everything you're intersecting
+					terrainRejectionDirection /= directionLength;
+				//Apply force to reject the block
+				allVoxels[a]->Acceleration += terrainRejectionDirection*penetrationDepth*100.0f;
+				//Now reflect velocity
+				float vel = 0.0f;
+				vel += removeInDirection(allVoxels[a]->Velocity,-terrainRejectionDirection);
+				//removeInDirection(allVoxels[a]->Acceleration
+				//The removed Velocity will now be thirded (instead of average since some is lost)
+				//and added back in the opposite direction
+				vel /= 3.0f;
+				allVoxels[a]->Velocity += vel*terrainRejectionDirection;
+				//Apply enhanced friction while they're touching
+				allVoxels[a]->Velocity *= .98;
+			}
+
+			//Now apply velocity/acceleration
 			//Always decrease the total energy in the system
 			allVoxels[a]->Velocity *= .99;
 			//Apply forces!
-			newFullSize = i;
 			allVoxels[i]->Velocity += allVoxels[i]->Acceleration*(float)delta;
 			allVoxels[i]->Position += allVoxels[i]->Velocity*(float)delta;
+			//Track the highest valid physics voxel
+			newFullSize = i;
 		}
 	}
 

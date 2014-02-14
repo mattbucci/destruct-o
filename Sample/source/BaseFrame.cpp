@@ -16,7 +16,7 @@
 
 #include "Demo.h"
 
-BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
+BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxels) {
 	cout << "\t Constructing base frame\n";
 
 	
@@ -128,7 +128,7 @@ void BaseFrame::OnFrameFocus() {
 
 
 	//Physics.BuildVoxel(player->GetPosition()+vec3(5,.2,9));
-	Physics.BuildVoxel(player->GetPosition()+vec3(-5,0,1));
+	//Physics.BuildVoxel(player->GetPosition()+vec3(5,.4,133));
 	//Physics.BuildVoxel(player->GetPosition()+vec3(5,1,1));
 	
 	//Physics.BuildVoxel(player->GetPosition()+vec3(5,2,2));

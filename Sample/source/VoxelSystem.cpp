@@ -92,7 +92,7 @@ float VoxelSystem::GetPositionHeight(vec2 pos) {
 	if ((pos.x < 0) || (pos.y < 0))
 		return floorHeight;
 
-	if ((pos.x >= tileData->Width) || (pos.x >= tileData->Height))
+	if ((pos.x >= tileData->Width) || (pos.y >= tileData->Height))
 		return floorHeight;
 
 	//Player is within the set of valid tiles

@@ -74,7 +74,9 @@ float GameTile::GetHeight(vec2 pos) {
 	int tileX = (int)floor(pos.x);
 	int tileY = (int)floor(pos.y);
 	//Now get the height of that tile
-	return Cells[tileY*Width+tileX].height;
+	//we add 1 because voxels have 1 height
+	//so the visible floor is 1 above the corner they draw from
+	return Cells[tileY*Width+tileX].height+1;
 }
 
 //Save the tile to disk
