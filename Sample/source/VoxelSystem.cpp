@@ -16,18 +16,7 @@ VoxelSystem::VoxelSystem() {
 	//No tile data loaded
 	tileData = NULL;
 
-	//Choose the appropriate render version
-	switch (OpenglVersion){
-	case 20:
-		renderer = new BasicVoxelRenderSystem();
-		break;
-//Android can't use instanced rendering so its not even an option
-#ifndef __ANDROID__
-	case 31:
-		renderer = new InstancedVoxelRenderSystem();
-		break;
-#endif
-	}
+	renderer = VoxelDrawSystem::BuildAppropriateSystem();
 
 	//Load the tile textures
 	unsigned int textureWidth, textureHeight;
@@ -47,9 +36,12 @@ VoxelSystem::VoxelSystem() {
 				textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
 				&image[0] );
 
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);	//GL_NEAREST FOR SPEED
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
 
+#ifndef __MOBILE__
+	glGenerateMipmap(GL_TEXTURE_2D);
+#endif
 }
 VoxelSystem::~VoxelSystem() {
 	delete renderer;
@@ -58,7 +50,7 @@ VoxelSystem::~VoxelSystem() {
 
 //Attempt to load a tile from disc
 bool VoxelSystem::LoadTile(string tileName) {
-	//Init Terrain Generator
+	/*//Init Terrain Generator
 	TerrainGen t = TerrainGen();
 	int wid = 1024; int hei = 1024;
 	t.setSeed(2);
@@ -80,9 +72,13 @@ bool VoxelSystem::LoadTile(string tileName) {
 	}
 
 	//Free Terrain Tile Memory
-	free(rawtile);
+	free(rawtile);*/
 
-	tileData = GameTile::LoadTileFromMemory(tile, wid, hei);
+	//Generate a flat 1024x1024 tile for physics testing
+	vector<unsigned char> flat(1024*1024*4);
+	memset(&flat.front(),0,1024*1024*4);
+
+	tileData = GameTile::LoadTileFromMemory(flat,1024,1024);
 
 	//First load the tile map
 	//tileData = GameTile::LoadTileFromDisk(tileName);

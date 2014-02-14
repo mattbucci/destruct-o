@@ -16,6 +16,7 @@ RasterizedText::RasterizedText(string text, Font * font, vec4 color) : GL2DVerte
 //Build empty rasterized text
 RasterizedText::RasterizedText() : GL2DVertexGroup(GL_TRIANGLE_STRIP,4) {
 	text = "";
+	this->textureId = 0;
 }
 //For copying
 RasterizedText::RasterizedText(const RasterizedText & original) : GL2DVertexGroup(GL_TRIANGLE_STRIP,4) {
@@ -31,7 +32,9 @@ RasterizedText::RasterizedText(const RasterizedText & original) : GL2DVertexGrou
 RasterizedText & RasterizedText::operator=(const RasterizedText & original) {
 	if (text != "") {
 		//Cleanup existing texture data
-		glDeleteTextures(1,&textureId);
+		if (textureId > 0)
+			glDeleteTextures(1,&textureId);
+		textureId = 0;
 	}
 
 	text = original.text;
@@ -48,6 +51,7 @@ RasterizedText::~RasterizedText() {
 	if (textureId > 0) {
 		//Cleanup existing texture data
 		glDeleteTextures(1,&textureId);
+		textureId = 0;
 	}
 }
 

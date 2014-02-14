@@ -69,6 +69,11 @@ GLCombinedModel & GLCombinedModel::Scale(float xScale, float yScale, float zScal
 	return *this;
 }
 
+GLCombinedModel & GLCombinedModel::Combine(mat4 matrix) {
+	modelMatrix[stackPosition] *= matrix;
+	return *this;
+}
+
 GLCombinedModel & GLCombinedModel::Project(vec3 direction, vec3 pointOnPlane, vec3 planeNormal) {
 	glm::mat3 am;
 	am[0].x = am[1].y = am[2].z = glm::dot(direction,planeNormal);

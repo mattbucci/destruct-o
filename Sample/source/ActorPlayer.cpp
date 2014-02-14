@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "BaseFrame.h"
 #include "ActorPlayer.h"
+#include "PhysicsSystem.h"
+#include "PhysicsVoxel.h"
 
 //Right now there's no physics system and this actor is a pseudo physics object
 //so here are the constants involved

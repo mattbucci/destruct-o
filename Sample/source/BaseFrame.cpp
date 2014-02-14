@@ -11,6 +11,11 @@
 
 #include "OS.h"
 
+#include "ParticleSystem.h"
+#include "ParticleData.h"
+
+#include "Demo.h"
+
 BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	cout << "\t Constructing base frame\n";
 
@@ -83,6 +88,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders) {
 	FirstPerson->Enable(true);
 
 	cout << "\t Finished base frame\n";
+	//testSystem = NULL;
 }
 BaseFrame::~BaseFrame() {
 
@@ -93,6 +99,65 @@ void BaseFrame::OnFrameFocus() {
 	player = new ActorPlayer();
 	//The player autoregisters himself with the actor system
 	//we do not need to do that by hand
+
+	//Build test voxels
+	/*Physics.BuildVoxel(player->GetPosition()+vec3(5.1,2,2));
+	Physics.BuildVoxel(player->GetPosition()+vec3(5.2,.5,1.5));
+	Physics.BuildVoxel(player->GetPosition()+vec3(5.3,0,1));//*/
+	/*for (int x = 0; x < 8; x+= (rand() % 4)) {
+		for (int y = 0; y < 8; y+= (rand() % 4)) {
+			if ((rand() % 2) == 1)
+				Physics.BuildVoxel(player->GetPosition()+vec3(x*.5,y*.5,rand() % 5+1));
+		}
+	}//*/
+
+	//Physics.BuildVoxel(player->GetPosition()+vec3(5.2,2,9));
+	//Physics.BuildVoxel(player->GetPosition()+vec3(5.1,2,5));
+	/*for (int i = 0; i < 3; i++) {
+		Physics.BuildVoxel(player->GetPosition()+vec3(5+(rand() % 10)/100.0,2+(rand() % 10)/100.0,2 + i*2));
+	}
+	
+	for (int p = 0; p < 3; p++) {
+		for (int a =p; a < 6-p; a++) {
+			for (int b = p; b < 6-p; b++) {
+				vec3 randomness = vec3((rand() % 10)/100.0,(rand() % 10)/100.0,(rand() % 10)/100.0);
+				Physics.BuildVoxel(player->GetPosition()+vec3(a+3,b-5,2+3*p)+randomness);
+			}
+		}
+	}//*/
+
+
+	//Physics.BuildVoxel(player->GetPosition()+vec3(5,.2,9));
+	Physics.BuildVoxel(player->GetPosition()+vec3(-5,0,1));
+	//Physics.BuildVoxel(player->GetPosition()+vec3(5,1,1));
+	
+	//Physics.BuildVoxel(player->GetPosition()+vec3(5,2,2));
+
+	demo = new Demo();
+
+	//Physics.BuildCloth(player->GetPosition()+vec3(5,0,5),vec3(0,1,0),vec3(0,0,-1),7,7);
+
+	//Build particle rules
+	ParticleData * rules = new ParticleData();
+	rules->GenerationRate.AddValue(0,40);
+	rules->Velocity.AddValue(0,vec3(0,0,.5));
+	rules->Variation.AddValue(0,.5);
+	rules->Life.AddValue(0,10);
+	rules->EmitterSize.AddValue(0,vec2(2,2));
+
+	rules->Color.AddValue(0,vec4(1,0,0,1));
+	rules->Color.AddValue(1,vec4(0,1,1,1));
+	rules->Scale.AddValue(0,vec3(.2,.2,.2));
+	rules->Scale.AddValue(1,vec3(.05,.05,.05));
+	rules->Acceleration.AddValue(0,vec3());
+
+	rules->ForceFunction = [](float timeSpan,vec3 position, vec3 velocity) {
+		return 4.0f*vec3(sin(position.x),cos(position.y+position.z),sin(position.z*position.x));
+	};
+	//rules->Velocity
+	//testSystem = new ParticleSystem(rules,0.0);
+	//->Position = player->GetPosition()+vec3(5,0,1);
+
 }
 
 void BaseFrame::Build() {
@@ -116,6 +181,14 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	//Update actors
 	Actors.Update(delta,now);
 
+	demo->OnInput(inputEvents,player->GetPosition(),FirstPerson.GetLookVector());
+	demo->Update(now,delta);
+
+	//Update physics/Particles
+	Physics.Update(delta,now);
+	Particles.UpdateCloud(now,delta,player->GetPosition()+vec3(0,0,2));
+	//if (testSystem != NULL)
+		//testSystem->UpdateEmitter(now);
 	return true;
 }
 
@@ -156,6 +229,9 @@ void BaseFrame::Draw(double width, double height) {
 	//camera draw also sets up world light
 	Camera.SetCameraView(pos,FirstPerson->GetLookVector());
 	Camera.Draw(shaders3d);
+	Physics.Draw(shaders);
+	Particles.Draw(shaders3d);
+	demo->Draw(shaders3d);
 	
 	// Draw voxels
 	Voxels.Draw(shaders3d,pos,(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);

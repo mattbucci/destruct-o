@@ -8,15 +8,20 @@
 #include "ActorSystem.h"
 
 #include "FirstPersonMode.h"
-#include "FirstPersonModeMobile.h"
+#include "PhysicsSystem.h"
+#include "ParticleCloud.h"
 
 class ActorPlayer;
+class ParticleSystem;
+class Demo;
 
 class BaseFrame : public GameSystem {
 	ActorPlayer * player;
 	
 	GLint uniformModelView;
 	GLint uniformModelViewProjection;
+
+	Demo * demo;
 public:
 	BaseFrame(ShaderGroup * shaders);
 	~BaseFrame();
@@ -30,6 +35,8 @@ public:
     
     // First person mode will either be desktop or mobile variant, so use a pointer
 	FirstPersonMode *FirstPerson;
+	PhysicsSystem Physics;
+	ParticleCloud Particles;
 
 	//for notes on Build() see GameSystem::Build()
 	void Build() override;
