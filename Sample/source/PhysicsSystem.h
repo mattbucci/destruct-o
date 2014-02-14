@@ -27,11 +27,6 @@ class PhysicsSystem {
 	void Register(PhysicsVoxel * toRegister);
 	void Unregister(PhysicsVoxel * toUnregister);
 
-	//Tracks voxels placing them in buckets in which a voxel
-	//can only ever possibly collide with other voxels in the same bucket
-	//though a voxel may be in multiple buckets
-	PhysicsHashTable voxelCollisionTable;
-
 	//Once an intersection is found, calculate this information about it
 	struct Intersection {
 		//The normal of the plane being intersected

@@ -229,12 +229,14 @@ void BaseFrame::Draw(double width, double height) {
 	//camera draw also sets up world light
 	Camera.SetCameraView(pos,FirstPerson->GetLookVector());
 	Camera.Draw(shaders3d);
-	Physics.Draw(shaders);
 	Particles.Draw(shaders3d);
 	//demo->Draw(shaders3d);
 	
 	// Draw voxels
 	Voxels.Draw(shaders3d,pos,(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);
+	//The physics system uses the same texture that the voxels above binds every time it draws
+	//so it must always immediately follow Voxels.draw()
+	Physics.Draw(shaders);
 	
 	//Update the voxel debug counter
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();

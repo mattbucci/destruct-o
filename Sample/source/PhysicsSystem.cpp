@@ -131,59 +131,52 @@ void PhysicsSystem::Update(double delta, double now) {
 			newFullSize = i;
 			allVoxels[i]->colliding = false;
 			allVoxels[i]->Acceleration = vec3();
-			//allVoxels[i]->Update(delta,now);
 		}
 	}
 
-	//Check all voxels in each bucket for intersections with other voxels in the bucket
-	for (unsigned int bu = 0; bu < PHYSICS_HASH_TABLE_BUCKETS; bu++) {
-		int voxelCount = voxelCollisionTable.Size(bu);
-		PhysicsVoxel ** voxelArray = voxelCollisionTable[bu];
-		//Now do the O(n^2) which checks for collisions
-		for (unsigned int a = 0; a < voxelCount; a++) {
-			for (unsigned int b = a+1; b < voxelCount; b++) {
-				//Do AABB before you do full physics check... or things will be slow
-				if (voxelArray[a]->AabColiding(voxelArray[b]->Position)) {
-					Intersection intr = CalculateIntersection(voxelArray[a]->Position,voxelArray[b]->Position);
+
+	//Now do the O(n^2) which checks for collisions
+	for (unsigned int a = 0; a <= highestFull; a++) {
+		for (unsigned int b = a+1; b <= highestFull; b++) {
+			//Do AABB before you do full physics check... or things will be slow
+			if (allVoxels[a]->AabColiding(allVoxels[b]->Position)) {
+				Intersection intr = CalculateIntersection(allVoxels[a]->Position,allVoxels[b]->Position);
 
 
-					voxelArray[a]->colliding = voxelArray[b]->colliding = true;
-					float depth = intr.Depth;
-					float force = 500*depth;
+				allVoxels[a]->colliding = allVoxels[b]->colliding = true;
+				float depth = intr.Depth;
+				float force = 500*depth;
 
-					//No two voxels can occupy the same position, push one voxel a little out of the other
-					if (voxelArray[a]->Position == voxelArray[b]->Position)
-						voxelArray[b]->Position += vec3(.01,.01,.01);
+				//No two voxels can occupy the same position, push one voxel a little out of the other
+				if (allVoxels[a]->Position == allVoxels[b]->Position)
+					allVoxels[b]->Position += vec3(.01,.01,.01);
 
-					vec3 forceDirection = intr.Normal;
-					//one idea is to mix the ideal direction (face aligned) with 
-					//the natural direction (collision aligned)
-					//to add instabilities which cause blocks on the edge to fall over
+				vec3 forceDirection = intr.Normal;
+				//one idea is to mix the ideal direction (face aligned) with 
+				//the natural direction (collision aligned)
+				//to add instabilities which cause blocks on the edge to fall over
 
 
-					voxelArray[a]->Acceleration += forceDirection*force;
-					voxelArray[b]->Acceleration += -forceDirection*force; 
-					//Remove Velocity in that direction
-					float vel = 0.0f;
-					vel += removeInDirection(voxelArray[a]->Velocity,-forceDirection);
-					vel += removeInDirection(voxelArray[b]->Velocity,forceDirection);
-					//The removed Velocity will now be thirded (instead of average since some is lost)
-					//and added back in the opposite direction
-					vel /= 3.0f;
-					voxelArray[a]->Velocity += vel*forceDirection;
-					voxelArray[b]->Velocity += vel*-forceDirection;
-					//Apply enhanced friction while they're touching
-					voxelArray[a]->Velocity *= .99;
-					voxelArray[b]->Velocity *= .99;
-				}
+				allVoxels[a]->Acceleration += forceDirection*force;
+				allVoxels[b]->Acceleration += -forceDirection*force; 
+				//Remove Velocity in that direction
+				float vel = 0.0f;
+				vel += removeInDirection(allVoxels[a]->Velocity,-forceDirection);
+				vel += removeInDirection(allVoxels[b]->Velocity,forceDirection);
+				//The removed Velocity will now be thirded (instead of average since some is lost)
+				//and added back in the opposite direction
+				vel /= 3.0f;
+				allVoxels[a]->Velocity += vel*forceDirection;
+				allVoxels[b]->Velocity += vel*-forceDirection;
+				//Apply enhanced friction while they're touching
+				allVoxels[a]->Velocity *= .99;
+				allVoxels[b]->Velocity *= .99;
 			}
 		}
 	}
 	//set the current voxel to 0
 
 
-	//Clear the physics hash table since its now invalid (positions change)
-	voxelCollisionTable.Clear();
 
 	//Update all the voxels
 	for (unsigned int i = 0; i <= highestFull; i++) {
@@ -210,8 +203,6 @@ void PhysicsSystem::Update(double delta, double now) {
 			newFullSize = i;
 			allVoxels[i]->Velocity += allVoxels[i]->Acceleration*(float)delta;
 			allVoxels[i]->Position += allVoxels[i]->Velocity*(float)delta;
-			//Add the voxel to the physics hashtable after updating its position
-			voxelCollisionTable.Add(allVoxels[i]);
 		}
 	}
 
@@ -233,29 +224,24 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 	if (allVoxels.size() <= 0)
 		return;
 
+	//Translate to the voxel position
+	shader->Model.PushMatrix();
+	//Voxels store their position around the center of mass instead of their edge
+	//add a correction to the model matrix
+	shader->Model.Translate(vec3(-.5,-.5,-.5));
+	shader->Model.Apply();
+
+	renderer->startDraw(shader);
+
 	//Draw all the voxels
 	for (unsigned int i = 0; i <= highestFull; i++) {
 		if (allVoxels[i] != NULL) {
-			
-			//Retrieve the voxel
-			PhysicsVoxel * voxel = allVoxels[i];
-			//Translate to the voxel position
-			shader->Model.PushMatrix();
-			shader->Model.Translate(voxel->Position);
-			//Rotate around the voxel
-			//mat4 rotation = mat4(voxel->rotation);
-			//rotation[3].w = 1;
-			//Combine voxel's matrix with model matrix
-			//shader->Model.Combine(rotation);
-			//Step .5,.5,.5 back since voxels are drawn at their edge
-			shader->Model.Translate(vec3(-.5,-.5,-.5));
-			shader->Model.Apply();
 			//Draw the voxel
-			renderer->startDraw(shader);
-			renderer->pushVoxel(shader,vec3(.01,.01,.01),1/* allVoxels[i]->colliding ? 1 : 0*/);
-			renderer->finishDraw(shader);
-
-			shader->Model.PopMatrix();
+			renderer->pushVoxel(shader,allVoxels[i]->Position,1);
 		}
 	}
+
+	renderer->finishDraw(shader);
+
+	shader->Model.PopMatrix();
 }
