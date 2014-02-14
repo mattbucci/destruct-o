@@ -251,8 +251,8 @@ void FirstPersonModeMobile::ReadInput(set<Sint64> pressedKeys, vector<InputEvent
     
 	//Calculate the looking vector from the new aggregate angle vector
 	//this part adapted from a previous FPS engine I wrote, so its a bit contrived
-	float f = aggregateMouseVector.x/180.f*M_PI;
-	float t = (90.0f-aggregateMouseVector.y)/180.0f*M_PI;
+	float f = aggregateMouseVector.x/180.f*(float)M_PI;
+	float t = (90.0f-aggregateMouseVector.y)/180.0f*(float)M_PI;
 	lookVector.x = sin(t)*cos(f);
 	lookVector.y = sin(t)*sin(f);
 	lookVector.z = cos(t);
@@ -276,7 +276,7 @@ void FirstPersonModeMobile::Draw(double width, double height, GL2DProgram * shad
 	
     // Push a translation matrix
 	shader->Model.PushMatrix();
-    shader->Model.Translate(160, height - 160, 0);
+    shader->Model.Translate(160, (float)height - 160, 0);
     
     // Apply the matrix
 	shader->Model.Apply();
@@ -292,7 +292,7 @@ void FirstPersonModeMobile::Draw(double width, double height, GL2DProgram * shad
 	
     // Push a translation matrix
 	shader->Model.PushMatrix();
-    shader->Model.Translate((160) + fingerJoystickCurrentLocation.x, (height - 160) + fingerJoystickCurrentLocation.y, 0);
+    shader->Model.Translate((160) + fingerJoystickCurrentLocation.x, (float)(height - 160) + fingerJoystickCurrentLocation.y, 0);
     
     // Apply the matrix
 	shader->Model.Apply();

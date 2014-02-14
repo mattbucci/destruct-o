@@ -18,7 +18,7 @@ void ParticleCloud::UpdateCloud(double time, double delta, vec3 cameraPosition) 
 	int activeParticles = 0;
 	//First update each particle
 	Particle ** first = &particles[0];
-	for (int i = 0; i < particles.size(); i++) {
+	for (unsigned int i = 0; i < particles.size(); i++) {
 		Particle * current = *(first+i);
 		//Done
 		if (current == NULL)
@@ -65,7 +65,7 @@ void ParticleCloud::CleanupSystem(ParticleSystem * system) {
 
 	//Cleanup each particle
 	Particle ** first = &particles[0];
-	for (int i = 0; i < particles.size(); i++) {
+	for (unsigned int i = 0; i < particles.size(); i++) {
 		Particle * current = *(first+i);
 		if ((current != NULL) && (current->owner == system)) {
 			//Cleanup that particle
@@ -108,7 +108,7 @@ void ParticleCloud::Draw(GL3DProgram * shaders) {
 	shaders->Camera.CopyMatricies(&viewMatrix,NULL);
 
 	Particle ** first = &particles[0];
-	for (int i = 0; i < particles.size(); i++) {
+	for (unsigned int i = 0; i < particles.size(); i++) {
 		Particle * current = *(first+i);
 		//Done
 		if (current == NULL)

@@ -107,16 +107,16 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
         if(axisX != 0 || axisY != 0)
         {
             // Override motion vector
-            moveVector.x = static_cast<float>(-axisY) / 32767.0;
-            moveVector.y = static_cast<float>(-axisX) / 32767.0;
+            moveVector.x = static_cast<float>(-axisY) / 32767.0f;
+            moveVector.y = static_cast<float>(-axisX) / 32767.0f;
         }
         
         // Check if we should override the mouse delta sum
         if(axisLX != 0 || axisLY != 0)
         {
             // Override motion vector
-            mouseDeltaSum.x = (static_cast<float>(-axisLX) / 32767.0) * 16.0;
-            mouseDeltaSum.y = (static_cast<float>(-axisLY) / 32767.0) * 16.0;
+            mouseDeltaSum.x = (static_cast<float>(-axisLX) / 32767.0f) * 16.0f;
+            mouseDeltaSum.y = (static_cast<float>(-axisLY) / 32767.0f) * 16.0f;
         }
     }
     
@@ -133,8 +133,8 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
     
 	//Calculate the looking vector from the new aggregate angle vector
 	//this part adapted from a previous FPS engine I wrote, so its a bit contrived
-	float f = aggregateMouseVector.x/180.f*M_PI;
-	float t = (90.0f-aggregateMouseVector.y)/180.0f*M_PI;
+	float f = aggregateMouseVector.x/180.f*(float)M_PI;
+	float t = (90.0f-aggregateMouseVector.y)/180.0f*(float)M_PI;
 	lookVector.x = sin(t)*cos(f);
 	lookVector.y = sin(t)*sin(f);
 	lookVector.z = cos(t);

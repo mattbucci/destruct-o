@@ -32,7 +32,7 @@ Particle::Particle(double gameTime, float systemTime, ParticleSystem * owner, Pa
 	position = owner->Position;
 
 	vec2 emitterSize = systemData->EmitterSize.ValueAtSequence(systemTime);
-	position += vec3(random(emitterSize.x*-.5,emitterSize.x*.5),random(emitterSize.y*-.5,emitterSize.y*.5),0);
+	position += vec3(random(emitterSize.x*-.5f,emitterSize.x*.5f),random(emitterSize.y*-.5f,emitterSize.y*.5f),0);
 
 	//Set all the normals to face the camera
 	for (int i = 0; i < 4; i++)
@@ -221,7 +221,7 @@ bool Particle::Update(double time, double delta) {
 
 	//Calculate acceleration
 	float life = (float)(time-spawn);
-	float lifeScale = life/(deathAt-spawn);
+	float lifeScale = life/(float)(deathAt-spawn);
 
 	//Use the midpoint method update formula to choose the new velocity/position
 	//First calculation

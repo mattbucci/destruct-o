@@ -68,7 +68,7 @@ void ActorSystem::Update(double delta, double now) {
 	for (unsigned int i = 0; i <= highestFull; i++) {
 		if (allActors[i] != NULL) {
 			newFullSize = i;
-			allActors[i]->Update(delta,now);
+			allActors[i]->Update((float)delta,(float)now);
 		}
 	}
 

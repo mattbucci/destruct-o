@@ -6,7 +6,7 @@
 
 //Right now there's no physics system and this actor is a pseudo physics object
 //so here are the constants involved
-static const float groundThreshold = .05;
+static const float groundThreshold = .05f;
 static const float movementSpeed = 6.0f;
 static const float gravity = -9.8f;
 static const float jumpVelocity = 10.0f;

@@ -221,7 +221,7 @@ void BaseFrame::Draw(double width, double height) {
 	//The player is 3 height right now
 	pos.z += 2.5;
 	//Calculate voxel draw rectangle
-	pair<vec2,vec2> drawRectangle = ViewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(pos),FirstPerson->GetAngleVector().x/180.0f*M_PI);
+	pair<vec2,vec2> drawRectangle = ViewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(pos),FirstPerson->GetAngleVector().x/180.0f*(float)M_PI);
 	vec2 minPoint = drawRectangle.first;
 	vec2 maxPoint = drawRectangle.second;
 
@@ -247,6 +247,6 @@ void BaseFrame::Draw(double width, double height) {
     // Draw the UI for joysticks
 	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
     shaders2d->UseProgram();
-    shaders2d->SetWidthHeight(width, height);
+    shaders2d->SetWidthHeight((float)width, (float)height);
     FirstPerson->Draw(width, height, shaders2d);
 }

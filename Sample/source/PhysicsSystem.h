@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "VoxelDrawSystem.h"
-#include "PhysicsHashTable.h"
 
 class ShaderGroup;
 class PhysicsVoxel;

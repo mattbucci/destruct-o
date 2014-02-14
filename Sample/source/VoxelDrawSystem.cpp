@@ -20,5 +20,7 @@ VoxelDrawSystem * VoxelDrawSystem::BuildAppropriateSystem() {
 		return new InstancedVoxelRenderSystem();
 		break;
 #endif
+		_ASSERTE(false);
+		return NULL;
 	}
 }
