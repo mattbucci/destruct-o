@@ -28,18 +28,11 @@ class InteropChain : public InteropChainType<chainType> {
 	T findZero() {
 		return T();
 	}
-    
-#if (defined WIN32)
-	template<>
-	float findZero<float>() {
-		return 0.0f;
-	}
-#else
-    // The recommended method of "template specialization" for clang and gcc is to overload the template function
+	
+	// The recommended method of "template specialization" for clang and gcc is to overload the template function
 	float findZero() {
 		return 0.0f;
 	}
-#endif
 
 	struct step {
 		step(interopType calc) : calculator(calc) {}
