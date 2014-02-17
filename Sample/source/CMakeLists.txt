@@ -57,6 +57,10 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     find_library(CURL_FRAMEWORK NAMES curl)
     target_link_libraries(VoxEngine ${CURL_FRAMEWORK})
 
+    # Fine the noise Framework
+    find_library(NOISE_FRAMEWORK NAMES noise)
+    target_link_libraries(VoxEngine ${NOISE_FRAMEWORK})
+
     # Pull in the bundled GLEW library
     include_directories("../includes/glew")
     get_filename_component(CGLEW "../libs/osx/glew/" ABSOLUTE)
@@ -64,13 +68,6 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     
     # Pull in the OpenGL Mathematics Library
     include_directories("../includes/glm-0.9.4.4")
-    
-    # Pull in the noise generation library
-    include_directories("../includes/libnoise")
-    
-    # Need to build libnoise for OS X
-    add_library(noise STATIC ${libnoise_src})
-    target_link_libraries(VoxEngine noise)
 
     # Make sure Xcode uses Clang set for libc++ and c++ version 2011
     set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvm.clang.1_0")
@@ -166,7 +163,156 @@ ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 #An attempt to copy the needed files over on run, doesn't work right now
 #add_custom_command(TARGET MyTarget PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/game/Interface $<TARGET_FILE_DIR:MyTarget>)
 
-#Code should be organized later, but currently
-#doesn't work properly in visual studio
-#FILE(GLOB GLFiles "GL*")
-#source_group(OpenGL FILES ${GLFiles})
+#Code should be organized
+#opengl files are really easy to organize
+FILE(GLOB GLFiles "GL*" "IOSGL.h" "MaxDistanceFog.h" "MaxDistanceFog.cpp" "ShaderGroup.h" "ShaderGroup.cpp")
+source_group(OpenGL FILES ${GLFiles})
+
+#actors
+FILE(GLOB ActorFiles "Actor*")
+source_group(Actors FILES ${ActorFiles})
+
+#audio
+FILE(GLOB AudioFiles "Audio*" "Music.h" "Music.cpp" "Effect.h" "Effect.cpp")
+source_group(Audio FILES ${AudioFiles})
+
+#Dialog/Interface files
+FILE(GLOB InterfaceFiles
+    Button.h
+	Button.cpp
+	ComboBox.h
+	ComboBox.cpp
+	Control.h
+	Control.cpp
+	ControlBase.h
+	ControlBase.cpp
+	DebugWindow.h
+	DebugWindow.cpp
+	ErrorWindow.h
+	ErrorWindow.cpp
+	Font.h
+	Font.cpp
+	InputEvent.h
+	InputEvent.cpp
+	Label.h
+	Label.cpp
+	Listbox.h
+	Listbox.cpp
+	NinePatchBinary.h
+	NinePatchBinary.cpp
+	Textbox.h
+	Textbox.cpp
+	Window.h
+	Window.cpp
+	InterfaceGlobals.h
+	InterfaceGlobals.cpp
+	RasterizedText.h
+	RasterizedText.cpp
+	Shape.h
+	Shape.cpp
+)
+source_group(Interface FILES ${InterfaceFiles})
+
+FILE(GLOB PhysicsFiles
+	Demo.h
+	Demo.cpp
+	Interop.h
+	InteropChain.h
+	InteropDecoders.h
+	LinearInterop.h
+	Particle.h
+	Particle.cpp
+	ParticleCloud.h
+	ParticleCloud.cpp
+	ParticleData.h
+	ParticleData.cpp
+	ParticleSystem.h
+	ParticleSystem.cpp
+	PhysicsVoxel.h
+	PhysicsVoxel.cpp
+	PhysicsSystem.h
+	PhysicsSystem.cpp
+)
+source_group(Physics FILES ${PhysicsFiles})
+
+FILE(GLOB UtilityFiles
+	AuxLogger.h
+	AuxLogger.cpp
+	GameEvent.h
+	GameEvent.cpp
+	GObject.h
+	GObject.cpp
+	ReflectionData.h
+	ReflectionData.cpp
+	lodepng.h
+	lodepng.cpp
+	noiseutils.h
+	noiseutils.cpp
+	OS.h
+	OS.cpp
+	Semaphore.h
+	Semaphore.cpp
+	FPSCounter.h
+	FPSCounter.cpp
+	Rect.h
+	Rect.cpp
+	GameEventInterface.h
+	GameEventSubscriber.h
+	GameEventSubscriber.cpp
+	Utilities.h
+	Utilities.cpp
+	GameSave.h
+	GameSave.cpp
+	ViewDistanceCalc.h
+	ViewDistanceCalc.cpp
+	LoadingScreen.h
+	LoadingScreen.cpp
+)
+source_group(Utilities FILES ${UtilityFiles})
+
+FILE(GLOB VoxelFiles
+	BasicVoxelRenderSystem.h
+	BasicVoxelRenderSystem.cpp
+	InstancedVoxelRenderSystem.h
+	InstancedVoxelRenderSystem.cpp
+	VoxelDrawSystem.h
+	VoxelDrawSystem.cpp
+	VoxelSystem.h
+	VoxelSystem.cpp
+	TileCell.h
+	GameTile.h
+	GameTile.cpp
+)
+source_group(Voxels FILES ${VoxelFiles})
+
+FILE(GLOB CoreFiles
+	VoxEngine.h
+	VoxEngine.cpp
+	GameSystem.h
+	GameSystem.cpp
+	Frames.h
+	Frames.cpp
+	BaseFrame.h
+	BaseFrame.cpp
+	stdafx.h
+	stdafx.cpp
+)
+source_group(Core FILES ${CoreFiles})
+
+FILE(GLOB GenFiles
+	TerrainGen.h
+	TerrainGen.cpp
+)
+source_group(Procedural FILES ${GenFiles})
+
+FILE(GLOB ControlFiles
+	FirstPersonMode.h
+	FirstPersonMode.cpp
+	FirstPersonModeMobile.h
+	FirstPersonModeMobile.cpp
+	LoadingScreen.h
+	LoadingScreen.cpp
+	GameCamera.h
+	GameCamera.cpp
+)
+source_group(GameControl FILES ${ControlFiles})

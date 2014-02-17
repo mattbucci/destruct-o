@@ -28,8 +28,9 @@ class InteropChain : public InteropChainType<chainType> {
 	T findZero() {
 		return T();
 	}
-	template<>
-	float findZero<float>() {
+	
+	// The recommended method of "template specialization" for clang and gcc is to overload the template function
+	float findZero() {
 		return 0.0f;
 	}
 
