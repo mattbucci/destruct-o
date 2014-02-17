@@ -79,7 +79,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	
     // Create the first person controller depending on the current platform
 #ifdef __MOBILE__
-    FirstPerson = (FirstPersonMode *) new FirstPersonModeMobile();
+    FirstPerson = new FirstPersonModeMobile();
 #else
     FirstPerson = new FirstPersonMode();
 #endif

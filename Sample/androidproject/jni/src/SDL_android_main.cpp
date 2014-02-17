@@ -1,12 +1,12 @@
 
 extern "C" {
 
-	#include "SDL/SDL_config.h"
+	#include "SDL2/SDL_config.h"
 
 	#ifdef __ANDROID__
 
 	/* Include the SDL main definition header */
-	#include "SDL/SDL_main.h"
+	#include "SDL2/SDL_main.h"
 
 	/*******************************************************************************
 					 Functions called by JNI

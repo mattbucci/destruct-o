@@ -2,6 +2,101 @@
 #include "GLDynamicVertexGroup.h"
 #include "GL3DProgram.h"
 
+#ifdef __ANDROID__
+
+//Build the arrays to create the vertex group
+GLDynamicVertexGroup::GLDynamicVertexGroup() {
+	vertices = NULL;
+	vertexNormals = NULL;
+
+	sizeChanged = true;
+}
+
+void GLDynamicVertexGroup::UpdateGroup(GLenum gltype, int vertexCount) {
+	//Use C allocaiton so I can use realloc()
+	if (vertices == NULL) {
+		vertices = (vec3*)malloc(sizeof(vec3)*vertexCount);
+		vertexNormals = (vec3*)malloc(sizeof(vec3)*vertexCount);
+		textureCoords = (vec2*)malloc(sizeof(vec2)*vertexCount);
+		memset(vertexNormals,0,sizeof(vertexNormals));
+	}
+	else {
+		vertices = (vec3*)realloc(vertices, sizeof(vec3)*vertexCount);
+		vertexNormals = (vec3*)realloc(vertexNormals, sizeof(vec3)*vertexCount);
+		textureCoords = (vec2*)realloc(textureCoords,sizeof(vec2)*vertexCount);
+	}
+
+	this->gltype = gltype;
+	this->vertexCount = vertexCount;
+	sizeChanged = true;
+}
+
+GLDynamicVertexGroup::~GLDynamicVertexGroup() {
+
+	free(vertices);
+	free(vertexNormals);
+	free(textureCoords);
+}
+
+	
+//For modifying vertices
+vec3 & GLDynamicVertexGroup::vat(const int index) {
+	_ASSERTE((index >= 0) && (index < vertexCount));
+	return vertices[index];
+}
+
+vec3 & GLDynamicVertexGroup::nat(const int index) {
+	_ASSERTE((index >= 0) && (index < vertexCount));
+	return vertexNormals[index];
+}
+
+vec2 & GLDynamicVertexGroup::xat(const int index) {
+	_ASSERTE((index >= 0) && (index < vertexCount));
+	return textureCoords[index];
+}
+
+
+
+void GLDynamicVertexGroup::Draw(GL3DProgram * shader) {
+	_ASSERTE(vertexBuffer >= 0);
+	_ASSERTE(vertexArray >= 0);
+	_ASSERTE(normalBuffer >= 0);
+	_ASSERTE(positionBuffer >= 0);
+
+	vector<vec4> positions(vertexCount);
+
+	//vertices
+	glEnableVertexAttribArray ( shader->AttributeVertex() );
+	glVertexAttribPointer ( shader->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, 0, vertices );
+
+	//Normals
+	glEnableVertexAttribArray ( shader->AttributeNormal() );
+	glVertexAttribPointer ( shader->AttributeNormal(), 3, GL_FLOAT, GL_FALSE, 0, vertexNormals );
+
+	//texture coordinates
+	glEnableVertexAttribArray ( shader->AttributeTexture() );
+	glVertexAttribPointer ( shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, 0, textureCoords ); 
+
+
+	//The GLDynamicVertexGroup does not use the position attribute
+	//so instead it simply pushes 0 for all the positions after the size changes
+	//the only consequence of this is that all texture coordinates must be from 0 to 4
+
+	//vec4 automatically initializes to 0,0,0,0
+		
+
+	//position
+	glBindBuffer ( GL_ARRAY_BUFFER, positionBuffer ); 
+	glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(vec4), &positions[0], GL_DYNAMIC_DRAW );
+	glEnableVertexAttribArray ( shader->AttributePosition() );
+	glVertexAttribPointer ( shader->AttributePosition(), 4, GL_FLOAT, GL_FALSE, 0, 0 ); 
+
+
+	glDrawArrays( gltype, 0, vertexCount );
+}
+
+#else
+
 //Build the arrays to create the vertex group
 GLDynamicVertexGroup::GLDynamicVertexGroup() {
 	vertices = NULL;
@@ -136,3 +231,5 @@ void GLDynamicVertexGroup::Draw(GL3DProgram * shader) {
 
 	glDrawArrays( gltype, 0, vertexCount );
 }
+
+#endif

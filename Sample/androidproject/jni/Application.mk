@@ -7,3 +7,5 @@ APP_CPPFLAGS += -std=c++11
 # or use APP_CPPFLAGS := -std=gnu++11
 
 APP_STL:=gnustl_static
+#need exceptions for libnoise
+APP_CPPFLAGS += -fexceptions
