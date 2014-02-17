@@ -8,7 +8,12 @@ VoxelDrawSystem::~VoxelDrawSystem() {
 }
 
 
-VoxelDrawSystem * VoxelDrawSystem::BuildAppropriateSystem() {
+VoxelDrawSystem * VoxelDrawSystem::BuildAppropriateSystem()
+{
+#if (defined __IPHONEOS__)
+    // iOS will ALWAYS use the instanced render system
+    return new InstancedVoxelRenderSystem();
+#else
 	//Choose the appropriate render version
 	switch (OpenglVersion){
 	case 20:
@@ -20,7 +25,10 @@ VoxelDrawSystem * VoxelDrawSystem::BuildAppropriateSystem() {
 		return new InstancedVoxelRenderSystem();
 		break;
 #endif
-		_ASSERTE(false);
-		return NULL;
 	}
+#endif
+    
+    // Function needs to have a definitive return.
+    _ASSERTE(false);
+    return NULL;
 }

@@ -8,6 +8,7 @@
 #include "ActorSystem.h"
 
 #include "FirstPersonMode.h"
+#include "FirstPersonModeMobile.h"
 #include "PhysicsSystem.h"
 #include "ParticleCloud.h"
 
