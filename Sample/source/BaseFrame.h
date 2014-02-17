@@ -9,6 +9,7 @@
 
 #include "FirstPersonModeMobile.h"
 #include "FirstPersonMode.h"
+#include "FirstPersonModeMobile.h"
 #include "PhysicsSystem.h"
 #include "ParticleCloud.h"
 
