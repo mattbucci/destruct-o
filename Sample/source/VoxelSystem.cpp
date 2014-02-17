@@ -48,29 +48,20 @@ VoxelSystem::~VoxelSystem() {
 bool VoxelSystem::LoadTile(string tileName) {
 	//Init Terrain Generator
 	TerrainGen t = TerrainGen();
-	int wid = 1024; int hei = 1024;
-	t.setSeed(2);
-	t.setTileScale(1, 1);
+	int wid = 256; int hei = 256;
 	t.setTileSize(wid, hei);
 
 	//Generate Terrain Tile
-	unsigned char* rawtile = t.generateTile(0, 0);
+	unsigned char* rawTile = t.generateTile(0, 0);
 
 	//Create and Fill Terrain Data Vector
 	vector<unsigned char> tile;
-	int s = wid * hei;
-	tile.resize(s * 4);
-	for(int i = 0; i < s; i++) {
-		tile[(i*4)] = rawtile[i];
-		tile[(i*4) + 1] = 0;
-		tile[(i*4) + 2] = 0;
-		tile[(i*4) + 3] = 0;
-	}
+	tile.assign(rawTile, rawTile + (wid*hei*4));
 
 	//Free Terrain Tile Memory
-	free(rawtile);
+	free(rawTile);
 
-	tileData = GameTile::LoadTileFromMemory(tile,1024,1024);
+	tileData = GameTile::LoadTileFromMemory(tile,wid,hei);
 
 	//First load the tile map
 	//tileData = GameTile::LoadTileFromDisk(tileName);
@@ -131,12 +122,11 @@ void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int 
 
 			voxelCount += stack+1;
 
-			//For now use raw tile % 2 to map all tiles to be within the 2 valid materials
-			//that i've made
+			//For now use raw tile % 16 to map all tiles to be within the 16 valid materials
 			//Note: This is a really bad place for a virtual function call
 			//maybe swap this out in the future
 			while (stack-- >= 0) {
-				renderer->pushVoxel(shader,pos,cell.materialId % 2);
+				renderer->pushVoxel(shader,pos,cell.materialId % 16);
 				pos.z--;
 			}
 		}
