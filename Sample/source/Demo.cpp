@@ -9,7 +9,7 @@
 
 
 Demo::Demo() {
-
+	CurrentAcidStrength = 0;
 }
 
 void Demo::BuildCube(vec3 pos, float sepStrength) {
@@ -144,6 +144,16 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 			}
 			else if (eve.Key == 'c') {
 				SwitchDemo(0,playerPos,playerFacing);
+			}
+			else if (eve.Key == 'y') {
+				CurrentAcidStrength += .2;
+				if (CurrentAcidStrength > 1.0f)
+					CurrentAcidStrength = 1.0f;
+			}
+			else if (eve.Key == 'h') {
+				CurrentAcidStrength -= .2;
+				if (CurrentAcidStrength < 0.0)
+					CurrentAcidStrength = 0.0f;
 			}
 		}
 	}

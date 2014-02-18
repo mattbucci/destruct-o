@@ -153,7 +153,9 @@ void BaseFrame::Draw(double width, double height) {
 	shaders3d->Model.Reset();
 	shaders3d->Model.Apply();
 	shaders3d->Acid.SetCurrentTime(VoxEngine::GetGameSimTime());
-	shaders3d->Acid.SetAcidFactor(1.0f);
+	//Acid factor currently managed by the demo system
+	//this will be moved to a more powerful game logic system in the future
+	shaders3d->Acid.SetAcidFactor(demo->CurrentAcidStrength);
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
