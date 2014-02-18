@@ -228,6 +228,10 @@ void VoxEngine::Start() {
 	SDL_Quit();
 }
 
+double VoxEngine::GetGameSimTime() {
+	return gameSimulationTime;
+}
+
 void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 		//You can poll up to 20 events per frame
 		//we don't want to take all day though

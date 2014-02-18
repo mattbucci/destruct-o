@@ -6,6 +6,7 @@
 #include "GLLighting.h"
 #include "MaxDistanceFog.h"
 #include "GLCombinedMatrix.h"
+#include "GLAcidTab.h"
 //#include "GLMaterialManager.h"
 
 class GL3DProgram : public GLProgram {
@@ -27,6 +28,7 @@ public:
 	GLCombinedModel Model;
 	GLCamera Camera;
 	MaxDistanceFog Fog;
+	GLAcidTab Acid;
 	//I've elected for manual management of textures
 	//since the material manager concept wasn't really doing anything for me
 	//GLMaterialManager Materials;

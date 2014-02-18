@@ -4,6 +4,7 @@
 #include "GL3DProgram.h"
 #include "ShaderGroup.h"
 #include "ActorPlayer.h"
+#include "VoxEngine.h"
 
 #include "Window.h"
 #include "Button.h"
@@ -77,13 +78,13 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	});
 	wm->AddControl(windowButton);
 	
-    // Create the first person controller depending on the current platform
+	// Create the first person controller depending on the current platform
 #ifdef __MOBILE__
-    FirstPerson = new FirstPersonModeMobile();
+	FirstPerson = new FirstPersonModeMobile();
 #else
-    FirstPerson = new FirstPersonMode();
+	FirstPerson = new FirstPersonMode();
 #endif
-    
+	
 	// Enable the first person controller
 	FirstPerson->Enable(true);
 
@@ -100,64 +101,9 @@ void BaseFrame::OnFrameFocus() {
 	//The player autoregisters himself with the actor system
 	//we do not need to do that by hand
 
-	//Build test voxels
-	/*Physics.BuildVoxel(player->GetPosition()+vec3(5.1,2,2));
-	Physics.BuildVoxel(player->GetPosition()+vec3(5.2,.5,1.5));
-	Physics.BuildVoxel(player->GetPosition()+vec3(5.3,0,1));//*/
-	/*for (int x = 0; x < 8; x+= (rand() % 4)) {
-		for (int y = 0; y < 8; y+= (rand() % 4)) {
-			if ((rand() % 2) == 1)
-				Physics.BuildVoxel(player->GetPosition()+vec3(x*.5,y*.5,rand() % 5+1));
-		}
-	}//*/
-
-	//Physics.BuildVoxel(player->GetPosition()+vec3(5.2,2,9));
-	//Physics.BuildVoxel(player->GetPosition()+vec3(5.1,2,5));
-	/*for (int i = 0; i < 3; i++) {
-		Physics.BuildVoxel(player->GetPosition()+vec3(5+(rand() % 10)/100.0,2+(rand() % 10)/100.0,2 + i*2));
-	}
-	
-	for (int p = 0; p < 3; p++) {
-		for (int a =p; a < 6-p; a++) {
-			for (int b = p; b < 6-p; b++) {
-				vec3 randomness = vec3((rand() % 10)/100.0,(rand() % 10)/100.0,(rand() % 10)/100.0);
-				Physics.BuildVoxel(player->GetPosition()+vec3(a+3,b-5,2+3*p)+randomness);
-			}
-		}
-	}//*/
-
-
-	//Physics.BuildVoxel(player->GetPosition()+vec3(5,.2,9));
-	//Physics.BuildVoxel(player->GetPosition()+vec3(5,.4,133));
-	//Physics.BuildVoxel(player->GetPosition()+vec3(5,1,1));
-	
-	//Physics.BuildVoxel(player->GetPosition()+vec3(5,2,2));
-
+	//The physics demo
+	//we won't have this forever
 	demo = new Demo();
-
-	//Physics.BuildCloth(player->GetPosition()+vec3(5,0,5),vec3(0,1,0),vec3(0,0,-1),7,7);
-
-	//Build particle rules
-	ParticleData * rules = new ParticleData();
-	rules->GenerationRate.AddValue(0,40);
-	rules->Velocity.AddValue(0,vec3(0,0,.5));
-	rules->Variation.AddValue(0,.5);
-	rules->Life.AddValue(0,10);
-	rules->EmitterSize.AddValue(0,vec2(2,2));
-
-	rules->Color.AddValue(0,vec4(1,0,0,1));
-	rules->Color.AddValue(1,vec4(0,1,1,1));
-	rules->Scale.AddValue(0,vec3(.2,.2,.2));
-	rules->Scale.AddValue(1,vec3(.05,.05,.05));
-	rules->Acceleration.AddValue(0,vec3());
-
-	rules->ForceFunction = [](float timeSpan,vec3 position, vec3 velocity) {
-		return 4.0f*vec3(sin(position.x),cos(position.y+position.z),sin(position.z*position.x));
-	};
-	//rules->Velocity
-	//testSystem = new ParticleSystem(rules,0.0);
-	//->Position = player->GetPosition()+vec3(5,0,1);
-
 }
 
 void BaseFrame::Build() {
@@ -203,8 +149,11 @@ void BaseFrame::Draw(double width, double height) {
 	//Enable the 2d shader for interface drawing
 	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
 	shaders3d->UseProgram();
+	//Setup basics of shader program per-frame
 	shaders3d->Model.Reset();
 	shaders3d->Model.Apply();
+	shaders3d->Acid.SetCurrentTime(VoxEngine::GetGameSimTime());
+	shaders3d->Acid.SetAcidFactor(1.0f);
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
@@ -229,24 +178,25 @@ void BaseFrame::Draw(double width, double height) {
 	//camera draw also sets up world light
 	Camera.SetCameraView(pos,FirstPerson->GetLookVector());
 	Camera.Draw(shaders3d);
-	Particles.Draw(shaders3d);
-	//demo->Draw(shaders3d);
 	
 	// Draw voxels
 	Voxels.Draw(shaders3d,pos,(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);
 	//The physics system uses the same texture that the voxels above binds every time it draws
 	//so it must always immediately follow Voxels.draw()
 	Physics.Draw(shaders);
+
+	//The particle system will use a different shader entirely soon
+	Particles.Draw(shaders3d);
 	
 	//Update the voxel debug counter
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
-    
+	
 	//Call the parent draw to draw interface
 	GameSystem::Draw(width,height);
-    
-    // Draw the UI for joysticks
+	
+	// Draw the UI for joysticks
 	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
-    shaders2d->UseProgram();
-    shaders2d->SetWidthHeight((float)width, (float)height);
-    FirstPerson->Draw(width, height, shaders2d);
+	shaders2d->UseProgram();
+	shaders2d->SetWidthHeight((float)width, (float)height);
+	FirstPerson->Draw(width, height, shaders2d);
 }

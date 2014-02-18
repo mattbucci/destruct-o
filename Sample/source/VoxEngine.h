@@ -34,4 +34,7 @@ class VoxEngine {
 	static int curHeight;
 
 	friend int main(int argc, char** argv);
+public:
+	//This gets the update cycle time
+	static double GetGameSimTime();
 };

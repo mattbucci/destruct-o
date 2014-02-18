@@ -13,25 +13,11 @@ static const float jumpVelocity = 10.0f;
 
 ActorPlayer::ActorPlayer() {
 	//Start the player off in abouts the center
-	position = vec3(128,128,0);
+	position = vec3(170,112,0);
 }
 ActorPlayer::~ActorPlayer() {
 
 }
-
-/*void ActorPlayer::ReadInput(const vector<InputEvent> & events) {
-	for (auto eve : events) {
-		if ((eve.Event == InputEvent::KeyboardDown) && (eve.Key == ' ')) {
-			//Check that the user is on the ground
-			float posHeight = Game()->Voxels.GetPositionHeight(vec2(position.x,position.y));
-			float relativeHeight = position.z-posHeight;
-			if (relativeHeight <= groundThreshold) {
-				//Apply upwards velocity
-				velocity.z += jumpVelocity;
-			}
-		}
-	}
-}*/
 
 //Update the position based off the most recent movement and direction vectors
 void ActorPlayer::Update(float delta, float now) {

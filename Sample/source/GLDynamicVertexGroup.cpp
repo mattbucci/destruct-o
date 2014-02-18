@@ -169,8 +169,6 @@ void GLDynamicVertexGroup::Draw(GL3DProgram * shader) {
 	_ASSERTE(normalBuffer >= 0);
 	_ASSERTE(positionBuffer >= 0);
 
-	vector<vec4> positions(vertexCount);
-
 	//Rebind the array to bring them into the current context
 	glBindVertexArray ( vertexArray );
 
@@ -199,7 +197,7 @@ void GLDynamicVertexGroup::Draw(GL3DProgram * shader) {
 		//the only consequence of this is that all texture coordinates must be from 0 to 4
 
 		//vec4 automatically initializes to 0,0,0,0
-		
+		vector<vec4> positions(vertexCount);
 
 		//position
 		glBindBuffer ( GL_ARRAY_BUFFER, positionBuffer ); 

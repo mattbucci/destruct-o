@@ -7,7 +7,9 @@ GL3DProgram::GL3DProgram(GLCommonShaderFile * commonShader, string vertexShaderP
 	Lights(programId),
 	Model(&cmatrix),
 	Camera(&cmatrix),
-	Fog(programId){
+	Fog(programId),
+	Acid(glGetUniformLocation(programId,"uCurrentTime"),glGetUniformLocation(programId,"uAcidFactor")) 
+	{
 
 		glUniform1i( glGetUniformLocation( programId, "basic_texture"), 0);
 
