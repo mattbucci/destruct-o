@@ -23,12 +23,10 @@ GLCommonShaderFile::GLCommonShaderFile(string path) {
 
 	//Build the rest of a shader using a stringstream
 	stringstream virtualShader;
-    string versionString = "";
+	string versionString = "";
 	//Decide the version to force
-#ifndef __IPHONEOS__
-	if (OpenglVersion == 31)
+	if (GLSLVersion == 140)
 		versionString = "#version 140\n";
-#endif
 	//Add in all OS specifies
 #ifdef WIN32
 	virtualShader << "#define WIN32\n";
@@ -45,12 +43,13 @@ GLCommonShaderFile::GLCommonShaderFile(string path) {
 #ifdef __IPHONEOS__
 	virtualShader << "#define __IPHONEOS__\n";
 #endif
+	virtualShader << "#define GLSL_VERSION_" << GLSLVersion << "\n";
 	//Now add the common file to the virtual shader
 	virtualShader << string(&fileContents.front(),fileContents.size());
 	//Now shove it all into a string and then a vector
 	string vs = virtualShader.str();
-    //First create the vertex shader file
-    string textVertexShader = versionString + "#define VERTEX_SHADER\n" + vs;
+	//First create the vertex shader file
+	string textVertexShader = versionString + "#define VERTEX_SHADER\n" + vs;
 	virtualShaderFileV.resize(textVertexShader.size());
 	//Also count lines
 	virtualShaderLength = 0;
@@ -61,8 +60,8 @@ GLCommonShaderFile::GLCommonShaderFile(string path) {
 	}
 	//all done
 	cout << "Built vertex common shader with " << virtualShaderLength << " lines of text.\n";
-    //Next build the fragment shader file
-    string textFragmentShader = versionString + "#define FRAGMENT_SHADER\n" + vs;
+	//Next build the fragment shader file
+	string textFragmentShader = versionString + "#define FRAGMENT_SHADER\n" + vs;
 	virtualShaderFileF.resize(textFragmentShader.size());
 	//Also count lines
 	virtualShaderLength = 0;
