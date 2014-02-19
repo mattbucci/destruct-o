@@ -3,28 +3,29 @@
 
 
 #include "GL3DProgram.h"
+#include "ContiguousList.h"
 
 
 class Particle;
 class ParticleSystem;
+class ParticleData;
+class ShaderGroup;
 
 class ParticleCloud {
-	//All the particles in the cloud
-	//Null values automatically float to the "bottom" particles.length
-	//and should be replaced with actual values
-	//Resorted every frame (sloow)
-	vector<Particle*> particles;
+	//All the particle systems in the game
+	ContiguousList<ParticleSystem> particles;
 public:
 
 	//Updates the contents of the particle cloud automatically
-	void UpdateCloud(double time, double delta, vec3 cameraPosition);
+	void UpdateCloud(double time, double delta);
 
-	//Add a particle to the cloud
-	void AddParticle(Particle * particle);
+	//Build a particle system with the given particle data
+	//to last the specified amount of time
+	ParticleSystem * BuildParticleSystem(const ParticleData & particleType, float lifeTime);
 
-	//Draw the particle cloud using a special shader in the future
-	void Draw(GL3DProgram * shaders);
+	//Draw the particle cloud using the special particle shader
+	void Draw(ShaderGroup * shaders);
 
 	//Destroy all the particles owned by a particular system
-	void CleanupSystem(ParticleSystem * system);
+	//void CleanupSystem(ParticleSystem * system);
 };

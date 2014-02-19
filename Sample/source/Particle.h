@@ -21,12 +21,15 @@ class Particle : GLDynamicVertexGroup {
 	vec3 scale;
 public:
 	Particle(double gameTime, float systemTime, ParticleSystem * owner, ParticleData * systemData);
-
-	vec3 position;
-	vec3 velocity;
+	//Data calculated by last Update
+	vec3 Position;
+	int Frame;
+	float Scale;
+	vec3 Velocity;
 	//Spawn time
 	double spawn;
 	ParticleSystem * owner;
+	ParticleData * SystemData;
 
 	//Draw this single particle. Must be called form the global context
 	void Draw(const mat4 & view, GL3DProgram * shaders);

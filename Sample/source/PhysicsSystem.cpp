@@ -207,7 +207,6 @@ void PhysicsSystem::Update(double delta, double now) {
 //Draw all the actors
 void PhysicsSystem::Draw(ShaderGroup * shaders) {
 	GL3DProgram * shader = (GL3DProgram *)shaders->GetShader("3d");
-	unsigned int newFullSize = 0;
 
 	//Translate to the voxel position
 	shader->Model.PushMatrix();

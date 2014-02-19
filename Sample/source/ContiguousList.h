@@ -75,8 +75,15 @@ public:
 			return *at;
 		}
 
+		//prefix operator
 		const iterator & operator++() {
 			// Move the pointer forwards
+			at++;
+			return *this;
+		}
+		//postfix operator (not sure what the argument does?)
+		iterator operator++(int) {
+			iterator copy(*this);
 			at++;
 			return *this;
 		}
@@ -124,6 +131,17 @@ public:
 		//When you remove something from the list, move something to fill its place if there is anything left
 		*toErase = data[listSize-1];
 		listSize--;
+
+		//Automatically resize the internal array if it's too large
+		//for the amount of data we have
+		if (listSize*2.0+10 < listCapacity) {
+			//at this point looks like we could shrink some
+			//Determine the position of the old iterator
+			int pos = (int)(toErase.at-data)/sizeof(T*);
+			resize((int)(listSize*1.25)+5);
+			//Build a new iterator at the same position but with the new data
+			return iterator(data+pos);
+		}
 
 		//The old iterator is still valid actually, haha....
 		return toErase;

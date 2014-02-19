@@ -14,7 +14,7 @@ public:
 	
 	//Copy the view or projection matrices the camera is using
 	//point may be NULL to not copy that value
-	void CopyMatricies(mat4 * viewMatrix, mat4 * projectionMatrix);
+	void CopyMatricies(mat4 * viewMatrix, mat4 * projectionMatrix) const;
 
 	void SetViewMatrix(mat4 viewMatrix);
 

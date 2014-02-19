@@ -28,8 +28,8 @@ public:
 	vec3 Position;
 
 	//Update the particle emitter spawning paritcles
-	void UpdateEmitter(double now);
-	//Particles are drawn as a cloud after the models are drawn 
-	//and so this call doesn't do anything for particles
-	void Draw(GL3DProgram * shaders, double now);
+	//returns true if this particle system should be cleaned up
+	bool UpdateEmitter(double now, double delta);
+	//Draw particles for this particle system
+	void Draw();
 };

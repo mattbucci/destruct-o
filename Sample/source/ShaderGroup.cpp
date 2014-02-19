@@ -32,6 +32,11 @@ ShaderGroup::ShaderGroup() {
 			cout << "Failed to build opengl program\n";
 		AddShader(shaders3d,"3d");
 	}
+	//Build the dialog shader
+	GL2DProgram * shadersP = new GL2DProgram(&commonShader,"Interface/Shaders/universal/vsh_particle.glsl","Interface/Shaders/universal/fsh_particle.glsl");
+	if (!shadersP->Valid()) 
+		cout << "Failed to build opengl program\n";
+	AddShader(shadersP,"particles");
 }
 
 ShaderGroup::~ShaderGroup() {

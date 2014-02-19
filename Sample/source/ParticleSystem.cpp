@@ -11,12 +11,10 @@ ParticleSystem::ParticleSystem(ParticleData * particleSystemDescription,double n
 	nextParticle = 0;
 }
 ParticleSystem::~ParticleSystem() {
-	BaseFrame * game = (BaseFrame*)CurrentSystem;
-	game->Particles.CleanupSystem(this);
 }
 
 //Update the particle emitter spawning particles
-void ParticleSystem::UpdateEmitter(double now) {
+bool ParticleSystem::UpdateEmitter(double now, double delta) {
 	double gameTime = now;
 	BaseFrame * game = (BaseFrame*)CurrentSystem;
 	//Adjust the time so it's relative to you
@@ -36,8 +34,6 @@ void ParticleSystem::UpdateEmitter(double now) {
 }
 //Particles are drawn as a cloud after the models are drawn 
 //and so this call doesn't do anything for particles
-void ParticleSystem::Draw(GL3DProgram * shaders, double now) {
-	//Does nothing, particles are drawn in the cloud
-	//NOTE:
-	//particle drawing will be moved to the system's responsibility shortly
+void ParticleSystem::Draw(GL3DProgram * shaders) {
+
 }

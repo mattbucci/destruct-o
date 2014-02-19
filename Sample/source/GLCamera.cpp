@@ -7,7 +7,7 @@ GLCamera::GLCamera(GLCombinedMatrix * cmatrix) {
 }
 	
 
-void GLCamera::CopyMatricies(mat4 * viewMatrix, mat4 * projectionMatrix) {
+void GLCamera::CopyMatricies(mat4 * viewMatrix, mat4 * projectionMatrix) const {
 	if (viewMatrix != NULL)
 		*viewMatrix = this->viewMatrix;
 	if (projectionMatrix != NULL)
