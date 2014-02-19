@@ -3,16 +3,14 @@
 
 #include "stdafx.h"
 
+#include "ContiguousList.h"
+
 class ShaderGroup;
 class Actor;
 
 class ActorSystem {
 	//All actors are updated and drawn
-	vector<Actor*> allActors;
-	//the lowest empty slot in the allActors array
-	unsigned int lastEmpty;
-	//the highest full slot in the allActors array
-	unsigned int highestFull;
+	ContiguousList<Actor> allActors;
 public:
 	ActorSystem();
 	~ActorSystem();

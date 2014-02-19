@@ -4,6 +4,8 @@ class ParticleData;
 class GL3DProgram;
 class ModelData;
 
+#include "ContiguousList.h"
+
 class ParticleSystem {
 	friend class Particle;
 
@@ -14,6 +16,9 @@ class ParticleSystem {
 	//State
 	double nextParticle;
 	double creationTime;
+
+	//The list of particles
+	ContiguousList<Particle*> particleList;
 public:
 	ParticleSystem(ParticleData * particleSystemDescription,double now);
 	~ParticleSystem();

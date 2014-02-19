@@ -133,10 +133,6 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				rules->Scale.AddValue(0,vec3(.2,.2,.2));
 				rules->Scale.AddValue(1,vec3(.05,.05,.05));
 				rules->Acceleration.AddValue(0,vec3());
-
-				rules->ForceFunction = [](float timeSpan,vec3 position, vec3 velocity) {
-					return 4.0f*vec3(sin(position.x),cos(position.y+position.z),sin(position.z*position.x));
-				};
 				//rules->Velocity
 				ParticleSystem * testSystem = new ParticleSystem(rules,0.0);
 				testSystem->Position = cubePos; 

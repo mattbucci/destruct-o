@@ -227,15 +227,11 @@ bool Particle::Update(double time, double delta) {
 	//First calculation
 	vec3 acceleration1,acceleration2;
 	acceleration1 = systemData->Acceleration.ValueAtSequence(life);
-	if (systemData->ForceFunction)
-		acceleration1 += systemData->ForceFunction(lifeScale,position,velocity);
 	//apply the calculated force with half the delta
 	velocity += acceleration1*(float)delta/2.0f;
 	position += velocity*(float)delta/2.0f;
 	//Now recalculate the applied force at this new position
 	acceleration2 = systemData->Acceleration.ValueAtSequence(life);
-	if (systemData->ForceFunction)
-		acceleration2 += systemData->ForceFunction(lifeScale,position,velocity);
 	//apply the final calculated force with the full data
 	velocity += acceleration2*(float)delta;
 	position += velocity*(float)delta;

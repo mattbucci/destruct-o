@@ -7,18 +7,14 @@
 #include "VoxelSystem.h"
 
 PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
-	lastEmpty = 0;
-	highestFull = 0;
 	//Build a voxel renderer
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
 	voxelSystem = system;
 
 }
 PhysicsSystem::~PhysicsSystem() {
-	//cleanup all the actors
-	//they auto-deregister, so we have to iterate over a separate list
-	vector<PhysicsVoxel*> voxels = allVoxels;
-	for (auto voxel : voxels)
+	//cleanup all the voxels
+	for (auto voxel : allVoxels)
 		delete voxel;
 }
 
@@ -64,43 +60,10 @@ PhysicsSystem::Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxe
 //Should be called by Actor.cpp only
 //no one else call these
 void PhysicsSystem::Register(PhysicsVoxel * toRegister) {
-	//Search for an empty space in allVoxels
-	//accelerated by the lastEmpty property
-	for (unsigned int i = lastEmpty; i < allVoxels.size(); i++) {
-		if (allVoxels[i] == NULL) {
-			//found an empty space
-			allVoxels[i] = toRegister;
-			//Mark the space as full
-			if (i > highestFull)
-				highestFull = i;
-			//you know there's nothing empty below this
-			lastEmpty = i+1;
-			return;
-		}
-	}
-	//Expand the actor array
-	//note there is currently no way to shrink the actor away
-	//so small bursts of large numbers of actors will cause array expansion
-	allVoxels.push_back(toRegister);
-	highestFull = allVoxels.size()-1;
-	lastEmpty = allVoxels.size();
+	allVoxels.insert(toRegister);
 }
 void PhysicsSystem::Unregister(PhysicsVoxel * toUnregister) {
-	//Do a linear search for the actor to unregister
-	//This could easily be optimized to be O(1) if actors
-	//remembered their position in the actor array
-	for (unsigned int i = 0; i < allVoxels.size(); i++) {
-		if (allVoxels[i] == toUnregister) {
-			allVoxels[i] = NULL;
-			//remember this position as empty
-			if (i < lastEmpty)
-				lastEmpty = i;
-
-			return;
-		}
-	}
-	//Should never get here
-	_ASSERTE(false);
+	allVoxels.erase(toUnregister);
 }
 
 PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate) {
@@ -121,25 +84,18 @@ float removeInDirection(vec3 & force, vec3 direction) {
 
 //Update the actors, called by base frame
 void PhysicsSystem::Update(double delta, double now) {
-	unsigned int newFullSize = 0;
 
-	//No actors mean nothing to do
-	if (allVoxels.size() <= 0)
-		return;
 
 	//Set all voxels to not colliding
-	for (unsigned int i = 0; i <= highestFull; i++) {
-		if (allVoxels[i] != NULL) {
-			newFullSize = i;
-			allVoxels[i]->colliding = false;
-			allVoxels[i]->Acceleration = vec3();
-		}
+	for (unsigned int i = 0; i < allVoxels.size(); i++) {
+		allVoxels[i]->colliding = false;
+		allVoxels[i]->Acceleration = vec3();
 	}
 
 
 	//Now do the O(n^2) which checks for collisions
-	for (unsigned int a = 0; a <= highestFull; a++) {
-		for (unsigned int b = a+1; b <= highestFull; b++) {
+	for (unsigned int a = 0; a < allVoxels.size(); a++) {
+		for (unsigned int b = a+1; b < allVoxels.size(); b++) {
 			//Do AABB before you do full physics check... or things will be slow
 			if (allVoxels[a]->AabColiding(allVoxels[b]->Position)) {
 				Intersection intr = CalculateIntersection(allVoxels[a]->Position,allVoxels[b]->Position);
@@ -181,7 +137,7 @@ void PhysicsSystem::Update(double delta, double now) {
 
 
 	//Update all the voxels
-	for (unsigned int a = 0; a <= highestFull; a++) {
+	for (unsigned int a = 0; a < allVoxels.size(); a++) {
 		if (allVoxels[a] != NULL) {
 
 			allVoxels[a]->Acceleration += vec3(0,0,-10);
@@ -243,17 +199,8 @@ void PhysicsSystem::Update(double delta, double now) {
 			//Apply forces!
 			allVoxels[a]->Velocity += allVoxels[a]->Acceleration*(float)delta;
 			allVoxels[a]->Position += allVoxels[a]->Velocity*(float)delta;
-			//Track the highest valid physics voxel
-			newFullSize = a;
 		}
 	}
-
-	//Update the highest full size
-	highestFull = newFullSize;
-
-	//A slow (sort of) bubble sort could be used
-	//to slowly compact the physics array
-	//but I don't think that's necessary right now
 }
 
 
@@ -261,10 +208,6 @@ void PhysicsSystem::Update(double delta, double now) {
 void PhysicsSystem::Draw(ShaderGroup * shaders) {
 	GL3DProgram * shader = (GL3DProgram *)shaders->GetShader("3d");
 	unsigned int newFullSize = 0;
-
-	//No voxels mean nothing to do
-	if (allVoxels.size() <= 0)
-		return;
 
 	//Translate to the voxel position
 	shader->Model.PushMatrix();
@@ -276,11 +219,9 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 	renderer->startDraw(shader);
 
 	//Draw all the voxels
-	for (unsigned int i = 0; i <= highestFull; i++) {
-		if (allVoxels[i] != NULL) {
-			//Draw the voxel
-			renderer->pushVoxel(shader,allVoxels[i]->Position,1);
-		}
+	for (unsigned int i = 0; i < allVoxels.size(); i++) {
+		//Draw the voxel
+		renderer->pushVoxel(shader,allVoxels[i]->Position,1);
 	}
 
 	renderer->finishDraw(shader);

@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "VoxelDrawSystem.h"
+#include "ContiguousList.h"
 
 class ShaderGroup;
 class PhysicsVoxel;
@@ -13,12 +14,10 @@ class VoxelSystem;
 
 //The true physics system
 class PhysicsSystem {
-	//All actors are updated and drawn
-	vector<PhysicsVoxel*> allVoxels;
-	//the lowest empty slot in the allActors array
-	unsigned int lastEmpty;
-	//the highest full slot in the allActors array
-	unsigned int highestFull;
+	//Voxel list now uses a contiguous list for speed
+	//designed for fast insert/removal
+	//stored objects are always contiguous
+	ContiguousList<PhysicsVoxel> allVoxels;
 
 	//The voxel draw renderer
 	VoxelDrawSystem * renderer;

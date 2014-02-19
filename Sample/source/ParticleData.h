@@ -7,11 +7,7 @@
 
 class ParticleData {
 public:
-	//This will load from a file eventaully
-
-	//Length before particle system ends
-	//negative for forever
-	double SystemLifetime;
+	//This will load from a file eventually
 
 	//These properties use the emitter's life as the time
 	//if they effect particles they are decided on particle creation
@@ -21,33 +17,45 @@ public:
 	LinearChain(vec3) Velocity;
 	//The variation in velocity of generated particles (%)
 	LinearChain(float) Variation;
+	//X,Y is min, max of random latitude
+	//applied to starting velocity
+	LinearChain(vec2) Latitude;
+	//X,Y is min, max of random longitude
+	//applied to starting velocity
+	LinearChain(vec2) Longitude;
 	//The life of the emitted particle
 	LinearChain(float) Life;
 	//The width/length of emitter
 	LinearChain(vec2) EmitterSize;
+	//The rows/columns of the particle texture
+	//note, floor() is applied before rows/columns are used
+	float Rows;
+	float Columns;
+	//The first frame of the texture the particle uses
+	//the first value is the min
+	//the second value is the max, the used value is floor(random(min,max))
+	LinearChain(vec2) FrameOffset;
 
 	//These properties use the particle's life as the time
-	//The color of generated particles
+	//The color of the generated particle
 	LinearChain(vec4) Color;
-	//The scale of generated particles
+	//The scale of the generated particle
 	LinearChain(vec3) Scale;
-	//The acceleration applied to particles
+	//The acceleration applied to the particle
 	LinearChain(vec3) Acceleration;
+	//The speed at which to play frames from the texture
+	//in frames per second
+	LinearChain(float) AnimationSpeed;
 
-
-	//A function used to create interesting particle movement
-	//is called, should return acceleration (added to the above Acceleration)
-	//parameters: life remaining (scaled 1 to 0), position, velocity
-	//should return acceleration
-	function<vec3(float,vec3,vec3)> ForceFunction;
 
 	enum MaterialEffect {
 		NONE,
 		BLEND,
 		ADDITIVE,
-		MODULATE,
+		//Similar to additive, but reverses color first
+		SCREEN,
 	};
 
 
-	//MaterialEffect Particle;
+	MaterialEffect Particle;
 };
