@@ -123,18 +123,19 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				//should be fixed
 				ParticleData * rules = new ParticleData();
 				//First system relative properties
-				rules->GenerationRate.AddValue(0,3);
-				rules->Velocity.AddValue(0,vec3(0,0,10));
+				rules->GenerationRate.AddValue(0,300);
+				rules->Velocity.AddValue(0,vec3(0,0,.5));
 				rules->Variation.AddValue(0,0);
 				rules->Latitude.AddValue(0,vec2());
 				rules->Longitude.AddValue(0,vec2());
-				rules->Life.AddValue(0,vec2(2,2));
+				rules->Life.AddValue(0,vec2(.6,.9));
 				rules->EmitterSize.AddValue(0,vec2(1,1));
 				rules->Rows = rules->Columns = 1;
 				rules->FrameOffset.AddValue(0,vec2(0,0));
 				//Now particle relative properties
-				rules->Color.AddValue(0,vec4(1,1,1,1));
-				rules->Scale.AddValue(0,vec2(1,1));
+				rules->Color.AddValue(0,vec4(1,0,0,1));
+				rules->Color.AddValue(.5,vec4(1,1,0,1));
+				rules->Scale.AddValue(0,vec2(.03,.1));
 				rules->Acceleration.AddValue(0,vec3());
 				rules->AnimationSpeed.AddValue(0,0);
 				rules->MaterialStyle = ParticleData::NONE;

@@ -2,6 +2,7 @@
 #include "ParticleRenderer.h"
 #include "GLParticleProgram.h"
 #include "Particle.h"
+#include "ParticleData.h"
 
 //Build the arrays to create the vertex group
 ParticleRenderer::ParticleRenderer() {
@@ -90,8 +91,20 @@ void ParticleRenderer::Render(GLParticleProgram * shader, Particle ** particles,
 		vertices[offset+5] = vertices[offset+2];
 
 		//Now figure out texture coordinate
+		vec2 texSize = vec2(1.0f/p->SystemData->Columns,1.0f/p->SystemData->Rows);
+		vec2 texCorner = texSize * vec2(p->Frame % (int)p->SystemData->Columns, p->Frame / (int)p->SystemData->Columns);
+		textureCoordinates[offset+0] = texCorner + texSize*vec2(0,0);
+		textureCoordinates[offset+1] = texCorner + texSize*vec2(1,0);
+		textureCoordinates[offset+2] = texCorner + texSize*vec2(0,1);
+		textureCoordinates[offset+3] = texCorner + texSize*vec2(1,1);
+		textureCoordinates[offset+4] = textureCoordinates[offset+1];
+		textureCoordinates[offset+5] = textureCoordinates[offset+2];
+
+		//finally color
+		colors[offset+0] = colors[offset+1] = colors[offset+2] = 
+			colors[offset+3] = colors[offset+4] = colors[offset+5] = p->Color;
 		
-		//textureCoordinates[offset+0] = 
+		//Now increment which particle you're on
 		curParticles++;
 	}
 	//Do one last render sweep to cleanup anything that hasn't been drawn yet
