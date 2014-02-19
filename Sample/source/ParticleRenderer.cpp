@@ -15,7 +15,7 @@ ParticleRenderer::ParticleRenderer() {
 	//Buffer junk data (doesn't matter if data is uninitialized)
 	//This allows the allocation to happen once
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
-	glBufferData ( GL_ARRAY_BUFFER, PARTICLE_RENDER_SWEEP*sizeof(vec3), vertices, GL_DYNAMIC_DRAW );
+	glBufferData ( GL_ARRAY_BUFFER, PARTICLE_RENDER_SWEEP*sizeof(vec4), vertices, GL_DYNAMIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER, textureBuffer ); 
 	glBufferData ( GL_ARRAY_BUFFER, PARTICLE_RENDER_SWEEP*sizeof(vec2), textureCoordinates, GL_DYNAMIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER, colorBuffer ); 
@@ -31,16 +31,16 @@ ParticleRenderer::~ParticleRenderer() {
 
 void ParticleRenderer::renderSweep(GLParticleProgram * shader, int particleCount) {
 	//There are four vertices for every particle right now
-	particleCount *= 4;
+	particleCount *= 6;
 
 	//Rebind the array to bring them into the current context
 	glBindVertexArray ( vertexArray );
 
 	 //positions
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
-	glBufferSubData ( GL_ARRAY_BUFFER, 0, particleCount*sizeof(vec3), vertices );
+	glBufferSubData ( GL_ARRAY_BUFFER, 0, particleCount*sizeof(vec4), vertices );
 	glEnableVertexAttribArray ( shader->AttributeVertex() );
-	glVertexAttribPointer ( shader->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, 0, 0 );
+	glVertexAttribPointer ( shader->AttributeVertex(), 4, GL_FLOAT, GL_FALSE, 0, 0 );
 
 
 	// texture coordinates
@@ -52,10 +52,10 @@ void ParticleRenderer::renderSweep(GLParticleProgram * shader, int particleCount
 	//colors
 	glBindBuffer ( GL_ARRAY_BUFFER, colorBuffer ); 
 	glBufferSubData ( GL_ARRAY_BUFFER, 0, particleCount*sizeof(vec4), colors );
-	glEnableVertexAttribArray ( shader->AttributeTexture() );
-	glVertexAttribPointer ( shader->AttributeTexture(), 4, GL_FLOAT, GL_FALSE, 0, 0 );
+	glEnableVertexAttribArray ( shader->AttributeColor() );
+	glVertexAttribPointer ( shader->AttributeColor(), 4, GL_FLOAT, GL_FALSE, 0, 0 );
 
-	glDrawArrays( GL_TRIANGLE_STRIP, 0, particleCount );
+	glDrawArrays( GL_TRIANGLES, 0, particleCount );
 }
 	
 
@@ -79,13 +79,16 @@ void ParticleRenderer::Render(GLParticleProgram * shader, Particle ** particles,
 		}
 		//Generate the vertex data for the given particle
 		Particle * p = particles[i];
-		int offset = i*4;
+		int offset = i*6;
 		float halfScale = p->Scale/2.0;
 		//Generate position data
-		vertices[offset+0] = p->Position+vec3(-halfScale,-halfScale,0.0f);
-		vertices[offset+1] = p->Position+vec3(halfScale,-halfScale,0.0f);
-		vertices[offset+2] = p->Position+vec3(-halfScale,halfScale,0.0f);
-		vertices[offset+3] = p->Position+vec3(halfScale,halfScale,0.0f);
+		vertices[offset+0] = vec4(p->Position*vec3(1,1,1),halfScale);
+		vertices[offset+1] = vec4(p->Position*vec3(1,-1,1),halfScale);
+		vertices[offset+2] = vec4(p->Position*vec3(-1,1,1),halfScale);
+		vertices[offset+3] = vec4(p->Position*vec3(-1,-1,1),halfScale);
+		vertices[offset+4] = vertices[offset+1];
+		vertices[offset+5] = vertices[offset+2];
+
 		//Now figure out texture coordinate
 		
 		//textureCoordinates[offset+0] = 

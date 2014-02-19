@@ -2,6 +2,7 @@
 #include "ShaderGroup.h"
 #include "GL3DProgram.h"
 #include "GL2DProgram.h"
+#include "GLParticleProgram.h"
 #include "GLCommonShaderFile.h"
 
 ShaderGroup::ShaderGroup() {
@@ -33,7 +34,7 @@ ShaderGroup::ShaderGroup() {
 		AddShader(shaders3d,"3d");
 	}
 	//Build the dialog shader
-	GL2DProgram * shadersP = new GL2DProgram(&commonShader,"Interface/Shaders/universal/vsh_particle.glsl","Interface/Shaders/universal/fsh_particle.glsl");
+	GLParticleProgram * shadersP = new GLParticleProgram(&commonShader,"Interface/Shaders/universal/vsh_particle.glsl","Interface/Shaders/universal/fsh_particle.glsl");
 	if (!shadersP->Valid()) 
 		cout << "Failed to build opengl program\n";
 	AddShader(shadersP,"particles");

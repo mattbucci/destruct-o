@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GLShader.h"
 #include "GLCommonShaderFile.h"
+#include <fstream>
 
 
 GLShader::GLShader(const GLShader & other) {
@@ -38,12 +39,25 @@ GLShader::GLShader(GLCommonShaderFile * commonShader, string filename,GLenum sha
 	shaderId = glCreateShader(shaderType);
 	//Copy the virtual shader
 	vector<char> virtualShader;
-    if (shaderType == GL_VERTEX_SHADER)
-        virtualShader = commonShader->GetVertexShaderText();
-    else
-        virtualShader = commonShader->GetFragmentShaderText();
+	if (shaderType == GL_VERTEX_SHADER)
+		virtualShader = commonShader->GetVertexShaderText();
+	else
+		virtualShader = commonShader->GetFragmentShaderText();
 	//Tack the loaded shader to the end of the virtual shader
 	virtualShader.insert(virtualShader.end(),fileContents.begin(),fileContents.end());
+
+	//For debug purposes
+	{
+		//Find only the file part of the filename
+		int firstChar = filename.size()-1;
+		for (;firstChar > 0; firstChar--)
+			if (filename[firstChar-1] == '/')
+				break;
+		//Now write the shader
+		ofstream debugOutput(string("debug_") + filename.substr(firstChar),ios::binary);
+		for (int i = 0; i < virtualShader.size(); i++)
+			debugOutput << virtualShader[i];
+	}
 
 	char * cstring = &virtualShader.front();
 	glShaderSource(shaderId,1,(const GLchar**)&cstring,NULL);

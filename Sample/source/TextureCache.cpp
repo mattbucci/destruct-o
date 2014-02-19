@@ -18,17 +18,13 @@ TextureCache::~TextureCache() {
 	delete errorTexture;
 }
 
-void TextureCache::setSearchPath(string path) {
-	rootSearchPath = path;
-}
-
 //Acquires the given texture, caching it on the fly if necessary
 GLTexture * TextureCache::GetTexture(string path) {
 	//Check cache first
 	auto it = cachedTextures.find(path);
 	if (it == cachedTextures.end()) {
 		//Attempt to cache
-		GLTexture * tex = new GLTexture(rootSearchPath+"\\"+path);
+		GLTexture * tex = new GLTexture(path);
 		if (!tex->CacheTexture()) {
 			//Cache failed, destroy the texture
 			//Substitute the memory-created error texture
@@ -77,7 +73,7 @@ void TextureCache::Refresh() {
 
 void TextureCache::PermaCacheTexture(string path) {
 	//Attempt to cache
-	GLTexture * tex = new GLTexture(rootSearchPath+"\\"+path);
+	GLTexture * tex = new GLTexture(path);
 	if (!tex->CacheTexture()) {
 		//Cache failed, destroy the texture
 		delete tex;

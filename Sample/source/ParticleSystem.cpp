@@ -86,7 +86,6 @@ void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shade
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
 		break;
 	}
-	glDepthMask(GL_FALSE);
 	//Enable the texture used for this particle system
 	GLTexture * texture = CurrentSystem->Textures.GetTexture(particleSystemDescription.MaterialTexture);
 	texture->Bind();

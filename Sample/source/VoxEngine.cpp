@@ -14,6 +14,9 @@ SDL_Renderer* displayRenderer;
 
 //A variable which at runtime can be used to figure out what version is running
 int OpenglVersion;
+//Used to determine the GLSL version used
+//supports only two values 110 and 140
+int GLSLVersion;
 
 // The current joystick
 SDL_Joystick *joystick = NULL;
@@ -51,11 +54,12 @@ void VoxEngine::Start() {
 	//Build us a state of the art context
 	displayWindow = BuildSDLContext(3,2,1.4f);
 	OpenglVersion = 31;
+	GLSLVersion = 140;
 #endif
 	//If that fails, try for something less state of the art
 	if (displayWindow == NULL) {
 		displayWindow = BuildSDLContext(2,0,0.0f);
-		
+		GLSLVersion = 110;
 #ifdef __IPHONEOS__
 		//For iOS, globally force the newer opengl version
 		OpenglVersion = 31;
@@ -101,37 +105,37 @@ void VoxEngine::Start() {
 
 	//Attempt to enable vsync (fails on mobile)
 	SDL_GL_SetSwapInterval(1);
-    
-    /* Print information about attached joysticks (actually works on iOS WOOHOO)*/
-    printf("There are %d joystick(s) attached\n", SDL_NumJoysticks());
-    for (int i = 0; i < SDL_NumJoysticks(); ++i) {
-        const char *name = SDL_JoystickNameForIndex(i);
-        printf("Joystick %d: %s\n", i, name ? name : "Unknown Joystick");
-        joystick = SDL_JoystickOpen(i);
-        if (joystick == NULL) {
-            fprintf(stderr, "SDL_JoystickOpen(%d) failed: %s\n", i,
-                    SDL_GetError());
-        } else {
-            char guid[64];
-            SDL_JoystickGetGUIDString(SDL_JoystickGetGUID(joystick),
-                                      guid, sizeof (guid));
-            printf("       axes: %d\n", SDL_JoystickNumAxes(joystick));
-            printf("      balls: %d\n", SDL_JoystickNumBalls(joystick));
-            printf("       hats: %d\n", SDL_JoystickNumHats(joystick));
-            printf("    buttons: %d\n", SDL_JoystickNumButtons(joystick));
-            printf("instance id: %d\n", SDL_JoystickInstanceID(joystick));
-            printf("       guid: %s\n", guid);
-            SDL_JoystickClose(joystick);
-        }
-    }
-    
-    // For now, need a selector for mobile since joystick #0 is the built in accelerometer
+	
+	/* Print information about attached joysticks (actually works on iOS WOOHOO)*/
+	printf("There are %d joystick(s) attached\n", SDL_NumJoysticks());
+	for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+		const char *name = SDL_JoystickNameForIndex(i);
+		printf("Joystick %d: %s\n", i, name ? name : "Unknown Joystick");
+		joystick = SDL_JoystickOpen(i);
+		if (joystick == NULL) {
+			fprintf(stderr, "SDL_JoystickOpen(%d) failed: %s\n", i,
+					SDL_GetError());
+		} else {
+			char guid[64];
+			SDL_JoystickGetGUIDString(SDL_JoystickGetGUID(joystick),
+									  guid, sizeof (guid));
+			printf("       axes: %d\n", SDL_JoystickNumAxes(joystick));
+			printf("      balls: %d\n", SDL_JoystickNumBalls(joystick));
+			printf("       hats: %d\n", SDL_JoystickNumHats(joystick));
+			printf("    buttons: %d\n", SDL_JoystickNumButtons(joystick));
+			printf("instance id: %d\n", SDL_JoystickInstanceID(joystick));
+			printf("       guid: %s\n", guid);
+			SDL_JoystickClose(joystick);
+		}
+	}
+	
+	// For now, need a selector for mobile since joystick #0 is the built in accelerometer
 #if !(defined __MOBILE__)
-    if(SDL_NumJoysticks() > 0)
-    {
-        joystick = SDL_JoystickOpen(0);
-        printf("Using joystick = %s\n", SDL_JoystickName(joystick));
-    }
+	if(SDL_NumJoysticks() > 0)
+	{
+		joystick = SDL_JoystickOpen(0);
+		printf("Using joystick = %s\n", SDL_JoystickName(joystick));
+	}
 #endif
 
 	//Initialze the dialog constants
@@ -222,9 +226,9 @@ void VoxEngine::Start() {
 		Frames::UpdateAliveFrame();
 	}
 
-    // close joystick
-    if(joystick) SDL_JoystickClose(joystick);
-    
+	// close joystick
+	if(joystick) SDL_JoystickClose(joystick);
+	
 	SDL_Quit();
 }
 
@@ -243,57 +247,57 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 			if (eventPolled) {
 				//Convert sdl event to InputEvent
 				switch (event.type)
-                {
-                    // Handle input events
+				{
+					// Handle input events
 #ifdef __MOBILE__
-                    // Mobile only responds to finger events
-                    case SDL_FINGERMOTION:
-                        //cout << "MOVED (" << event.tfinger.fingerId << ") : " << event.tfinger.x << "," << event.tfinger.y << "\n";
-                        eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
-                        break;
-                    case SDL_FINGERUP:
-                        eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
-                        break;
-                    case SDL_FINGERDOWN:
-                        eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
-                        break;
+					// Mobile only responds to finger events
+					case SDL_FINGERMOTION:
+						//cout << "MOVED (" << event.tfinger.fingerId << ") : " << event.tfinger.x << "," << event.tfinger.y << "\n";
+						eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
+						break;
+					case SDL_FINGERUP:
+						eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
+						break;
+					case SDL_FINGERDOWN:
+						eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
+						break;
 #else
-                        // Desktop (well, whatever non mobile is called these days) only responds to keyboard and mouse events
-                    case SDL_MOUSEBUTTONDOWN:
-                        eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),(float)event.button.x,(float)event.button.y, event.button.button));
-                        break;
-                    case SDL_MOUSEBUTTONUP:
-                        eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),(float)event.button.x,(float)event.button.y, event.button.button));
-                        break;
-                    case SDL_MOUSEMOTION:
-                        eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),(float)event.motion.x,(float)event.motion.y, event.button.button));
-                        //Add in the relative motion information
-                        eventQueue.back().RelX = (float)event.motion.xrel;
-                        eventQueue.back().RelY = (float)event.motion.yrel;
-                        break;
+						// Desktop (well, whatever non mobile is called these days) only responds to keyboard and mouse events
+					case SDL_MOUSEBUTTONDOWN:
+						eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),(float)event.button.x,(float)event.button.y, event.button.button));
+						break;
+					case SDL_MOUSEBUTTONUP:
+						eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),(float)event.button.x,(float)event.button.y, event.button.button));
+						break;
+					case SDL_MOUSEMOTION:
+						eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),(float)event.motion.x,(float)event.motion.y, event.button.button));
+						//Add in the relative motion information
+						eventQueue.back().RelX = (float)event.motion.xrel;
+						eventQueue.back().RelY = (float)event.motion.yrel;
+						break;
 #endif
-                    case SDL_KEYDOWN:
-                        eventQueue.push_back(InputEvent(InputEvent::KeyboardDown,OS::Now(),event.key.keysym.sym));
-                        break;
-                    case SDL_KEYUP:
-                        eventQueue.push_back(InputEvent(InputEvent::KeyboardUp,OS::Now(),event.key.keysym.sym));
-                        break;
-                    
-                    //Handle events which directly effect the operation of the game engine
-                    case SDL_WINDOWEVENT: 
-                        //Window events have their own set of things that could happen
-                        switch (event.window.event) {
-                        case SDL_WINDOWEVENT_RESIZED:
-                            curWidth = event.window.data1;
-                            curHeight = event.window.data2;
-                            glViewport(0,0,curWidth,curHeight);
-                            break;
-                        }
-                        break;
-                    case SDL_QUIT:
-                        //Stops the next iteration of the game loop
-                        continueGameLoop = false;
-                        break;
+					case SDL_KEYDOWN:
+						eventQueue.push_back(InputEvent(InputEvent::KeyboardDown,OS::Now(),event.key.keysym.sym));
+						break;
+					case SDL_KEYUP:
+						eventQueue.push_back(InputEvent(InputEvent::KeyboardUp,OS::Now(),event.key.keysym.sym));
+						break;
+					
+					//Handle events which directly effect the operation of the game engine
+					case SDL_WINDOWEVENT: 
+						//Window events have their own set of things that could happen
+						switch (event.window.event) {
+						case SDL_WINDOWEVENT_RESIZED:
+							curWidth = event.window.data1;
+							curHeight = event.window.data2;
+							glViewport(0,0,curWidth,curHeight);
+							break;
+						}
+						break;
+					case SDL_QUIT:
+						//Stops the next iteration of the game loop
+						continueGameLoop = false;
+						break;
 				}
 			}
 			else

@@ -123,7 +123,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				//should be fixed
 				ParticleData * rules = new ParticleData();
 				//First system relative properties
-				rules->GenerationRate.AddValue(0,100);
+				rules->GenerationRate.AddValue(0,3);
 				rules->Velocity.AddValue(0,vec3(0,0,10));
 				rules->Variation.AddValue(0,0);
 				rules->Latitude.AddValue(0,vec2());
@@ -143,7 +143,6 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				//rules->Velocity
 				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,-1);
 				testSystem->Position = cubePos; 
-				systems.push_back(testSystem);
 			}
 			else if (eve.Key == 'c') {
 				SwitchDemo(0,playerPos,playerFacing);
@@ -175,9 +174,7 @@ void Demo::SwitchDemo(int newDemo, vec3 playerPos, vec3 playerFacing) {
 }
 
 void Demo::Update(double now, double delta) {
-	for (auto sys : systems) {
-		sys->UpdateEmitter(now,delta);
-	}
+
 }
 
 void Demo::Draw(GL3DProgram * shader) {

@@ -7,8 +7,10 @@
 class GLParticleProgram : public GLProgram {
 	GLint attributeIndexTexture;
 	GLint attributeIndexVertex;
+	GLint attributeIndexColor;
 
-	GLint uniformMVP;
+	GLint uniformView;
+	GLint uniformProjection;
 
 public:
 	GLParticleProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath);
@@ -23,4 +25,5 @@ public:
 	//All the attributes used for drawing particles
 	const GLint AttributeTexture();
 	const GLint AttributeVertex();
+	const GLint AttributeColor();
 };

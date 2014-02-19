@@ -19,9 +19,9 @@ class ParticleRenderer {
 	GLuint textureBuffer;
 	GLuint colorBuffer;
 
-	vec3 vertices[PARTICLE_RENDER_SWEEP*4];
-	vec2 textureCoordinates[PARTICLE_RENDER_SWEEP*4];
-	vec4 colors[PARTICLE_RENDER_SWEEP*4];
+	vec4 vertices[PARTICLE_RENDER_SWEEP*6];
+	vec2 textureCoordinates[PARTICLE_RENDER_SWEEP*6];
+	vec4 colors[PARTICLE_RENDER_SWEEP*6];
 
 	//Render one sweep of particles
 	void renderSweep(GLParticleProgram * shader, int particleCount);

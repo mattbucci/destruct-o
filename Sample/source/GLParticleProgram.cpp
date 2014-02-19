@@ -9,27 +9,26 @@ GLParticleProgram::GLParticleProgram(GLCommonShaderFile * commonShader, string v
 
 	glUniform1i( glGetUniformLocation( programId, "basic_texture"), 0);
 
-	uniformMVP = glGetUniformLocation(programId,"MVP");
+	uniformView = glGetUniformLocation(programId,"uView");
+	uniformProjection = glGetUniformLocation(programId,"uProjection");
 	attributeIndexTexture = glGetAttribLocation(programId,"vTex");
 	attributeIndexVertex = glGetAttribLocation(programId,"vVert");
+	attributeIndexColor = glGetAttribLocation(programId,"vColor");
 };
 
 //Apply the given camera to this program
 void GLParticleProgram::ApplyCamera(const GLCamera & camera) {
 	mat4 view, projection;
 	camera.CopyMatricies(&view,&projection);
-	//remove rotation from view matrix
-	mat4 newView;
-	//The upper left 3x3 (rotation/scaling) is identity
-	newView[0].x = 1;
-	newView[1].y = 1;
-	newView[2].z = 1;
-	//The right vector 4x1 (translation) is the same 
-	newView[3] = view[3];
-	//now combine with projection
-	mat4 mvp = projection * newView;
-	//And there's your MVP
-	glUniformMatrix4fv(uniformMVP, 1, GL_FALSE, (const GLfloat *)&mvp);
+	//Push this information unmultiplied to the vertex shader
+	//Why unmultiplied? Because billboarding requires per-particle
+	//modifications to the matrix before multiplication
+	glUniformMatrix4fv(uniformView, 1, GL_FALSE, (const GLfloat *)&view);
+	glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, (const GLfloat *)&projection);
+
+	vec3 test = vec3(1,5,3);
+	mat4 otest = glm::translate(test);
+	vec2 x = vec2(5,1);
 }
 
 const GLint GLParticleProgram::AttributeTexture() {
@@ -37,4 +36,7 @@ const GLint GLParticleProgram::AttributeTexture() {
 }
 const GLint GLParticleProgram::AttributeVertex() {
 	return attributeIndexVertex;
+}
+const GLint GLParticleProgram::AttributeColor() {
+	return attributeIndexColor;
 }

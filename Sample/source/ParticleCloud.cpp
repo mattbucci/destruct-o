@@ -13,7 +13,7 @@ void ParticleCloud::UpdateCloud(double time, double delta) {
 	for (auto it = particles.begin(); it != particles.end(); ) {
 		ParticleSystem * current = *it;
 		
-		if (!current->UpdateEmitter(time,delta)) {
+		if (current->UpdateEmitter(time,delta)) {
 			//Cleanup that particle system
 			delete current;
 			//Remove it from the list
@@ -41,7 +41,12 @@ void ParticleCloud::Draw(ShaderGroup * shaders) {
 	//Apply camera data from the 3d shader
 	shaderParticles->ApplyCamera(shader3d->Camera);
 
+	//The particle system disables depth
+	glDepthMask(GL_FALSE);
+
 	//Draw each particle system
 	for (auto system : particles)
 		system->Draw(&renderer, shaderParticles);
+
+	glDepthMask(GL_TRUE);
 }

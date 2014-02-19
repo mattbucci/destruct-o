@@ -4,7 +4,6 @@
 #include "stdafx.h"
 
 class TextureCache {
-	string rootSearchPath;
 	GLTexture * errorTexture;
 
 	typedef pair<GLTexture*,double> cached;
@@ -17,8 +16,6 @@ class TextureCache {
 public:
 	TextureCache();
 	~TextureCache();
-
-	void setSearchPath(string path);
 
 	//Acquires the given texture, caching it on the fly if necessary
 	GLTexture * GetTexture(string path);

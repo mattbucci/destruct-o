@@ -112,6 +112,7 @@ using glm::quat;
 //3 is 33
 //2 is 20
 extern int OpenglVersion;
+extern int GLSLVersion;
 
 // The active joystick
 extern SDL_Joystick *joystick;
