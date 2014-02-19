@@ -132,7 +132,7 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 
 	//Update physics/Particles
 	Physics.Update(delta,now);
-	Particles.UpdateCloud(now,delta,player->GetPosition()+vec3(0,0,2));
+	Particles.UpdateCloud(now,delta);
 	//if (testSystem != NULL)
 		//testSystem->UpdateEmitter(now);
 	return true;
@@ -188,7 +188,7 @@ void BaseFrame::Draw(double width, double height) {
 	Physics.Draw(shaders);
 
 	//The particle system will use a different shader entirely soon
-	Particles.Draw(shaders3d);
+	Particles.Draw(shaders);
 	
 	//Update the voxel debug counter
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
@@ -201,4 +201,4 @@ void BaseFrame::Draw(double width, double height) {
 	shaders2d->UseProgram();
 	shaders2d->SetWidthHeight((float)width, (float)height);
 	FirstPerson->Draw(width, height, shaders2d);
-}
+} 

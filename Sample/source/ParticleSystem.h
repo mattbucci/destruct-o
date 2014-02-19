@@ -1,26 +1,26 @@
 #pragma once
 
-class ParticleData;
-class GL3DProgram;
-class ModelData;
+class GLParticleProgram;
+class ParticleRenderer;
 
 #include "ContiguousList.h"
+#include "ParticleData.h"
 
 class ParticleSystem {
 	friend class Particle;
 
 	//The data describing this particle system
-	ParticleData * particleSystemDescription;
-	ModelData * parent;
+	ParticleData particleSystemDescription;
 
 	//State
 	double nextParticle;
 	double creationTime;
+	double deathAt;
 
 	//The list of particles
-	ContiguousList<Particle*> particleList;
+	ContiguousList<Particle> particleList;
 public:
-	ParticleSystem(ParticleData * particleSystemDescription,double now);
+	ParticleSystem(ParticleData particleSystemDescription,double now, double lifetime);
 	~ParticleSystem();
 
 	//Particle system position
@@ -31,5 +31,6 @@ public:
 	//returns true if this particle system should be cleaned up
 	bool UpdateEmitter(double now, double delta);
 	//Draw particles for this particle system
-	void Draw();
+	void Draw(ParticleRenderer * renderer, GLParticleProgram * shader);
 };
+ 

@@ -111,7 +111,7 @@ public:
 		return iterator(data+listSize);
 	}
 
-	T * operator[](const int index) const {
+	T *& operator[](const int index) const {
 		return data[index];
 	}
 	//Now the complicated methods

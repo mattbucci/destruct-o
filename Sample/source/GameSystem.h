@@ -7,6 +7,7 @@
 #include "GameEventSubscriber.h"
 
 #include "FPSCounter.h"
+#include "TextureCache.h"
 
 class Sprite;
 class ShaderGroup;
@@ -28,7 +29,11 @@ public:
 	GameSystem(ShaderGroup * shaders);
 	virtual ~GameSystem();
 
+	//The root control of all windows displayed by this frame
 	ControlBase Controls;
+
+	//Texture cache system
+	TextureCache Textures;
 
 	//This is called right after all frames are constructed
 	//but before any frames start running
@@ -48,4 +53,4 @@ public:
 	virtual bool Update(double delta,double now, vector<InputEvent> inputEvents);
 	//Draw happens whenever possible
 	virtual void Draw(double width, double height);
-};
+}; 

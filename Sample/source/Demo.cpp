@@ -122,19 +122,26 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				//Yes you leak a particle data every time you do this
 				//should be fixed
 				ParticleData * rules = new ParticleData();
-				rules->GenerationRate.AddValue(0,40);
-				rules->Velocity.AddValue(0,vec3(0,0,.5));
-				rules->Variation.AddValue(0,.5);
-				rules->Life.AddValue(0,10);
-				rules->EmitterSize.AddValue(0,vec2(2,2));
-
-				rules->Color.AddValue(0,vec4(1,0,0,1));
-				rules->Color.AddValue(1,vec4(0,1,1,1));
-				rules->Scale.AddValue(0,vec3(.2,.2,.2));
-				rules->Scale.AddValue(1,vec3(.05,.05,.05));
+				//First system relative properties
+				rules->GenerationRate.AddValue(0,100);
+				rules->Velocity.AddValue(0,vec3(0,0,10));
+				rules->Variation.AddValue(0,0);
+				rules->Latitude.AddValue(0,vec2());
+				rules->Longitude.AddValue(0,vec2());
+				rules->Life.AddValue(0,vec2(2,2));
+				rules->EmitterSize.AddValue(0,vec2(1,1));
+				rules->Rows = rules->Columns = 1;
+				rules->FrameOffset.AddValue(0,vec2(0,0));
+				//Now particle relative properties
+				rules->Color.AddValue(0,vec4(1,1,1,1));
+				rules->Scale.AddValue(0,vec2(1,1));
 				rules->Acceleration.AddValue(0,vec3());
+				rules->AnimationSpeed.AddValue(0,0);
+				rules->MaterialStyle = ParticleData::NONE;
+				rules->MaterialTexture = "particles/textures/purewhite.png";
+
 				//rules->Velocity
-				ParticleSystem * testSystem = new ParticleSystem(rules,0.0);
+				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,-1);
 				testSystem->Position = cubePos; 
 				systems.push_back(testSystem);
 			}
@@ -169,10 +176,10 @@ void Demo::SwitchDemo(int newDemo, vec3 playerPos, vec3 playerFacing) {
 
 void Demo::Update(double now, double delta) {
 	for (auto sys : systems) {
-		sys->UpdateEmitter(now);
+		sys->UpdateEmitter(now,delta);
 	}
 }
 
 void Demo::Draw(GL3DProgram * shader) {
 
-}
+} 

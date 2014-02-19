@@ -4,6 +4,7 @@
 #include "ShaderGroup.h"
 #include "GLParticleProgram.h"
 #include "GL3DProgram.h"
+#include "VoxEngine.h"
 
 //Updates the contents of the particle cloud automatically
 void ParticleCloud::UpdateCloud(double time, double delta) {
@@ -23,26 +24,13 @@ void ParticleCloud::UpdateCloud(double time, double delta) {
 			it++;
 	}
 }
-/*
-void ParticleCloud::CleanupSystem(ParticleSystem * system) {
-	if (particles.size() <= 0)
-		//Nothing to update, go no further
-		return;
 
-
-	//Cleanup each particle
-	Particle ** first = &particles[0];
-	for (unsigned int i = 0; i < particles.size(); i++) {
-		Particle * current = *(first+i);
-		if ((current != NULL) && (current->owner == system)) {
-			//Cleanup that particle
-			delete current;
-			//Mark the current entry as unused
-			*(first+i) = NULL;
-		}
-	}
+ParticleSystem * ParticleCloud::BuildParticleSystem(const ParticleData & particleType,float lifeTime) {
+	ParticleSystem * ps = new ParticleSystem(particleType,VoxEngine::GetGameSimTime(),lifeTime);
+	particles.insert(ps);
+	return ps;
 }
-*/
+
 
 //Draw the particle cloud using a special shader in the future
 void ParticleCloud::Draw(ShaderGroup * shaders) {
@@ -55,5 +43,5 @@ void ParticleCloud::Draw(ShaderGroup * shaders) {
 
 	//Draw each particle system
 	for (auto system : particles)
-		system->Draw();
+		system->Draw(&renderer, shaderParticles);
 }

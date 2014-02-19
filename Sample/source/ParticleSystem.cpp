@@ -5,9 +5,16 @@
 #include "Frames.h"
 #include "ParticleData.h"
 
-ParticleSystem::ParticleSystem(ParticleData * particleSystemDescription,double now) {
+#include "GLTexture.h"
+#include "TextureCache.h"
+
+ParticleSystem::ParticleSystem(ParticleData particleSystemDescription,double now, double lifetime) {
 	this->particleSystemDescription = particleSystemDescription;
 	this->creationTime = now;
+	if (lifetime < 0)
+		deathAt = -1;
+	else
+		deathAt = creationTime+lifetime;
 	nextParticle = 0;
 }
 ParticleSystem::~ParticleSystem() {
@@ -15,25 +22,74 @@ ParticleSystem::~ParticleSystem() {
 
 //Update the particle emitter spawning particles
 bool ParticleSystem::UpdateEmitter(double now, double delta) {
-	double gameTime = now;
-	BaseFrame * game = (BaseFrame*)CurrentSystem;
 	//Adjust the time so it's relative to you
-	now -= creationTime;
+	double systemTime = now-creationTime;
+	BaseFrame * game = (BaseFrame*)CurrentSystem;
+	
+	//A negative death time indicates infinite life
+	if ((deathAt < 0) || (deathAt > now)) {
+		if (nextParticle == 0)
+			nextParticle = systemTime;
 
-	if (nextParticle == 0)
-		nextParticle = now;
-
-	//Generate as many new particles as are necessary to catch up
-	double perParticle = 1.0f/particleSystemDescription->GenerationRate.ValueAtSequence((float)now);
-	while (nextParticle < now) {
-		nextParticle += perParticle;
-		Particle * p = new Particle(gameTime,(float)now,this,particleSystemDescription);
-		game->Particles.AddParticle(p);
+		//Generate as many new particles as are necessary to catch up
+		double perParticle = 1.0f/particleSystemDescription.GenerationRate.ValueAtSequence((float)now);
+		while (nextParticle < systemTime) {
+			nextParticle += perParticle;
+			Particle * p = new Particle(now,(float)systemTime,this,&particleSystemDescription);
+			particleList.insert(p);
+		}
+	}
+	else {
+		//Time for death, stop generating particles, when all the particles are gone
+		//request your own destruction
+		if (particleList.size() <= 0)
+			return true;
 	}
 
-}
-//Particles are drawn as a cloud after the models are drawn 
-//and so this call doesn't do anything for particles
-void ParticleSystem::Draw(GL3DProgram * shaders) {
+	//Update all the particles
+	for (auto it = particleList.begin(); it != particleList.end();) {
+		Particle * p = *it;
+		if (p->Update(now,delta)) {
+			//The particle requested death, cleanup
+			delete p;
+			it = particleList.erase(it);
+		}
+		else
+			it++;
+	}
 
+	//Keep on living
+	return false;
 }
+
+//Handle particle system material and draw style now
+void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shader) {
+	//Enforce the selected material
+	switch(particleSystemDescription.MaterialStyle) {
+	case ParticleData::NONE:
+		glDisable (GL_BLEND);
+		glDisable(GL_ALPHA_TEST);
+		break;
+	case ParticleData::ADDITIVE:
+		glEnable(GL_BLEND);
+		glDisable(GL_ALPHA_TEST);
+		glBlendFunc(GL_SRC_COLOR, GL_ONE);
+		break;
+	case ParticleData::BLEND:
+		glEnable(GL_BLEND);
+		glDisable(GL_ALPHA_TEST);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		break;
+	case ParticleData::SCREEN:
+		glEnable(GL_BLEND);
+		glDisable(GL_ALPHA_TEST);
+		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
+		break;
+	}
+	glDepthMask(GL_FALSE);
+	//Enable the texture used for this particle system
+	GLTexture * texture = CurrentSystem->Textures.GetTexture(particleSystemDescription.MaterialTexture);
+	texture->Bind();
+	//Call the renderer to render all the particles
+	renderer->Render(shader,&particleList[0],particleList.size());
+} 

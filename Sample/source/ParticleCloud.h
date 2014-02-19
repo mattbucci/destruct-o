@@ -4,6 +4,7 @@
 
 #include "GL3DProgram.h"
 #include "ContiguousList.h"
+#include "ParticleRenderer.h"
 
 
 class Particle;
@@ -14,6 +15,11 @@ class ShaderGroup;
 class ParticleCloud {
 	//All the particle systems in the game
 	ContiguousList<ParticleSystem> particles;
+
+	//This is the renderer for particles
+	//similar to the voxel system, it will probably be replaced
+	//with an instanced version for non-android/up-to-date platforms
+	ParticleRenderer renderer;
 public:
 
 	//Updates the contents of the particle cloud automatically
@@ -28,4 +34,6 @@ public:
 
 	//Destroy all the particles owned by a particular system
 	//void CleanupSystem(ParticleSystem * system);
+
 };
+ 

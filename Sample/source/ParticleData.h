@@ -16,15 +16,16 @@ public:
 	//The initial velocity vector
 	LinearChain(vec3) Velocity;
 	//The variation in velocity of generated particles (%)
+	//Example: 10 would be 10%, and any Velocity value could be up to 10% higher or lower
 	LinearChain(float) Variation;
-	//X,Y is min, max of random latitude
+	//X,Y is min, max of random latitude (degrees -90 to 90)
 	//applied to starting velocity
 	LinearChain(vec2) Latitude;
-	//X,Y is min, max of random longitude
+	//X,Y is min, max of random longitude (degrees -180 to 180)
 	//applied to starting velocity
 	LinearChain(vec2) Longitude;
-	//The life of the emitted particle
-	LinearChain(float) Life;
+	//X,Y is the min/max of the life of the emitted particle
+	LinearChain(vec2) Life;
 	//The width/length of emitter
 	LinearChain(vec2) EmitterSize;
 	//The rows/columns of the particle texture
@@ -40,22 +41,28 @@ public:
 	//The color of the generated particle
 	LinearChain(vec4) Color;
 	//The scale of the generated particle
-	LinearChain(vec3) Scale;
+	//X,Y is the min/max scale
+	LinearChain(vec2) Scale;
 	//The acceleration applied to the particle
+	//this acceleration is /not/ rotated 
 	LinearChain(vec3) Acceleration;
 	//The speed at which to play frames from the texture
 	//in frames per second
 	LinearChain(float) AnimationSpeed;
 
-
+	//Properties for the material
 	enum MaterialEffect {
+		//No blending (like voxels)
 		NONE,
+		//Transparency is allowed
+		//sorting is required
 		BLEND,
+		//Color is added to already drawn colors
 		ADDITIVE,
 		//Similar to additive, but reverses color first
 		SCREEN,
 	};
-
-
-	MaterialEffect Particle;
-};
+	MaterialEffect MaterialStyle;
+	//Should be the texture name relative to the particle texture directory
+	string MaterialTexture;
+}; 
