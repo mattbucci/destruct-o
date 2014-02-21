@@ -17,16 +17,19 @@ Particle::Particle(double gameTime, float systemTime, ParticleSystem * owner, Pa
 	//Determine all your starting properties
 	
 	//Calculate velocity factoring in variation
-	float variationPercent = systemData->Variation.ValueAtSequence(systemTime);
+	float variationPercent = systemData->VelocityVariation.ValueAtSequence(systemTime);
 	this->Velocity = systemData->Velocity.ValueAtSequence(systemTime) * 
 		(1.0f + variationPercent - random(0.0f,2.0f*variationPercent));
 
-	//Apply the latitude/longitude to velocity
-	vec2 latRange = systemData->Latitude.ValueAtSequence(systemTime);
-	float lat = random(latRange.x,latRange.y);
-	vec2 lonRange = systemData->Longitude.ValueAtSequence(systemTime);
-	float lon = random(lonRange.x,lonRange.y);
-	//TODO: Finsh lat/lon
+	//Apply latitude/longitude to initial velocity vector
+	vec4 tempVelocity = vec4(this->Velocity,1.0);
+	vec2 latitudeRange = systemData->Latitude.ValueAtSequence(systemTime);
+	vec2 longitudeRange = systemData->Longitude.ValueAtSequence(systemTime);
+	//First apply latitude
+	tempVelocity = tempVelocity * glm::rotate(random(latitudeRange.x,latitudeRange.y),vec3(1,0,0));
+	//Now longitude
+	tempVelocity = tempVelocity * glm::rotate(random(longitudeRange.x,longitudeRange.y),vec3(0,0,1));
+	this->Velocity = vec3(tempVelocity);
 
 	//Determine initial position
 	vec2 emitterSize = systemData->EmitterSize.ValueAtSequence(systemTime);
@@ -38,6 +41,10 @@ Particle::Particle(double gameTime, float systemTime, ParticleSystem * owner, Pa
 	vec2 frameRange = SystemData->FrameOffset.ValueAtSequence(systemTime);
 	Frame = (int)(random(frameRange.x,frameRange.y));
 	unroundedFrame = (double)Frame;
+
+	//Save the scale variation that applies to you
+	float possibleVariation = systemData->ScaleVariation.ValueAtSequence(systemTime);
+	scaleVariation = random(1-possibleVariation,possibleVariation);;
 
 	//Set your spawn time to right now
 	spawnedAt = gameTime;
@@ -54,8 +61,7 @@ bool Particle::Update(double time, double delta) {
 	//Simulate particle
 	float life = (float)(time-spawnedAt);
 	Color = SystemData->Color.ValueAtSequence(life);
-	vec2 scaleRange = SystemData->Scale.ValueAtSequence(life);
-	Scale = random(scaleRange.x,scaleRange.y);
+	Scale = SystemData->Scale.ValueAtSequence(life) * scaleVariation;
 	//Now get/apply forces
 	vec3 acceleration = SystemData->Acceleration.ValueAtSequence(life);
 	Velocity += acceleration*(float)delta;

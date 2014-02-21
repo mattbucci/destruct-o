@@ -144,9 +144,10 @@ void BaseFrame::Draw(double width, double height) {
 	Camera.UpdateViewSize(viewPortSize);
 	vec2 mapExtents = vec2(Voxels.GetWidth(),Voxels.GetHeight());
 
+	//Update the texture caching system
+	Textures.Refresh();
 
 	//Startup 3d rendering
-	//Enable the 2d shader for interface drawing
 	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
 	shaders3d->UseProgram();
 	//Setup basics of shader program per-frame

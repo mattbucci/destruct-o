@@ -123,23 +123,26 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				//should be fixed
 				ParticleData * rules = new ParticleData();
 				//First system relative properties
-				rules->GenerationRate.AddValue(0,300);
-				rules->Velocity.AddValue(0,vec3(0,0,.5));
-				rules->Variation.AddValue(0,0);
-				rules->Latitude.AddValue(0,vec2());
-				rules->Longitude.AddValue(0,vec2());
-				rules->Life.AddValue(0,vec2(.6,.9));
-				rules->EmitterSize.AddValue(0,vec2(1,1));
-				rules->Rows = rules->Columns = 1;
-				rules->FrameOffset.AddValue(0,vec2(0,0));
+				rules->GenerationRate.AddValue(0,1000);
+				rules->Velocity.AddValue(0,vec3(0,0,1.5));
+				rules->Latitude.AddValue(0,vec2(0,20));
+				rules->Longitude.AddValue(0,vec2(0,360));
+				rules->Life.AddValue(0,vec2(.5,.5));
+				rules->EmitterSize.AddValue(0,vec2(.6,.6));
+				rules->Rows = 4;
+				rules->Columns = 4;
+				rules->FrameOffset.AddValue(0,vec2(0,15.9));
+				rules->VelocityVariation.AddValue(0,.6);
+				rules->ScaleVariation.AddValue(0,.4);
 				//Now particle relative properties
-				rules->Color.AddValue(0,vec4(1,0,0,1));
-				rules->Color.AddValue(.5,vec4(1,1,0,1));
-				rules->Scale.AddValue(0,vec2(.03,.1));
+				rules->Color.AddValue(0,vec4(1,115.0f/255.0f,60.0f/255.0f,1));
+				rules->Color.AddValue(.4,.5f*vec4(1,115.0f/255.0f,60.0f/255.0f,1));
+				rules->Color.AddValue(.5,vec4(0,0,0,1));
+				rules->Scale.AddValue(0,.3);
 				rules->Acceleration.AddValue(0,vec3());
 				rules->AnimationSpeed.AddValue(0,0);
-				rules->MaterialStyle = ParticleData::NONE;
-				rules->MaterialTexture = "particles/textures/purewhite.png";
+				rules->MaterialStyle = ParticleData::SCREEN;
+				rules->MaterialTexture = "particles/textures/fire.png";
 
 				//rules->Velocity
 				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,-1);

@@ -8,6 +8,8 @@ class ParticleData;
 
 class Particle {
 	double unroundedFrame;
+	//Saved scale variation determined at spawn
+	float scaleVariation;
 public:
 	//"systemTime" is the time relative to the spawning particle system
 	//that is, if the game has been running for 100 seconds and the particle system has been alive for 10

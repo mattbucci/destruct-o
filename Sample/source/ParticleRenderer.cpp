@@ -16,11 +16,11 @@ ParticleRenderer::ParticleRenderer() {
 	//Buffer junk data (doesn't matter if data is uninitialized)
 	//This allows the allocation to happen once
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
-	glBufferData ( GL_ARRAY_BUFFER, PARTICLE_RENDER_SWEEP*sizeof(vec4), vertices, GL_DYNAMIC_DRAW );
+	glBufferData ( GL_ARRAY_BUFFER, PARTICLE_RENDER_SWEEP*6*sizeof(vec4), vertices, GL_DYNAMIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER, textureBuffer ); 
-	glBufferData ( GL_ARRAY_BUFFER, PARTICLE_RENDER_SWEEP*sizeof(vec2), textureCoordinates, GL_DYNAMIC_DRAW );
+	glBufferData ( GL_ARRAY_BUFFER, PARTICLE_RENDER_SWEEP*6*sizeof(vec2), textureCoordinates, GL_DYNAMIC_DRAW );
 	glBindBuffer ( GL_ARRAY_BUFFER, colorBuffer ); 
-	glBufferData ( GL_ARRAY_BUFFER, PARTICLE_RENDER_SWEEP*sizeof(vec4), colors, GL_DYNAMIC_DRAW );
+	glBufferData ( GL_ARRAY_BUFFER, PARTICLE_RENDER_SWEEP*6*sizeof(vec4), colors, GL_DYNAMIC_DRAW );
 }
 
 ParticleRenderer::~ParticleRenderer() {

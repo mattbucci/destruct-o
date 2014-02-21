@@ -15,9 +15,6 @@ public:
 	LinearChain(float) GenerationRate;
 	//The initial velocity vector
 	LinearChain(vec3) Velocity;
-	//The variation in velocity of generated particles (%)
-	//Example: 10 would be 10%, and any Velocity value could be up to 10% higher or lower
-	LinearChain(float) Variation;
 	//X,Y is min, max of random latitude (degrees -90 to 90)
 	//applied to starting velocity
 	LinearChain(vec2) Latitude;
@@ -41,14 +38,18 @@ public:
 	//The color of the generated particle
 	LinearChain(vec4) Color;
 	//The scale of the generated particle
-	//X,Y is the min/max scale
-	LinearChain(vec2) Scale;
+	LinearChain(float) Scale;
 	//The acceleration applied to the particle
 	//this acceleration is /not/ rotated 
 	LinearChain(vec3) Acceleration;
 	//The speed at which to play frames from the texture
 	//in frames per second
 	LinearChain(float) AnimationSpeed;
+	//The variation in velocity of generated particles (%)
+	//Example: 10 would be 10%, and any Velocity value could be up to 10% higher or lower
+	LinearChain(float) VelocityVariation;
+	//The variation in scale of the generated particles (%)
+	LinearChain(float) ScaleVariation;
 
 	//Properties for the material
 	enum MaterialEffect {
