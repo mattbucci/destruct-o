@@ -248,17 +248,20 @@ ParticleData * ParticleData::Parser::ReadParticle(string vpartText) {
 					partTwo += insideChar;
 					insideChar = '\0';
 				}
+
+				partOne = trimWhitespace(partOne);
+				partTwo = trimWhitespace(partTwo);
 					
 
 				if (partOneComplete) {
 					//Both parts completed, not a header
 					//Now parse the line or return NULL on parse failure
-					if (!parseLine(trimWhitespace(partOne),trimWhitespace(partTwo),false))
+					if (!parseLine(partOne,partTwo,false))
 						return NULL;
 				}
 				else if (partOne.size() > 0) {
 					//Only one part completed, check for header
-					partOne = trimWhitespace(partOne);
+					
 					if (partOne[partOne.size()-1] != ':') {
 						cout << "\nError on line " << lineNumber << ": Syntax error, missing '=' or ':'\n";
 						return NULL;
