@@ -121,7 +121,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				vec3 cubePos = playerPos+playerFacing*5.0f;
 				//Yes you leak a particle data every time you do this
 				//should be fixed
-				ParticleData * rules = new ParticleData();
+				ParticleData * rules;/* = new ParticleData();
 				//First system relative properties
 				rules->GenerationRate.AddValue(0,1000);
 				rules->Velocity.AddValue(0,vec3(0,0,1.5));
@@ -136,13 +136,17 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				rules->ScaleVariation.AddValue(0,.4);
 				//Now particle relative properties
 				rules->Color.AddValue(0,vec4(1,115.0f/255.0f,60.0f/255.0f,1));
-				rules->Color.AddValue(.4,.5f*vec4(1,115.0f/255.0f,60.0f/255.0f,1));
-				rules->Color.AddValue(.5,vec4(0,0,0,1));
+				rules->Color.AddValue(.8,.5f*vec4(1,115.0f/255.0f,60.0f/255.0f,1));
+				rules->Color.AddValue(1,vec4(0,0,0,1));
 				rules->Scale.AddValue(0,.3);
 				rules->Acceleration.AddValue(0,vec3());
 				rules->AnimationSpeed.AddValue(0,0);
 				rules->MaterialStyle = ParticleData::SCREEN;
-				rules->MaterialTexture = "particles/textures/fire.png";
+				rules->MaterialTexture = "particles/textures/fire.png"; */
+
+				rules = ParticleData::LoadParticleData("particles/fire.vpart");
+				if (rules == NULL)
+					return;
 
 				//rules->Velocity
 				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,-1);

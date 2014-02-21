@@ -49,7 +49,8 @@ Particle::Particle(double gameTime, float systemTime, ParticleSystem * owner, Pa
 	//Set your spawn time to right now
 	spawnedAt = gameTime;
 	vec2 lifeRange = systemData->Life.ValueAtSequence(systemTime);
-	deathAt = spawnedAt+random(lifeRange.x,lifeRange.y);
+	lifeSpan = random(lifeRange.x,lifeRange.y);
+	deathAt = spawnedAt+lifeSpan;
 }
 
 //Updates the position of the particle
@@ -60,14 +61,16 @@ bool Particle::Update(double time, double delta) {
 
 	//Simulate particle
 	float life = (float)(time-spawnedAt);
-	Color = SystemData->Color.ValueAtSequence(life);
-	Scale = SystemData->Scale.ValueAtSequence(life) * scaleVariation;
+	//How long this particle has lived normalized to be from 0.0 to 1.0
+	float lifeFactor = 1.0f - (life/lifeSpan);
+	Color = SystemData->Color.ValueAtSequence(lifeFactor);
+	Scale = SystemData->Scale.ValueAtSequence(lifeFactor) * scaleVariation;
 	//Now get/apply forces
-	vec3 acceleration = SystemData->Acceleration.ValueAtSequence(life);
+	vec3 acceleration = SystemData->Acceleration.ValueAtSequence(lifeFactor);
 	Velocity += acceleration*(float)delta;
 	Position += Velocity*(float)delta;
 	//Finally calculate the current frame
-	unroundedFrame += SystemData->AnimationSpeed.ValueAtSequence(life)*delta;
+	unroundedFrame += SystemData->AnimationSpeed.ValueAtSequence(lifeFactor)*delta;
 	Frame = (int)unroundedFrame;
 
 	return false;
