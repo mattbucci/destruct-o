@@ -2,6 +2,7 @@
 
 class GLParticleProgram;
 class ParticleRenderer;
+class Particle;
 
 #include "ContiguousList.h"
 #include "ParticleData.h"
