@@ -21,8 +21,12 @@ GLTexture * GLTexture::GenerateErrorTexture() {
 	//texture mapping type, perhaps elsewhere?
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );	//GL_NEAREST FOR SPEED
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);	//GL_NEAREST FOR SPEED
+    
+#if !(defined __MOBILE__)
+    // OpenGL ES 2.0+ does not support this function
 	glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
+#endif
+    
 	vector<vec4> errorTexture(8*8);
 	//Generate a red/green 8x8 pattern which is the error pattern
 	for (int x = 0; x < 8; x++) {
@@ -64,7 +68,11 @@ bool GLTexture::CacheTexture(){
 	//texture mapping type, perhaps elsewhere?
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );	//GL_NEAREST FOR SPEED
 	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
+    
+#if !(defined __MOBILE__)
+    // OpenGL ES 2.0+ does not support this function
 	glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+#endif
 
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width,
 				height, 0, GL_RGBA, GL_UNSIGNED_BYTE,

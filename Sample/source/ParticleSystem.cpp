@@ -68,24 +68,27 @@ void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shade
 	switch(particleSystemDescription.MaterialStyle) {
 	case ParticleData::NONE:
 		glDisable (GL_BLEND);
-		glDisable(GL_ALPHA_TEST);
 		break;
 	case ParticleData::ADDITIVE:
 		glEnable(GL_BLEND);
-		glDisable(GL_ALPHA_TEST);
 		glBlendFunc(GL_SRC_COLOR, GL_ONE);
 		break;
 	case ParticleData::BLEND:
 		glEnable(GL_BLEND);
-		glDisable(GL_ALPHA_TEST);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		break;
 	case ParticleData::SCREEN:
 		glEnable(GL_BLEND);
-		glDisable(GL_ALPHA_TEST);
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
 		break;
 	}
+    
+// Was defined in every single case
+#if !(defined __MOBILE__)
+    // Not supported on mobile
+    glDisable(GL_ALPHA_TEST);
+#endif
+    
 	//Enable the texture used for this particle system
 	GLTexture * texture = CurrentSystem->Textures.GetTexture(particleSystemDescription.MaterialTexture);
 	texture->Bind();
