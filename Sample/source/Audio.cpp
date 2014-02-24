@@ -31,10 +31,10 @@ void AudioPlayer::ReceiveEvent(event action) {
 }
 void AudioPlayer::Subscribe(ActorPlayer* user) {
     
-    Subscribe<void(ActorPlayer*,Effect*)>(user->PlayerJumped,[user,EffectPlayer](ActorPlayer* Object, Effect* EffectPlayer) {
+    GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&user->PlayerJumped,[this](ActorPlayer* Object) {
             event test;
             test.type="ui-newability";
             test.id=5;
-            EffectPlayer->PlayEffect(test);
+            EffectPlayer.PlayEffect(test);
 	});
 }

@@ -18,10 +18,15 @@ void GameSystem::Build() {
 
 }
 
-void GameSystem::passEventsToControl(vector<InputEvent> inputEvents) {
+void GameSystem::passEventsToControl(vector<InputEvent> & inputEvents) {
+	//Build a new list of events not used by the dialog system
+	vector<InputEvent> nonDialogInputs;
 	//Process key events
 	for (InputEvent & event : inputEvents) {
 		bool used = Controls.FireEvent(event);
+
+		if (!used)
+			nonDialogInputs.push_back(event);
 
 		if (event.Event == InputEvent::KeyboardUp) {
 			//Remove the key if its in the pressed keys set
@@ -36,6 +41,8 @@ void GameSystem::passEventsToControl(vector<InputEvent> inputEvents) {
 				currentlyPressedKeys.insert(event.Key);
 		}
 	}
+
+	inputEvents = nonDialogInputs;
 }
 
 

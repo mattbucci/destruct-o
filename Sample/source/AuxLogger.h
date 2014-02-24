@@ -5,6 +5,8 @@
 //I don't know about iOS but traditional cout doesn't work on android
 #ifdef __ANDROID__
 
+#define endl "\n"
+
 #include <android/log.h>
 #include <sstream>
 

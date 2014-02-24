@@ -165,7 +165,7 @@ ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 #Code should be organized
 #opengl files are really easy to organize
-FILE(GLOB GLFiles "GL*" "IOSGL.h" "MaxDistanceFog.h" "MaxDistanceFog.cpp" "ShaderGroup.h" "ShaderGroup.cpp")
+FILE(GLOB GLFiles "GL*" "IOSGL.h" "MaxDistanceFog.h" "MaxDistanceFog.cpp" "ShaderGroup.h" "ShaderGroup.cpp" "TextureCache.h" "TextureCache.cpp")
 source_group(OpenGL FILES ${GLFiles})
 
 #actors
@@ -228,6 +228,8 @@ FILE(GLOB PhysicsFiles
 	ParticleData.cpp
 	ParticleSystem.h
 	ParticleSystem.cpp
+	ParticleRenderer.h
+	ParticleRenderer.cpp
 	PhysicsVoxel.h
 	PhysicsVoxel.cpp
 	PhysicsSystem.h
@@ -273,6 +275,7 @@ source_group(Utilities FILES ${UtilityFiles})
 FILE(GLOB VoxelFiles
 	BasicVoxelRenderSystem.h
 	BasicVoxelRenderSystem.cpp
+	ContiguousList.h
 	InstancedVoxelRenderSystem.h
 	InstancedVoxelRenderSystem.cpp
 	VoxelDrawSystem.h

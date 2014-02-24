@@ -13,6 +13,7 @@
 #include "PhysicsSystem.h"
 #include "ParticleCloud.h"
 #include "Audio.h"
+#include "DemoWindow.h"
 
 class ActorPlayer;
 class ParticleSystem;
@@ -25,6 +26,7 @@ class BaseFrame : public GameSystem {
 	GLint uniformModelViewProjection;
 
 	Demo * demo;
+	DemoWindow * demoWindow;
 public:
 	BaseFrame(ShaderGroup * shaders);
 	~BaseFrame();

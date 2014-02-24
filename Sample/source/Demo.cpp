@@ -10,6 +10,20 @@
 
 Demo::Demo() {
 	CurrentAcidStrength = 0;
+	queuedKeyPress = -1;
+}
+
+void Demo::CheckTouchInput(vec3 playerPos, vec3 playerFacing) {
+	if (queuedKeyPress >= 0) {
+		vector<InputEvent> fakeEvent;
+		fakeEvent.push_back(InputEvent(InputEvent::KeyboardDown,0,queuedKeyPress));
+		OnInput(fakeEvent,playerPos,playerFacing);
+		queuedKeyPress =  -1;
+	}
+}
+
+void Demo::QueueTouchEvent(int keyPress) {
+	queuedKeyPress = keyPress;
 }
 
 void Demo::BuildCube(vec3 pos, float sepStrength) {
