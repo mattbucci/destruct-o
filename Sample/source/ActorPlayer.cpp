@@ -73,7 +73,8 @@ void ActorPlayer::Update(float delta, float now) {
 	}
     else if (relativeHeight < -groundThreshold) {
 		//You're below the ground, correct
-		velocity.z = 0;
+		if (velocity.z < 0)
+			velocity.z = 0;
 		position.z = posHeight;
 	}
 	else {
@@ -89,8 +90,14 @@ void ActorPlayer::Update(float delta, float now) {
 		//Position is good, allow it
 		position = newPos;
 	else if (relativeHeight < -groundThreshold) {
-		//position is bad, leave it
-		velocity = vec3();
+		//position is bad, cancel movement that's not directly upwards
+		//cancel velocity that's not directly up
+		float v = glm::dot(velocity,vec3(0,0,1));
+		if (v < 0)
+			v = 0;
+		velocity = v*vec3(0,0,1);
+		//Apply the new only-up velocity to the player
+		position += velocity*delta;
 	}
 	else {
 		//You're on the ground
