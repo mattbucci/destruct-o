@@ -87,7 +87,6 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	
 	// Enable the first person controller
 	FirstPerson->Enable(true);
-    audio = new AudioPlayer(100);
 	cout << "\t Finished base frame\n";
 	//testSystem = NULL;
 }
@@ -108,6 +107,9 @@ void BaseFrame::OnFrameFocus() {
 }
 
 void BaseFrame::Build() {
+    //load the audio
+    audio = new AudioPlayer(100);
+    
 	//Load the sample tile
 	if (!Voxels.LoadTile("basic-h.png")) {
 		cout << "Failed to load voxel tile\n";
