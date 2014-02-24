@@ -118,7 +118,7 @@ void VoxelSystem::Draw(GL3DProgram * shader,vec3 drawPos, int atx, int aty, int 
 
 			//Get position
 			vec3 pos = vec3(x,y,cell.height);
-			char stack = (char)cell.stackHeight;
+			int8_t stack = (int8_t)cell.stackHeight;
 
 			voxelCount += stack+1;
 
