@@ -12,9 +12,17 @@ class Demo {
 
 	void BuildCube(vec3 pos, float sepStrength);
 
+	//-1 if no key press queued
+	//or >1 if we want to fake a key press on next Update()
+	int queuedKeyPress;
+
 public:
 
+	void QueueTouchEvent(int keyPress);
+
 	Demo();
+
+	void CheckTouchInput(vec3 playerPos, vec3 playerFacing);
 
 	void OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing);
 

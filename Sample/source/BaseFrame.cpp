@@ -87,6 +87,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	
 	// Enable the first person controller
 	FirstPerson->Enable(true);
+	
 	cout << "\t Finished base frame\n";
 	//testSystem = NULL;
 }
@@ -100,9 +101,16 @@ void BaseFrame::OnFrameFocus() {
 	//The player autoregisters himself with the actor system
 	//we do not need to do that by hand
 
+	AudioPlayer* Audio =  new AudioPlayer(100);
+	Audio->Subscribe(player);
+
 	//The physics demo
 	//we won't have this forever
 	demo = new Demo();
+#ifdef __MOBILE__
+	demoWindow = new DemoWindow(demo);
+	Controls.AddWindow(demoWindow);
+#endif
 }
 
 void BaseFrame::Build() {
@@ -137,6 +145,9 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	Particles.UpdateCloud(now,delta);
 	//if (testSystem != NULL)
 		//testSystem->UpdateEmitter(now);
+
+	//Update demo
+	demo->CheckTouchInput(player->GetPosition(),FirstPerson->GetLookVector());
 	return true;
 }
 
