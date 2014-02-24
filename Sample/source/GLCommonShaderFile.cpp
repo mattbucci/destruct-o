@@ -29,19 +29,19 @@ GLCommonShaderFile::GLCommonShaderFile(string path) {
 		versionString = "#version 140\n";
 	//Add in all OS specifies
 #ifdef WIN32
-	virtualShader << "#define WIN32\n";
+	virtualShader << "#define GLSL_WIN32\n";
 #endif
 #ifdef __APPLE__
-	virtualShader << "#define __APPLE__\n";
+	virtualShader << "#define GLSL_APPLE\n";
 #endif
 #ifdef __ANDROID__
-	virtualShader << "#define __ANDROID__\n";
+	virtualShader << "#define GLSL_ANDROID\n";
 #endif
 #ifdef __MOBILE__
-	virtualShader << "#define __MOBILE__\n";
+	virtualShader << "#define GLSL_MOBILE\n";
 #endif
 #ifdef __IPHONEOS__
-	virtualShader << "#define __IPHONEOS__\n";
+	virtualShader << "#define GLSL_IPHONEOS\n";
 #endif
 	virtualShader << "#define GLSL_VERSION_" << GLSLVersion << "\n";
 	//Now add the common file to the virtual shader

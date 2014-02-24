@@ -4,6 +4,7 @@
 #include "Particle.h"
 #include "ParticleData.h"
 
+#ifndef __ANDROID__
 //Build the arrays to create the vertex group
 ParticleRenderer::ParticleRenderer() {
 	//Generate the opengl buffers representing this vertex group
@@ -24,6 +25,7 @@ ParticleRenderer::ParticleRenderer() {
 }
 
 ParticleRenderer::~ParticleRenderer() {
+
 	glDeleteBuffers(1,&vertexBuffer);
 	glDeleteBuffers(1,&textureBuffer);
 	glDeleteBuffers(1,&colorBuffer);
@@ -58,12 +60,33 @@ void ParticleRenderer::renderSweep(GLParticleProgram * shader, int particleCount
 
 	glDrawArrays( GL_TRIANGLES, 0, particleCount );
 }
-	
+
+#else
+
+ParticleRenderer::ParticleRenderer() {
+}
+ParticleRenderer::~ParticleRenderer() {
+}
+
+void ParticleRenderer::renderSweep(GLParticleProgram * shader, int particleCount) {
+	//There are four vertices for every particle right now
+	particleCount *= 6;
+
+	glEnableVertexAttribArray ( shader->AttributeVertex() );
+	glVertexAttribPointer ( shader->AttributeVertex(), 4, GL_FLOAT, GL_FALSE, 0, 0 );
+
+	glEnableVertexAttribArray ( shader->AttributeTexture() );
+	glVertexAttribPointer ( shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, 0, 0 );
+
+	glEnableVertexAttribArray ( shader->AttributeColor() );
+	glVertexAttribPointer ( shader->AttributeColor(), 4, GL_FLOAT, GL_FALSE, 0, 0 );
+
+	glDrawArrays( GL_TRIANGLES, 0, particleCount );
+}
+#endif
+
 
 void ParticleRenderer::Render(GLParticleProgram * shader, Particle ** particles, unsigned int size) {
-	_ASSERTE(vertexBuffer >= 0);
-	_ASSERTE(vertexArray >= 0);
-	_ASSERTE(textureBuffer >= 0);
 
 	//If there are no vertices, abort
 	if (size == 0)
