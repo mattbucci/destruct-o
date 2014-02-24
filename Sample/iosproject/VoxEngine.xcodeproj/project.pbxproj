@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		699B196118BB63210061F821 /* DemoWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 699B195F18BB63210061F821 /* DemoWindow.cpp */; };
 		F11C7EF818A8A7F9004BC84B /* latlon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F13517E418A8A5A20078FDA4 /* latlon.cpp */; };
 		F11C7EF918A8A7F9004BC84B /* noisegen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F13517E518A8A5A20078FDA4 /* noisegen.cpp */; };
 		F11C7EFA18A8A7F9004BC84B /* cylinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F13517E818A8A5AF0078FDA4 /* cylinder.cpp */; };
@@ -146,6 +147,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		699B195F18BB63210061F821 /* DemoWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DemoWindow.cpp; path = ../../source/DemoWindow.cpp; sourceTree = "<group>"; };
+		699B196018BB63210061F821 /* DemoWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DemoWindow.h; path = ../../source/DemoWindow.h; sourceTree = "<group>"; };
 		F13517E418A8A5A20078FDA4 /* latlon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = latlon.cpp; path = ../../includes/libnoise/noise/latlon.cpp; sourceTree = "<group>"; };
 		F13517E518A8A5A20078FDA4 /* noisegen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = noisegen.cpp; path = ../../includes/libnoise/noise/noisegen.cpp; sourceTree = "<group>"; };
 		F13517E818A8A5AF0078FDA4 /* cylinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cylinder.cpp; path = ../../includes/libnoise/noise/model/cylinder.cpp; sourceTree = "<group>"; };
@@ -635,6 +638,8 @@
 				F1E7098418B9BB13007E7ED2 /* PhysicsSystem.cpp */,
 				F1E7098518B9BB13007E7ED2 /* PhysicsSystem.h */,
 				F1E7098618B9BB13007E7ED2 /* PhysicsVoxel.cpp */,
+				699B195F18BB63210061F821 /* DemoWindow.cpp */,
+				699B196018BB63210061F821 /* DemoWindow.h */,
 				F1E7098718B9BB13007E7ED2 /* PhysicsVoxel.h */,
 				F1E7098818B9BB13007E7ED2 /* RasterizedText.cpp */,
 				F1E7098918B9BB13007E7ED2 /* RasterizedText.h */,
@@ -875,6 +880,7 @@
 				F1E709BE18B9BB13007E7ED2 /* GameEvent.cpp in Sources */,
 				F11C7F1818A8A7F9004BC84B /* translatepoint.cpp in Sources */,
 				F1E709BD18B9BB13007E7ED2 /* GameCamera.cpp in Sources */,
+				699B196118BB63210061F821 /* DemoWindow.cpp in Sources */,
 				F1E709E018B9BB13007E7ED2 /* noiseutils.cpp in Sources */,
 				F1E709D518B9BB13007E7ED2 /* GObject.cpp in Sources */,
 				F11C7F1918A8A7F9004BC84B /* turbulence.cpp in Sources */,
