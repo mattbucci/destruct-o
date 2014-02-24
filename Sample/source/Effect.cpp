@@ -30,9 +30,36 @@ void Effect::PlayEffect(event action) {
     }
 }
 
+
+void ReadFiles(string data, map<string,Mix_Chunk*>& effects) {
+
+    
+}
 bool Effect::load_files() {
-    //Load the music
-    fstream File("sounds/Effects.txt");
+    //Load the effects
+    string filename = "sounds/Effects.txt";
+    
+	SDL_RWops *file = SDL_RWFromFile(filename.c_str(), "r");
+	long size;
+	
+	cout << "Parsing particle file \"" << filename << "\":";
+    
+	if(!file) {
+		cout << "\nFailed to open particle data file \"" << filename << "\"\n";
+		return NULL;
+	}
+    
+	//Use the SDL system to read the file
+	SDL_RWseek(file , 0 , RW_SEEK_END);
+	size = (long)SDL_RWtell(file);
+	SDL_RWseek(file,0,RW_SEEK_SET);
+    
+	char * fileData = new char[size];
+	SDL_RWread(file,fileData, 1, (size_t)size);
+	SDL_RWclose(file);
+    
+    stringstream File(string(fileData,size));
+    
     string tmp;
     //Effect File Defintion Format
         //EffectName pathtofile
@@ -55,7 +82,7 @@ bool Effect::load_files() {
         }
         params.clear();
     }
-    File.close();
+
     
     
     return true;
