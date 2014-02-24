@@ -15,7 +15,6 @@ class ControlBase : Control {
 	double lastKeyProcessedAt;
 	//First key press is special, it has a long gap after it
 	bool firstKeyPressRecorded;
-
 public:
 	ControlBase();
 
@@ -34,5 +33,5 @@ public:
 	DebugWindow Debug;
 
 	//Draw all contrls
-	void Draw(GL2DProgram * prg, Rect size);
+	void Draw(GL2DProgram * prg, vec2 originalSize);
 };

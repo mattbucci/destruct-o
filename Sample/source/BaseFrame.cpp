@@ -114,9 +114,9 @@ void BaseFrame::OnFrameFocus() {
 }
 
 void BaseFrame::Build() {
-    //load the audio
-    audio = new AudioPlayer(100);
-    audio->Subscribe(player);
+	//load the audio
+	audio = new AudioPlayer(100);
+	audio->Subscribe(player);
 	//Load the sample tile
 	if (!Voxels.LoadTile("basic-h.png")) {
 		cout << "Failed to load voxel tile\n";

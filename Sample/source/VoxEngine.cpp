@@ -37,6 +37,11 @@ double VoxEngine::gameSimulationTime = 0.0;
 int VoxEngine::curWidth;
 int VoxEngine::curHeight;
 
+//The scaled size of the 2d interface over the window
+vec2 VoxEngine::scaledSize;
+//The scaling applied to the mouse positions
+vec2 VoxEngine::scaleFactor;
+
 //Program entry point
 int main(int argc, char** argv)
 {
@@ -159,6 +164,7 @@ void VoxEngine::Start() {
 			SDL_PumpEvents();
 			//Check window size
 			SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
+			ResizeWindow();
 			//render the loading screen
 			glViewport(0, 0, curWidth, curHeight);
 			load.Draw(curWidth,curHeight,shader);
@@ -171,6 +177,7 @@ void VoxEngine::Start() {
 	continueGameLoop = true;
 	//Get the current window size
 	SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
+	ResizeWindow();
 
 	//Mark the simulation starting time
 	//Start the simulation one update loop into the past
@@ -214,7 +221,7 @@ void VoxEngine::Start() {
 		//Run the frame draw
 		glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		//Draw
-		CurrentSystem->Draw((double)curWidth,(double)curHeight);
+		CurrentSystem->Draw(scaledSize.x,scaledSize.y);
 
 		/* Swap our back buffer to the front */
 		SDL_GL_SwapWindow(displayWindow);
@@ -230,6 +237,33 @@ void VoxEngine::Start() {
 	if(joystick) SDL_JoystickClose(joystick);
 	
 	SDL_Quit();
+}
+void VoxEngine::ResizeWindow() {
+	const static vec2 targetResolution = vec2(800,600);
+
+	vec2 newSize = vec2((float)curWidth,(float)curHeight);
+
+	//Use the current width/height to find the closest width/height to the 
+	//target resolution which maintains aspect ratio
+	vec2 currentResolution = newSize;
+	currentResolution /= targetResolution;
+	vec2 finalResolution;
+	if (currentResolution.x > currentResolution.y) {
+		//The screen is more wide than 800 by 600
+		//Scale the height to fill the screen and then determine the correct width
+		finalResolution.y = targetResolution.y;
+		finalResolution.x = newSize.x/currentResolution.y;
+	}
+	else {
+		//the screen is more tall than 800 by 600
+		//Scale the width to fill the screen and then determine the correct height
+		finalResolution.x = targetResolution.x;
+		finalResolution.y = newSize.y/currentResolution.x;
+	}
+
+	//Save calculated size information
+	scaledSize = finalResolution;
+	scaleFactor = scaledSize/newSize;
 }
 
 double VoxEngine::GetGameSimTime() {
@@ -253,24 +287,24 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 					// Mobile only responds to finger events
 					case SDL_FINGERMOTION:
 						//cout << "MOVED (" << event.tfinger.fingerId << ") : " << event.tfinger.x << "," << event.tfinger.y << "\n";
-						eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
+						eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),scaleFactor.x*event.tfinger.x*curWidth,scaleFactor.y*event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
 						break;
 					case SDL_FINGERUP:
-						eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
+						eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),scaleFactor.x*event.tfinger.x*curWidth,scaleFactor.y*event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
 						break;
 					case SDL_FINGERDOWN:
-						eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),event.tfinger.x*curWidth,event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
+						eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),scaleFactor.x*event.tfinger.x*curWidth,scaleFactor.y*event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
 						break;
 #else
 						// Desktop (well, whatever non mobile is called these days) only responds to keyboard and mouse events
 					case SDL_MOUSEBUTTONDOWN:
-						eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),(float)event.button.x,(float)event.button.y, event.button.button));
+						eventQueue.push_back(InputEvent(InputEvent::MouseDown,OS::Now(),scaleFactor.x*(float)event.button.x,scaleFactor.y*(float)event.button.y, event.button.button));
 						break;
 					case SDL_MOUSEBUTTONUP:
-						eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),(float)event.button.x,(float)event.button.y, event.button.button));
+						eventQueue.push_back(InputEvent(InputEvent::MouseUp,OS::Now(),scaleFactor.x*(float)event.button.x,scaleFactor.y*(float)event.button.y, event.button.button));
 						break;
 					case SDL_MOUSEMOTION:
-						eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),(float)event.motion.x,(float)event.motion.y, event.button.button));
+						eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),scaleFactor.x*(float)event.motion.x,scaleFactor.y*(float)event.motion.y, event.button.button));
 						//Add in the relative motion information
 						eventQueue.back().RelX = (float)event.motion.xrel;
 						eventQueue.back().RelY = (float)event.motion.yrel;
@@ -291,6 +325,7 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 							curWidth = event.window.data1;
 							curHeight = event.window.data2;
 							glViewport(0,0,curWidth,curHeight);
+							ResizeWindow();
 							break;
 						}
 						break;
