@@ -9,6 +9,7 @@
 #include "Effect.h"
 
 Effect::Effect() {
+    Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
     cout << "Loading effects" << endl;
     load_files();
     event test;
@@ -18,7 +19,15 @@ Effect::Effect() {
 }
 
 void Effect::PlayEffect(event action) {
-    Mix_PlayChannel(-1,effects[action.type],-1);
+    if(action.type=="player-walk"){
+        if(foot)
+            Mix_PlayChannel(-1,effects["player-left-foot"],0);
+        else
+            Mix_PlayChannel(-1,effects["player-right-foot"],0);
+    }
+    else {
+        Mix_PlayChannel(-1,effects[action.type],0);
+    }
 }
 
 bool Effect::load_files() {
@@ -40,6 +49,7 @@ bool Effect::load_files() {
         //ignore comment lines
         if(params.size() == 2) {
             if(params[0].substr(0,2) != "//") {
+                cout << "Loaded: " << params[0]<< endl;
                 effects.insert ( pair<string,Mix_Chunk*>(params[0],Mix_LoadWAV(params[1].c_str())) );
             }
         }

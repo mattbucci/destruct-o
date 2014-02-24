@@ -21,6 +21,7 @@ class Demo;
 
 class BaseFrame : public GameSystem {
 	ActorPlayer * player;
+    AudioPlayer * audio;
 	
 	GLint uniformModelView;
 	GLint uniformModelViewProjection;

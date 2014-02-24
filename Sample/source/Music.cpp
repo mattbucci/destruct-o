@@ -10,6 +10,7 @@
 
 
 Music::Music() {
+    Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
     cout << "Loading music" << endl;
     load_tracks();
     play_track("menu");

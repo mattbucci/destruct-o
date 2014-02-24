@@ -10,8 +10,6 @@
 
 
 AudioPlayer::AudioPlayer(Uint8 volume) {
-    Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
-    Mix_AllocateChannels(250);
 }
 
 void AudioPlayer::SetVolume(Uint8 effectvolume,Uint8 backgroundvolume) {
@@ -30,11 +28,25 @@ void AudioPlayer::ReceiveEvent(event action) {
     //set the intensity
 }
 void AudioPlayer::Subscribe(ActorPlayer* user) {
-    
     GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&user->PlayerJumped,[this](ActorPlayer* Object) {
-            event test;
-            test.type="ui-newability";
-            test.id=5;
-            EffectPlayer.PlayEffect(test);
-	});
+        event test;
+        test.type="player-jump";
+        test.id=5;
+        EffectPlayer.PlayEffect(test);
+    });
+    
+    GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&user->PlayerLanded,[this](ActorPlayer* Object) {
+        event test;
+        test.type="player-land";
+        test.id=5;
+        EffectPlayer.PlayEffect(test);
+    });
+    
+    GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&user->PlayerWalked,[this](ActorPlayer* Object) {
+        event test;
+        test.type="player-walk";
+        test.id=5;
+        EffectPlayer.PlayEffect(test);
+    });
+
 }

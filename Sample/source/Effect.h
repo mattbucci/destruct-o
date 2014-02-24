@@ -17,6 +17,7 @@ private:
     map<string,Mix_Chunk*> effects;
     map<uint32_t,uint16_t> channels;
     bool load_files();
+    bool foot;
 public:
     Effect();
     void SetVolume(uint8_t volume);

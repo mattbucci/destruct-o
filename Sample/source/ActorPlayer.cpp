@@ -32,15 +32,15 @@ void ActorPlayer::Update(float delta, float now) {
 	velocity.x = playerMotion.x;
 	velocity.y = playerMotion.y;
     
-    if(deltaPosition>10 && onGround) {
+    if(deltaPosition>200 && onGround) {
         //Let everyone know we walked
         PlayerWalked.Fire([this](function<void(ActorPlayer*)> subscriber) {
             subscriber(this);
         });
-        deltaPosition -=10;
+        deltaPosition -=200;
     } else {
         if(onGround) {
-            deltaPosition+= velocity.length();
+            deltaPosition+= sqrt(pow(velocity.x,2)+pow(velocity.y,2));
         }
     }
     
@@ -75,13 +75,6 @@ void ActorPlayer::Update(float delta, float now) {
 		//You're below the ground, correct
 		velocity.z = 0;
 		position.z = posHeight;
-        if(!onGround) {
-            //Let everyone know we landed
-            PlayerLanded.Fire([this](function<void(ActorPlayer*)> subscriber) {
-                subscriber(this);
-            });
-            onGround = true;
-        }
 	}
 	else {
 		//you're on the ground
@@ -99,7 +92,15 @@ void ActorPlayer::Update(float delta, float now) {
 		//position is bad, leave it
 		velocity = vec3();
 	}
-	else
+	else {
 		//You're on the ground
 		position = newPos;
+        if(!onGround) {
+            //Let everyone know we landed
+            PlayerLanded.Fire([this](function<void(ActorPlayer*)> subscriber) {
+                subscriber(this);
+            });
+            onGround = true;
+        }
+    }
 }

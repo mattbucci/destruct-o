@@ -15,14 +15,12 @@
 #include "GameEventSubscriber.h"
 #include "ActorPlayer.h"
 
-
 class AudioPlayer : protected GameEventSubscriber {
 private:
     Music MusicPlayer;
     Effect EffectPlayer;
     void clean_up();
 public:
-    AudioPlayer() {};
     AudioPlayer(uint8_t volume);
     void Pause();
     void Resume();
