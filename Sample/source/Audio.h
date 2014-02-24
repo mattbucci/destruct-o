@@ -12,18 +12,23 @@
 #include "AudioHeader.h"
 #include "Music.h"
 #include "Effect.h"
+#include "GameEventSubscriber.h"
+#include "ActorPlayer.h"
 
-class AudioPlayer {
+
+class AudioPlayer : protected GameEventSubscriber {
 private:
     Music MusicPlayer;
     Effect EffectPlayer;
     void clean_up();
 public:
+    AudioPlayer() {};
     AudioPlayer(uint8_t volume);
     void Pause();
     void Resume();
     void SetVolume(uint8_t effectvolume, uint8_t backgroundvolume);
     void SetIntensity(uint8_t value);
     void ReceiveEvent(event action);
+    void Subscribe(ActorPlayer*);
 };
 #endif /* defined(__Audio_Test__Audio__) */

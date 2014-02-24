@@ -9,8 +9,7 @@
 #include "Effect.h"
 
 Effect::Effect() {
-    cout << "loading effects" << endl;
-    Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
+    cout << "Loading effects" << endl;
     load_files();
     event test;
     test.type="ui-newability";
@@ -19,7 +18,7 @@ Effect::Effect() {
 }
 
 void Effect::PlayEffect(event action) {
-    Mix_PlayChannel(1,effects[action.type],-1);
+    Mix_PlayChannel(-1,effects[action.type],-1);
 }
 
 bool Effect::load_files() {
@@ -41,7 +40,6 @@ bool Effect::load_files() {
         //ignore comment lines
         if(params.size() == 2) {
             if(params[0].substr(0,2) != "//") {
-                cout << "loaded: " << params[0] << endl;
                 effects.insert ( pair<string,Mix_Chunk*>(params[0],Mix_LoadWAV(params[1].c_str())) );
             }
         }

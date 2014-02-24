@@ -8,7 +8,10 @@
 
 #include "Audio.h"
 
+
 AudioPlayer::AudioPlayer(Uint8 volume) {
+    Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
+    Mix_AllocateChannels(250);
 }
 
 void AudioPlayer::SetVolume(Uint8 effectvolume,Uint8 backgroundvolume) {
@@ -25,4 +28,13 @@ void AudioPlayer::ReceiveEvent(event action) {
     
     //if in battle
     //set the intensity
+}
+void AudioPlayer::Subscribe(ActorPlayer* user) {
+    
+    Subscribe<void(ActorPlayer*,Effect*)>(user->PlayerJumped,[user,EffectPlayer](ActorPlayer* Object, Effect* EffectPlayer) {
+            event test;
+            test.type="ui-newability";
+            test.id=5;
+            EffectPlayer->PlayEffect(test);
+	});
 }
