@@ -101,9 +101,6 @@ void BaseFrame::OnFrameFocus() {
 	//The player autoregisters himself with the actor system
 	//we do not need to do that by hand
 
-	AudioPlayer* Audio =  new AudioPlayer(100);
-	Audio->Subscribe(player);
-
 	//The physics demo
 	//we won't have this forever
 	demo = new Demo();
