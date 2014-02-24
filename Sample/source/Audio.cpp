@@ -44,7 +44,7 @@ void AudioPlayer::Subscribe(ActorPlayer* user) {
     
     GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&user->PlayerWalked,[this](ActorPlayer* Object) {
         event test;
-        test.type="player-left-foot";
+        test.type="player-walk";
         test.id=5;
         EffectPlayer.PlayEffect(test);
     });
