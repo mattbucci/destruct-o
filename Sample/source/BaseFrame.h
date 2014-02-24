@@ -12,6 +12,7 @@
 #include "FirstPersonModeMobile.h"
 #include "PhysicsSystem.h"
 #include "ParticleCloud.h"
+#include "Audio.h"
 
 class ActorPlayer;
 class ParticleSystem;

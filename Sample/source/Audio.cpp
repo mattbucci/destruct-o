@@ -9,7 +9,6 @@
 #include "Audio.h"
 
 AudioPlayer::AudioPlayer(Uint8 volume) {
-    printf("test");
 }
 
 void AudioPlayer::SetVolume(Uint8 effectvolume,Uint8 backgroundvolume) {

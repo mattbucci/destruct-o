@@ -20,7 +20,7 @@ private:
 public:
     Effect();
     void SetVolume(uint8_t volume);
-    //void PlayEffect(event action);
+    void PlayEffect(event action);
     void Pause();
     void Resume();
     void Play();

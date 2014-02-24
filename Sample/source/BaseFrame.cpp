@@ -87,7 +87,8 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	
 	// Enable the first person controller
 	FirstPerson->Enable(true);
-
+    AudioPlayer* Audio =  new AudioPlayer(100);
+    
 	cout << "\t Finished base frame\n";
 	//testSystem = NULL;
 }

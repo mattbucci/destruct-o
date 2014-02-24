@@ -5,22 +5,26 @@
 //  Created by Matthew Bucci on 2/6/14.
 //  Copyright (c) 2014 Matthew Bucci. All rights reserved.
 //
+
 #include "Effect.h"
 
 Effect::Effect() {
+    cout << "loading effects" << endl;
+    Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
     load_files();
     event test;
-    test.type="gunshot";
+    test.type="ui-newability";
     test.id=5;
-    //PlayEffect(test);
+    PlayEffect(test);
 }
 
-//void Effect::PlayEffect(event action) {
- //   Mix_PlayChannel(1,effects[action.type],-1);
-//}
+void Effect::PlayEffect(event action) {
+    Mix_PlayChannel(1,effects[action.type],-1);
+}
+
 bool Effect::load_files() {
     //Load the music
-    fstream File("/sounds/Effects.txt");
+    fstream File("sounds/Effects.txt");
     string tmp;
     //Effect File Defintion Format
         //EffectName pathtofile
@@ -35,8 +39,11 @@ bool Effect::load_files() {
         }
         
         //ignore comment lines
-        if(params[0].substr(0,2) != "//" && params.size() == 2) {
-            effects.insert ( pair<string,Mix_Chunk*>(params[0],Mix_LoadWAV(params[1].c_str())) );
+        if(params.size() == 2) {
+            if(params[0].substr(0,2) != "//") {
+                cout << "loaded: " << params[0] << endl;
+                effects.insert ( pair<string,Mix_Chunk*>(params[0],Mix_LoadWAV(params[1].c_str())) );
+            }
         }
         params.clear();
     }
@@ -45,6 +52,7 @@ bool Effect::load_files() {
     
     return true;
 }
+
 void Effect::SetVolume(uint8_t volume) {
     this->volume = volume;
     

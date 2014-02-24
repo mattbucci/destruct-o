@@ -17,6 +17,11 @@ protected:
 	//Any acceleration forces applied upon the actor
 	//in this case, just gravity
 	vec3 acceleration;
+    
+    //trigger for landing sound
+    bool onGround;
+    //delta since last walk fired
+    double deltaPosition;
 
 	//Retrieve the game object
 	BaseFrame * Game();

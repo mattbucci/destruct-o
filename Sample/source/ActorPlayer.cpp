@@ -14,6 +14,9 @@ static const float jumpVelocity = 10.0f;
 ActorPlayer::ActorPlayer() {
 	//Start the player off in abouts the center
 	position = vec3(170,112,0);
+    deltaPosition = 0.0;
+    onGround = true;
+    
 }
 ActorPlayer::~ActorPlayer() {
 
@@ -29,6 +32,18 @@ void ActorPlayer::Update(float delta, float now) {
 	velocity.x = playerMotion.x;
 	velocity.y = playerMotion.y;
     
+    if(deltaPosition>10 && onGround) {
+        //Let everyone know we walked
+        PlayerWalked.Fire([this](function<void(ActorPlayer*)> subscriber) {
+            subscriber(this);
+        });
+        deltaPosition -=10;
+    } else {
+        if(onGround) {
+            deltaPosition+= velocity.length();
+        }
+    }
+    
     // Lets check if the controller wants us to jump
     if(Game()->FirstPerson->GetJumpRequested())
     {
@@ -39,6 +54,11 @@ void ActorPlayer::Update(float delta, float now) {
         {
             //Apply upwards velocity
             velocity.z += jumpVelocity;
+            
+            //Let everyone know we jumped
+            PlayerJumped.Fire([this](function<void(ActorPlayer*)> subscriber) {
+                subscriber(this);
+            });
         }
     }
     
@@ -46,13 +66,22 @@ void ActorPlayer::Update(float delta, float now) {
 
 	float posHeight = Game()->Voxels.GetPositionHeight(vec2(position.x,position.y));
 	float relativeHeight = position.z-posHeight;
-	if (relativeHeight > groundThreshold)
+	if (relativeHeight > groundThreshold) {
 		//You're off the grund, apply gravity
 		velocity.z += gravity*delta;
-	else if (relativeHeight < -groundThreshold) {
+        onGround = false;
+	}
+    else if (relativeHeight < -groundThreshold) {
 		//You're below the ground, correct
 		velocity.z = 0;
 		position.z = posHeight;
+        if(!onGround) {
+            //Let everyone know we landed
+            PlayerLanded.Fire([this](function<void(ActorPlayer*)> subscriber) {
+                subscriber(this);
+            });
+            onGround = true;
+        }
 	}
 	else {
 		//you're on the ground
