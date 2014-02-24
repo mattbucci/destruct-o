@@ -100,7 +100,6 @@ void BaseFrame::OnFrameFocus() {
 	player = new ActorPlayer();
 	//The player autoregisters himself with the actor system
 	//we do not need to do that by hand
-    audio->Subscribe(player);
 
 	AudioPlayer* Audio =  new AudioPlayer(100);
 	Audio->Subscribe(player);
@@ -117,7 +116,7 @@ void BaseFrame::OnFrameFocus() {
 void BaseFrame::Build() {
     //load the audio
     audio = new AudioPlayer(100);
-    
+    audio->Subscribe(player);
 	//Load the sample tile
 	if (!Voxels.LoadTile("basic-h.png")) {
 		cout << "Failed to load voxel tile\n";
