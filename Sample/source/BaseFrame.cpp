@@ -211,8 +211,7 @@ void BaseFrame::Draw(double width, double height) {
 	GameSystem::Draw(width,height);
 	
 	// Draw the UI for joysticks
+	//Assume that gameSystem::Draw has set up the 2d shader
 	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
-	shaders2d->UseProgram();
-	shaders2d->SetWidthHeight((float)width, (float)height);
 	FirstPerson->Draw(width, height, shaders2d);
 } 

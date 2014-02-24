@@ -61,11 +61,31 @@ bool GameSystem::Update(double delta,double now, vector<InputEvent> inputEvents)
 
 //By default only runs the dialog system
 void GameSystem::Draw(double width, double height) {
+	const static vec2 targetResolution = vec2(800,600);
+
+	//Use the current width/height to find the closest width/height to the 
+	//target resolution which maintains aspect ratio
+	vec2 currentResolution = vec2((float)width,(float)height);
+	currentResolution /= targetResolution;
+	vec2 finalResolution;
+	if (currentResolution.x > currentResolution.y) {
+		//The screen is more wide than 800 by 600
+		//Scale the height to fill the screen and then determine the correct width
+		finalResolution.y = targetResolution.y;
+		finalResolution.x = (float)width/currentResolution.y;
+	}
+	else {
+		//the screen is more tall than 800 by 600
+		//Scale the width to fill the screen and then determine the correct height
+		finalResolution.x = targetResolution.x;
+		finalResolution.y = (float)height/currentResolution.x;
+	}
+
 
 	//Enable the 2d shader for interface drawing
 	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
 	shaders2d->UseProgram();
-	shaders2d->SetWidthHeight((float)width,(float)height);
+	shaders2d->SetWidthHeight(finalResolution.x,finalResolution.y);
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
