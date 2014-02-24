@@ -87,9 +87,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	
 	// Enable the first person controller
 	FirstPerson->Enable(true);
-    AudioPlayer* Audio =  new AudioPlayer(100);
-    Audio->Subscribe(player);
-    
+    audio = new AudioPlayer(100);
 	cout << "\t Finished base frame\n";
 	//testSystem = NULL;
 }
@@ -102,6 +100,7 @@ void BaseFrame::OnFrameFocus() {
 	player = new ActorPlayer();
 	//The player autoregisters himself with the actor system
 	//we do not need to do that by hand
+    audio->Subscribe(player);
 
 	//The physics demo
 	//we won't have this forever
