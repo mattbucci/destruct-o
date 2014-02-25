@@ -57,6 +57,7 @@
 		F1C6999318A728FC00442752 /* Interface in Resources */ = {isa = PBXBuildFile; fileRef = F1C6998F18A728FC00442752 /* Interface */; };
 		F1C6999418A728FC00442752 /* loading.png in Resources */ = {isa = PBXBuildFile; fileRef = F1C6999018A728FC00442752 /* loading.png */; };
 		F1C6999518A728FC00442752 /* terrain in Resources */ = {isa = PBXBuildFile; fileRef = F1C6999118A728FC00442752 /* terrain */; };
+		F1DA140218BD57D8004DD134 /* libassimp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1DA140118BD57D8004DD134 /* libassimp.a */; };
 		F1DE040818B29A2800FA53AC /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = F1DE040718B29A2800FA53AC /* sounds */; };
 		F1E65A9818AA0BA300A799C9 /* libSDL2_mixer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1E65A9218AA0BA300A799C9 /* libSDL2_mixer.a */; };
 		F1E65A9A18AA0BA300A799C9 /* libSDL2_ttf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1E65A9418AA0BA300A799C9 /* libSDL2_ttf.a */; };
@@ -202,6 +203,7 @@
 		F1C6998F18A728FC00442752 /* Interface */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Interface; path = ../source/game/Interface; sourceTree = "<group>"; };
 		F1C6999018A728FC00442752 /* loading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = loading.png; path = ../source/game/loading.png; sourceTree = "<group>"; };
 		F1C6999118A728FC00442752 /* terrain */ = {isa = PBXFileReference; lastKnownFileType = folder; name = terrain; path = ../source/game/terrain; sourceTree = "<group>"; };
+		F1DA140118BD57D8004DD134 /* libassimp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libassimp.a; path = ../libs/ios/assimp/libassimp.a; sourceTree = "<group>"; };
 		F1DE040718B29A2800FA53AC /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; name = sounds; path = ../source/game/sounds; sourceTree = "<group>"; };
 		F1E65A9218AA0BA300A799C9 /* libSDL2_mixer.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_mixer.a; path = ../libs/ios/SDL2/libSDL2_mixer.a; sourceTree = "<group>"; };
 		F1E65A9418AA0BA300A799C9 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../libs/ios/SDL2/libSDL2_ttf.a; sourceTree = "<group>"; };
@@ -387,11 +389,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1ED7BD018AC6FB400DC9D69 /* libz.dylib in Frameworks */,
-				F1E65A9C18AA0BA300A799C9 /* libSDL2.a in Frameworks */,
-				F1E65A9A18AA0BA300A799C9 /* libSDL2_ttf.a in Frameworks */,
-				F1E65A9818AA0BA300A799C9 /* libSDL2_mixer.a in Frameworks */,
-				F1ED7BCE18AC687600DC9D69 /* libcurl.a in Frameworks */,
 				F136299C18A59BE70006A8BB /* QuartzCore.framework in Frameworks */,
 				F136299B18A59BB40006A8BB /* CoreGraphics.framework in Frameworks */,
 				F136299118A599E20006A8BB /* CoreAudio.framework in Frameworks */,
@@ -400,6 +397,12 @@
 				F136298F18A599CC0006A8BB /* OpenGLES.framework in Frameworks */,
 				F1989FDC18A58C3900A5165E /* UIKit.framework in Frameworks */,
 				F1989FD818A58C3900A5165E /* Foundation.framework in Frameworks */,
+				F1ED7BD018AC6FB400DC9D69 /* libz.dylib in Frameworks */,
+				F1E65A9C18AA0BA300A799C9 /* libSDL2.a in Frameworks */,
+				F1E65A9A18AA0BA300A799C9 /* libSDL2_ttf.a in Frameworks */,
+				F1E65A9818AA0BA300A799C9 /* libSDL2_mixer.a in Frameworks */,
+				F1ED7BCE18AC687600DC9D69 /* libcurl.a in Frameworks */,
+				F1DA140218BD57D8004DD134 /* libassimp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -485,6 +488,7 @@
 				F1E65A9418AA0BA300A799C9 /* libSDL2_ttf.a */,
 				F1E65A9218AA0BA300A799C9 /* libSDL2_mixer.a */,
 				F1ED7BCD18AC687600DC9D69 /* libcurl.a */,
+				F1DA140118BD57D8004DD134 /* libassimp.a */,
 				F136299918A59B780006A8BB /* QuartzCore.framework */,
 				F136299618A59A0D0006A8BB /* AudioUnit.framework */,
 				F136299418A59A050006A8BB /* AudioToolbox.framework */,
@@ -943,12 +947,13 @@
 				LIBRARY_SEARCH_PATHS = (
 					../libs/ios/SDL2,
 					../libs/ios/curl,
+					../libs/ios/assimp,
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-D__IPHONEOS__";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "../includes/SDL ../includes/glm-0.9.4.4 ../includes/libnoise ../includes/curl/ios";
+				USER_HEADER_SEARCH_PATHS = "../includes/SDL ../includes/glm-0.9.4.4 ../includes/libnoise ../includes/curl/ios ../includes/assimp";
 			};
 			name = Debug;
 		};
@@ -985,12 +990,13 @@
 				LIBRARY_SEARCH_PATHS = (
 					../libs/ios/SDL2,
 					../libs/ios/curl,
+					../libs/ios/assimp,
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-D__IPHONEOS__";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "../includes/SDL ../includes/glm-0.9.4.4 ../includes/libnoise ../includes/curl/ios";
+				USER_HEADER_SEARCH_PATHS = "../includes/SDL ../includes/glm-0.9.4.4 ../includes/libnoise ../includes/curl/ios ../includes/assimp";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1007,6 +1013,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/nathaniel/Desktop/main-client/Sample/libs/ios/curl",
+					"/Users/nathaniel/Desktop/main-client/Sample/libs/ios/assimp",
+					"/Users/nathaniel/Desktop/main-client/Sample/libs/ios/SDL2",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -1025,6 +1033,8 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/nathaniel/Desktop/main-client/Sample/libs/ios/curl",
+					"/Users/nathaniel/Desktop/main-client/Sample/libs/ios/assimp",
+					"/Users/nathaniel/Desktop/main-client/Sample/libs/ios/SDL2",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
