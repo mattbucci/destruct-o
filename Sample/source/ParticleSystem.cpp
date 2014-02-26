@@ -36,7 +36,7 @@ bool ParticleSystem::UpdateEmitter(double now, double delta) {
 		while (nextParticle < systemTime) {
 			nextParticle += perParticle;
 			Particle * p = new Particle(now,(float)systemTime,this,&particleSystemDescription);
-			particleList.insert(p);
+			particleList.push_back(p);
 		}
 	}
 	else {

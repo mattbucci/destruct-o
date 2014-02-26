@@ -3,7 +3,11 @@
 
 #include "stdafx.h"
 #include "GObject.h"
-/*
+#include "ContiguousList.h"
+#include <json/json.h>
+
+
+
 //If the GObject will need to be linked afterwards
 struct Linkable {
 	GObject * *linkAt;
@@ -35,17 +39,16 @@ class ReflectionData {
 	//The constructed list representing the reflected contents of the class
 	list<Reflection> allSavables;
 
+
 	//For fast primitive loading, loads a value from the top of loadFrom saving it to loadTo
 	//returns the size of the value loaded. linkRequirement not used in this overload
 	template<class T>
-	static int32_t Load(T* loadTo, int8_t * loadFrom, list<Linkable> & linkRequirements) {
-		*loadTo = *((T*)loadFrom);
-		return sizeof(T);
+	static void Load(T* loadTo, string name, Json::Value default, Json::Value & loadFrom, list<Linkable> & linkRequirements) {
+		loadFrom.get(name,default).as
 	}
-	//For fast primitive saving
-	//saves value into the byte stream saveTo
+	//Save the value into JSON
 	template<class T>
-	static void Save(T value, vector<int8_t> & saveTo) {
+	static void Save(T & value, string valueName, vector<int8_t> & saveTo) {
 		int8_t * readAt = (int8_t*)&value;
 		for (int i = 0; i < sizeof(T); i++)
 			saveTo.push_back(readAt[i]);
@@ -53,10 +56,10 @@ class ReflectionData {
 
 	//For loading game objects only
 	//same as primitive Load() except it adds loadTo to linkRequirements
-	static int32_t Load(GObject** loadTo, int8_t * loadFrom, list<Linkable> & linkRequirements) {
+	static void Load(GObject** loadTo, string name, Json::Value & loadFrom, list<Linkable> & linkRequirements) {
 		//Load the game handle
 		GID objectHandle;
-		int size = Load(&objectHandle,loadFrom,linkRequirements);
+		Load(&objectHandle,name,loadFrom,linkRequirements);
 		//Add the value to be linked in the future
 		Linkable link;
 		link.linkAt = loadTo;
@@ -106,13 +109,6 @@ public:
 		return size;\
 	}
 
-	//Used for actually doing saving
-	//Designed for primitives /only/
-	template<class T>
-	static void SaveValue(T * value, vector<int8_t> & saveTo) {
-		Save(*T,saveTo);
-	}
-
 	template<class T>
 	static void SaveArrayValue(T ** value, int32_t length, vector<int8_t> & saveTo) {
 		//Save the contents. Length is static
@@ -123,16 +119,12 @@ public:
 	//For containers
 	SAVECONTAINER(vector)
 	SAVECONTAINER(list)
+	SAVECONTAINER(ContiguousList)
 	//SAVECONTAINER(map) //pending
-
-	//Used for actually doing loading
-	template<class T>
-	static int32_t LoadValue(T * value, int8_t * loadFrom, list<Linkable> & linkRequirements) {
-		return Load(value,loadFrom,linkRequirements);
-	}
 
 	LOADCONTAINER(vector)
 	LOADCONTAINER(list)
+	LOADCONTAINER(ContiguousList)
 	//LOADCONTAINER(map) //pending
 
 	template<class T>
@@ -159,26 +151,26 @@ public:
 	return (GObject*)new classname();\
 	};\
 	ReflectionData classname::Reflect() { ReflectionData ref;
-#define MEMBER_VALUE(pointer_to_value) ref.AddSavable(\
-	[&pointer_to_value](vector<int8_t> & saveTo) {\
-		ReflectionData::SaveValue(&pointer_to_value,saveTo);\
+#define MEMBER_VALUE(value) ref.AddSavable(\
+	[&,value](vector<int8_t> & saveTo) {\
+		ReflectionData::Save(\
 	},\
-	[&pointer_to_value](int8_t * loadFrom,int32_t objectlength,list<Linkable> & linkRequirements) {\
-		return ReflectionData::LoadValue(&pointer_to_value,loadFrom,linkRequirements);\
+	[&,value](int8_t * loadFrom,int32_t objectlength,list<Linkable> & linkRequirements) {\
+		return ReflectionData::LoadValue(&value,loadFrom,linkRequirements);\
 	});
-#define MEMBER_CONTAINER(pointer_to_container) ref.AddSavable(\
-	[&pointer_to_container](vector<int8_t> & saveTo) {\
+#define MEMBER_CONTAINER(container) ref.AddSavable(\
+	[&,container](vector<int8_t> & saveTo) {\
 		ReflectionData::SaveContainerValue(&pointer_to_container,saveTo);\
 	},\
-	[&pointer_to_container](int8_t * loadFrom,int32_t objectlength,list<Linkable> & linkRequirements) {\
+	[&,container](int8_t * loadFrom,int32_t objectlength,list<Linkable> & linkRequirements) {\
 		return ReflectionData::LoadContainerValue(&pointer_to_container,loadFrom,linkRequirements);\
 	});
-#define MEMBER_ARRAY(pointer_to_array,static_array_length) ref.AddSavable(\
-	[&pointer_to_array](vector<int8_t> & saveTo) {\
-		ReflectionData::SaveArrayValue(&pointer_to_array,static_array_length,saveTo);\
+#define MEMBER_ARRAY(array,static_array_length) ref.AddSavable(\
+	[&array,static_array_length](vector<int8_t> & saveTo) {\
+		ReflectionData::SaveArrayValue(&array,static_array_length,saveTo);\
 	},\
-	[&pointer_to_array](int8_t * loadFrom,int32_t objectlength,list<Linkable> & linkRequirements) {\
-		return ReflectionData::LoadArrayValue(&pointer_to_array,static_array_length,loadFrom,linkRequirements);\
+	[&array,static_array_length](int8_t * loadFrom,int32_t objectlength,list<Linkable> & linkRequirements) {\
+		return ReflectionData::LoadArrayValue(&array,static_array_length,loadFrom,linkRequirements);\
 	});
 #define END_SAVABLE_CLASS }
-*/
+

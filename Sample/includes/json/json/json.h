@@ -68,8 +68,8 @@ license you like.
 // End of content of file: LICENSE
 // //////////////////////////////////////////////////////////////////////
 
-
-
+//This define was missing for some reason, I added it
+#define JSON_IS_AMALGAMATION
 
 
 #ifndef JSON_AMALGATED_H_INCLUDED

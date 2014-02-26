@@ -60,7 +60,7 @@ PhysicsSystem::Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxe
 //Should be called by Actor.cpp only
 //no one else call these
 void PhysicsSystem::Register(PhysicsVoxel * toRegister) {
-	allVoxels.insert(toRegister);
+	allVoxels.push_back(toRegister);
 }
 void PhysicsSystem::Unregister(PhysicsVoxel * toUnregister) {
 	allVoxels.erase(toUnregister);

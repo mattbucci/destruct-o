@@ -8,7 +8,7 @@ ActorSystem::ActorSystem() {
 ActorSystem::~ActorSystem() {
 	//cleanup all the actors
 	//they auto-deregister, so we have to iterate over a separate list
-	ContiguousList<Actor> actors = allActors;
+	ContiguousList<Actor*> actors = allActors;
 	for (auto actor : actors)
 		delete actor;
 }
@@ -16,7 +16,7 @@ ActorSystem::~ActorSystem() {
 //Should be called by Actor.cpp only
 //no one else call these
 void ActorSystem::Register(Actor * toRegister) {
-	allActors.insert(toRegister);
+	allActors.push_back(toRegister);
 }
 void ActorSystem::Unregister(Actor * toUnregister) {
 	allActors.erase(toUnregister);

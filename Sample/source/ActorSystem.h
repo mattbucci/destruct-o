@@ -10,7 +10,7 @@ class Actor;
 
 class ActorSystem {
 	//All actors are updated and drawn
-	ContiguousList<Actor> allActors;
+	ContiguousList<Actor*> allActors;
 public:
 	ActorSystem();
 	~ActorSystem();

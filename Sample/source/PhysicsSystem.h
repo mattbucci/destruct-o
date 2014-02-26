@@ -17,7 +17,7 @@ class PhysicsSystem {
 	//Voxel list now uses a contiguous list for speed
 	//designed for fast insert/removal
 	//stored objects are always contiguous
-	ContiguousList<PhysicsVoxel> allVoxels;
+	ContiguousList<PhysicsVoxel*> allVoxels;
 
 	//The voxel draw renderer
 	VoxelDrawSystem * renderer;

@@ -12,7 +12,7 @@
 template <class T>
 class ContiguousList {
 	//The array of stored data
-	T ** data;
+	T * data;
 	//The current listCapacity
 	unsigned int listCapacity;
 	//The current listSize
@@ -21,9 +21,9 @@ class ContiguousList {
 	//Resize data to the new listCapacity
 	void resize(int newCapacity) {
 		//Allocate the new storage
-		T ** newData = new T*[newCapacity];
+		T * newData = new T[newCapacity];
 		//Copy over the data
-		memcpy(newData,data,sizeof(T*)*listCapacity);
+		memcpy(newData,data,sizeof(T)*listCapacity);
 		//Clean up the old storage
 		delete [] data;
 		//Remember only the new storage
@@ -34,18 +34,18 @@ public:
 	ContiguousList() {
 		listCapacity = 10;
 		listSize = 0;
-		data = new T*[listCapacity];
+		data = new T[listCapacity];
 	}
 	ContiguousList(unsigned int initialCapacity) {
 		listCapacity = initialCapacity;
 		listSize = 0;
-		data = new T*[listCapacity];
+		data = new T[listCapacity];
 	}
 	ContiguousList(const ContiguousList & original) {
 		listCapacity = original.listCapacity;
 		listSize = original.listSize;
-		data = new T*[listCapacity];
-		memcpy(data,original.data,original.listSize*sizeof(T*));
+		data = new T[listCapacity];
+		memcpy(data,original.data,original.listSize*sizeof(T));
 	}
 
 	const ContiguousList & operator=(const ContiguousList & original) {
@@ -54,8 +54,8 @@ public:
 
 		listCapacity = original.listCapacity;
 		listSize = original.listSize;
-		data = new T*[listCapacity];
-		memcpy(data,original.data,original.listSize*sizeof(T*));
+		data = new T[listCapacity];
+		memcpy(data,original.data,original.listSize*sizeof(T));
 	}
 
 	virtual ~ContiguousList() {
@@ -64,14 +64,14 @@ public:
 
 	class iterator {
 		//The iterators current position
-		T ** at;
+		T * at;
 		//Build a new iterator giving it only the raw start position
-		iterator(T ** at) {
+		iterator(T * at) {
 			this->at = at;
 		}
 		friend class ContiguousList<T>;
 	public:
-		T* & operator*() const {
+		T & operator*() const {
 			return *at;
 		}
 
@@ -111,11 +111,11 @@ public:
 		return iterator(data+listSize);
 	}
 
-	T *& operator[](const int index) const {
+	T & operator[](const int index) const {
 		return data[index];
 	}
 	//Now the complicated methods
-	void insert(T * toInsert) {
+	void push_back(T toInsert) {
 		if (listSize == listCapacity)
 			//Not enough room, make some more
 			resize((int)(listCapacity * 1.5 + 4));
@@ -148,7 +148,7 @@ public:
 	}
 	//Finds the first matching entry and removes it
 	//if there are no matching entries, has no effect
-	void erase(T * toRemove) {
+	void erase(T toRemove) {
 		for (unsigned int i = 0; i < listSize; i++) {
 			if (data[i] == toRemove) {
 				erase(iterator(data+i));

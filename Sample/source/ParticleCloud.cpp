@@ -27,7 +27,7 @@ void ParticleCloud::UpdateCloud(double time, double delta) {
 
 ParticleSystem * ParticleCloud::BuildParticleSystem(const ParticleData & particleType,float lifeTime) {
 	ParticleSystem * ps = new ParticleSystem(particleType,VoxEngine::GetGameSimTime(),lifeTime);
-	particles.insert(ps);
+	particles.push_back(ps);
 	return ps;
 }
 
