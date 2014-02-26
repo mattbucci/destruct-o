@@ -15,6 +15,9 @@ file(GLOB libnoise_src
 # VoxEngine Executable
 add_executable(VoxEngine ${VoxEngine_SRC})
 
+#Add universal includes
+include_directories("../includes/json")
+
 # Are we compiling on Window?
 IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
@@ -216,6 +219,8 @@ source_group(Interface FILES ${InterfaceFiles})
 FILE(GLOB PhysicsFiles
 	Demo.h
 	Demo.cpp
+	DemoWindow.h
+	DemoWindow.cpp
 	Interop.h
 	InteropChain.h
 	InteropDecoders.h
@@ -248,6 +253,7 @@ FILE(GLOB UtilityFiles
 	ReflectionData.cpp
 	lodepng.h
 	lodepng.cpp
+	jsoncpp.cpp
 	noiseutils.h
 	noiseutils.cpp
 	OS.h
