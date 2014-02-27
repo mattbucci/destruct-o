@@ -6,171 +6,128 @@
 #include "ContiguousList.h"
 #include <json/json.h>
 
+class LoadData {
+	struct loadhandle {
+		void ** handleToLoad;
+		void * originalHandle;
+	};
+	vector<loadhandle> handlesToLoad;
+	//matches an original handle to a created handle
+	map<void*,void*> handlesRebuilt;
+public:
+	//Register a recreated object
+	void RegisterLoadedHandle(void * original, void * newHandle);
+	//Register a pointer to a recreated object which has not been created yet
+	void RegisterHandleToLoad(void * original, void ** handleToLoad);
 
-
-//If the GObject will need to be linked afterwards
-struct Linkable {
-	GObject * *linkAt;
-	//Replace *linkAt with the GObject with id "linkId"
-	GID linkId;
+	//Use the list of built handles and the
+	//originalHandles to match created objects
+	//to old pointers to created objects
+	//and patch up the pointers to point to the new objects
+	void FinishLoading();
 };
 
-//Used to store data about a class to save that class
+
 class ReflectionData {
-	friend class SObject;
-
-	//The save and load types are lambda expressions
-	//save() takes a vector to add the saved data to
-	typedef function<void(vector<int8_t> & saveTo)> saveFunction;
-	//load() takes an array (loadFrom) to load the values from, linkRequirements to add any found GObject handles to and
-	//should return the number of bytes used during load
-	typedef function<int32_t(int8_t * loadFrom,list<Linkable> & linkRequirements)> loadFunction;
-
-	//Holds the data needed to save/load a single value
-	class Reflection {
-	public:
-		//The save operation
-		saveFunction save;
-		//The load operation, also adds this reflection to the sob
-		loadFunction load;
-
+public:
+	//The different types which can be saved
+	enum SaveType {
+		SAVE_INT8,
+		SAVE_UINT8,
+		SAVE_INT16,
+		SAVE_UINT16,
+		SAVE_INT32,
+		SAVE_UINT32,
+		SAVE_INT64,
+		SAVE_UINT64,
+		SAVE_FLOAT,
+		SAVE_DOUBLE,
+		SAVE_STRING,
+		//Saves the handle, but does not save what the handle points to
+		SAVE_HANDLE,
+		//Saves the handle, and saves what it points to
+		//will reconstruct the object automatically upon load
+		SAVE_OWNEDHANDLE,
+		SAVE_LIST,
+		SAVE_VECTOR,
+		SAVE_CONTIGOUSLIST,
+		SAVE_STATICARRAY,
+	};
+	struct savable {
+		savable(SaveType type, void * member, string name);
+		//The type of data to save/load
+		SaveType dataType;
+		//a pointer to the member
+		void * member;
+		//The name of the member
+		string memberName;
 	};
 
-	//The constructed list representing the reflected contents of the class
-	list<Reflection> allSavables;
+
+	virtual ~ReflectionData();
+
+	virtual vector<savable> RetrieveReflectionData(void * classdata) = 0;
+};
 
 
-	//For fast primitive loading, loads a value from the top of loadFrom saving it to loadTo
-	//returns the size of the value loaded. linkRequirement not used in this overload
-	template<class T>
-	static void Load(T* loadTo, string name, Json::Value default, Json::Value & loadFrom, list<Linkable> & linkRequirements) {
-		loadFrom.get(name,default).as
-	}
-	//Save the value into JSON
-	template<class T>
-	static void Save(T & value, string valueName, vector<int8_t> & saveTo) {
-		int8_t * readAt = (int8_t*)&value;
-		for (int i = 0; i < sizeof(T); i++)
-			saveTo.push_back(readAt[i]);
-	}
+class Savable {
+	Savable(){}
+	virtual ~Savable(){}
 
-	//For loading game objects only
-	//same as primitive Load() except it adds loadTo to linkRequirements
-	static void Load(GObject** loadTo, string name, Json::Value & loadFrom, list<Linkable> & linkRequirements) {
-		//Load the game handle
-		GID objectHandle;
-		Load(&objectHandle,name,loadFrom,linkRequirements);
-		//Add the value to be linked in the future
-		Linkable link;
-		link.linkAt = loadTo;
-		link.linkId = objectHandle;
-		linkRequirements.push_back(link);
-		//Set the value to be null for now 
-		*loadTo = NULL;
+	void SaveValue(ReflectionData::savable valueData,Json::Value & parentValue);
+
+	void LoadValue(ReflectionData::savable valueData,Json::Value & parentValue, LoadData & loadData);
+
+protected:
+	/*//Saves standard types automatically
+	template<T>
+	void SaveValue(Json::Value classObject,string name, T * valueToSave) {
+		classObject[name] = *valueToSave;
 	}
-	//For saving game objects only
-	static void Save(GObject * gameObjectHandle, vector<int8_t> & saveTo) {
-		//Save handle
-		Save(gameObjectHandle->GetId(),saveTo);
-	}
-	
+	//Loads standard types automatically
+	template<T>
+	void LoadValue(Json::Value classObject,string name, T * valueToLoad) {
+
+	}*/
+
+	virtual string Name() = 0;
+
+	virtual void Save(Json::Value & parentValue);
+
+	virtual void Load(Json::Value & parentValue, LoadData & loadData);
 
 public:
 
-	//Create a new empty reflectionData
-	ReflectionData();
-
-	//Cleanup all the offsets
-	~ReflectionData();
-
-	//Add save/load reflection data for a member of the desired class
-	void AddSavable(saveFunction saver, loadFunction loader);
-
-
-	//static Functions used during save/load below
-
-//Macros for making my job a little easier for container types
-#define SAVECONTAINER(container) template<class T> \
-	static void SaveContainerValue(container<T> * value, vector<int8_t> & saveTo) {\
-		Save((uint32_t)value->size(),saveTo);\
-		for (T & each : value)\
-			Save(value,saveTo);\
-	}
-#define LOADCONTAINER(container) 	template<class T> \
-	static int32_t LoadContainerValue(container<T> * value, int8_t * loadFrom, list<Linkable> & linkRequirements) {\
-		uint32_t length;\
-		int32_t size = Load(&length,loadFrom,linkRequirements);\
-		value->clear();\
-		for (uint32_t i = 0; i < length; i++) {\
-			T item;\
-			size += Load(&item,loadFrom+size,linkRequirements);\
-			value->push_back(item);\
-		}\
-		return size;\
-	}
-
-	template<class T>
-	static void SaveArrayValue(T ** value, int32_t length, vector<int8_t> & saveTo) {
-		//Save the contents. Length is static
-		for (int i = 0; i < length; i++)
-			Save((*value)[i],saveTo);
-	}
-
-	//For containers
-	SAVECONTAINER(vector)
-	SAVECONTAINER(list)
-	SAVECONTAINER(ContiguousList)
-	//SAVECONTAINER(map) //pending
-
-	LOADCONTAINER(vector)
-	LOADCONTAINER(list)
-	LOADCONTAINER(ContiguousList)
-	//LOADCONTAINER(map) //pending
-
-	template<class T>
-	static int32_t LoadArrayValue(T ** value, int length, int8_t * loadFrom, list<Linkable> & linkRequirements) {\
-		for (uint32_t i = 0; i < length; i++) {
-			T item;
-			size += Load(&T,loadFrom+size,linkRequirements);
-			value[i] = item;
-		}
-		return size;
-	}
-
-//Don't pollute with #defines we don't need
-#undef SAVECONTAINER
-#undef LOADCONTAINER
-
 };
 
-//Use the above values to allow simple creation of a save/load table by the user
-//This system heavily abuses lambda expressions, go no further without a solid understanding!
 
-//static int8_t RegisterType(string typeName, function<GObject*(void)> toRegister);
-#define SAVABLE_CLASS(classname) int8_t classname::forceClassRegistration = RegisterType(#classname,[](){\
-	return (GObject*)new classname();\
-	};\
-	ReflectionData classname::Reflect() { ReflectionData ref;
-#define MEMBER_VALUE(value) ref.AddSavable(\
-	[&,value](vector<int8_t> & saveTo) {\
-		ReflectionData::Save(\
-	},\
-	[&,value](int8_t * loadFrom,int32_t objectlength,list<Linkable> & linkRequirements) {\
-		return ReflectionData::LoadValue(&value,loadFrom,linkRequirements);\
-	});
-#define MEMBER_CONTAINER(container) ref.AddSavable(\
-	[&,container](vector<int8_t> & saveTo) {\
-		ReflectionData::SaveContainerValue(&pointer_to_container,saveTo);\
-	},\
-	[&,container](int8_t * loadFrom,int32_t objectlength,list<Linkable> & linkRequirements) {\
-		return ReflectionData::LoadContainerValue(&pointer_to_container,loadFrom,linkRequirements);\
-	});
-#define MEMBER_ARRAY(array,static_array_length) ref.AddSavable(\
-	[&array,static_array_length](vector<int8_t> & saveTo) {\
-		ReflectionData::SaveArrayValue(&array,static_array_length,saveTo);\
-	},\
-	[&array,static_array_length](int8_t * loadFrom,int32_t objectlength,list<Linkable> & linkRequirements) {\
-		return ReflectionData::LoadArrayValue(&array,static_array_length,loadFrom,linkRequirements);\
-	});
-#define END_SAVABLE_CLASS }
+class ReflectionStore {
+public:
+	static ReflectionStore & Data();
+
+	void RegisterClassType(string name, ReflectionData * data);
+	void RegisterInheritance(string derivingClass, string baseClass);
+
+	vector<ReflectionData::savable> LookupClassMembers(string classname);
+};
+
+#define CLASS_CONCAT_B(a,b) a##b
+#define CLASS_CONCAT_A(a,b) CLASS_CONCAT_B(a,b)
+#define CLASS_TNAME(classname) CLASS_CONCAT_A(classname,_TypeData)
+
+
+#define CLASS_DECLARATION(classname) class CLASS_TNAME : public ReflectionData { \
+					ReflectionData(){ \
+						string name = #classname;\
+						ReflectionStore::Data().RegisterClassType(name,this);\
+					}\
+					vector<savable> RetrieveReflectionData(void * classdata) {\
+						vector<savable> members;	\
+						classname * instance = (classname*)classdata;
+//#define INHERITS_FROM(otherclassname) ReflectionStroe::Data().RegisterInheritance(name,#otherclassname);
+#define CLASS_MEMBER(member,type) members.push_back(savable(type,&instance->member,#member));
+
+#define END_CLASS_DECLARATION return members;}}
+
+
 
