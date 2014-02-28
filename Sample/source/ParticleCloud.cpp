@@ -41,12 +41,11 @@ void ParticleCloud::Draw(ShaderGroup * shaders) {
 	//Apply camera data from the 3d shader
 	shaderParticles->ApplyCamera(shader3d->Camera);
 
-	//The particle system disables depth
-	glDepthMask(GL_FALSE);
-
 	//Draw each particle system
 	for (auto system : particles)
 		system->Draw(&renderer, shaderParticles);
 
+	//Some particle systems disable depth
+	//re-enable it before continuing
 	glDepthMask(GL_TRUE);
 }

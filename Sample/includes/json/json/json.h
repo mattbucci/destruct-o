@@ -69,7 +69,7 @@ license you like.
 // //////////////////////////////////////////////////////////////////////
 
 
-
+#define JSON_IS_AMALGAMATION
 
 
 #ifndef JSON_AMALGATED_H_INCLUDED
