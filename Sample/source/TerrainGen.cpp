@@ -125,7 +125,7 @@ unsigned char* TerrainGen::generateTile(int x, int y) {
 	//Compile Tile Data
 	for(int i = 0; i < s; i++) {
 		tile[(i*4)] = (unsigned char)(rawTerrain[i] * 86 + 128);
-		tile[(i*4) + 1] = 0; // TODO: Intelligent Material Selection
+		tile[(i*4) + 1] = 2; // TODO: Intelligent Material Selection
 		tile[(i*4) + 2] = 0;
 		tile[(i*4) + 3] = 0;
 	}
