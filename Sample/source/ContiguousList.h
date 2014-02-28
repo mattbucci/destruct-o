@@ -3,13 +3,16 @@
 
 #include "stdafx.h"
 
+class __listdummyallocator {};
+
 //A contiguous list is an implementation which 
 //supports pushing members at the end
 //and removing members from any point
 //It will automatically do both of these things fairly quickly
 //it is designed to contain pointers, not data
-//Note, order of contents /not/ maintained!
-template <class T>
+//Note: order of contents /not/ maintained!
+//		and allocator does not actually do anything
+template <class T, class _Alloc = __listdummyallocator>
 class ContiguousList {
 	//The array of stored data
 	T * data;
