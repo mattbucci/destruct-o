@@ -108,6 +108,8 @@ void BaseFrame::OnFrameFocus() {
 	demoWindow = new DemoWindow(demo);
 	Controls.AddWindow(demoWindow);
 #endif
+	notification = Notification::init();
+	Controls.AddWindow(notification);
 }
 
 void BaseFrame::Build() {
