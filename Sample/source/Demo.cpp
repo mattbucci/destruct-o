@@ -132,7 +132,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 			}
 			else if (eve.Key == 'z') {
 				vec3 hit, norm;
-				game->Physics.Raytrace(playerPos,playerFacing,hit,norm);
+				game->Physics.Raytrace(playerPos+vec3(0,0,2.5),playerFacing,hit,norm);
 			}
 			else if (eve.Key == 'r') {
 				//Spawn a particle system

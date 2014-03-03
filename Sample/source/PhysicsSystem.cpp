@@ -5,6 +5,7 @@
 #include "ShaderGroup.h"
 #include "PhysicsVoxel.h"
 #include "VoxelSystem.h"
+#include "PhysicsTriangle.h"
 
 PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	//Build a voxel renderer
@@ -203,9 +204,66 @@ void PhysicsSystem::Update(double delta, double now) {
 	}
 }
 
+void PhysicsSystem::checkForCollision(const vec3 & from, const vec3 & direction, vec3 at) {
+	static PhysicsTriangle voxelTriangles[12] = {
+		//Top
+		PhysicsTriangle(vec3( 0.0f,0.0f,1.0f),
+		vec3( 1.0f,0.0f,1.0f),
+		vec3( 0.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3(1.0f,1.0f,1.0f),
+		vec3(-1.0f,1.0f,1.0f),
+		vec3(1.0f,0.0f,1.0f)),
+		//Bottom
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,0.0f),
+		vec3( 0.0f,1.0f,0.0f)),
+		PhysicsTriangle(vec3(1.0f,1.0f,0.0f),
+		vec3(-1.0f,1.0f,0.0f),
+		vec3(1.0f,0.0f,0.0f)),
+		//left
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 0.0f,1.0f,0.0f),
+		vec3( 0.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 0.0f,0.0f,1.0f),
+		vec3( 0.0f,1.0f,1.0f)),
+		//right
+		PhysicsTriangle(vec3( 1.0f,0.0f,0.0f),
+		vec3( 1.0f,1.0f,0.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3( 1.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,1.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+		//front
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,1.0f)),
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 0.0f,0.0f,1.0f),
+		vec3( 1.0f,0.0f,1.0f)),
+		//back
+		PhysicsTriangle(vec3( 0.0f,1.0f,0.0f),
+		vec3( 1.0f,1.0f,0.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3( 0.0f,1.0f,0.0f),
+		vec3( 0.0f,1.0f,1.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+	};
+	//Check every triangle in this voxel for a collision
+	for (int i = 0 ; i < 12; i++) {
+		double surf;
+		vec3 norm;
+		if (PhysicsTriangle::RayIntersects(voxelTriangles[i],at,from,direction,&surf,&norm)) {
+			//Paint colliding voxels
+			voxelSystem->Paint(vec2(at.x,at.y),1);
+		}
+	}
+}
+
+
 //Adapted from
 //http://playtechs.blogspot.com/2007/03/raytracing-on-grid.html
-void PhysicsSystem::raytrace(vec2 p0, vec2 p1) {
+void PhysicsSystem::raytrace(vec2 p0, vec2 p1, const vec3 & from, const vec3 & direction) {
 	vec2 d = glm::abs(p1-p0);
 
 	int x = int(floor(p0.x));
@@ -246,8 +304,12 @@ void PhysicsSystem::raytrace(vec2 p0, vec2 p1) {
 	}
 
 	for (; n > 0; --n) {
+		//Paint it to mark it as visited
 		voxelSystem->Paint(vec2(x,y),5);
+		//Check the voxel for a ray collision in 3d space
+		checkForCollision(from,direction,vec3(x,y,voxelSystem->GetPositionHeight(vec2(x,y))));
 
+		//Move to the next voxel
 		if (error > 0) {
 			y += y_inc;
 			error -= d.x;
@@ -260,7 +322,7 @@ void PhysicsSystem::raytrace(vec2 p0, vec2 p1) {
 }
 
 bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec3 & surfaceNormal) {
-	raytrace(vec2(from),vec2(from+direction*500.0f));
+	raytrace(vec2(from),vec2(from+direction*500.0f),from,direction);
 
 	return false;
 }
