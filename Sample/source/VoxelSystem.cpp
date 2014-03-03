@@ -146,7 +146,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 	}
 	voxelCount = 0;
 
-	renderer->startDraw(shader);
+	
 	//render each viewable rectangle
 
 	for (int i = 0; i < tiles.size(); i++) {
@@ -167,6 +167,8 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 			cout << "transform:" << current_tile.tile_x * 256 << ":" << current_tile.tile_y * 256 << endl;
 			TileCell * cells = tileData->Cells;
 
+
+			renderer->startDraw(shader);
 			for (int y = current_tile.y_start; y <= current_tile.y_end; y++) {
 				//It is important for x to be the inner loop
 				//so consecutive operations access contiguous memory
@@ -190,10 +192,11 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 					}
 				}
 			}
+			renderer->finishDraw(shader);
 			shader->Model.PopMatrix();
 		}
 	}
-	renderer->finishDraw(shader);
+	
 }
 
 //Get map width
