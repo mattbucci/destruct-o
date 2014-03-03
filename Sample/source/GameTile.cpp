@@ -42,29 +42,34 @@ GameTile * GameTile::LoadTileFromMemory(const vector<unsigned char> & tileData, 
 	}
 
 	cout << "\tLoaded game tile data. Now building stacks.\n";
-	for (unsigned int x = 1; x < width-1; x++) {
-		for (unsigned int y = 1; y < height-1; y++) {
+	tile->CalculateStackSizes(1,1,width-1,height-1);
+
+	cout << "\tTile Load Complete.\n";
+	return tile;
+}
+
+void GameTile::CalculateStackSizes(unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy) {
+	for (unsigned int x = rx; x < tox; x++) {
+		for (unsigned int y = ry; y < toy; y++) {
 			unsigned char lowestHeight;
 			unsigned char checkHeight;
 			//Your stack size is the stack necessary to 
 			//cover up the hole between you and your lowest neighboring voxel
 			//so first find the lowest neighboring voxel
-			lowestHeight = tile->Cells[y*(int)width+(x+1)].height;
+			lowestHeight = Cells[y*(int)Width+(x+1)].height;
 
-			if ((checkHeight = tile->Cells[y*(int)width+(x-1)].height) < lowestHeight)
+			if ((checkHeight = Cells[y*(int)Width+(x-1)].height) < lowestHeight)
 				lowestHeight = checkHeight;
-			if ((checkHeight = tile->Cells[(y+1)*(int)width+x].height) < lowestHeight)
+			if ((checkHeight = Cells[(y+1)*(int)Width+x].height) < lowestHeight)
 				lowestHeight = checkHeight;
-			if ((checkHeight = tile->Cells[(y-1)*(int)width+x].height) < lowestHeight)
+			if ((checkHeight = Cells[(y-1)*(int)Width+x].height) < lowestHeight)
 				lowestHeight = checkHeight;
 			//Now determine the stack height based off of the lowest height around you
-			unsigned char myHeight = tile->Cells[y*(int)width+x].height;
+			unsigned char myHeight = Cells[y*(int)Width+x].height;
 			if (lowestHeight < myHeight)
-				tile->Cells[y*(int)width+x].stackHeight = myHeight-lowestHeight;
+				Cells[y*(int)Width+x].stackHeight = myHeight-lowestHeight;
 		}
 	}
-	cout << "\tTile Load Complete.\n";
-	return tile;
 }
 
 float GameTile::GetHeight(vec2 pos) {

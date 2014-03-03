@@ -204,7 +204,7 @@ void PhysicsSystem::Update(double delta, double now) {
 	}
 }
 
-void PhysicsSystem::checkForCollision(const vec3 & from, const vec3 & direction, vec3 at) {
+bool PhysicsSystem::checkForCollision(const vec3 & from, const vec3 & direction, vec3 at, vec3 & rayCollision, vec3 & surfaceNormal) {
 	static PhysicsTriangle voxelTriangles[12] = {
 		//Top
 		PhysicsTriangle(vec3( 0.0f,0.0f,1.0f),
@@ -256,14 +256,21 @@ void PhysicsSystem::checkForCollision(const vec3 & from, const vec3 & direction,
 		if (PhysicsTriangle::RayIntersects(voxelTriangles[i],at,from,direction,&surf,&norm)) {
 			//Paint colliding voxels
 			voxelSystem->Paint(vec2(at.x,at.y),1);
+			//Stop checking voxels
+			return true;
 		}
 	}
 }
 
 
-//Adapted from
-//http://playtechs.blogspot.com/2007/03/raytracing-on-grid.html
-void PhysicsSystem::raytrace(vec2 p0, vec2 p1, const vec3 & from, const vec3 & direction) {
+bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec3 & surfaceNormal) {
+	//Ray trace in 2d to get a short list of possible colliding voxels from the terrain
+	vec2 p0 = vec2(from);
+	//Hits surfaces up to 200 away
+	vec2 p1 = vec2(from+direction*200.0f);
+
+	//2d ray tracing adapted from
+	//http://playtechs.blogspot.com/2007/03/raytracing-on-grid.html
 	vec2 d = glm::abs(p1-p0);
 
 	int x = int(floor(p0.x));
@@ -305,9 +312,11 @@ void PhysicsSystem::raytrace(vec2 p0, vec2 p1, const vec3 & from, const vec3 & d
 
 	for (; n > 0; --n) {
 		//Paint it to mark it as visited
-		voxelSystem->Paint(vec2(x,y),5);
+		//voxelSystem->Paint(vec2(x,y),5);
 		//Check the voxel for a ray collision in 3d space
-		checkForCollision(from,direction,vec3(x,y,voxelSystem->GetPositionHeight(vec2(x,y))));
+		if (checkForCollision(from,direction,vec3(x,y,voxelSystem->GetPositionHeight(vec2(x,y))),rayCollision,surfaceNormal))
+			//Collided with terrain
+			return true;
 
 		//Move to the next voxel
 		if (error > 0) {
@@ -319,11 +328,8 @@ void PhysicsSystem::raytrace(vec2 p0, vec2 p1, const vec3 & from, const vec3 & d
 			error += d.y;
 		}
 	}
-}
 
-bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec3 & surfaceNormal) {
-	raytrace(vec2(from),vec2(from+direction*500.0f),from,direction);
-
+	//No collision found
 	return false;
 }
 
