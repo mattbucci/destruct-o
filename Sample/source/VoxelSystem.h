@@ -32,6 +32,9 @@ public:
 	//all positions acceptable
 	float GetPositionHeight(vec2 pos);
 
+	//Pain a new material at position onto any voxel in that tile
+	void Paint(vec2 pos, int newMaterial);
+
 	//Draw the voxels in a region
 	//atx,aty and tox, toy define two corners of the rectangle
 	//of voxels which will be rendered

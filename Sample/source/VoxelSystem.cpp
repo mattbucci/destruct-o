@@ -147,3 +147,18 @@ int VoxelSystem::GetHeight() {
 int VoxelSystem::GetLastVoxelCount() {
 	return voxelCount;
 }
+
+void VoxelSystem::Paint(vec2 pos, int newMaterial) {
+	//Check that the region is in valid space
+	if ((pos.x < 0) || (pos.y < 0))
+		return;
+
+	if ((pos.x >= tileData->Width) || (pos.y >= tileData->Height))
+		return;
+
+	int x = floor(pos.x);
+	int y = floor(pos.y);
+	//Determine which tile to paint
+	//then paint that one tile
+	tileData->Cells[tileData->Width*y+x].materialId = newMaterial;
+}

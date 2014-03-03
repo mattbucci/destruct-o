@@ -39,13 +39,16 @@ class PhysicsSystem {
 	//A tie to the voxel system used to lookup the terrain height at various points
 	VoxelSystem * voxelSystem;
 
-
+	void raytrace(vec2 p0, vec2 p1);
 
 	//C style function for performance reasons
 	friend Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxelBPosition);
 public:
 	PhysicsSystem(VoxelSystem * system);
 	~PhysicsSystem();
+
+	//Traces a line to the first intersecting terrain or physics voxel
+	bool Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec3 & surfaceNormal);
 
 	//Constructs a voxel at the given coordinate
 	//returns the voxel
