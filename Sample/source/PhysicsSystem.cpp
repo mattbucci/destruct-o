@@ -71,7 +71,7 @@ PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate) {
 	PhysicsVoxel * voxel = new PhysicsVoxel();
 	voxel->Position = voxelCoordinate + vec3(.5,.5,.5);
 	Register(voxel);
-	cout << "Physics Voxel Count: " << allVoxels.size() << "\n";
+	//cout << "Physics Voxel Count: " << allVoxels.size() << "\n";
 	return voxel;
 }
 float removeInDirection(vec3 & force, vec3 direction) {
@@ -254,6 +254,8 @@ bool PhysicsSystem::checkForCollision(const vec3 & from, const vec3 & direction,
 		double surf;
 		vec3 norm;
 		if (PhysicsTriangle::RayIntersects(voxelTriangles[i],at,from,direction,&surf,&norm)) {
+			rayCollision = ((float)surf)*direction+from;
+			surfaceNormal = norm;
 			//Paint colliding voxels
 			voxelSystem->Paint(vec2(at.x,at.y),1);
 			//Stop checking voxels
@@ -312,11 +314,17 @@ bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec
 
 	for (; n > 0; --n) {
 		//Paint it to mark it as visited
-		//voxelSystem->Paint(vec2(x,y),5);
+		voxelSystem->Paint(vec2(x,y),5);
 		//Check the voxel for a ray collision in 3d space
-		if (checkForCollision(from,direction,vec3(x,y,voxelSystem->GetPositionHeight(vec2(x,y))),rayCollision,surfaceNormal))
-			//Collided with terrain
-			return true;
+		//Check every voxel that's in this 2d region
+		float height = voxelSystem->GetPositionHeight(vec2(x,y));
+		int stackSize = voxelSystem->GetPositionStackSize(vec2(x,y));
+		for (int stack = 0; stack <= stackSize; stack++) {
+			if (checkForCollision(from,direction,vec3(x,y,height-(float)stack),rayCollision,surfaceNormal))
+				//Collided with terrain
+				return true;
+		}
+
 
 		//Move to the next voxel
 		if (error > 0) {

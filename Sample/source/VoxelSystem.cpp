@@ -71,6 +71,16 @@ bool VoxelSystem::LoadTile(string tileName) {
 	return true;
 }
 
+TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
+	//Check that the position is valid
+	if ((pos.x < 0) || (pos.y < 0))
+		return NULL;
+
+	if ((pos.x >= tileData->Width) || (pos.y >= tileData->Height))
+		return NULL;
+	return tileData->GetTile(pos);
+}
+
 //When the voxel system calculates position height
 //it will have to check which tile the position is in
 //in the future. For now only one tile is loaded
@@ -80,14 +90,31 @@ float VoxelSystem::GetPositionHeight(vec2 pos) {
 	//because that's fun?
 	static const float floorHeight = -1000.0f;
 
-	if ((pos.x < 0) || (pos.y < 0))
-		return floorHeight;
+	TileCell * cell = GetTileCellAt(pos);
 
-	if ((pos.x >= tileData->Width) || (pos.y >= tileData->Height))
+	if (cell == NULL)
 		return floorHeight;
 
 	//Player is within the set of valid tiles
-	return tileData->GetHeight(pos);
+
+
+	//Now get the height of that tile
+	//we add 1 because voxels have 1 height
+	//so the visible floor is 1 above the corner they draw from
+	return cell->height + 1.0f;
+}
+
+//Get the stack size of a specific position
+//all positions acceptable
+int VoxelSystem::GetPositionStackSize(vec2 pos) {
+	TileCell * cell = GetTileCellAt(pos);
+
+	if (cell == NULL)
+		return -1;
+
+	//Player is within the set of valid tiles
+
+	return cell->stackHeight + 1;
 }
 
 //Draw the voxels in a region
@@ -161,4 +188,20 @@ void VoxelSystem::Paint(vec2 pos, int newMaterial) {
 	//Determine which tile to paint
 	//then paint that one tile
 	tileData->Cells[tileData->Width*y+x].materialId = newMaterial;
+}
+
+//Deforms a region of voxels, punching a crater into the given position
+//all voxels removed are returned as positions
+vector<vec3> VoxelSystem::Crater(vec3 pos, float size) {
+	vector<vec3> removedVoxels;
+	//Build the intersection of this crater and the valid tile(s)
+	int fx = (int)(pos.x-size/2.0);
+	int fy = (int)(pos.y-size/2.0);
+	int tox = (int)(pos.x+size/2.0);
+	int toy = (int)(pos.y+size/2.0);
+	//Apply this region to the valid tile
+	tileData->Crater(fx,fy,tox,toy,(int)(pos.z-size/2.0),removedVoxels);
+
+	//Return all removed voxels
+	return removedVoxels;
 }

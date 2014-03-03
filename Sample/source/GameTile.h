@@ -23,7 +23,11 @@ public:
 
 	//Get the height of a position within this tile
 	//don't call for positions outside of the tile
-	float GetHeight(vec2 pos);
+	TileCell * GetTile(vec2 pos);
+
+	//Carves a square crater from fx,fy to tox,toy to depth "depth" and adds all removed voxels
+	//to the removedVoxels value
+	void Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vector<vec3> & removedVoxels);
 
 	//Loaded tile information is public for fastest access
 	TileCell * Cells;

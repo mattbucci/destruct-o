@@ -72,16 +72,58 @@ void GameTile::CalculateStackSizes(unsigned int rx, unsigned int ry, unsigned in
 	}
 }
 
-float GameTile::GetHeight(vec2 pos) {
+TileCell * GameTile::GetTile(vec2 pos) {
 	_ASSERTE((pos.x >= 0) && (pos.y >= 0));
 	_ASSERTE((pos.x < (float)Width) && (pos.y < (float)Height));
 	//First lookup which tile the position is in
 	int tileX = (int)floor(pos.x);
 	int tileY = (int)floor(pos.y);
-	//Now get the height of that tile
-	//we add 1 because voxels have 1 height
-	//so the visible floor is 1 above the corner they draw from
-	return Cells[tileY*Width+tileX].height+1.0f;
+
+	return &Cells[tileY*Width+tileX];
+}
+
+//Carves a square crater from fx,fy to tox,toy to depth "depth" and adds all removed voxels
+//to the removedVoxels value
+void GameTile::Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vector<vec3> & removedVoxels) {
+	_ASSERTE((fx >= 0) && (fy >= 0));
+	_ASSERTE((tox < (float)Width) && (toy < (float)Height));	
+	_ASSERTE((fx <= tox) && (fy <= toy));
+	_ASSERTE(craterBottomZ > 0);
+
+
+	for (int x = fx; x <= tox; x++) {
+		for (int y = fy; y <= toy; y++) {
+			int height = Cells[y*Width+x].height;
+			int heightDiff = height-craterBottomZ;
+			//Skip where the terrain does not intersect the crater
+			if (heightDiff < 0)
+				break;
+			//Keep track of all removed voxels
+			while (heightDiff >= 0) {
+				removedVoxels.push_back(vec3(x,y,height));
+				heightDiff--;
+				height--;
+			}
+			//Alter the height to create the crater
+			Cells[y*Width+x].height = craterBottomZ-1;
+		}
+	}
+	//Alter the values to be large enough for stack calculation
+	fx--;
+	fy--;
+	tox+=2;
+	toy+=2;
+	//Limit the values to valid ranges
+	if (fx < 1)
+		fx = 1;
+	if (fy < 1)
+		fy = 1;
+	if (tox > Width-1)
+		tox = Width-1;
+	if (toy > Height-1)
+		toy = Height-1;
+	//Rebuild the stack heights in this region
+	CalculateStackSizes(fx,fy,tox,toy);
 }
 
 //Save the tile to disk
