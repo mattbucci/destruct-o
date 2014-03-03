@@ -8,7 +8,7 @@ string ParticleData::Parser::trimWhitespace(string in) {
 	int lastBitOfSpace = in.size();
 	bool foundNonwhitespace = false;
 	//Look for whitespace and mark what characters you've found
-	for (int i = 0; i < in.size(); i++) {
+	for (unsigned int i = 0; i < in.size(); i++) {
 		char c= in[i];
 		if ((c == ' ') || (c == '\t') || (c == '\r') || (c == '\n')) {
 			if (!foundNonwhitespace)
@@ -73,7 +73,7 @@ bool ParticleData::Parser::readIn(float & readInto, vector<float> values) {
 //then use readValue to add the value to the chain
 bool ParticleData::Parser::processValue(string valueName, string value) {
 	//change valueName to lowercase
-	for (int i = 0; i < valueName.size(); i++)
+	for (unsigned int i = 0; i < valueName.size(); i++)
 		valueName[i] = tolower(valueName[i]);
 
 	switch (Section) {
@@ -110,7 +110,7 @@ bool ParticleData::Parser::processValue(string valueName, string value) {
 
 bool ParticleData::Parser::readProperty(string propertyName, string value) {
 	//change propertyName to lowercase
-	for (int i = 0; i < propertyName.size(); i++)
+	for (unsigned int i = 0; i < propertyName.size(); i++)
 		propertyName[i] = tolower(propertyName[i]);
 
 	if (propertyName == "materialstyle") {
@@ -130,9 +130,9 @@ bool ParticleData::Parser::readProperty(string propertyName, string value) {
 	else if (propertyName == "materialtexture") 
 		inProgress->MaterialTexture = string("particles/textures/") + value;
 	else if (propertyName == "rows") 
-		inProgress->Rows = atoi(value.c_str());
+		inProgress->Rows = (float)atoi(value.c_str());
 	else if (propertyName == "columns")
-		inProgress->Columns = atoi(value.c_str());
+		inProgress->Columns = (float)atoi(value.c_str());
 	else {
 		cout << "\nError on line " << lineNumber << ": Failed to recognize property \"" << propertyName << "\" as a valid property.\n";
 		return false;
@@ -225,7 +225,7 @@ ParticleData * ParticleData::Parser::ReadParticle(string vpartText) {
 	string partOne;
 	string partTwo;
 	bool partOneComplete = false;
-	for (int i = 0; i < vpartText.size(); i++) {
+	for (unsigned int i = 0; i < vpartText.size(); i++) {
 		char c = vpartText[i];
 		//Keep track of the line number for accurate error messages
 		if (c == '\n')

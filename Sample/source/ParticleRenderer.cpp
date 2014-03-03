@@ -94,7 +94,7 @@ void ParticleRenderer::Render(GLParticleProgram * shader, Particle ** particles,
 
 	//Take the data for each particle and generate the vertices represented by that data
 	int curParticles = 0;
-	for (int i = 0; i < size; i++) {
+	for (unsigned int i = 0; i < size; i++) {
 		//If you can't fit any more particles in the current sweep
 		//execute it now
 		if (curParticles >= PARTICLE_RENDER_SWEEP) {
@@ -104,7 +104,7 @@ void ParticleRenderer::Render(GLParticleProgram * shader, Particle ** particles,
 		//Generate the vertex data for the given particle
 		Particle * p = particles[i];
 		int offset = i*6;
-		float halfScale = p->Scale/2.0;
+		float halfScale = p->Scale/2.0f;
 		//Generate position data
 		vertices[offset+0] = vec4(p->Position*vec3(1,1,1),halfScale);
 		vertices[offset+1] = vec4(p->Position*vec3(1,-1,1),halfScale);

@@ -6,6 +6,8 @@
 #include "ContiguousList.h"
 #include <json/json.h>
 
+#include <list>
+
 class LoadData {
 	struct loadhandle {
 		void ** handleToLoad;
@@ -58,6 +60,7 @@ public:
 	};
 	struct savable {
 		savable(SaveType type, void * member, string name);
+		savable(){}
 		//The type of data to save/load
 		SaveType dataType;
 		//a pointer to the member
@@ -84,12 +87,12 @@ class Savable {
 
 	void LoadValue(ReflectionData::savable valueData,Json::Value & value, LoadData & loadData);
 	
-	template <template<class, class> class ContainerType, class InternalType>
+	template <template<class, class> class ContainerType, template<class> class AllocaterType, class InternalType>
 	void LoadSpecificContainer(ReflectionData::savable valueData,Json::Value & value, LoadData & loadData) {
 		//First get a pointer to the class in question
-		ContainerType<InternalType> & container =  *(ContainerType<InternalType>*)valueData.member;
+		ContainerType<InternalType,AllocaterType<InternalType>> & container =  *(ContainerType<InternalType,AllocaterType<InternalType>>*)valueData.member;
 		//Now load values into the class
-		for (int i = 0; i < value.size(); i++) {
+		for (unsigned int i = 0; i < value.size(); i++) {
 			InternalType valueToLoad;
 
 			ReflectionData::savable saveData;
@@ -105,46 +108,46 @@ class Savable {
 		}
 	}
 
-	template <template<class, class> class ContainerType>
+	template <template<class, class> class ContainerType, template<class> class AllocaterType>
 	void LoadContainerValue(ReflectionData::savable valueData,Json::Value & value, LoadData & loadData) {
 		switch (valueData.internalType) {
-		case SAVE_INT8:
-			LoadSpecificContainer<ContainerType,int8_t>(valueData,value,loadData);
+		case ReflectionData::SAVE_INT8:
+			LoadSpecificContainer<ContainerType,AllocaterType,int8_t>(valueData,value,loadData);
 			break;
-		case SAVE_UINT8:
-			LoadSpecificContainer<ContainerType,uint8_t>(valueData,value,loadData);
+		case ReflectionData::SAVE_UINT8:
+			LoadSpecificContainer<ContainerType,AllocaterType,uint8_t>(valueData,value,loadData);
 			break;
-		case SAVE_INT16:
-			LoadSpecificContainer<ContainerType,int16_t>(valueData,value,loadData);
+		case ReflectionData::SAVE_INT16:
+			LoadSpecificContainer<ContainerType,AllocaterType,int16_t>(valueData,value,loadData);
 			break;
-		case SAVE_UINT16:
-			LoadSpecificContainer<ContainerType,uint16_t>(valueData,value,loadData);
+		case ReflectionData::SAVE_UINT16:
+			LoadSpecificContainer<ContainerType,AllocaterType,uint16_t>(valueData,value,loadData);
 			break;
-		case SAVE_INT32:
-			LoadSpecificContainer<ContainerType,int32_t>(valueData,value,loadData);
+		case ReflectionData::SAVE_INT32:
+			LoadSpecificContainer<ContainerType,AllocaterType,int32_t>(valueData,value,loadData);
 			break;
-		case SAVE_UINT32:
-			LoadSpecificContainer<ContainerType,uint32_t>(valueData,value,loadData);
+		case ReflectionData::SAVE_UINT32:
+			LoadSpecificContainer<ContainerType,AllocaterType,uint32_t>(valueData,value,loadData);
 			break;
-		case SAVE_INT64:
-			LoadSpecificContainer<ContainerType,int64_t>(valueData,value,loadData);
+		case ReflectionData::SAVE_INT64:
+			LoadSpecificContainer<ContainerType,AllocaterType,int64_t>(valueData,value,loadData);
 			break;
-		case SAVE_UINT64:
-			LoadSpecificContainer<ContainerType,uint64_t>(valueData,value,loadData);
+		case ReflectionData::SAVE_UINT64:
+			LoadSpecificContainer<ContainerType,AllocaterType,uint64_t>(valueData,value,loadData);
 			break;
-		case SAVE_FLOAT:
-			LoadSpecificContainer<ContainerType,float>(valueData,value,loadData);
+		case ReflectionData::SAVE_FLOAT:
+			LoadSpecificContainer<ContainerType,AllocaterType,float>(valueData,value,loadData);
 			break;
-		case SAVE_DOUBLE:
-			LoadSpecificContainer<ContainerType,double>(valueData,value,loadData);
+		case ReflectionData::SAVE_DOUBLE:
+			LoadSpecificContainer<ContainerType,AllocaterType,double>(valueData,value,loadData);
 			break;
-		case SAVE_STRING:
-			LoadSpecificContainer<ContainerType,string>(valueData,value,loadData);
+		case ReflectionData::SAVE_STRING:
+			LoadSpecificContainer<ContainerType,AllocaterType,string>(valueData,value,loadData);
 			break;
 		//This is actually unsafe but I doubt it'll break anything
-		case SAVE_OWNEDHANDLE:
-		case SAVE_HANDLE:
-			LoadSpecificContainer<ContainerType,void*>(valueData,value,loadData);
+		case ReflectionData::SAVE_OWNEDHANDLE:
+		case ReflectionData::SAVE_HANDLE:
+			LoadSpecificContainer<ContainerType,AllocaterType,void*>(valueData,value,loadData);
 			break;
 		default:
 			//Illegal type in container
@@ -152,10 +155,10 @@ class Savable {
 		}
 	}
 	
-	template <template<class, class> class ContainerType, class InternalType>
+	template <template<class, class> class ContainerType, template<class> class AllocaterType, class InternalType>
 	void SaveSpecificContainer(ReflectionData::savable valueData,Json::Value & value) {
 		//First get a pointer to the class in question
-		ContainerType<InternalType> & container =  *(ContainerType<InternalType>*)valueData.member;
+		ContainerType<InternalType,AllocaterType<InternalType>> & container =  *(ContainerType<InternalType,AllocaterType<InternalType>>*)valueData.member;
 		//Now iterate over the class
 		int i = 0;
 		for (auto member : container) {
@@ -169,47 +172,47 @@ class Savable {
 		}
 	}
 
-	template <template<class, class> class ContainerType>
+	template <template<class, class> class ContainerType, template<class> class AllocaterType>
 	//Selects the appropriate type argument and calls SaveSpecificContainer
 	void SaveContainerValue(ReflectionData::savable valueData,Json::Value & value) {
 		switch (valueData.internalType) {
-		case SAVE_INT8:
-			SaveSpecificContainer<ContainerType,int8_t>(valueData,value);
+		case ReflectionData::SAVE_INT8:
+			SaveSpecificContainer<ContainerType,AllocaterType,int8_t>(valueData,value);
 			break;
-		case SAVE_UINT8:
-			SaveSpecificContainer<ContainerType,uint8_t>(valueData,value);
+		case ReflectionData::SAVE_UINT8:
+			SaveSpecificContainer<ContainerType,AllocaterType,uint8_t>(valueData,value);
 			break;
-		case SAVE_INT16:
-			SaveSpecificContainer<ContainerType,int16_t>(valueData,value);
+		case ReflectionData::SAVE_INT16:
+			SaveSpecificContainer<ContainerType,AllocaterType,int16_t>(valueData,value);
 			break;
-		case SAVE_UINT16:
-			SaveSpecificContainer<ContainerType,uint16_t>(valueData,value);
+		case ReflectionData::SAVE_UINT16:
+			SaveSpecificContainer<ContainerType,AllocaterType,uint16_t>(valueData,value);
 			break;
-		case SAVE_INT32:
-			SaveSpecificContainer<ContainerType,int32_t>(valueData,value);
+		case ReflectionData::SAVE_INT32:
+			SaveSpecificContainer<ContainerType,AllocaterType,int32_t>(valueData,value);
 			break;
-		case SAVE_UINT32:
-			SaveSpecificContainer<ContainerType,uint32_t>(valueData,value);
+		case ReflectionData::SAVE_UINT32:
+			SaveSpecificContainer<ContainerType,AllocaterType,uint32_t>(valueData,value);
 			break;
-		case SAVE_INT64:
-			SaveSpecificContainer<ContainerType,int64_t>(valueData,value);
+		case ReflectionData::SAVE_INT64:
+			SaveSpecificContainer<ContainerType,AllocaterType,int64_t>(valueData,value);
 			break;
-		case SAVE_UINT64:
-			SaveSpecificContainer<ContainerType,uint64_t>(valueData,value);
+		case ReflectionData::SAVE_UINT64:
+			SaveSpecificContainer<ContainerType,AllocaterType,uint64_t>(valueData,value);
 			break;
-		case SAVE_FLOAT:
-			SaveSpecificContainer<ContainerType,float>(valueData,value);
+		case ReflectionData::SAVE_FLOAT:
+			SaveSpecificContainer<ContainerType,AllocaterType,float>(valueData,value);
 			break;
-		case SAVE_DOUBLE:
-			SaveSpecificContainer<ContainerType,double>(valueData,value);
+		case ReflectionData::SAVE_DOUBLE:
+			SaveSpecificContainer<ContainerType,AllocaterType,double>(valueData,value);
 			break;
-		case SAVE_STRING:
-			SaveSpecificContainer<ContainerType,string>(valueData,value);
+		case ReflectionData::SAVE_STRING:
+			SaveSpecificContainer<ContainerType,AllocaterType,string>(valueData,value);
 			break;
 		//This is actually unsafe but I doubt it'll break anything
-		case SAVE_OWNEDHANDLE:
-		case SAVE_HANDLE:
-			SaveSpecificContainer<ContainerType,void*>(valueData,value);
+		case ReflectionData::SAVE_OWNEDHANDLE:
+		case ReflectionData::SAVE_HANDLE:
+			SaveSpecificContainer<ContainerType,AllocaterType,void*>(valueData,value);
 			break;
 		default:
 			//Illegal type in container

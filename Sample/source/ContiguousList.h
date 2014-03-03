@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 
+//A dummy allocator to make contiguouslist's template signature
+//the same as vector and list
+template <class T>
 class __listdummyallocator {};
 
 //A contiguous list is an implementation which 
@@ -12,7 +15,7 @@ class __listdummyallocator {};
 //it is designed to contain pointers, not data
 //Note: order of contents /not/ maintained!
 //		and allocator does not actually do anything
-template <class T, class _Alloc = __listdummyallocator>
+template <class T, class _Alloc = __listdummyallocator<T>>
 class ContiguousList {
 	//The array of stored data
 	T * data;

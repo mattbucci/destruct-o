@@ -112,13 +112,13 @@ void Savable::SaveValue(ReflectionData::savable valueData,Json::Value & value) {
 	}
 
 	case ReflectionData::SAVE_LIST:
-		SaveContainerValue<list>(valueData,value);
+		SaveContainerValue<list,allocator>(valueData,value);
 		return;
 	case ReflectionData::SAVE_VECTOR:
-		SaveContainerValue<vector>(valueData,value);
+		SaveContainerValue<vector,allocator>(valueData,value);
 		return;
 	case ReflectionData::SAVE_CONTIGOUSLIST:
-		SaveContainerValue<ContiguousList>(valueData,value);
+		SaveContainerValue<ContiguousList,__listdummyallocator>(valueData,value);
 		return;
 	default:
 		_ASSERTE(false);
@@ -209,13 +209,13 @@ void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, L
 		return;
 	}
 	case ReflectionData::SAVE_LIST:
-		LoadContainerValue<list>(valueData,value,loadData);
+		LoadContainerValue<list,allocator>(valueData,value,loadData);
 		return;
 	case ReflectionData::SAVE_VECTOR:
-		LoadContainerValue<vector>(valueData,value,loadData);
+		LoadContainerValue<vector,allocator>(valueData,value,loadData);
 		return;
 	case ReflectionData::SAVE_CONTIGOUSLIST:
-		LoadContainerValue<ContiguousList>(valueData,value,loadData);
+		LoadContainerValue<ContiguousList,allocator>(valueData,value,loadData);
 		return;
 	default:
 		_ASSERTE(false);
@@ -242,4 +242,26 @@ void Savable::Load(Json::Value & parentValue, LoadData & loadData) {
 		else
 			LoadValue(member,parentValue[member.memberName],loadData);
 	}
+}
+
+
+ReflectionStore & ReflectionStore::Data() {
+
+}
+
+void ReflectionStore::RegisterClassType(string name, ReflectionData * data) {
+
+}
+void ReflectionStore::RegisterInheritance(string derivingClass, string baseClass) {
+
+}
+void ReflectionStore::RegisterClassBuilder(string name, function<Savable*()> constructor) {
+
+}
+
+vector<ReflectionData::savable> ReflectionStore::LookupClassMembers(string classname) {
+
+}
+Savable * ReflectionStore::RetrieveClassInstance(string name) {
+
 }
