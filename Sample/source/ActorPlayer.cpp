@@ -37,6 +37,7 @@ void ActorPlayer::Update(float delta, float now) {
         PlayerWalked.Fire([this](function<void(ActorPlayer*)> subscriber) {
             subscriber(this);
         });
+		
         deltaPosition -=200;
     } else {
         if(onGround) {

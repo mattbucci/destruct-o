@@ -1,7 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
-
+#include "ContiguousList.h"
 class GL3DProgram;
 class GameTile;
 class VoxelDrawSystem;
@@ -9,7 +9,7 @@ class VoxelDrawSystem;
 class VoxelSystem {
 	//Tile data loaded
 	GameTile * tileData;
-	
+	ContiguousList<GameTile> world;
 	//A debug counter for the number of voxels rendered last frame
 	int voxelCount;
 
@@ -18,12 +18,24 @@ class VoxelSystem {
 
 
 	VoxelDrawSystem * renderer;
+
+	struct tile_renderinfo {
+		float x_start;
+		float x_end;
+		float y_start;
+		float y_end;
+		int   tile_x;
+		int   tile_y;
+	};
 public:
 	VoxelSystem();
 	~VoxelSystem();
 
-	//Attempt to load a tile from disc
-	bool LoadTile(string tileName);
+	//Attempt to load a world from disc
+	bool LoadWorld(string saveName);
+
+	//Attempt to Generate a new world
+	bool GenWorld();
 
 	//Get the number of voxels drawn last frame
 	int GetLastVoxelCount();
