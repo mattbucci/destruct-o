@@ -125,6 +125,10 @@ TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
 	pos.x = int(pos.x) % 256;
 	pos.y = int(pos.y) % 256;
 
+	//account for negative position
+	if (pos.x < 0) pos.x = 255 + pos.x;
+	if (pos.y < 0) pos.y = 255 + pos.y;
+
 	if ((pos.x < 0) || (pos.y < 0))
 		return NULL;
 	
@@ -209,6 +213,13 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 			current_tile.x_end = (min(x + 256 - x % 256, tox) - 1) % 256;
 			current_tile.y_start = y % 256;
 			current_tile.y_end = (min(y + 256 - y % 256, toy) - 1) % 256;
+
+			//account for negatives
+			if (current_tile.x_start < 0) current_tile.x_start = 255 + current_tile.x_start;
+			if (current_tile.x_end < 0)  current_tile.x_end = 255 + current_tile.x_end;
+			if (current_tile.y_start < 0)  current_tile.y_start = 255 + current_tile.y_start;
+			if (current_tile.y_end < 0)  current_tile.y_end = 255 + current_tile.y_end;
+
 			tiles.push_back(current_tile);
 
 		}
@@ -337,6 +348,13 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 			current_tile.x_end = (min(x + 256 - x % 256, tox) - 1) % 256;
 			current_tile.y_start = y % 256;
 			current_tile.y_end = (min(y + 256 - y % 256, toy) - 1) % 256;
+
+			//account for negatives
+			if (current_tile.x_start < 0) current_tile.x_start = 255 + current_tile.x_start;
+			if (current_tile.x_end < 0)  current_tile.x_end = 255 + current_tile.x_end;
+			if (current_tile.y_start < 0)  current_tile.y_start = 255 + current_tile.y_start;
+			if (current_tile.y_end < 0) current_tile.y_end = 255 + current_tile.y_end;
+
 			tiles.push_back(current_tile);
 
 		}
