@@ -15,8 +15,13 @@ file(GLOB libnoise_src
 # VoxEngine Executable
 add_executable(VoxEngine ${VoxEngine_SRC})
 
+#Add universal includes
+include_directories("../includes/json")
+
 # Are we compiling on Window?
 IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+
+	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/game/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
 
     # Windows should consume headers bundles with source
     include_directories("../includes/SDL")
@@ -221,6 +226,8 @@ source_group(Interface FILES ${InterfaceFiles})
 FILE(GLOB PhysicsFiles
 	Demo.h
 	Demo.cpp
+	DemoWindow.h
+	DemoWindow.cpp
 	Interop.h
 	InteropChain.h
 	InteropDecoders.h
@@ -253,6 +260,7 @@ FILE(GLOB UtilityFiles
 	ReflectionData.cpp
 	lodepng.h
 	lodepng.cpp
+	jsoncpp.cpp
 	noiseutils.h
 	noiseutils.cpp
 	OS.h

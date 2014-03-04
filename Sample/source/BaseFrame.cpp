@@ -112,6 +112,8 @@ void BaseFrame::OnFrameFocus() {
 	demoWindow = new DemoWindow(demo);
 	Controls.AddWindow(demoWindow);
 #endif
+	notification = Notification::init();
+	Controls.AddWindow(notification);
 }
 
 void BaseFrame::Build() {
@@ -119,9 +121,10 @@ void BaseFrame::Build() {
 	audio = new AudioPlayer(100);
 	audio->Subscribe(player);
 	//Load the sample tile
-	if (!Voxels.LoadTile("basic-h.png")) {
-		cout << "Failed to load voxel tile\n";
-	}
+	Voxels.LoadWorld("A Save File");
+	//if (!Voxels.LoadWorld("basic-h.png")) {
+	//	cout << "Failed to load voxel tile\n";
+	//}
 }
 
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {

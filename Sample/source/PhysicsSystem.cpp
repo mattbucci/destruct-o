@@ -5,6 +5,8 @@
 #include "ShaderGroup.h"
 #include "PhysicsVoxel.h"
 #include "VoxelSystem.h"
+#include "PhysicsTriangle.h"
+#include "VoxEngine.h"
 
 PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	//Build a voxel renderer
@@ -57,20 +59,12 @@ PhysicsSystem::Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxe
 	return data;
 }
 
-//Should be called by Actor.cpp only
-//no one else call these
-void PhysicsSystem::Register(PhysicsVoxel * toRegister) {
-	allVoxels.insert(toRegister);
-}
-void PhysicsSystem::Unregister(PhysicsVoxel * toUnregister) {
-	allVoxels.erase(toUnregister);
-}
-
-PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate) {
+PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate,double lifeTime) {
 	PhysicsVoxel * voxel = new PhysicsVoxel();
 	voxel->Position = voxelCoordinate + vec3(.5,.5,.5);
-	Register(voxel);
-	cout << "Physics Voxel Count: " << allVoxels.size() << "\n";
+	voxel->MaterialId = 1;
+	voxel->DeathAt = lifeTime + VoxEngine::GetGameSimTime();
+	allVoxels.insert(voxel);
 	return voxel;
 }
 float removeInDirection(vec3 & force, vec3 direction) {
@@ -86,12 +80,19 @@ float removeInDirection(vec3 & force, vec3 direction) {
 void PhysicsSystem::Update(double delta, double now) {
 
 
-	//Set all voxels to not colliding
-	for (unsigned int i = 0; i < allVoxels.size(); i++) {
-		allVoxels[i]->colliding = false;
-		allVoxels[i]->Acceleration = vec3();
+	//Set all voxels to have no forces
+	//And check if any voxels should expire
+	for (auto it = allVoxels.begin(); it != allVoxels.end();){
+		PhysicsVoxel * voxel = *it;
+		voxel->Acceleration = vec3();
+		if ((voxel->DeathAt > 0) && (voxel->DeathAt < now)) {
+			//disintegrate voxel
+			//remove voxel
+			it = allVoxels.erase(it);
+		}
+		else
+			it++;
 	}
-
 
 	//Now do the O(n^2) which checks for collisions
 	for (unsigned int a = 0; a < allVoxels.size(); a++) {
@@ -100,8 +101,6 @@ void PhysicsSystem::Update(double delta, double now) {
 			if (allVoxels[a]->AabColiding(allVoxels[b]->Position)) {
 				Intersection intr = CalculateIntersection(allVoxels[a]->Position,allVoxels[b]->Position);
 
-
-				allVoxels[a]->colliding = allVoxels[b]->colliding = true;
 				float depth = intr.Depth;
 				float force = 500*depth;
 
@@ -203,6 +202,143 @@ void PhysicsSystem::Update(double delta, double now) {
 	}
 }
 
+bool PhysicsSystem::checkForCollision(const vec3 & from, const vec3 & direction, vec3 at, vec3 & rayCollision, vec3 & surfaceNormal) {
+	static PhysicsTriangle voxelTriangles[12] = {
+		//Top
+		PhysicsTriangle(vec3( 0.0f,0.0f,1.0f),
+		vec3( 1.0f,0.0f,1.0f),
+		vec3( 0.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3(1.0f,1.0f,1.0f),
+		vec3(-1.0f,1.0f,1.0f),
+		vec3(1.0f,0.0f,1.0f)),
+		//Bottom
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,0.0f),
+		vec3( 0.0f,1.0f,0.0f)),
+		PhysicsTriangle(vec3(1.0f,1.0f,0.0f),
+		vec3(-1.0f,1.0f,0.0f),
+		vec3(1.0f,0.0f,0.0f)),
+		//left
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 0.0f,1.0f,0.0f),
+		vec3( 0.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 0.0f,0.0f,1.0f),
+		vec3( 0.0f,1.0f,1.0f)),
+		//right
+		PhysicsTriangle(vec3( 1.0f,0.0f,0.0f),
+		vec3( 1.0f,1.0f,0.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3( 1.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,1.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+		//front
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,1.0f)),
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 0.0f,0.0f,1.0f),
+		vec3( 1.0f,0.0f,1.0f)),
+		//back
+		PhysicsTriangle(vec3( 0.0f,1.0f,0.0f),
+		vec3( 1.0f,1.0f,0.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3( 0.0f,1.0f,0.0f),
+		vec3( 0.0f,1.0f,1.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+	};
+	//Check every triangle in this voxel for a collision
+	for (int i = 0 ; i < 12; i++) {
+		double surf;
+		vec3 norm;
+		if (PhysicsTriangle::RayIntersects(voxelTriangles[i],at,from,direction,&surf,&norm)) {
+			rayCollision = ((float)surf)*direction+from;
+			surfaceNormal = norm;
+			//Paint colliding voxels
+			voxelSystem->Paint(vec2(at.x,at.y),1);
+			//Stop checking voxels
+			return true;
+		}
+	}
+}
+
+
+bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec3 & surfaceNormal) {
+	//Ray trace in 2d to get a short list of possible colliding voxels from the terrain
+	vec2 p0 = vec2(from);
+	//Hits surfaces up to 200 away
+	vec2 p1 = vec2(from+direction*200.0f);
+
+	//2d ray tracing adapted from
+	//http://playtechs.blogspot.com/2007/03/raytracing-on-grid.html
+	vec2 d = glm::abs(p1-p0);
+
+	int x = int(floor(p0.x));
+	int y = int(floor(p0.y));
+
+	int n = 1;
+	int x_inc, y_inc;
+	float error;
+
+	if (d.x == 0) {
+		x_inc = 0;
+		error = std::numeric_limits<float>::infinity();
+	}
+	else if (p1.x > p0.x) {
+		x_inc = 1;
+		n += int(floor(p1.x)) - x;
+		error = (floor(p0.x) + 1 - p0.x) * d.y;
+	}
+	else {
+		x_inc = -1;
+		n += x - int(floor(p1.x));
+		error = (p0.x - floor(p0.x)) * d.y;
+	}
+
+	if (d.y == 0) {
+		y_inc = 0;
+		error -= std::numeric_limits<float>::infinity();
+	}
+	else if (p1.y > p0.y) {
+		y_inc = 1;
+		n += int(floor(p1.y)) - y;
+		error -= (floor(p0.y) + 1 - p0.y) * d.x;
+	}
+	else {
+		y_inc = -1;
+		n += y - int(floor(p1.y));
+		error -= (p0.y - floor(p0.y)) * d.x;
+	}
+
+	for (; n > 0; --n) {
+		//Paint it to mark it as visited
+		voxelSystem->Paint(vec2(x,y),5);
+		//Check the voxel for a ray collision in 3d space
+		//Check every voxel that's in this 2d region
+		float height = voxelSystem->GetPositionHeight(vec2(x,y));
+		int stackSize = voxelSystem->GetPositionStackSize(vec2(x,y));
+		for (int stack = 0; stack <= stackSize; stack++) {
+			if (checkForCollision(from,direction,vec3(x,y,height-(float)stack),rayCollision,surfaceNormal))
+				//Collided with terrain
+				return true;
+		}
+
+
+		//Move to the next voxel
+		if (error > 0) {
+			y += y_inc;
+			error -= d.x;
+		}
+		else {
+			x += x_inc;
+			error += d.y;
+		}
+	}
+
+	//No collision found
+	return false;
+}
+
 
 //Draw all the actors
 void PhysicsSystem::Draw(ShaderGroup * shaders) {
@@ -220,7 +356,7 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 	//Draw all the voxels
 	for (unsigned int i = 0; i < allVoxels.size(); i++) {
 		//Draw the voxel
-		renderer->pushVoxel(shader,allVoxels[i]->Position,1);
+		renderer->pushVoxel(shader,allVoxels[i]->Position,allVoxels[i]->MaterialId);
 	}
 
 	renderer->finishDraw(shader);

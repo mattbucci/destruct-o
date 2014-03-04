@@ -42,41 +42,89 @@ GameTile * GameTile::LoadTileFromMemory(const vector<unsigned char> & tileData, 
 	}
 
 	cout << "\tLoaded game tile data. Now building stacks.\n";
-	for (unsigned int x = 1; x < width-1; x++) {
-		for (unsigned int y = 1; y < height-1; y++) {
+	tile->CalculateStackSizes(1,1,width-1,height-1);
+
+	cout << "\tTile Load Complete.\n";
+	return tile;
+}
+
+void GameTile::CalculateStackSizes(unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy) {
+	for (unsigned int x = rx; x < tox; x++) {
+		for (unsigned int y = ry; y < toy; y++) {
 			unsigned char lowestHeight;
 			unsigned char checkHeight;
 			//Your stack size is the stack necessary to 
 			//cover up the hole between you and your lowest neighboring voxel
 			//so first find the lowest neighboring voxel
-			lowestHeight = tile->Cells[y*(int)width+(x+1)].height;
+			lowestHeight = Cells[y*(int)Width+(x+1)].height;
 
-			if ((checkHeight = tile->Cells[y*(int)width+(x-1)].height) < lowestHeight)
+			if ((checkHeight = Cells[y*(int)Width+(x-1)].height) < lowestHeight)
 				lowestHeight = checkHeight;
-			if ((checkHeight = tile->Cells[(y+1)*(int)width+x].height) < lowestHeight)
+			if ((checkHeight = Cells[(y+1)*(int)Width+x].height) < lowestHeight)
 				lowestHeight = checkHeight;
-			if ((checkHeight = tile->Cells[(y-1)*(int)width+x].height) < lowestHeight)
+			if ((checkHeight = Cells[(y-1)*(int)Width+x].height) < lowestHeight)
 				lowestHeight = checkHeight;
 			//Now determine the stack height based off of the lowest height around you
-			unsigned char myHeight = tile->Cells[y*(int)width+x].height;
+			unsigned char myHeight = Cells[y*(int)Width+x].height;
 			if (lowestHeight < myHeight)
-				tile->Cells[y*(int)width+x].stackHeight = myHeight-lowestHeight;
+				Cells[y*(int)Width+x].stackHeight = myHeight-lowestHeight;
 		}
 	}
-	cout << "\tTile Load Complete.\n";
-	return tile;
 }
 
-float GameTile::GetHeight(vec2 pos) {
+TileCell * GameTile::GetTileCell(vec2 pos) {
 	_ASSERTE((pos.x >= 0) && (pos.y >= 0));
 	_ASSERTE((pos.x < (float)Width) && (pos.y < (float)Height));
 	//First lookup which tile the position is in
 	int tileX = (int)floor(pos.x);
 	int tileY = (int)floor(pos.y);
-	//Now get the height of that tile
-	//we add 1 because voxels have 1 height
-	//so the visible floor is 1 above the corner they draw from
-	return Cells[tileY*Width+tileX].height+1.0f;
+
+	return &Cells[tileY*Width+tileX];
+}
+
+//Carves a square crater from fx,fy to tox,toy to depth "depth" and adds all removed voxels
+//to the removedVoxels value
+void GameTile::Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vector<vec4> & removedVoxels) {
+	_ASSERTE((fx >= 0) && (fy >= 0));
+	_ASSERTE((tox < (float)Width) && (toy < (float)Height));	
+	_ASSERTE((fx <= tox) && (fy <= toy));
+	_ASSERTE(craterBottomZ > 0);
+
+
+	for (int x = fx; x <= tox; x++) {
+		for (int y = fy; y <= toy; y++) {
+			TileCell& cell = Cells[y*Width+x];
+			int height = cell.height;
+			int heightDiff = height-craterBottomZ;
+			//Skip where the terrain does not intersect the crater
+			if (heightDiff < 0)
+				break;
+			//Keep track of all removed voxels
+			while (heightDiff >= 0) {
+				removedVoxels.push_back(vec4(x,y,height,cell.materialId));
+				heightDiff--;
+				height--;
+			}
+			//Alter the height to create the crater
+			Cells[y*Width+x].height = craterBottomZ-1;
+		}
+	}
+	//Alter the values to be large enough for stack calculation
+	fx--;
+	fy--;
+	tox+=2;
+	toy+=2;
+	//Limit the values to valid ranges
+	if (fx < 1)
+		fx = 1;
+	if (fy < 1)
+		fy = 1;
+	if (tox > Width-1)
+		tox = Width-1;
+	if (toy > Height-1)
+		toy = Height-1;
+	//Rebuild the stack heights in this region
+	CalculateStackSizes(fx,fy,tox,toy);
 }
 
 //Save the tile to disk
