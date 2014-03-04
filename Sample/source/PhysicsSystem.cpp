@@ -127,7 +127,7 @@ void PhysicsSystem::Update(double delta, double now) {
 					Intersection intr = CalculateIntersection(section[a]->Position,section[b]->Position);
 
 					float depth = intr.Depth;
-					float force = 500*depth;
+					float force = 100*depth;
 
 					//No two voxels can occupy the same position, push one voxel a little out of the other
 					if (section[a]->Position == section[b]->Position)
