@@ -24,6 +24,9 @@ PhysicsSystem::~PhysicsSystem() {
 PhysicsSystem::Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxelBPosition) {
 	PhysicsSystem::Intersection data;
 
+	if (voxelAPosition == voxelBPosition)
+		voxelAPosition += .0001;
+
 	//Estimate penetration depth as the greatest difference between A and B
 	//this works for cubes only
 	vec3 collisionVector = voxelAPosition-voxelBPosition;
@@ -63,7 +66,10 @@ PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate,double lifeTime) {
 	PhysicsVoxel * voxel = new PhysicsVoxel();
 	voxel->Position = voxelCoordinate + vec3(.5,.5,.5);
 	voxel->MaterialId = 1;
-	voxel->DeathAt = lifeTime + VoxEngine::GetGameSimTime();
+	if (lifeTime <= 0)
+		voxel->DeathAt = -1;
+	else
+		voxel->DeathAt = lifeTime + VoxEngine::GetGameSimTime();
 	allVoxels.insert(voxel);
 	return voxel;
 }
