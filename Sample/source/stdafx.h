@@ -23,6 +23,9 @@
 
 using namespace std;
 
+//Disable the rest of includes if in the unit testing system
+#ifndef __UNIT_TESTING__
+
 //Define mobile platforms
 //iOS would also go here
 #if (defined __ANDROID__) || (defined __IPHONEOS__)
@@ -123,3 +126,5 @@ inline float clamp(T x, T a, T b)
 {
     return x < a ? a : (x > b ? b : x);
 }
+
+#endif

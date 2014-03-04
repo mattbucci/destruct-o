@@ -131,8 +131,8 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				}
 			}
 			else if (eve.Key == 'z') {
-				const float initialEnergy = 20.0f;
-				const float initialDisplacement = .5f;
+				const float initialEnergy = 0.0f;
+				const float initialDisplacement = 0.0f;
 				vec3 hit, norm;
 				if (game->Physics.Raytrace(playerPos+vec3(0,0,2.5),playerFacing,hit,norm)) {
 
