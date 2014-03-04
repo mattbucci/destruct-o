@@ -10,7 +10,6 @@ class TerrainGen;
 
 class VoxelSystem {
 	//Tile data loaded
-	GameTile * tileData;
 	ContiguousList<GameTile> world;
 	TerrainGen * generator;
 	//A debug counter for the number of voxels rendered last frame

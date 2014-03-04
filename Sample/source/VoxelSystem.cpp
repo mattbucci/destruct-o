@@ -17,8 +17,6 @@ static const int tile_width = 256;
 static const int tile_height = 256;
 
 VoxelSystem::VoxelSystem() {
-	//No tile data loaded
-	tileData = NULL;
 	//Init Terrain Generator
 	generator = new TerrainGen();
 	generator->setTileSize(tile_width, tile_height);
@@ -48,7 +46,6 @@ VoxelSystem::VoxelSystem() {
 }
 VoxelSystem::~VoxelSystem() {
 	delete renderer;
-	delete tileData;
 }
 
 //Attempt to load a tile from disc
@@ -68,7 +65,7 @@ bool VoxelSystem::LoadWorld(string saveName) {
 bool VoxelSystem::LoadTile(int seed, int x, int y) {
 	stringstream s;
 	s << "saves/" << seed << "-" << x << "-" << y << ".txt";
-	tileData = GameTile::LoadTileFromDisk(s.str());
+	GameTile * tileData = GameTile::LoadTileFromDisk(s.str());
 
 	if (tileData != NULL) {
 		tileData->tile_x = x;
@@ -95,7 +92,7 @@ bool VoxelSystem::GenTile(int x, int y) {
 	//Free Terrain Tile Memory
 	free(rawTile);
 
-	tileData = GameTile::LoadTileFromMemory(tile, tile_width, tile_height);
+	GameTile * tileData = GameTile::LoadTileFromMemory(tile, tile_width, tile_height);
 	tileData->tile_x = x;
 	tileData->tile_y = y;
 	world.insert(tileData);
@@ -110,13 +107,13 @@ bool VoxelSystem::GenWorld(int seed) {
 			LoadTile(seed, x, y);
 		}
 	}
-	if (tileData == NULL)
-		return false;
 
 	return true;
 }
 
 TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
+	GameTile * tileData = NULL;
+
 	//Check that the position is valid
 	for (int j = 0; j < world.size(); j++) {
 		if ((world[j])->tile_x == floor(pos.x / 256) && world[j]->tile_y == floor(pos.y / 256)) {
@@ -139,7 +136,7 @@ float VoxelSystem::GetPositionHeight(vec2 pos) {
 	//The height where there is no tiles
 	//right now causes the player to fall
 	//because that's fun?
-	tileData = NULL;
+	GameTile * tileData = NULL;
 	static const float floorHeight = -1000.0f;
 
 	for (int j = 0; j < world.size(); j++) {
@@ -218,7 +215,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 	for (int i = 0; i < tiles.size(); i++) {
 		current_tile = tiles[i];
 		//find the tile in our world
-		tileData = NULL;
+		GameTile * tileData = NULL;
 		for (int j = 0; j < world.size(); j++) {
 			if ((world[j])->tile_x == current_tile.tile_x && world[j]->tile_y == current_tile.tile_y) {
 				tileData = world[j];
@@ -294,7 +291,7 @@ void VoxelSystem::Paint(vec2 pos, int newMaterial) {
 //Deforms a region of voxels, punching a crater into the given position
 //all voxels removed are returned as positions
 vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
-
+	GameTile * tileData;
 	for (int j = 0; j < world.size(); j++) {
 		if ((world[j])->tile_x == floor(pos.x / 256) && world[j]->tile_y == floor(pos.y / 256)) {
 			tileData = world[j];
@@ -302,6 +299,8 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 		}
 	}
 	vector<vec4> removedVoxels;
+	//Modify pos to be relative to the tile
+	pos -= vec3((float)tileData->tile_x,(float)tileData->tile_y,0.0f);
 	//Build the intersection of this crater and the valid tile(s)
 	int fx = (int)(pos.x - size / 2.0);
 	int fy = (int)(pos.y - size / 2.0);
