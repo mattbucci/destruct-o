@@ -5,6 +5,7 @@
 #include "ShaderGroup.h"
 #include "ActorPlayer.h"
 #include "VoxEngine.h"
+#include "GLMesh.h"
 
 #include "Window.h"
 #include "Button.h"
@@ -87,6 +88,9 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	
 	// Enable the first person controller
 	FirstPerson->Enable(true);
+    
+    // Test load a mesh
+    GLMesh mesh("meshes/phoenix_ugv.md2");
 	
 	cout << "\t Finished base frame\n";
 	//testSystem = NULL;

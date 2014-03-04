@@ -14,6 +14,7 @@
 #include <map>
 #include <list>
 #include <string>
+#include <array>
 
 //Other utilities
 #include <algorithm>
