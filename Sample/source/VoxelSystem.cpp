@@ -11,11 +11,18 @@
 #include "VoxelDrawSystem.h"
 #include "InstancedVoxelRenderSystem.h"
 #include "BasicVoxelRenderSystem.h"
+#include <sstream>
+
+static const int tile_width = 256;
+static const int tile_height = 256;
 
 VoxelSystem::VoxelSystem() {
 	//No tile data loaded
 	tileData = NULL;
-
+     //Init Terrain Generator
+    generator = new TerrainGen();
+    generator->setTileSize(tile_width, tile_height);
+    
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
 
 	//Load the tile textures
@@ -46,37 +53,63 @@ VoxelSystem::~VoxelSystem() {
 
 //Attempt to load a tile from disc
 bool VoxelSystem::LoadWorld(string saveName) {
-	//First load the tile map
-	tileData = GameTile::LoadTileFromDisk(saveName);
-	if (tileData == NULL)
-		return false;
+    if(0) {
+        
+    }
+    else {
+        //todo, set seed
+        GenWorld(128);
+        
+    }
 
 	return true;
 }
 
-bool VoxelSystem::GenWorld() {
-	for (int i = 0; i < 5; i++) {
-		//Init Terrain Generator
-		TerrainGen t = TerrainGen();
-		int wid = 256; int hei = 256;
-		t.setTileSize(wid, hei);
+bool VoxelSystem::LoadTile(int seed,int x, int y) {
+    stringstream s;
+    s << "saves/" << seed << "-" << x << "-" << y << ".txt";
+    tileData = GameTile::LoadTileFromDisk(s.str());
+    
+    if(tileData!=NULL) {
+        tileData->tile_x = x;
+        tileData->tile_y = y;
+        world.insert(tileData);
+        return true;
+        
+    }
+    else {
+        GenTile(x,y);
+        return false;
+    }
+    
+}
 
-		//Generate Terrain Tile
-		unsigned char* rawTile = t.generateTile(i, 0);
+bool VoxelSystem::GenTile(int x, int y) {
+    //Generate Terrain Tile
+    unsigned char* rawTile = generator->generateTile(x, y);
+    
+    //Create and Fill Terrain Data Vector
+    vector<unsigned char> tile;
+    tile.assign(rawTile, rawTile + (tile_width*tile_height * 4));
+    
+    //Free Terrain Tile Memory
+    free(rawTile);
+    
+    tileData = GameTile::LoadTileFromMemory(tile, tile_width, tile_height);
+    tileData->tile_x = x;
+    tileData->tile_y = y;
+    world.insert(tileData);
+    return true;
+}
 
-		//Create and Fill Terrain Data Vector
-		vector<unsigned char> tile;
-		tile.assign(rawTile, rawTile + (wid*hei * 4));
 
-		//Free Terrain Tile Memory
-		free(rawTile);
-
-		tileData = GameTile::LoadTileFromMemory(tile, wid, hei);
-		tileData->tile_x = i;
-		tileData->tile_y = 0;
-		world.insert(tileData);
+bool VoxelSystem::GenWorld(int seed) {
+    //todo, call set seed
+	for (int x = 0; x < 3; x++) {
+        for (int y = 0; y < 3; y++) {
+            LoadTile(seed,x,y);
+        }
 	}
-		//First load the tile map
 		if (tileData == NULL)
 			return false;
 
@@ -140,7 +173,6 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 			current_tile.y_start = y % 256;
 			current_tile.y_end = (min(y + 256 - y % 256, toy) - 1) % 256;
 			tiles.push_back(current_tile);
-			cout << "tile: " << current_tile.x_start << ":" << current_tile.x_end <<" , " << current_tile.y_start << ":" << current_tile.y_end << endl;
 
 		}
 	}
@@ -153,7 +185,6 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 		current_tile = tiles[i];
 		//find the tile in our world
 		tileData = NULL;
-		cout << current_tile.tile_x << " : " << current_tile.tile_y << endl;
 		for (int j = 0; j < world.size(); j++) {
 			if ((world[j])->tile_x == current_tile.tile_x && world[j]->tile_y == current_tile.tile_y) {
 				tileData = world[j];
@@ -164,7 +195,6 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 			shader->Model.PushMatrix();
 			shader->Model.Translate(vec3(current_tile.tile_x * 256, current_tile.tile_y * 256, 0));
 			shader->Model.Apply();
-			cout << "transform:" << current_tile.tile_x * 256 << ":" << current_tile.tile_y * 256 << endl;
 			TileCell * cells = tileData->Cells;
 
 
@@ -199,13 +229,17 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 	 
 }
 
+void VoxelSystem::Update(vec2 player_pos){
+    //check the players position, offload tiles, generate new tiles
+}
+
 //Get map width
 int VoxelSystem::GetWidth() {
-	return 1024; //tileData->Width*5;
+	return tile_width*3; //tileData->Width*5;
 }
 //Get map height
 int VoxelSystem::GetHeight() {
-	return 256; //tileData->Height;
+	return tile_height*3; //tileData->Height;
 }
 
 int VoxelSystem::GetLastVoxelCount() {

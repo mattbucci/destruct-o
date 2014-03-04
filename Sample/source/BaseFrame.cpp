@@ -117,7 +117,7 @@ void BaseFrame::Build() {
 	audio = new AudioPlayer(100);
 	audio->Subscribe(player);
 	//Load the sample tile
-	Voxels.GenWorld();
+	Voxels.LoadWorld("A Save File");
 	//if (!Voxels.LoadWorld("basic-h.png")) {
 	//	cout << "Failed to load voxel tile\n";
 	//}
