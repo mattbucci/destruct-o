@@ -102,12 +102,12 @@ bool VoxelSystem::GenTile(int x, int y) {
 
 bool VoxelSystem::GenWorld(int seed) {
 	//todo, call set seed
-	for (int x = 0; x < 3; x++) {
-		for (int y = 0; y < 3; y++) {
-			LoadTile(seed, x, y);
-		}
-	}
-
+	//for (int x = 0; x < 3; x++) {
+	//	for (int y = 0; y < 3; y++) {
+	//		LoadTile(seed, x, y);
+	//	}
+	//}
+	LoadTile(seed, 0, 0);
 	return true;
 }
 
@@ -266,8 +266,26 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 
 }
 
-void VoxelSystem::Update(vec2 player_pos){
+void VoxelSystem::Update(vec3 player_pos){
 	//check the players position, offload tiles, generate new tiles
+	for (int x_offset = -1; x_offset <= 1; x_offset++) {
+		for (int y_offset = -1; y_offset <= 1; y_offset++) {
+			//make sure tile exists
+			GameTile * tileData = NULL;
+			for (int j = 0; j < world.size(); j++) {
+				if ((world[j])->tile_x == floor(player_pos.x / 256) +x_offset && world[j]->tile_y == floor(player_pos.y / 256) + y_offset) {
+					tileData = world[j];
+					break;
+				}
+			}
+			if (tileData == NULL) {
+				cout << "Generating: " << floor(player_pos.x / 256) + x_offset << "," << floor(player_pos.y / 256) + y_offset;
+				GenTile(floor(player_pos.x / 256) + x_offset, floor(player_pos.y / 256) + y_offset);
+			}
+
+		}
+	}
+	
 }
 
 //Get map width

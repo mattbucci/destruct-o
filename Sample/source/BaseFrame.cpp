@@ -140,6 +140,8 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	demo->OnInput(inputEvents,player->GetPosition(),FirstPerson->GetLookVector());
 	demo->Update(now,delta);
 
+	Voxels.Update(player->GetPosition());
+
 	//Update physics/Particles
 	Physics.Update(delta,now);
 	Particles.UpdateCloud(now,delta);
