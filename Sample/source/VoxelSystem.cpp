@@ -127,7 +127,7 @@ TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
 
 	if ((pos.x < 0) || (pos.y < 0))
 		return NULL;
-
+	
 	if ((pos.x >= tileData->Width) || (pos.y >= tileData->Height))
 		return NULL;
 
@@ -306,7 +306,7 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 	}
 	vector<vec4> removedVoxels;
 	//Modify pos to be relative to the tile
-	pos -= vec3((float)tileData->tile_x,(float)tileData->tile_y,0.0f);
+	pos -= vec3((float)tileData->tile_x*tile_width,(float)tileData->tile_y*tile_height,0.0f);
 	//Build the intersection of this crater and the valid tile(s)
 	int fx = (int)(pos.x - size / 2.0);
 	int fy = (int)(pos.y - size / 2.0);
