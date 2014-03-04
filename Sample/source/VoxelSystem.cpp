@@ -121,11 +121,17 @@ TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
 			break;
 		}
 	}
+	//convert to relative position
+	pos.x = int(pos.x) % 256;
+	pos.y = int(pos.y) % 256;
+
 	if ((pos.x < 0) || (pos.y < 0))
 		return NULL;
 
 	if ((pos.x >= tileData->Width) || (pos.y >= tileData->Height))
 		return NULL;
+
+
 	return tileData->GetTileCell(pos);
 }
 
@@ -145,12 +151,11 @@ float VoxelSystem::GetPositionHeight(vec2 pos) {
 			break;
 		}
 	}
-
 	TileCell * cell = GetTileCellAt(pos);
 
 	if (tileData != NULL){
 
-
+		
 		if (cell == NULL)
 			return floorHeight;
 
@@ -162,6 +167,7 @@ float VoxelSystem::GetPositionHeight(vec2 pos) {
 		//so the visible floor is 1 above the corner they draw from
 		return cell->height + 1.0f;
 	}
+	return  floorHeight;
 }
 
 //Get the stack size of a specific position
