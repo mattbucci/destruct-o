@@ -229,9 +229,8 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
         //Now offset the region by the tile position so that it is relative to the tile
         rectStartX -= current_tile.tile_x * 256;
         rectStartY -= current_tile.tile_y * 256;
-        //End if offset by 1 more since it can't draw tile 256
-        rectEndX -= current_tile.tile_x * 256 + 1;
-        rectEndY -= current_tile.tile_y * 256 + 1;
+        rectEndX -= current_tile.tile_x * 256;
+        rectEndY -= current_tile.tile_y * 256;
 
 		
 		shader->Model.PushMatrix();
