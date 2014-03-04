@@ -102,12 +102,12 @@ bool VoxelSystem::GenTile(int x, int y) {
 
 bool VoxelSystem::GenWorld(int seed) {
 	//todo, call set seed
-	for (int x = 0; x < 3; x++) {
-		for (int y = 0; y < 3; y++) {
-			LoadTile(seed, x, y);
-		}
-	}
-
+	//for (int x = 0; x < 3; x++) {
+	//	for (int y = 0; y < 3; y++) {
+	//		LoadTile(seed, x, y);
+	//	}
+	//}
+	LoadTile(seed, 0, 0);
 	return true;
 }
 
@@ -124,6 +124,10 @@ TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
 	//convert to relative position
 	pos.x = int(pos.x) % 256;
 	pos.y = int(pos.y) % 256;
+
+	//account for negative position
+	if (pos.x < 0) pos.x = 255 + pos.x;
+	if (pos.y < 0) pos.y = 255 + pos.y;
 
 	if ((pos.x < 0) || (pos.y < 0))
 		return NULL;
@@ -209,6 +213,13 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 			current_tile.x_end = (min(x + 256 - x % 256, tox) - 1) % 256;
 			current_tile.y_start = y % 256;
 			current_tile.y_end = (min(y + 256 - y % 256, toy) - 1) % 256;
+
+			//account for negatives
+			if (current_tile.x_start < 0) current_tile.x_start = 255 + current_tile.x_start;
+			if (current_tile.x_end < 0)  current_tile.x_end = 255 + current_tile.x_end;
+			if (current_tile.y_start < 0)  current_tile.y_start = 255 + current_tile.y_start;
+			if (current_tile.y_end < 0)  current_tile.y_end = 255 + current_tile.y_end;
+
 			tiles.push_back(current_tile);
 
 		}
@@ -266,17 +277,35 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 
 }
 
-void VoxelSystem::Update(vec2 player_pos){
+void VoxelSystem::Update(vec3 player_pos){
 	//check the players position, offload tiles, generate new tiles
+	for (int x_offset = -1; x_offset <= 1; x_offset++) {
+		for (int y_offset = -1; y_offset <= 1; y_offset++) {
+			//make sure tile exists
+			GameTile * tileData = NULL;
+			for (int j = 0; j < world.size(); j++) {
+				if ((world[j])->tile_x == floor(player_pos.x / 256) +x_offset && world[j]->tile_y == floor(player_pos.y / 256) + y_offset) {
+					tileData = world[j];
+					break;
+				}
+			}
+			if (tileData == NULL) {
+				cout << "Generating: " << floor(player_pos.x / 256) + x_offset << "," << floor(player_pos.y / 256) + y_offset;
+				GenTile(floor(player_pos.x / 256) + x_offset, floor(player_pos.y / 256) + y_offset);
+			}
+
+		}
+	}
+	
 }
 
 //Get map width
 int VoxelSystem::GetWidth() {
-	return tile_width * 3; //tileData->Width*5;
+	return tile_width * 255; //tileData->Width*5;
 }
 //Get map height
 int VoxelSystem::GetHeight() {
-	return tile_height * 3; //tileData->Height;
+	return tile_height * 255; //tileData->Height;
 }
 
 int VoxelSystem::GetLastVoxelCount() {
@@ -319,6 +348,13 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 			current_tile.x_end = (min(x + 256 - x % 256, tox) - 1) % 256;
 			current_tile.y_start = y % 256;
 			current_tile.y_end = (min(y + 256 - y % 256, toy) - 1) % 256;
+
+			//account for negatives
+			if (current_tile.x_start < 0) current_tile.x_start = 255 + current_tile.x_start;
+			if (current_tile.x_end < 0)  current_tile.x_end = 255 + current_tile.x_end;
+			if (current_tile.y_start < 0)  current_tile.y_start = 255 + current_tile.y_start;
+			if (current_tile.y_end < 0) current_tile.y_end = 255 + current_tile.y_end;
+
 			tiles.push_back(current_tile);
 
 		}

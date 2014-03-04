@@ -68,7 +68,7 @@ public:
 	//atx,aty and tox, toy define two corners of the rectangle
 	//of voxels which will be rendered
 	void Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int tox, int toy);
-	void Update(vec2 player_pos);
+	void Update(vec3 player_pos);
 	//Get map width
 	int GetWidth();
 	//Get map height

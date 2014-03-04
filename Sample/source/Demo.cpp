@@ -152,6 +152,28 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				}
 					
 			}
+			else if (eve.Key == 'x') {
+				const float initialEnergy = 50.0f;
+				const float initialDisplacement = 2.0f;
+				vec3 hit, norm;
+				if (game->Physics.Raytrace(playerPos + vec3(0, 0, 2.5), playerFacing, hit, norm)) {
+
+					vector<vec4> displacedVoxels = game->Voxels.Crater(hit, 5);
+					for (vec4 & voxRemoved : displacedVoxels) {
+						vec3 vox = vec3(voxRemoved);
+						//add a bit of random noise
+						vox += vec3(Utilities::random(-initialDisplacement, initialDisplacement), Utilities::random(-initialDisplacement, initialDisplacement), Utilities::random(-initialDisplacement, initialDisplacement));
+						//Build the voxel
+						PhysicsVoxel * ph = game->Physics.BuildVoxel(vox);
+						//Set the material
+						ph->MaterialId = (int)voxRemoved.w;
+						//and some energy (velocity)
+						ph->Velocity = vec3(Utilities::random(-initialEnergy, initialEnergy), Utilities::random(-initialEnergy, initialEnergy), Utilities::random(-initialEnergy, initialEnergy));
+					}
+
+				}
+
+			}
 			else if (eve.Key == 'r') {
 				//Spawn a particle system
 				vec3 cubePos = playerPos+playerFacing*5.0f;
