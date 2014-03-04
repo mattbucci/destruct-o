@@ -187,92 +187,86 @@ int VoxelSystem::GetPositionStackSize(vec2 pos) {
 	return cell->stackHeight + 1;
 }
 
+//intersects two ranges
+//places the output into rangeA
+void intersect1D(int & rangeAStart, int & rangeAEnd, int rangeBStart, int rangeBEnd) {
+    //No intersection
+    if ((rangeAStart > rangeBEnd) || (rangeAEnd < rangeBStart)) {
+        rangeAEnd = rangeAStart;
+        return;
+    }
+    //Find the range intersection
+    rangeAStart = max(rangeAStart, rangeBStart);
+    rangeAEnd = min(rangeAEnd, rangeBEnd);
+}
+
 //Draw the voxels in a region
 void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int tox, int toy) {
-	_ASSERTE(atx >= 0);
-	_ASSERTE(aty >= 0);
 	//_ASSERTE(tileData != NULL);
 
 	//Enable voxel texture
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureId);
 
-	vector<tile_renderinfo> tiles;
-	tile_renderinfo current_tile;
-	//cout << "Player Position: " << atx << " : " << tox << "," << aty << " : " << toy << endl;
-
-	//break the view into relevant rectangles
-	for (int y = aty; y <= toy; y += 256 - y % 256) {
-		//start at the smallest value and get tile aligned asap
-		for (int x = atx; x <= tox; x += 256 - x % 256) {
-			//calculate offsets for this rectangle
-			current_tile.tile_x = floor(x / 256);
-			current_tile.tile_y = floor(y / 256);
-
-			current_tile.x_start = x % 256;
-			current_tile.x_end = (min(x + 256 - x % 256, tox) - 1) % 256;
-			current_tile.y_start = y % 256;
-			current_tile.y_end = (min(y + 256 - y % 256, toy) - 1) % 256;
-
-			//account for negatives
-			if (current_tile.x_start < 0) current_tile.x_start = 255 + current_tile.x_start;
-			if (current_tile.x_end < 0)  current_tile.x_end = 255 + current_tile.x_end;
-			if (current_tile.y_start < 0)  current_tile.y_start = 255 + current_tile.y_start;
-			if (current_tile.y_end < 0)  current_tile.y_end = 255 + current_tile.y_end;
-
-			tiles.push_back(current_tile);
-
-		}
-	}
 	voxelCount = 0;
 
 
 	//render each viewable rectangle
 
-	for (int i = 0; i < tiles.size(); i++) {
-		current_tile = tiles[i];
-		//find the tile in our world
-		GameTile * tileData = NULL;
-		for (int j = 0; j < world.size(); j++) {
-			if ((world[j])->tile_x == current_tile.tile_x && world[j]->tile_y == current_tile.tile_y) {
-				tileData = world[j];
-				break;
-			}
-		}
-		if (tileData != NULL){
-			shader->Model.PushMatrix();
-			shader->Model.Translate(vec3(current_tile.tile_x * 256, current_tile.tile_y * 256, 0));
-			shader->Model.Apply();
-			TileCell * cells = tileData->Cells;
+	for (int i = 0; i < world.size(); i++) {
+        GameTile & current_tile = *world[i];
+		int rectStartX, rectStartY, rectEndX, rectEndY;
+		//Get the region this tile is in
+        rectStartX = current_tile.tile_x * 256;
+        rectStartY = current_tile.tile_y * 256;
+        rectEndX = rectStartX + 255;
+        rectEndY = rectStartY + 255;
+        //Intersect it with the region you're supposed to be drawing
+        intersect1D(rectStartX, rectEndX, atx, tox);
+        intersect1D(rectStartY, rectEndY, aty, toy);
 
 
-			renderer->startDraw(shader);
-			for (int y = current_tile.y_start; y <= current_tile.y_end; y++) {
-				//It is important for x to be the inner loop
-				//so consecutive operations access contiguous memory
-				//(though performance will probably be poor anyways)
-				for (int x = current_tile.x_start; x <= current_tile.x_end; x++) {
-					//Lookup cell to render
-					TileCell & cell = cells[tileData->Width*y + x];
+        //Now offset the region by the tile position so that it is relative to the tile
+        rectStartX -= current_tile.tile_x * 256;
+        rectStartY -= current_tile.tile_y * 256;
+        //End if offset by 1 more since it can't draw tile 256
+        rectEndX -= current_tile.tile_x * 256 + 1;
+        rectEndY -= current_tile.tile_y * 256 + 1;
 
-					//Get position
-					vec3 pos = vec3(x, y, cell.height);
-					int8_t stack = (int8_t)cell.stackHeight;
+		
+		shader->Model.PushMatrix();
+		shader->Model.Translate(vec3(current_tile.tile_x * 256, current_tile.tile_y * 256, 0));
+		shader->Model.Apply();
+        TileCell * cells = current_tile.Cells;
 
-					voxelCount += stack + 1;
 
-					//For now use raw tile % 16 to map all tiles to be within the 16 valid materials
-					//Note: This is a really bad place for a virtual function call
-					//maybe swap this out in the future
-					while (stack-- >= 0) {
-						renderer->pushVoxel(shader, pos, cell.materialId % 16);
-						pos.z--;
-					}
+		renderer->startDraw(shader);
+		for (int y = rectStartY; y <= rectEndY; y++) {
+			//It is important for x to be the inner loop
+			//so consecutive operations access contiguous memory
+			//(though performance will probably be poor anyways)
+			for (int x = rectStartX; x <= rectEndX; x++) {
+				//Lookup cell to render
+                TileCell & cell = cells[current_tile.Width*y + x];
+
+				//Get position
+				vec3 pos = vec3(x, y, cell.height);
+				int8_t stack = (int8_t)cell.stackHeight;
+
+				voxelCount += stack + 1;
+
+				//For now use raw tile % 16 to map all tiles to be within the 16 valid materials
+				//Note: This is a really bad place for a virtual function call
+				//maybe swap this out in the future
+				while (stack-- >= 0) {
+					renderer->pushVoxel(shader, pos, cell.materialId % 16);
+					pos.z--;
 				}
 			}
-			renderer->finishDraw(shader);
-			shader->Model.PopMatrix();
+			
 		}
+		renderer->finishDraw(shader);
+		shader->Model.PopMatrix();
 	}
 
 }
