@@ -186,7 +186,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 
 	vector<tile_renderinfo> tiles;
 	tile_renderinfo current_tile;
-	cout << "Player Position: " << atx << " : " << tox << "," << aty << " : " << toy << endl;
+	//cout << "Player Position: " << atx << " : " << tox << "," << aty << " : " << toy << endl;
 
 	//break the view into relevant rectangles
 	for (int y = aty; y <= toy; y += 256 - y % 256) {
