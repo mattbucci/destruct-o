@@ -19,10 +19,10 @@ static const int tile_height = 256;
 VoxelSystem::VoxelSystem() {
 	//No tile data loaded
 	tileData = NULL;
-     //Init Terrain Generator
-    generator = new TerrainGen();
-    generator->setTileSize(tile_width, tile_height);
-    
+	//Init Terrain Generator
+	generator = new TerrainGen();
+	generator->setTileSize(tile_width, tile_height);
+
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
 
 	//Load the tile textures
@@ -31,20 +31,20 @@ VoxelSystem::VoxelSystem() {
 
 	//A smart system would have multiple res tiles and would automatically select
 	//one appropriate for the system its running on
-	lodepng::decode(image,textureWidth,textureHeight,"terrain/tiles-lowres.png");
+	lodepng::decode(image, textureWidth, textureHeight, "terrain/tiles-lowres.png");
 
 	//I should have moved the png->texture into a utility library
 	//later...
-	glGenTextures( 1, &textureId );
+	glGenTextures(1, &textureId);
 	glBindTexture(GL_TEXTURE_2D, textureId);
 
 
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, textureWidth,
-				textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-				&image[0] );
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth,
+		textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+		&image[0]);
 
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
 }
 VoxelSystem::~VoxelSystem() {
 	delete renderer;
@@ -53,67 +53,67 @@ VoxelSystem::~VoxelSystem() {
 
 //Attempt to load a tile from disc
 bool VoxelSystem::LoadWorld(string saveName) {
-    if(0) {
-        
-    }
-    else {
-        //todo, set seed
-        GenWorld(128);
-        
-    }
+	if (0) {
+
+	}
+	else {
+		//todo, set seed
+		GenWorld(128);
+
+	}
 
 	return true;
 }
 
-bool VoxelSystem::LoadTile(int seed,int x, int y) {
-    stringstream s;
-    s << "saves/" << seed << "-" << x << "-" << y << ".txt";
-    tileData = GameTile::LoadTileFromDisk(s.str());
-    
-    if(tileData!=NULL) {
-        tileData->tile_x = x;
-        tileData->tile_y = y;
-        world.insert(tileData);
-        return true;
-        
-    }
-    else {
-        GenTile(x,y);
-        return false;
-    }
-    
+bool VoxelSystem::LoadTile(int seed, int x, int y) {
+	stringstream s;
+	s << "saves/" << seed << "-" << x << "-" << y << ".txt";
+	tileData = GameTile::LoadTileFromDisk(s.str());
+
+	if (tileData != NULL) {
+		tileData->tile_x = x;
+		tileData->tile_y = y;
+		world.insert(tileData);
+		return true;
+
+	}
+	else {
+		GenTile(x, y);
+		return false;
+	}
+
 }
 
 bool VoxelSystem::GenTile(int x, int y) {
-    //Generate Terrain Tile
-    unsigned char* rawTile = generator->generateTile(x, y);
-    
-    //Create and Fill Terrain Data Vector
-    vector<unsigned char> tile;
-    tile.assign(rawTile, rawTile + (tile_width*tile_height * 4));
-    
-    //Free Terrain Tile Memory
-    free(rawTile);
-    
-    tileData = GameTile::LoadTileFromMemory(tile, tile_width, tile_height);
-    tileData->tile_x = x;
-    tileData->tile_y = y;
-    world.insert(tileData);
-    return true;
+	//Generate Terrain Tile
+	unsigned char* rawTile = generator->generateTile(x, y);
+
+	//Create and Fill Terrain Data Vector
+	vector<unsigned char> tile;
+	tile.assign(rawTile, rawTile + (tile_width*tile_height * 4));
+
+	//Free Terrain Tile Memory
+	free(rawTile);
+
+	tileData = GameTile::LoadTileFromMemory(tile, tile_width, tile_height);
+	tileData->tile_x = x;
+	tileData->tile_y = y;
+	world.insert(tileData);
+	return true;
 }
 
 
 bool VoxelSystem::GenWorld(int seed) {
-    //todo, call set seed
+	//todo, call set seed
 	for (int x = 0; x < 3; x++) {
-        for (int y = 0; y < 3; y++) {
-            LoadTile(seed,x,y);
-        }
+		for (int y = 0; y < 3; y++) {
+			LoadTile(seed, x, y);
+		}
 	}
-		if (tileData == NULL)
-			return false;
+	if (tileData == NULL)
+		return false;
 
-		return true;
+	return true;
 }
 
 TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
@@ -136,25 +136,29 @@ float VoxelSystem::GetPositionHeight(vec2 pos) {
 	tileData = NULL;
 	static const float floorHeight = -1000.0f;
 
-	TileCell * cell = GetTileCellAt(pos);
+	for (int j = 0; j < world.size(); j++) {
 		if ((world[j])->tile_x == floor(pos.x / 256) && world[j]->tile_y == floor(pos.y / 256)) {
 			tileData = world[j];
 			break;
 		}
 	}
-	if (tileData != NULL){
-		
 
-	if (cell == NULL)
-		//	return floorHeight;
+	TileCell * cell = GetTileCellAt(pos);
+
+	if (tileData != NULL){
+
+
+		if (cell == NULL)
+			return floorHeight;
 
 		//Player is within the set of valid tiles
 
 
-	//Now get the height of that tile
-	//we add 1 because voxels have 1 height
-	//so the visible floor is 1 above the corner they draw from
-	return cell->height + 1.0f;
+		//Now get the height of that tile
+		//we add 1 because voxels have 1 height
+		//so the visible floor is 1 above the corner they draw from
+		return cell->height + 1.0f;
+	}
 }
 
 //Get the stack size of a specific position
@@ -182,7 +186,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 
 	vector<tile_renderinfo> tiles;
 	tile_renderinfo current_tile;
-	cout << "Player Position: "<< atx << " : " << tox << "," << aty << " : " << toy <<  endl;
+	cout << "Player Position: " << atx << " : " << tox << "," << aty << " : " << toy << endl;
 
 	//break the view into relevant rectangles
 	for (int y = aty; y <= toy; y += 256 - y % 256) {
@@ -193,7 +197,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 			current_tile.tile_y = floor(y / 256);
 
 			current_tile.x_start = x % 256;
-			current_tile.x_end = (min(x + 256 - x % 256, tox)-1) % 256;
+			current_tile.x_end = (min(x + 256 - x % 256, tox) - 1) % 256;
 			current_tile.y_start = y % 256;
 			current_tile.y_end = (min(y + 256 - y % 256, toy) - 1) % 256;
 			tiles.push_back(current_tile);
@@ -202,7 +206,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 	}
 	voxelCount = 0;
 
-	
+
 	//render each viewable rectangle
 
 	for (int i = 0; i < tiles.size(); i++) {
@@ -250,20 +254,20 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 			shader->Model.PopMatrix();
 		}
 	}
-	 
+
 }
 
 void VoxelSystem::Update(vec2 player_pos){
-    //check the players position, offload tiles, generate new tiles
+	//check the players position, offload tiles, generate new tiles
 }
 
 //Get map width
 int VoxelSystem::GetWidth() {
-	return tile_width*3; //tileData->Width*5;
+	return tile_width * 3; //tileData->Width*5;
 }
 //Get map height
 int VoxelSystem::GetHeight() {
-	return tile_height*3; //tileData->Height;
+	return tile_height * 3; //tileData->Height;
 }
 
 int VoxelSystem::GetLastVoxelCount() {
@@ -286,12 +290,12 @@ void VoxelSystem::Paint(vec2 pos, int newMaterial) {
 vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 	vector<vec4> removedVoxels;
 	//Build the intersection of this crater and the valid tile(s)
-	int fx = (int)(pos.x-size/2.0);
-	int fy = (int)(pos.y-size/2.0);
-	int tox = (int)(pos.x+size/2.0);
-	int toy = (int)(pos.y+size/2.0);
+	int fx = (int)(pos.x - size / 2.0);
+	int fy = (int)(pos.y - size / 2.0);
+	int tox = (int)(pos.x + size / 2.0);
+	int toy = (int)(pos.y + size / 2.0);
 	//Apply this region to the valid tile
-	tileData->Crater(fx,fy,tox,toy,(int)(pos.z-size/2.0),removedVoxels);
+	tileData->Crater(fx, fy, tox, toy, (int)(pos.z - size / 2.0), removedVoxels);
 
 	//Return all removed voxels
 	return removedVoxels;
