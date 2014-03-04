@@ -34,4 +34,6 @@ public:
 	TileCell * Cells;
 	int Width;
 	int Height;
+	int tile_x;
+	int tile_y;
 };
