@@ -295,6 +295,12 @@ void VoxelSystem::Paint(vec2 pos, int newMaterial) {
 //all voxels removed are returned as positions
 vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 
+	for (int j = 0; j < world.size(); j++) {
+		if ((world[j])->tile_x == floor(pos.x / 256) && world[j]->tile_y == floor(pos.y / 256)) {
+			tileData = world[j];
+			break;
+		}
+	}
 	vector<vec4> removedVoxels;
 	//Build the intersection of this crater and the valid tile(s)
 	int fx = (int)(pos.x - size / 2.0);
