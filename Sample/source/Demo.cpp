@@ -136,14 +136,15 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				vec3 hit, norm;
 				if (game->Physics.Raytrace(playerPos+vec3(0,0,2.5),playerFacing,hit,norm)) {
 
-					vector<vec3> displacedVoxels = game->Voxels.Crater(hit,5);
-					for (vec3 & vox : displacedVoxels) {
-						//Center the voxels around their center of mass to become physics voxels
-						vox += vec3(.5f,.5f,.5f);
+					vector<vec4> displacedVoxels = game->Voxels.Crater(hit,5);
+					for (vec4 & voxRemoved : displacedVoxels) {
+						vec3 vox = vec3(voxRemoved);
 						//add a bit of random noise
 						vox += vec3(Utilities::random(-initialDisplacement,initialDisplacement),Utilities::random(-initialDisplacement,initialDisplacement),Utilities::random(-initialDisplacement,initialDisplacement));
 						//Build the voxel
 						PhysicsVoxel * ph = game->Physics.BuildVoxel(vox);
+						//Set the material
+						ph->MaterialId = (int)voxRemoved.w;
 						//and some energy (velocity)
 						ph->Velocity = vec3(Utilities::random(-initialEnergy,initialEnergy),Utilities::random(-initialEnergy,initialEnergy),Utilities::random(-initialEnergy,initialEnergy));
 					}

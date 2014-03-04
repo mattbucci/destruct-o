@@ -22,10 +22,6 @@ class PhysicsSystem {
 	//The voxel draw renderer
 	VoxelDrawSystem * renderer;
 
-	//Physics Voxel
-	void Register(PhysicsVoxel * toRegister);
-	void Unregister(PhysicsVoxel * toUnregister);
-
 	//Once an intersection is found, calculate this information about it
 	struct Intersection {
 		//The normal of the plane being intersected
@@ -53,7 +49,7 @@ public:
 
 	//Constructs a voxel at the given coordinate
 	//returns the voxel
-	PhysicsVoxel * BuildVoxel(vec3 voxelCoordinate);
+	PhysicsVoxel * BuildVoxel(vec3 voxelCoordinate, double lifeTime=-1.0);
 
 	//Update the physics voxels, called by base frame
 	void Update(double delta, double now);

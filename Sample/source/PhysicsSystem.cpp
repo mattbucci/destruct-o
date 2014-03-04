@@ -6,6 +6,7 @@
 #include "PhysicsVoxel.h"
 #include "VoxelSystem.h"
 #include "PhysicsTriangle.h"
+#include "VoxEngine.h"
 
 PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	//Build a voxel renderer
@@ -58,20 +59,12 @@ PhysicsSystem::Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxe
 	return data;
 }
 
-//Should be called by Actor.cpp only
-//no one else call these
-void PhysicsSystem::Register(PhysicsVoxel * toRegister) {
-	allVoxels.insert(toRegister);
-}
-void PhysicsSystem::Unregister(PhysicsVoxel * toUnregister) {
-	allVoxels.erase(toUnregister);
-}
-
-PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate) {
+PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate,double lifeTime) {
 	PhysicsVoxel * voxel = new PhysicsVoxel();
 	voxel->Position = voxelCoordinate + vec3(.5,.5,.5);
-	Register(voxel);
-	//cout << "Physics Voxel Count: " << allVoxels.size() << "\n";
+	voxel->MaterialId = 1;
+	voxel->DeathAt = lifeTime + VoxEngine::GetGameSimTime();
+	allVoxels.insert(voxel);
 	return voxel;
 }
 float removeInDirection(vec3 & force, vec3 direction) {
@@ -87,12 +80,19 @@ float removeInDirection(vec3 & force, vec3 direction) {
 void PhysicsSystem::Update(double delta, double now) {
 
 
-	//Set all voxels to not colliding
-	for (unsigned int i = 0; i < allVoxels.size(); i++) {
-		allVoxels[i]->colliding = false;
-		allVoxels[i]->Acceleration = vec3();
+	//Set all voxels to have no forces
+	//And check if any voxels should expire
+	for (auto it = allVoxels.begin(); it != allVoxels.end();){
+		PhysicsVoxel * voxel = *it;
+		voxel->Acceleration = vec3();
+		if ((voxel->DeathAt > 0) && (voxel->DeathAt < now)) {
+			//disintegrate voxel
+			//remove voxel
+			it = allVoxels.erase(it);
+		}
+		else
+			it++;
 	}
-
 
 	//Now do the O(n^2) which checks for collisions
 	for (unsigned int a = 0; a < allVoxels.size(); a++) {
@@ -101,8 +101,6 @@ void PhysicsSystem::Update(double delta, double now) {
 			if (allVoxels[a]->AabColiding(allVoxels[b]->Position)) {
 				Intersection intr = CalculateIntersection(allVoxels[a]->Position,allVoxels[b]->Position);
 
-
-				allVoxels[a]->colliding = allVoxels[b]->colliding = true;
 				float depth = intr.Depth;
 				float force = 500*depth;
 
@@ -358,7 +356,7 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 	//Draw all the voxels
 	for (unsigned int i = 0; i < allVoxels.size(); i++) {
 		//Draw the voxel
-		renderer->pushVoxel(shader,allVoxels[i]->Position,1);
+		renderer->pushVoxel(shader,allVoxels[i]->Position,allVoxels[i]->MaterialId);
 	}
 
 	renderer->finishDraw(shader);

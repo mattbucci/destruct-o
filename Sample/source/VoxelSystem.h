@@ -44,7 +44,7 @@ public:
 
 	//Deforms a region of voxels, punching a crater into the given position
 	//all voxels removed are returned as positions
-	vector<vec3> Crater(vec3 pos, float size);
+	vector<vec4> Crater(vec3 pos, float size);
 
 	//Draw the voxels in a region
 	//atx,aty and tox, toy define two corners of the rectangle

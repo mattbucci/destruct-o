@@ -192,8 +192,8 @@ void VoxelSystem::Paint(vec2 pos, int newMaterial) {
 
 //Deforms a region of voxels, punching a crater into the given position
 //all voxels removed are returned as positions
-vector<vec3> VoxelSystem::Crater(vec3 pos, float size) {
-	vector<vec3> removedVoxels;
+vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
+	vector<vec4> removedVoxels;
 	//Build the intersection of this crater and the valid tile(s)
 	int fx = (int)(pos.x-size/2.0);
 	int fy = (int)(pos.y-size/2.0);

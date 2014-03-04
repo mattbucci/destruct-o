@@ -84,7 +84,7 @@ TileCell * GameTile::GetTile(vec2 pos) {
 
 //Carves a square crater from fx,fy to tox,toy to depth "depth" and adds all removed voxels
 //to the removedVoxels value
-void GameTile::Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vector<vec3> & removedVoxels) {
+void GameTile::Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vector<vec4> & removedVoxels) {
 	_ASSERTE((fx >= 0) && (fy >= 0));
 	_ASSERTE((tox < (float)Width) && (toy < (float)Height));	
 	_ASSERTE((fx <= tox) && (fy <= toy));
@@ -93,14 +93,15 @@ void GameTile::Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vecto
 
 	for (int x = fx; x <= tox; x++) {
 		for (int y = fy; y <= toy; y++) {
-			int height = Cells[y*Width+x].height;
+			TileCell& cell = Cells[y*Width+x];
+			int height = cell.height;
 			int heightDiff = height-craterBottomZ;
 			//Skip where the terrain does not intersect the crater
 			if (heightDiff < 0)
 				break;
 			//Keep track of all removed voxels
 			while (heightDiff >= 0) {
-				removedVoxels.push_back(vec3(x,y,height));
+				removedVoxels.push_back(vec4(x,y,height,cell.materialId));
 				heightDiff--;
 				height--;
 			}
