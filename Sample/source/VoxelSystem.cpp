@@ -159,6 +159,9 @@ float VoxelSystem::GetPositionHeight(vec2 pos) {
 		//so the visible floor is 1 above the corner they draw from
 		return cell->height + 1.0f;
 	}
+    
+    _ASSERTE(false);
+    return 0.0f;
 }
 
 //Get the stack size of a specific position
