@@ -78,7 +78,7 @@ TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
 
 	if ((pos.x >= tileData->Width) || (pos.y >= tileData->Height))
 		return NULL;
-	return tileData->GetTile(pos);
+	return tileData->GetTileCell(pos);
 }
 
 //When the voxel system calculates position height
@@ -176,18 +176,14 @@ int VoxelSystem::GetLastVoxelCount() {
 }
 
 void VoxelSystem::Paint(vec2 pos, int newMaterial) {
-	//Check that the region is in valid space
-	if ((pos.x < 0) || (pos.y < 0))
+	TileCell * cell = GetTileCellAt(pos);
+
+	if (cell == NULL)
 		return;
 
-	if ((pos.x >= tileData->Width) || (pos.y >= tileData->Height))
-		return;
-
-	int x = floor(pos.x);
-	int y = floor(pos.y);
-	//Determine which tile to paint
-	//then paint that one tile
-	tileData->Cells[tileData->Width*y+x].materialId = newMaterial;
+	//Player is within the set of valid tiles
+	//Paint the tile material
+	cell->materialId = newMaterial;
 }
 
 //Deforms a region of voxels, punching a crater into the given position

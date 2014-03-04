@@ -21,9 +21,9 @@ public:
 	//Save the tile to disk
 	void SaveTile(string saveName);
 
-	//Get the height of a position within this tile
+	//Get the height of a position within this tile (relative to this tile)
 	//don't call for positions outside of the tile
-	TileCell * GetTile(vec2 pos);
+	TileCell * GetTileCell(vec2 pos);
 
 	//Carves a square crater from fx,fy to tox,toy to depth "depth" and adds all removed voxels
 	//to the removedVoxels value, the first three values are xyz and the forth value

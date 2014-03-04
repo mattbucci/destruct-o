@@ -72,7 +72,7 @@ void GameTile::CalculateStackSizes(unsigned int rx, unsigned int ry, unsigned in
 	}
 }
 
-TileCell * GameTile::GetTile(vec2 pos) {
+TileCell * GameTile::GetTileCell(vec2 pos) {
 	_ASSERTE((pos.x >= 0) && (pos.y >= 0));
 	_ASSERTE((pos.x < (float)Width) && (pos.y < (float)Height));
 	//First lookup which tile the position is in
