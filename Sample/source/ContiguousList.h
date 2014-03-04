@@ -23,7 +23,7 @@ class ContiguousList {
 		//Allocate the new storage
 		T ** newData = new T*[newCapacity];
 		//Copy over the data
-		memcpy(newData,data,sizeof(T*)*listCapacity);
+		memcpy(newData,data,sizeof(T*)*newCapacity);
 		//Clean up the old storage
 		delete [] data;
 		//Remember only the new storage
@@ -137,7 +137,7 @@ public:
 		if (listSize*2.0+10 < listCapacity) {
 			//at this point looks like we could shrink some
 			//Determine the position of the old iterator
-			int pos = (int)(toErase.at-data)/sizeof(T*);
+			int pos = (int)(toErase.at-data);
 			resize((int)(listSize*1.25)+5);
 			//Build a new iterator at the same position but with the new data
 			return iterator(data+pos);
