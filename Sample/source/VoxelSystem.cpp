@@ -290,11 +290,11 @@ void VoxelSystem::Update(vec3 player_pos){
 
 //Get map width
 int VoxelSystem::GetWidth() {
-	return tile_width * 3; //tileData->Width*5;
+	return tile_width * 255; //tileData->Width*5;
 }
 //Get map height
 int VoxelSystem::GetHeight() {
-	return tile_height * 3; //tileData->Height;
+	return tile_height * 255; //tileData->Height;
 }
 
 int VoxelSystem::GetLastVoxelCount() {
