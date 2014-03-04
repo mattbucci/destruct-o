@@ -196,7 +196,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 			shader->Model.PopMatrix();
 		}
 	}
-	
+	 
 }
 
 //Get map width

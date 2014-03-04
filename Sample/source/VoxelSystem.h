@@ -25,7 +25,7 @@ class VoxelSystem {
 		float y_start;
 		float y_end;
 		int   tile_x;
-		int   tile_y;
+		int   tile_y; 
 	};
 public:
 	VoxelSystem();
