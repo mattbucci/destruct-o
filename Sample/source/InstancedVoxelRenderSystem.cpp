@@ -100,46 +100,40 @@ void InstancedVoxelRenderSystem::startDraw(GL3DProgram * shader) {
 	glBufferData ( GL_ARRAY_BUFFER, 36*sizeof(vec3), vertices, GL_STATIC_DRAW );
 	glEnableVertexAttribArray ( shader->AttributeVertex() );
 	glVertexAttribPointer ( shader->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, 0, 0 );
+	glVertexAttribDivisor(shader->AttributeVertex(),0);
 
 	glBindBuffer ( GL_ARRAY_BUFFER, textureBuffer );
 	glBufferData ( GL_ARRAY_BUFFER, 36*sizeof(vec2), textureCoordinates, GL_STATIC_DRAW );
 	glEnableVertexAttribArray ( shader->AttributeTexture() );
 	glVertexAttribPointer ( shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, 0, 0 );
+	glVertexAttribDivisor(shader->AttributeTexture(),0);
 	
 	glBindBuffer ( GL_ARRAY_BUFFER, normalBuffer );
 	glBufferData ( GL_ARRAY_BUFFER, 36*sizeof(vec3), normals, GL_STATIC_DRAW );
 	glEnableVertexAttribArray ( shader->AttributeNormal() );
 	glVertexAttribPointer ( shader->AttributeNormal(), 3, GL_FLOAT, GL_FALSE, 0, 0 );
+	glVertexAttribDivisor(shader->AttributeNormal(),0);
 	
 	//Allocate space for positions
 	glBindBuffer ( GL_ARRAY_BUFFER, positionBuffer );
 	glBufferData ( GL_ARRAY_BUFFER, INSTANCE_RENDER_SWEEP*sizeof(vec4), positions, GL_DYNAMIC_DRAW );
 	glEnableVertexAttribArray ( shader->AttributePosition() );
 	glVertexAttribPointer ( shader->AttributePosition(), 4, GL_FLOAT, GL_FALSE, 0, 0 );
+	glVertexAttribDivisor(shader->AttributePosition(),1);
 	
 	//Push indices (not necessary on windows... for some reason?
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,indexBuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,36,&indices[0],GL_STATIC_DRAW);
 }
 
-void InstancedVoxelRenderSystem::draw(GL3DProgram * shader) {
-
+void InstancedVoxelRenderSystem::draw(GL3DProgram * shader)
+{
 	glBindVertexArray ( vertexArray );
 
 	glBindBuffer ( GL_ARRAY_BUFFER, positionBuffer );
-	glBufferSubData ( GL_ARRAY_BUFFER, 0,INSTANCE_RENDER_SWEEP*sizeof(vec4), positions );
-	glEnableVertexAttribArray ( shader->AttributePosition() );
-	glVertexAttribPointer ( shader->AttributePosition(), 4, GL_FLOAT, GL_FALSE, 0, 0 );
-	
-	//The position is per-instance
-	//everything else is per-vertex
-	glVertexAttribDivisor(shader->AttributeNormal(),0);
-	glVertexAttribDivisor(shader->AttributePosition(),1);
-	glVertexAttribDivisor(shader->AttributeTexture(),0);
-	glVertexAttribDivisor(shader->AttributeVertex(),0);
+	glBufferSubData ( GL_ARRAY_BUFFER, 0,bufferedVoxels*sizeof(vec4), positions );
 	
 	glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0, bufferedVoxels);
-
 
 	//All buffered voxels now drawn
 	bufferedVoxels = 0;
