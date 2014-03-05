@@ -5,7 +5,6 @@
 #include "ShaderGroup.h"
 #include "ActorPlayer.h"
 #include "VoxEngine.h"
-#include "GLMesh.h"
 
 #include "Window.h"
 #include "Button.h"
@@ -90,13 +89,13 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	FirstPerson->Enable(true);
     
     // Test load a mesh
-    GLMesh mesh("meshes/phoenix_ugv.md2");
+    mesh = new GLMesh("meshes", "phoenix_ugv.md2", Textures);
 	
 	cout << "\t Finished base frame\n";
 	//testSystem = NULL;
 }
 BaseFrame::~BaseFrame() {
-
+    delete mesh;
 }
 
 void BaseFrame::OnFrameFocus() {
@@ -178,6 +177,8 @@ void BaseFrame::Draw(double width, double height) {
 	//Acid factor currently managed by the demo system
 	//this will be moved to a more powerful game logic system in the future
 	shaders3d->Acid.SetAcidFactor(demo->CurrentAcidStrength);
+    
+    
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
@@ -211,6 +212,35 @@ void BaseFrame::Draw(double width, double height) {
 
 	//The particle system will use a different shader entirely soon
 	Particles.Draw(shaders);
+    
+    // Setup the mesh shader
+    GL3DProgram * shadersMesh = (GL3DProgram *)shaders->GetShader("mesh");
+    shadersMesh->UseProgram();
+    shadersMesh->Acid.SetCurrentTime(VoxEngine::GetGameSimTime());
+    shadersMesh->Acid.SetAcidFactor(demo->CurrentAcidStrength);
+    shadersMesh->Fog.SetFogColor(vec4(.5, .5, .5, 1.0));
+    Camera.Draw(shadersMesh);
+    
+    // Draw the meshes
+    for(std::vector<glm::vec3>::iterator it = Meshes.begin(); it != Meshes.end(); ++it)
+    {
+        // Set the proper translation
+        shadersMesh->Model.PushMatrix();
+		shadersMesh->Model.Translate(*it);
+        shadersMesh->Model.PushMatrix();
+        shadersMesh->Model.Scale(0.1, 0.1, 0.1);
+        shadersMesh->Model.PushMatrix();
+        shadersMesh->Model.Rotate(90.0, 1, 0, 0);
+		shadersMesh->Model.Apply();
+        
+        // Draw the mesh
+        mesh->Draw(shadersMesh);
+        
+        // Remove this translation
+        shadersMesh->Model.PopMatrix();
+        shadersMesh->Model.PopMatrix();
+        shadersMesh->Model.PopMatrix();
+    }
 	
 	//Update the voxel debug counter
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();

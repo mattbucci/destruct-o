@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "GL3DProgram.h"
+#include "TextureCache.h"
 
 // Class to encapsulate draw data loaded from model files
 class GLMesh
@@ -49,6 +50,9 @@ protected:
         // Material id for this mesh
         GLuint material;
         
+        // Index count
+        unsigned int indexCount;
+        
         // Constructor to setup everything about this mesh
         Submesh();
         ~Submesh();
@@ -57,12 +61,18 @@ protected:
     // Submeshes supported by this
     std::vector<Submesh *> submeshes;
     
+    // Textures used by our mesh
+    std::vector<std::string> textures;
+    
     // Last program used to render (used to figure out if we've cached the vertex locations)
     GL3DProgram *priorShader;
     
+    // Active texture cache
+    TextureCache&          textureCache;
 public:
     // Load a model from a file
-    GLMesh(const std::string& filename);
+    GLMesh(const std::string& directory, const std::string& name, TextureCache& _textureCache);
+    ~GLMesh();
     
     // Draw this mesh
     void Draw(GL3DProgram *shader);

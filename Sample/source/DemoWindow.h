@@ -12,6 +12,7 @@ class DemoWindow : public Window {
 	Button makeFire;
 	Button increaseAcid;
 	Button decreaseAcid;
+    Button makeMesh;
 public:
 	DemoWindow(Demo * d);
 	~DemoWindow();

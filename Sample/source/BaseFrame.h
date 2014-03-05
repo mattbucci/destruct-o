@@ -6,6 +6,7 @@
 #include "GameCamera.h"
 #include "ViewDistanceCalc.h"
 #include "ActorSystem.h"
+#include "GLMesh.h"
 
 #include "FirstPersonModeMobile.h"
 #include "FirstPersonMode.h"
@@ -26,9 +27,10 @@ class BaseFrame : public GameSystem {
 	
 	GLint uniformModelView;
 	GLint uniformModelViewProjection;
-
+    
 	Demo * demo;
 	DemoWindow * demoWindow;
+    GLMesh     * mesh;
 	Notification * notification;
 public:
 	BaseFrame(ShaderGroup * shaders);
@@ -45,6 +47,7 @@ public:
 	FirstPersonMode *FirstPerson;
 	PhysicsSystem Physics;
 	ParticleCloud Particles;
+    std::vector<glm::vec3> Meshes;
 
 	//for notes on Build() see GameSystem::Build()
 	void Build() override;

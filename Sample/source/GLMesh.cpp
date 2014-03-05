@@ -23,8 +23,11 @@
 #include <assimp/vector3.h>
 
 // Default constructor (loads all submeshes from model file)
-GLMesh::GLMesh(const std::string& filename)
+GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCache& _textureCache) : textureCache(_textureCache)
 {
+    // Get the filename
+    std::string filename = directory + "/" + name;
+    
     // Create an importer object for asset importer
     Assimp::Importer Importer;
     
@@ -37,9 +40,6 @@ GLMesh::GLMesh(const std::string& filename)
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Error parsing '%s': '%s'\n", filename.c_str(), Importer.GetErrorString());
         throw std::exception();
     }
-    
-    // Allocate the necessary amount of submesh pointers
-    submeshes.resize(pScene->mNumMeshes);
     
     // Initialize all of the submeshes
     for(unsigned int i = 0; i < pScene->mNumMeshes; i++)
@@ -83,19 +83,99 @@ GLMesh::GLMesh(const std::string& filename)
         // Upload the index buffer to the GPU
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, submesh->indexBuffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indexBuffer.size(), indexBuffer.data(), GL_STATIC_DRAW);
+        submesh->indexCount = indexBuffer.size();
         
         // Add this submesh to the mesh
         submeshes.push_back(submesh);
     }
     
     // Load textures for this model
-    for(unsigned int i = 0; i < pScene->mNumMaterials; i++)
+    for (unsigned int i = 0 ; i < pScene->mNumMaterials ; i++)
     {
+        // Get a pointer to the material
+        const aiMaterial* material = pScene->mMaterials[i];
         
+        // If this maerial has textures associated with it
+        if (material->GetTextureCount(aiTextureType_DIFFUSE))
+        {
+            // Get the name of the texture
+            aiString Path;
+            
+            // Get the texture name
+            if (material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
+            {
+                // Calculate the path to the mesh
+                std::string path = directory + "/" + Path.data;
+                
+                // Cache this texture
+                textureCache.GetTexture(path);
+                
+                // Push back this path
+                textures.push_back(path);
+            }
+        }
     }
     
     // Success
     SDL_Log("Loaded mesh: \"%s\"\n", filename.c_str());
+}
+
+// Destroy this mesh
+GLMesh::~GLMesh()
+{
+    // Iterate through all the submeshes
+    for(std::vector<Submesh *>::iterator it = submeshes.begin(); it != submeshes.end(); ++it)
+    {
+        delete *it;
+    }
+}
+
+// Draw this mesh
+void GLMesh::Draw(GL3DProgram *shader)
+{
+    // Iterate through all the submeshes
+    for(std::vector<Submesh *>::iterator it = submeshes.begin(); it != submeshes.end(); ++it)
+    {
+#if !(defined __ANDROID__)
+        // Bind the vertex array object
+        glBindVertexArray((*it)->attributes);
+
+        // If the shader has changed, reload the vertex array object pointers
+        if(shader != priorShader)
+        {
+            // Enable the vertex array object attributes that we will be using
+            glEnableVertexAttribArray(shader->AttributeVertex());
+            glEnableVertexAttribArray(shader->AttributeNormal());
+            glEnableVertexAttribArray(shader->AttributeTexture());
+#endif
+            // Set the vertex attribute pointer
+            glBindBuffer(GL_ARRAY_BUFFER, (*it)->vertexBuffer);
+            glVertexAttribPointer(shader->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, 0, 0);
+            
+            // Set the normal attribute pointer
+            glBindBuffer(GL_ARRAY_BUFFER, (*it)->normalBuffer);
+            glVertexAttribPointer(shader->AttributeNormal(), 3, GL_FLOAT, GL_FALSE, 0, 0);
+            
+            // Set the texture coordinate attribute pointer
+            glBindBuffer(GL_ARRAY_BUFFER, (*it)->textureCoordinateBuffer);
+            glVertexAttribPointer(shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, 0);
+            
+            // Set the index buffer
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->indexBuffer);
+            
+#if !(defined __ANDROID__)
+        }
+#endif
+        // Bind the texture
+        glActiveTexture(GL_TEXTURE0);
+        textureCache.GetTexture(*(textures.begin() + (*it)->material))->Bind();
+        
+        // Draw this mesh
+        glDrawElements(GL_TRIANGLES, (*it)->indexCount, GL_UNSIGNED_INT, 0);
+    }
+    
+    // Store the new shader pointer
+    priorShader = shader;
 }
 
 // Initialization of the submesh object
