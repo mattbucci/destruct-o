@@ -219,6 +219,7 @@ void BaseFrame::Draw(double width, double height) {
     shadersMesh->Acid.SetCurrentTime(VoxEngine::GetGameSimTime());
     shadersMesh->Acid.SetAcidFactor(demo->CurrentAcidStrength);
     shadersMesh->Fog.SetFogColor(vec4(.5, .5, .5, 1.0));
+    shadersMesh->Fog.SetFogDistance(shaders3d->Fog.GetFogDistance());
     Camera.Draw(shadersMesh);
     
     // Draw the meshes

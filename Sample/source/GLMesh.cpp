@@ -158,7 +158,7 @@ void GLMesh::Draw(GL3DProgram *shader)
             
             // Set the texture coordinate attribute pointer
             glBindBuffer(GL_ARRAY_BUFFER, (*it)->textureCoordinateBuffer);
-            glVertexAttribPointer(shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, 0);
+            glVertexAttribPointer(shader->AttributeTexture(), 3, GL_FLOAT, GL_FALSE, 0, 0);
             
             // Set the index buffer
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->indexBuffer);
@@ -169,6 +169,10 @@ void GLMesh::Draw(GL3DProgram *shader)
         // Bind the texture
         glActiveTexture(GL_TEXTURE0);
         textureCache.GetTexture(*(textures.begin() + (*it)->material))->Bind();
+        
+        // Set the reflectivity
+        glm::vec2 specular = glm::vec2(1.0, 1.0);
+        glUniform2fv(glGetUniformLocation(shader->GetId(), "material_reflectivity"), 2, (const GLfloat *) &specular);
         
         // Draw this mesh
         glDrawElements(GL_TRIANGLES, (*it)->indexCount, GL_UNSIGNED_INT, 0);
