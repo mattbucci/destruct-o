@@ -127,7 +127,7 @@ void InstancedVoxelRenderSystem::draw(GL3DProgram * shader) {
 	glBindVertexArray ( vertexArray );
 
 	glBindBuffer ( GL_ARRAY_BUFFER, positionBuffer );
-	glBufferSubData ( GL_ARRAY_BUFFER, 0,INSTANCE_RENDER_SWEEP*sizeof(vec4), positions );
+	glBufferSubData ( GL_ARRAY_BUFFER, 0,bufferedVoxels*sizeof(vec4), positions );
 	glEnableVertexAttribArray ( shader->AttributePosition() );
 	glVertexAttribPointer ( shader->AttributePosition(), 4, GL_FLOAT, GL_FALSE, 0, 0 );
 	
