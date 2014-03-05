@@ -79,7 +79,7 @@ void RasterizedText::rasterize() {
 
 	//Convert the surface to a gltexture
 	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_2D);
 	if (textureId != 0)
 		glDeleteTextures(1,&textureId);
 	glGenTextures(1, &textureId);
@@ -136,7 +136,7 @@ void RasterizedText::Draw(GL2DProgram * shader) {
 	shader->SetColor(vec4(1,1,1,1));
 
 	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_2D);
 	//Bind texture
 	glBindTexture(GL_TEXTURE_2D,textureId);
 	
