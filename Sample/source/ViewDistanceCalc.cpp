@@ -82,8 +82,8 @@ pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 map
 	minPoint = glm::floor(minPoint);
 	maxPoint = glm::ceil(maxPoint);
 	//Limit points to valid ranges (vec2() creates a zero vector)
-	minPoint = glm::max(vec2(),minPoint);
-	maxPoint = glm::min(mapExtents-vec2(1,1),maxPoint);
+	//minPoint = glm::max(vec2(),minPoint);
+	//maxPoint = glm::min(mapExtents-vec2(1,1),maxPoint);
 	return pair<vec2,vec2>(minPoint,maxPoint);
 }
 

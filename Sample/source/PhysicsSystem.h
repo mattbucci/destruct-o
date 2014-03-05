@@ -18,6 +18,10 @@ class PhysicsSystem {
 	//designed for fast insert/removal
 	//stored objects are always contiguous
 	ContiguousList<PhysicsVoxel> allVoxels;
+	
+	//this contiguous list is a sub buffer used to severely decrease the AABB checks needed for physics voxels
+	ContiguousList<PhysicsVoxel> section;
+
 
 	//The voxel draw renderer
 	VoxelDrawSystem * renderer;

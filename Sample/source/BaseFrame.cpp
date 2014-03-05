@@ -138,13 +138,15 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	//The player is the only actor which reads input
 	//player->ReadInput(inputEvents);
 
+    Voxels.Update(player->GetPosition());
+
 	//Update actors
 	Actors.Update(delta,now);
 
 	demo->OnInput(inputEvents,player->GetPosition(),FirstPerson->GetLookVector());
 	demo->Update(now,delta);
 
-	Voxels.Update(player->GetPosition());
+	
 
 	//Update physics/Particles
 	Physics.Update(delta,now);

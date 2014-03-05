@@ -332,3 +332,26 @@ FILE(GLOB ControlFiles
 	GameCamera.cpp
 )
 source_group(GameControl FILES ${ControlFiles})
+
+
+##########################################################################################
+#start the unit test voxel group
+project (VoxEngineUnitTests)
+
+file(GLOB VoxEngineUnitTests_SRC
+	"../unittests/*.h"
+	"../unittests/*.cpp"
+	"ContiguousList.h"
+)
+
+
+# Unit Test Executable
+add_executable(VoxEngineUnitTests ${VoxEngineUnitTests_SRC})
+SET_TARGET_PROPERTIES(VoxEngineUnitTests PROPERTIES COMPILE_FLAGS -D__UNIT_TESTING__)
+
+
+#Add universal includes
+include_directories("../includes/json")
+
+#Reset the project to set the main project name (at least on windows)
+project (VoxEngine)

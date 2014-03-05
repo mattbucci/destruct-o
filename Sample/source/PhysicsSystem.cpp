@@ -12,7 +12,7 @@ PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	//Build a voxel renderer
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
 	voxelSystem = system;
-
+	section.autoredeuce(false);
 }
 PhysicsSystem::~PhysicsSystem() {
 	//cleanup all the voxels
@@ -91,49 +91,69 @@ void PhysicsSystem::Update(double delta, double now) {
 	for (auto it = allVoxels.begin(); it != allVoxels.end();){
 		PhysicsVoxel * voxel = *it;
 		voxel->Acceleration = vec3();
-		if ((voxel->DeathAt > 0) && (voxel->DeathAt < now)) {
+		/*if ((voxel->DeathAt > 0) && (voxel->DeathAt < now)) {
 			//disintegrate voxel
 			//remove voxel
 			it = allVoxels.erase(it);
 		}
-		else
+		else*/
 			it++;
 	}
+	allVoxels.sort([](PhysicsVoxel * a, PhysicsVoxel * b) -> bool {
+		return a->Position.x < b->Position.x;
+	});
+	//Clear the valid section
+	section.clear();
+	//Use space partitioning to only check within sections
+	for (unsigned int s = 0; s < allVoxels.size(); s++) {
+		float limit = allVoxels[s]->Position.x;
+		//Search for pieces that should no longer be in this section
+		for (auto it = section.begin(); it != section.end();) {
+			PhysicsVoxel * p = *it;
+			if (abs(p->Position.x - limit) > 1.0)
+				it = section.erase(it);
+			else
+				it++;
+		}
+		section.insert(allVoxels[s]);
+		if (section.size() > 50)
+			cout << "";
 
-	//Now do the O(n^2) which checks for collisions
-	for (unsigned int a = 0; a < allVoxels.size(); a++) {
-		for (unsigned int b = a+1; b < allVoxels.size(); b++) {
-			//Do AABB before you do full physics check... or things will be slow
-			if (allVoxels[a]->AabColiding(allVoxels[b]->Position)) {
-				Intersection intr = CalculateIntersection(allVoxels[a]->Position,allVoxels[b]->Position);
+		//Now do the O(n^2) which checks for collisions
+		for (unsigned int a = 0; a < section.size(); a++) {
+			for (unsigned int b = a+1; b < section.size(); b++) {
+				//Do AABB before you do full physics check... or things will be slow
+				if (section[a]->AabColiding(section[b]->Position)) {
+					Intersection intr = CalculateIntersection(section[a]->Position,section[b]->Position);
 
-				float depth = intr.Depth;
-				float force = 500*depth;
+					float depth = intr.Depth;
+					float force = 100*depth;
 
-				//No two voxels can occupy the same position, push one voxel a little out of the other
-				if (allVoxels[a]->Position == allVoxels[b]->Position)
-					allVoxels[b]->Position += vec3(.01,.01,.01);
+					//No two voxels can occupy the same position, push one voxel a little out of the other
+					if (section[a]->Position == section[b]->Position)
+						section[b]->Position += vec3(.01,.01,.01);
 
-				vec3 forceDirection = intr.Normal;
-				//one idea is to mix the ideal direction (face aligned) with 
-				//the natural direction (collision aligned)
-				//to add instabilities which cause blocks on the edge to fall over
+					vec3 forceDirection = intr.Normal;
+					//one idea is to mix the ideal direction (face aligned) with 
+					//the natural direction (collision aligned)
+					//to add instabilities which cause blocks on the edge to fall over
 
 
-				allVoxels[a]->Acceleration += forceDirection*force;
-				allVoxels[b]->Acceleration += -forceDirection*force; 
-				//Remove Velocity in that direction
-				float vel = 0.0f;
-				vel += removeInDirection(allVoxels[a]->Velocity,-forceDirection);
-				vel += removeInDirection(allVoxels[b]->Velocity,forceDirection);
-				//The removed Velocity will now be thirded (instead of average since some is lost)
-				//and added back in the opposite direction
-				vel /= 3.0f;
-				allVoxels[a]->Velocity += vel*forceDirection;
-				allVoxels[b]->Velocity += vel*-forceDirection;
-				//Apply enhanced friction while they're touching
-				allVoxels[a]->Velocity *= .99;
-				allVoxels[b]->Velocity *= .99;
+					section[a]->Acceleration += forceDirection*force;
+					section[b]->Acceleration += -forceDirection*force; 
+					//Remove Velocity in that direction
+					float vel = 0.0f;
+					vel += removeInDirection(section[a]->Velocity,-forceDirection);
+					vel += removeInDirection(section[b]->Velocity,forceDirection);
+					//The removed Velocity will now be thirded (instead of average since some is lost)
+					//and added back in the opposite direction
+					vel /= 3.0f;
+					section[a]->Velocity += vel*forceDirection;
+					section[b]->Velocity += vel*-forceDirection;
+					//Apply enhanced friction while they're touching
+					section[a]->Velocity *= .99;
+					section[b]->Velocity *= .99;
+				}
 			}
 		}
 	}
