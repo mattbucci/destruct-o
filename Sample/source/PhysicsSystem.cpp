@@ -286,6 +286,7 @@ bool PhysicsSystem::checkForCollision(const vec3 & from, const vec3 & direction,
 			return true;
 		}
 	}
+    return false;
 }
 
 
