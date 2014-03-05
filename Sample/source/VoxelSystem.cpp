@@ -238,6 +238,9 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 		shader->Model.Apply();
         TileCell * cells = current_tile.Cells;
 
+		//Skip zero length segments
+		if ((rectStartY == rectEndY) || (rectStartX == rectEndX))
+			continue;
 
 		renderer->startDraw(shader);
 		for (int y = rectStartY; y <= rectEndY; y++) {
