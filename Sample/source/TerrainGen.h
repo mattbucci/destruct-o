@@ -44,6 +44,7 @@ public:
 	TerrainGen();
 	~TerrainGen();
 
+	int getSeed();
 	void setSeed(int seed);
 	void setTileScale(double x, double y);
 	void setTileSize(int x, int y);

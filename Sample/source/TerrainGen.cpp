@@ -78,7 +78,6 @@ TerrainGen::TerrainGen() {
 	time_t t;
 	time(&t);
 	srand(t);
-	setSeed(rand());
 }
 TerrainGen::~TerrainGen() {
 }
@@ -90,6 +89,11 @@ void TerrainGen::setSeed(int seed) {
 	baseMountNoise.SetSeed(seed);
 	blend1Noise.SetSeed(seed);
 	blend2Noise.SetSeed(seed/2);
+}
+
+
+int TerrainGen::getSeed() {
+	return this->seed;
 }
 
 void TerrainGen::setTileScale(double x, double y) {
