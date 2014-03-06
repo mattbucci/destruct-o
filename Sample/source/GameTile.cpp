@@ -139,5 +139,19 @@ void GameTile::Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vecto
 
 //Save the tile to disk
 void GameTile::SaveTile(string saveName) {
-	//stub
+	//Convert the tile to RGBA pixel data
+	vector<unsigned char> rawTileData(Width*Height*4);
+	for (int y = 0; y < Height; y++) {
+		for (int x = 0; x < Width; x++) {
+			int cellIndex = (x+y*Height);
+			rawTileData[cellIndex*4+0] = Cells[cellIndex].height;
+			rawTileData[cellIndex*4+1] = Cells[cellIndex].materialId;
+			rawTileData[cellIndex*4+2] = 0;
+			rawTileData[cellIndex*4+3] = 0;
+		}
+	}
+	unsigned int error = lodepng::encode(saveName.c_str(),rawTileData,Width,Height);
+	if (error) {
+		cout << "Failed to save tile. Lodepng error " << error << ": "<< lodepng_error_text(error) << "\n";
+	}
 }
