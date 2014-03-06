@@ -293,65 +293,34 @@ void VoxelSystem::Paint(vec2 pos, int newMaterial) {
 //Deforms a region of voxels, punching a crater into the given position
 //all voxels removed are returned as positions
 vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
-	GameTile * tileData;
-
-	vector<tile_renderinfo> tiles;
-	tile_renderinfo current_tile;
-	//get the crater sides
-	int atx = (int)(pos.x - size / 2.0);
-	int aty = (int)(pos.y - size / 2.0);
-	int tox = (int)(pos.x + size / 2.0);
-	int toy = (int)(pos.y + size / 2.0);
-
-	//break the view into relevant rectangles
-	for (int y = aty; y <= toy; y += 256 - y % 256) {
-		//start at the smallest value and get tile aligned asap
-		for (int x = atx; x <= tox; x += 256 - x % 256) {
-			//calculate offsets for this rectangle
-			current_tile.tile_x = floor(x / 256);
-			current_tile.tile_y = floor(y / 256);
-
-			current_tile.x_start = x % 256;
-			current_tile.x_end = (min(x + 256 - x % 256, tox) - 1) % 256;
-			current_tile.y_start = y % 256;
-			current_tile.y_end = (min(y + 256 - y % 256, toy) - 1) % 256;
-
-			//account for negatives
-			if (current_tile.x_start < 0) current_tile.x_start = 255 + current_tile.x_start;
-			if (current_tile.x_end < 0)  current_tile.x_end = 255 + current_tile.x_end;
-			if (current_tile.y_start < 0)  current_tile.y_start = 255 + current_tile.y_start;
-			if (current_tile.y_end < 0) current_tile.y_end = 255 + current_tile.y_end;
-
-			tiles.push_back(current_tile);
-
-		}
-	}
+	GameTile * current_tile;
+	//render each viewable rectangle
 	vector<vec4> removedVoxels;
+	for (int i = 0; i < world.size(); i++) {
+		current_tile = world[i];
+		int rectStartX, rectStartY, rectEndX, rectEndY;
+		//Get the region this tile is in
+		rectStartX = current_tile->tile_x * 256;
+		rectStartY = current_tile->tile_y * 256;
+		rectEndX = rectStartX + 255;
+		rectEndY = rectStartY + 255;
+		//Intersect it with the region you're supposed to be drawing
+		intersect1D(rectStartX, rectEndX, pos.x - size / 2, pos.x + size / 2);
+		intersect1D(rectStartY, rectEndY, pos.y - size / 2, pos.y + size / 2);
 
-	for (int i = 0; i < tiles.size(); i++) {
-		current_tile = tiles[i];
-		//find the tile in our world
-		GameTile * tileData = NULL;
-		for (int j = 0; j < world.size(); j++) {
-			if ((world[j])->tile_x == current_tile.tile_x && world[j]->tile_y == current_tile.tile_y) {
-				tileData = world[j];
-				break;
-			}
-		}
-		if (tileData != NULL){
-			for (int y = current_tile.y_start; y <= current_tile.y_end; y++) {
-				for (int x = current_tile.x_start; x <= current_tile.x_end; x++) {
 
-					//Modify pos to be relative to the tile
-					pos -= vec3((float)tileData->tile_x*tile_width, (float)tileData->tile_y*tile_height, 0.0f);
-					//Build the intersection of this crater and the valid tile(s)
+		//Now offset the region by the tile position so that it is relative to the tile
+		rectStartX -= current_tile->tile_x * 256;
+		rectStartY -= current_tile->tile_y * 256;
+		rectEndX -= current_tile->tile_x * 256;
+		rectEndY -= current_tile->tile_y * 256;
 
-					//Apply this region to the valid tile
-					tileData->Crater(current_tile.x_start, current_tile.y_start, current_tile.x_end, current_tile.y_end, (int)(pos.z - size / 2.0), removedVoxels);
-					
-				}
-			}
-		}
+		//Skip zero length segments
+		if ((rectStartY == rectEndY) || (rectStartX == rectEndX))
+			continue;
+
+		current_tile->Crater(rectStartX, rectStartY, rectEndX, rectEndY, (int)(pos.z - size / 2.0), removedVoxels);
+
 	}
 	//Return all removed voxels
 	return removedVoxels;
