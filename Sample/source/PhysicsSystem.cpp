@@ -229,7 +229,7 @@ void PhysicsSystem::Update(double delta, double now) {
 
 			if (depthTilesViolated == 4) {
 				//The tile is fully underground, force it to the surface
-				allVoxels[a]->Position.z = lowestHeight+.5;
+				allVoxels[a]->Position.z = lowestHeight+.5; 
 				allVoxels[a]->Velocity.z = 2;
 			}
 
