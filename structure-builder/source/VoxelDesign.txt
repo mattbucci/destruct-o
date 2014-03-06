@@ -1,0 +1,9 @@
+Design methods
+Level by level
+-> Select level you're working on and place voxels anywere on that 2d level (up/down arrows control level)
+
+Build up
+-> place voxels on top of any existing voxels or floor (ray trace to voxel, place voxel over ray traced area)
+
+Sticky
+-> Place voxels next to surface mouse is hovering over

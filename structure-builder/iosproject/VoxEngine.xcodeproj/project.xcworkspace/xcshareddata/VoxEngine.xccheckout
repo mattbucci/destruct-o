@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>BE8EA7F0-F8A8-4BB7-A1EB-93DB85AC8B44</string>
+	<key>IDESourceControlProjectName</key>
+	<string>VoxEngine</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>0CA0DD0F-BB92-456A-BB66-25C8B6664A01</key>
+		<string>https://bitbucket.org/destructo_game/main-client.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Sample/VoxEngine/VoxEngine.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>0CA0DD0F-BB92-456A-BB66-25C8B6664A01</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://bitbucket.org/destructo_game/main-client.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>0CA0DD0F-BB92-456A-BB66-25C8B6664A01</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>0CA0DD0F-BB92-456A-BB66-25C8B6664A01</string>
+			<key>IDESourceControlWCCName</key>
+			<string>main-client</string>
+		</dict>
+	</array>
+</dict>
+</plist>
