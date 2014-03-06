@@ -56,15 +56,16 @@ void GameTile::CalculateStackSizes(unsigned int rx, unsigned int ry, unsigned in
 			//Your stack size is the stack necessary to 
 			//cover up the hole between you and your lowest neighboring voxel
 			//so first find the lowest neighboring voxel
-			lowestHeight = Cells[y*(int)Width+(x+1)].height;
+			lowestHeight = Cells[y*(int)Width + (x + 1)].height;
 
-			if ((checkHeight = Cells[y*(int)Width+(x-1)].height) < lowestHeight)
+			if ((checkHeight = Cells[y*(int)Width + (x - 1)].height) < lowestHeight)
 				lowestHeight = checkHeight;
-			if ((checkHeight = Cells[(y+1)*(int)Width+x].height) < lowestHeight)
+			if ((checkHeight = Cells[(y + 1)*(int)Width + x].height) < lowestHeight)
 				lowestHeight = checkHeight;
-			if ((checkHeight = Cells[(y-1)*(int)Width+x].height) < lowestHeight)
+			if ((checkHeight = Cells[(y - 1)*(int)Width + x].height) < lowestHeight)
 				lowestHeight = checkHeight;
 			//Now determine the stack height based off of the lowest height around you
+			if ((x == 255 || x == 0 )|| (y==0 || y == 255)) lowestHeight -= 3;
 			unsigned char myHeight = Cells[y*(int)Width+x].height;
 			if (lowestHeight < myHeight)
 				Cells[y*(int)Width+x].stackHeight = myHeight-lowestHeight;
