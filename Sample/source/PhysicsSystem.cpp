@@ -194,6 +194,11 @@ void PhysicsSystem::Update(double delta, double now) {
 				float height = voxelSystem->GetPositionHeight(floorTiles[i]);
 				if ((height+.5) < allVoxels[a]->Position.z)
 					continue;
+
+				//temp patch for underground voxels
+				if (height > allVoxels[a]->Position.z + 1) 
+					allVoxels[a]->Position.z = voxelSystem->GetPositionHeight(floorTiles[i]) + 1;
+
 				//So the block must be penetrating this block of terrain
 				//time to reject it
 				//simulate a block next to the penetrating voxel

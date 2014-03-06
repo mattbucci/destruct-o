@@ -80,28 +80,32 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 	else if (pressedKeys.find('d') != pressedKeys.end())
 		moveVector.y = -1 * movement_speed;
 
+	
+
+	
+
+    // Did the user request jump?
+    if (pressedKeys.find(' ') != pressedKeys.end() && !debug)
+    {
+        // User requested jump
+        jumpRequested = true;
+	}
+
 	//{DEBUGGING
+	else if (pressedKeys.find(' ') != pressedKeys.end()) {
+		debug_target_height += .1;
+		cout << "target_height:" << debug_target_height << endl;
+	}
 	else if (pressedKeys.find('p') != pressedKeys.end()) {
 		if (debug) debug = false;
 		else debug = true;
 	}
 
 	else if (pressedKeys.find(SDLK_LCTRL) != pressedKeys.end()) {
-		debug_target_height += .1;
-		cout << "target_height:" << debug_target_height << endl;
-	}
-	else if (pressedKeys.find(SDLK_LALT) != pressedKeys.end()) {
 		debug_target_height -= .1;
 		cout << "target_height:" << debug_target_height << endl;
 	}
 	//DEBUGGING}
-
-    // Did the user request jump?
-    if (pressedKeys.find(' ') != pressedKeys.end())
-    {
-        // User requested jump
-        jumpRequested = true;
-    }
 
 	//Sum up the mouse deltas into the current looking vector
 	//Mouse sensitivity constants for now
@@ -110,20 +114,20 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 	vec2 mouseDeltaSum;
 	for (auto e : input)
     {
-        // If the input event is that the mouse moved
+		// If the input event is that the mouse moved
 		if (e.Event == InputEvent::MouseMove)
-        {
-			mouseDeltaSum -= vec2(e.RelX,e.RelY);
+		{
+			mouseDeltaSum -= vec2(e.RelX, e.RelY);
 		}
 		else if (e.Event == InputEvent::KeyboardUp) {
 			if (e.Key == SDLK_LSHIFT) {
 				movement_speed = 1;
 			}
-
 		}
 		else if (e.Event == InputEvent::KeyboardDown) {
 			if (e.Key == SDLK_LSHIFT) {
-				movement_speed = 2;
+				if(!debug) movement_speed = 2;
+				else movement_speed = 5;
 			}
 
 		}
