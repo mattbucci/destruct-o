@@ -1,9 +1,11 @@
+#include "stdafx.h"
 #include <noise/noise.h>
 #include "noiseutils.h"
 #include "TerrainGen.h"
 #include <ctime>
 #include <iostream>
 #include <climits>
+
 
 TerrainGen::TerrainGen() {
 
