@@ -25,6 +25,7 @@
 // Default constructor (loads all submeshes from model file)
 GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCache& _textureCache) : textureCache(_textureCache)
 {
+    
     // Get the filename
     std::string filename = directory + "/" + name;
     
@@ -37,7 +38,7 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
     // If the import failed, we have a problem
     if(!pScene)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Error parsing '%s': '%s'\n", filename.c_str(), Importer.GetErrorString());
+        std::cerr << "Error parsing " << filename << ": " << Importer.GetErrorString() << std::endl;
         throw std::exception();
     }
     
@@ -117,7 +118,7 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
     }
     
     // Success
-    SDL_Log("Loaded mesh: \"%s\"\n", filename.c_str());
+    std::cout << "Loaded mesh: \"" << filename.c_str() << "\"" << std::endl;
 }
 
 // Destroy this mesh
