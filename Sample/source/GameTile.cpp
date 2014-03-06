@@ -44,6 +44,16 @@ GameTile * GameTile::LoadTileFromMemory(const vector<unsigned char> & tileData, 
 	cout << "\tLoaded game tile data. Now building stacks.\n";
 	tile->CalculateStackSizes(1,1,width-1,height-1);
 
+	//Patch edge stack heights to be 2 (3 height) to cover most holes
+	for (unsigned int i = 0; i < width; i++) {
+		tile->Cells[i].stackHeight = 2;
+		tile->Cells[i+(height-1)*width].stackHeight = 2;
+	}
+	for (unsigned int i = 0; i < height; i++) {
+		tile->Cells[i*width + 0].stackHeight = 2;
+		tile->Cells[i*width + height - 1].stackHeight = 2;
+	}
+
 	cout << "\tTile Load Complete.\n";
 	return tile;
 }
@@ -65,7 +75,6 @@ void GameTile::CalculateStackSizes(unsigned int rx, unsigned int ry, unsigned in
 			if ((checkHeight = Cells[(y - 1)*(int)Width + x].height) < lowestHeight)
 				lowestHeight = checkHeight;
 			//Now determine the stack height based off of the lowest height around you
-			if ((x == 255 || x == 0 )|| (y==0 || y == 255)) lowestHeight -= 3;
 			unsigned char myHeight = Cells[y*(int)Width+x].height;
 			if (lowestHeight < myHeight)
 				Cells[y*(int)Width+x].stackHeight = myHeight-lowestHeight;
