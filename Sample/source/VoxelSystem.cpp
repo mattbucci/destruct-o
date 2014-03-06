@@ -79,7 +79,7 @@ bool VoxelSystem::GenWorld(int seed) {
 		tileData = GenTile(vec2(0, 0));
 
 	//this function garuntees a tile is generated so fail if it's not
-	_ASSERT(tileData != NULL);
+	_ASSERTE(tileData != NULL);
 
 	return true;
 }
@@ -103,7 +103,7 @@ GameTile * VoxelSystem::GetTile(vec2 pos) {
 		tileData = GenTile(pos);
 
 	//this function garuntees a tile is generated so fail if it's not
-	_ASSERT(tileData != NULL);
+	_ASSERTE(tileData != NULL);
 
 	return tileData;
 }
@@ -154,7 +154,7 @@ TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
 	tileData = GetTile(pos);
 
 	//that better not be null or we fucked up hard
-	_ASSERT(tileData != NULL);
+	_ASSERTE(tileData != NULL);
 
 	//convert to relative position
 	pos.x -= tileData->tile_x*256;
