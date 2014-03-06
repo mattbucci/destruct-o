@@ -174,6 +174,18 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				}
 
 			}
+			else if (eve.Key == 't') {
+				//takeover an area
+				vec3 hit, norm;
+				int size = 20;
+				if(game->Physics.Raytrace(playerPos + vec3(0, 0, 2.5), playerFacing, hit, norm)) {
+					for (int x = -size/2; x < size/2; x++) {
+						for (int y = -size/2; y < size/2; y++) {
+							game->Voxels.Paint(vec2(hit.x+x, hit.y+y), 3);
+						}
+					}
+				}
+			}
 			else if (eve.Key == 'r') {
 				//Spawn a particle system
 				vec3 cubePos = playerPos+playerFacing*5.0f;

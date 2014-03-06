@@ -44,6 +44,16 @@ GameTile * GameTile::LoadTileFromMemory(const vector<unsigned char> & tileData, 
 	cout << "\tLoaded game tile data. Now building stacks.\n";
 	tile->CalculateStackSizes(1,1,width-1,height-1);
 
+	//Patch edge stack heights to be 2 (3 height) to cover most holes
+	for (unsigned int i = 0; i < width; i++) {
+		tile->Cells[i].stackHeight = 2;
+		tile->Cells[i+(height-1)*width].stackHeight = 2;
+	}
+	for (unsigned int i = 0; i < height; i++) {
+		tile->Cells[i*width + 0].stackHeight = 2;
+		tile->Cells[i*width + height - 1].stackHeight = 2;
+	}
+
 	cout << "\tTile Load Complete.\n";
 	return tile;
 }
@@ -56,13 +66,13 @@ void GameTile::CalculateStackSizes(unsigned int rx, unsigned int ry, unsigned in
 			//Your stack size is the stack necessary to 
 			//cover up the hole between you and your lowest neighboring voxel
 			//so first find the lowest neighboring voxel
-			lowestHeight = Cells[y*(int)Width+(x+1)].height;
+			lowestHeight = Cells[y*(int)Width + (x + 1)].height;
 
-			if ((checkHeight = Cells[y*(int)Width+(x-1)].height) < lowestHeight)
+			if ((checkHeight = Cells[y*(int)Width + (x - 1)].height) < lowestHeight)
 				lowestHeight = checkHeight;
-			if ((checkHeight = Cells[(y+1)*(int)Width+x].height) < lowestHeight)
+			if ((checkHeight = Cells[(y + 1)*(int)Width + x].height) < lowestHeight)
 				lowestHeight = checkHeight;
-			if ((checkHeight = Cells[(y-1)*(int)Width+x].height) < lowestHeight)
+			if ((checkHeight = Cells[(y - 1)*(int)Width + x].height) < lowestHeight)
 				lowestHeight = checkHeight;
 			//Now determine the stack height based off of the lowest height around you
 			unsigned char myHeight = Cells[y*(int)Width+x].height;
@@ -129,5 +139,19 @@ void GameTile::Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vecto
 
 //Save the tile to disk
 void GameTile::SaveTile(string saveName) {
-	//stub
+	//Convert the tile to RGBA pixel data
+	vector<unsigned char> rawTileData(Width*Height*4);
+	for (int y = 0; y < Height; y++) {
+		for (int x = 0; x < Width; x++) {
+			int cellIndex = (x+y*Height);
+			rawTileData[cellIndex*4+0] = Cells[cellIndex].height;
+			rawTileData[cellIndex*4+1] = Cells[cellIndex].materialId;
+			rawTileData[cellIndex*4+2] = 0;
+			rawTileData[cellIndex*4+3] = 0;
+		}
+	}
+	unsigned int error = lodepng::encode(saveName.c_str(),rawTileData,Width,Height);
+	if (error) {
+		cout << "Failed to save tile. Lodepng error " << error << ": "<< lodepng_error_text(error) << "\n";
+	}
 }

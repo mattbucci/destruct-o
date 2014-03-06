@@ -48,42 +48,88 @@ VoxelSystem::~VoxelSystem() {
 	delete renderer;
 }
 
-//Attempt to load a tile from disc
 bool VoxelSystem::LoadWorld(string saveName) {
+	//Attempt to load a tile from disc
+	//This happens syncronously before the player loads, Generate just what we need and setup the terrain generator
 	if (0) {
-
+		//hey there's save data, let's load it
+		//please don't actually use this, just load the seed from the Save
+		//Genworld sets the seed, it will also handle loading prebuilt tiles
+		GenWorld(stoi(saveName));
 	}
 	else {
-		//todo, set seed
-		GenWorld(128);
-
+		//World failed to load
+		GenWorld(rand());
 	}
 
 	return true;
 }
 
-bool VoxelSystem::LoadTile(int seed, int x, int y) {
-	stringstream s;
-	s << "saves/" << seed << "-" << x << "-" << y << ".txt";
-	GameTile * tileData = GameTile::LoadTileFromDisk(s.str());
+bool VoxelSystem::GenWorld(int seed) {
+	//Generate the tile the player is standing on, the case we don't have save data it's 0,0
+	GameTile * tileData = NULL;
 
-	if (tileData != NULL) {
-		tileData->tile_x = x;
-		tileData->tile_y = y;
-		world.insert(tileData);
-		return true;
+	//this call is pointless if we use a random seed. Generator already initalizes with one
+	generator->setSeed(seed);
 
-	}
-	else {
-		GenTile(x, y);
-		return false;
-	}
+	tileData = LoadTile(vec2(0, 0));
 
+	//failed to load from disk cache, generate the tile
+	if (tileData == NULL)
+		tileData = GenTile(vec2(0, 0));
+
+	//this function garuntees a tile is generated so fail if it's not
+	_ASSERT(tileData != NULL);
+
+	return true;
 }
 
-bool VoxelSystem::GenTile(int x, int y) {
+GameTile * VoxelSystem::GetTile(vec2 pos) {
+	//return a tile, even if it doesn't exist yet
+	GameTile * tileData = NULL;
+
+
+	//search for the tile
+	for (int j = 0; j < world.size(); j++) {
+		if ((world[j])->tile_x == floor(pos.x / 256) && world[j]->tile_y == floor(pos.y / 256)) {
+			//we found the tile
+			return  world[j];
+		}
+	}
+
+	tileData = LoadTile(pos);
+	//failed to load from disk cache, generate the tile
+	if (tileData == NULL)
+		tileData = GenTile(pos);
+
+	//this function garuntees a tile is generated so fail if it's not
+	_ASSERT(tileData != NULL);
+
+	return tileData;
+}
+
+GameTile * VoxelSystem::LoadTile(vec2 pos) {
+	GameTile * tileData = NULL;
+	stringstream s;
+
+	//get the seed from the terrain generator
+	int seed = generator->getSeed();
+	s << "saves/" << seed << "-" << pos.x << "-" << pos.y << ".txt";
+	tileData = GameTile::LoadTileFromDisk(s.str());
+
+	if (tileData != NULL) {
+		tileData->tile_x = pos.x;
+		tileData->tile_y = pos.y;
+		world.insert(tileData);
+		return world[world.size() - 1];
+	}
+
+	return NULL;
+}
+
+GameTile * VoxelSystem::GenTile(vec2 pos) {
 	//Generate Terrain Tile
-	unsigned char* rawTile = generator->generateTile(x, y);
+	unsigned char* rawTile = generator->generateTile(pos.x, pos.y);
 
 	//Create and Fill Terrain Data Vector
 	vector<unsigned char> tile;
@@ -93,41 +139,26 @@ bool VoxelSystem::GenTile(int x, int y) {
 	free(rawTile);
 
 	GameTile * tileData = GameTile::LoadTileFromMemory(tile, tile_width, tile_height);
-	tileData->tile_x = x;
-	tileData->tile_y = y;
+	tileData->tile_x = pos.x;
+	tileData->tile_y = pos.y;
 	world.insert(tileData);
-	return true;
+	return world[world.size() - 1];
 }
 
 
-bool VoxelSystem::GenWorld(int seed) {
-	//todo, call set seed
-	//for (int x = 0; x < 3; x++) {
-	//	for (int y = 0; y < 3; y++) {
-	//		LoadTile(seed, x, y);
-	//	}
-	//}
-	LoadTile(seed, 0, 0);
-	return true;
-}
 
 TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
 	GameTile * tileData = NULL;
 
-	//Check that the position is valid
-	for (int j = 0; j < world.size(); j++) {
-		if ((world[j])->tile_x == floor(pos.x / 256) && world[j]->tile_y == floor(pos.y / 256)) {
-			tileData = world[j];
-			break;
-		}
-	}
-	//convert to relative position
-	pos.x = int(pos.x) % 256;
-	pos.y = int(pos.y) % 256;
+	//get the current tile
+	tileData = GetTile(pos);
 
-	//account for negative position
-	if (pos.x < 0) pos.x = 255 + pos.x;
-	if (pos.y < 0) pos.y = 255 + pos.y;
+	//that better not be null or we fucked up hard
+	_ASSERT(tileData != NULL);
+
+	//convert to relative position
+	pos.x -= tileData->tile_x*256;
+	pos.y -= tileData->tile_y*256;
 
 	if ((pos.x < 0) || (pos.y < 0))
 		return NULL;
@@ -143,35 +174,10 @@ TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
 //it will have to check which tile the position is in
 //in the future. For now only one tile is loaded
 float VoxelSystem::GetPositionHeight(vec2 pos) {
-	//The height where there is no tiles
-	//right now causes the player to fall
-	//because that's fun?
-	GameTile * tileData = NULL;
-	static const float floorHeight = -1000.0f;
-
-	for (int j = 0; j < world.size(); j++) {
-		if ((world[j])->tile_x == floor(pos.x / 256) && world[j]->tile_y == floor(pos.y / 256)) {
-			tileData = world[j];
-			break;
-		}
-	}
 	TileCell * cell = GetTileCellAt(pos);
 
-	if (tileData != NULL){
-
-		
-		if (cell == NULL)
-			return floorHeight;
-
-		//Player is within the set of valid tiles
-
-
-		//Now get the height of that tile
-		//we add 1 because voxels have 1 height
-		//so the visible floor is 1 above the corner they draw from
-		return cell->height + 1.0f;
-	}
-	return  floorHeight;
+	_ASSERTE(cell != NULL);
+	return cell->height + 1.0f;
 }
 
 //Get the stack size of a specific position
@@ -280,15 +286,21 @@ void VoxelSystem::Update(vec3 player_pos){
 		for (int y_offset = -1; y_offset <= 1; y_offset++) {
 			//make sure tile exists
 			GameTile * tileData = NULL;
+
+			//if you use gettile it will block and create a tile, search yourself
 			for (int j = 0; j < world.size(); j++) {
 				if ((world[j])->tile_x == floor(player_pos.x / 256) +x_offset && world[j]->tile_y == floor(player_pos.y / 256) + y_offset) {
 					tileData = world[j];
 					break;
 				}
 			}
+
 			if (tileData == NULL) {
+				//Player entered a new area
+
 				cout << "Generating: " << floor(player_pos.x / 256) + x_offset << "," << floor(player_pos.y / 256) + y_offset;
-				GenTile(floor(player_pos.x / 256) + x_offset, floor(player_pos.y / 256) + y_offset);
+				//this can happen async
+				GenTile(vec2(floor(player_pos.x / 256) + x_offset, floor(player_pos.y / 256) + y_offset));
 			}
 
 		}
@@ -312,8 +324,7 @@ int VoxelSystem::GetLastVoxelCount() {
 void VoxelSystem::Paint(vec2 pos, int newMaterial) {
 	TileCell * cell = GetTileCellAt(pos);
 
-	if (cell == NULL)
-		return;
+	_ASSERTE(cell != NULL);
 
 	//Player is within the set of valid tiles
 	//Paint the tile material
@@ -323,65 +334,34 @@ void VoxelSystem::Paint(vec2 pos, int newMaterial) {
 //Deforms a region of voxels, punching a crater into the given position
 //all voxels removed are returned as positions
 vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
-	GameTile * tileData;
-
-	vector<tile_renderinfo> tiles;
-	tile_renderinfo current_tile;
-	//get the crater sides
-	int atx = (int)(pos.x - size / 2.0);
-	int aty = (int)(pos.y - size / 2.0);
-	int tox = (int)(pos.x + size / 2.0);
-	int toy = (int)(pos.y + size / 2.0);
-
-	//break the view into relevant rectangles
-	for (int y = aty; y <= toy; y += 256 - y % 256) {
-		//start at the smallest value and get tile aligned asap
-		for (int x = atx; x <= tox; x += 256 - x % 256) {
-			//calculate offsets for this rectangle
-			current_tile.tile_x = floor(x / 256);
-			current_tile.tile_y = floor(y / 256);
-
-			current_tile.x_start = x % 256;
-			current_tile.x_end = (min(x + 256 - x % 256, tox) - 1) % 256;
-			current_tile.y_start = y % 256;
-			current_tile.y_end = (min(y + 256 - y % 256, toy) - 1) % 256;
-
-			//account for negatives
-			if (current_tile.x_start < 0) current_tile.x_start = 255 + current_tile.x_start;
-			if (current_tile.x_end < 0)  current_tile.x_end = 255 + current_tile.x_end;
-			if (current_tile.y_start < 0)  current_tile.y_start = 255 + current_tile.y_start;
-			if (current_tile.y_end < 0) current_tile.y_end = 255 + current_tile.y_end;
-
-			tiles.push_back(current_tile);
-
-		}
-	}
+	GameTile * current_tile;
+	//render each viewable rectangle
 	vector<vec4> removedVoxels;
+	for (int i = 0; i < world.size(); i++) {
+		current_tile = world[i];
+		int rectStartX, rectStartY, rectEndX, rectEndY;
+		//Get the region this tile is in
+		rectStartX = current_tile->tile_x * 256;
+		rectStartY = current_tile->tile_y * 256;
+		rectEndX = rectStartX + 255;
+		rectEndY = rectStartY + 255;
+		//Intersect it with the region you're supposed to be drawing
+		intersect1D(rectStartX, rectEndX, pos.x - size / 2, pos.x + size / 2);
+		intersect1D(rectStartY, rectEndY, pos.y - size / 2, pos.y + size / 2);
 
-	for (int i = 0; i < tiles.size(); i++) {
-		current_tile = tiles[i];
-		//find the tile in our world
-		GameTile * tileData = NULL;
-		for (int j = 0; j < world.size(); j++) {
-			if ((world[j])->tile_x == current_tile.tile_x && world[j]->tile_y == current_tile.tile_y) {
-				tileData = world[j];
-				break;
-			}
-		}
-		if (tileData != NULL){
-			for (int y = current_tile.y_start; y <= current_tile.y_end; y++) {
-				for (int x = current_tile.x_start; x <= current_tile.x_end; x++) {
 
-					//Modify pos to be relative to the tile
-					pos -= vec3((float)tileData->tile_x*tile_width, (float)tileData->tile_y*tile_height, 0.0f);
-					//Build the intersection of this crater and the valid tile(s)
+		//Now offset the region by the tile position so that it is relative to the tile
+		rectStartX -= current_tile->tile_x * 256;
+		rectStartY -= current_tile->tile_y * 256;
+		rectEndX -= current_tile->tile_x * 256;
+		rectEndY -= current_tile->tile_y * 256;
 
-					//Apply this region to the valid tile
-					tileData->Crater(current_tile.x_start, current_tile.y_start, current_tile.x_end, current_tile.y_end, (int)(pos.z - size / 2.0), removedVoxels);
-					
-				}
-			}
-		}
+		//Skip zero length segments
+		if ((rectStartY == rectEndY) || (rectStartX == rectEndX))
+			continue;
+
+		current_tile->Crater(rectStartX, rectStartY, rectEndX, rectEndY, (int)(pos.z - size / 2.0), removedVoxels);
+
 	}
 	//Return all removed voxels
 	return removedVoxels;
