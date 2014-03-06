@@ -6,6 +6,8 @@ FirstPersonMode::FirstPersonMode()
 {
 	firstPersonEnabled = false;
     jumpRequested = false;
+	debug = false;
+	debug_target_height = 0;
 }
 FirstPersonMode::~FirstPersonMode() {
 
@@ -38,6 +40,18 @@ bool FirstPersonMode::GetJumpRequested(bool clearFlag)
     return _t;
 }
 
+
+//debug getters
+bool FirstPersonMode::GetDebug()
+{
+	return debug;
+}
+
+float FirstPersonMode::GetDebugHeight()
+{
+	return debug_target_height;
+}
+
 //Enable or disable first person mode 
 void FirstPersonMode::Enable(bool enableFirstPerson) {
 #ifndef __MOBILE__
@@ -52,20 +66,35 @@ void FirstPersonMode::Enable(bool enableFirstPerson) {
 void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> input) {
 	if (!firstPersonEnabled)
 		return;
-    
+
 	//Desktop method of calculating move vector
-	moveVector = vec2(0,0);
-    
-    if (pressedKeys.find('w') != pressedKeys.end())
+	moveVector = vec2(0, 0);
+
+	if (pressedKeys.find('w') != pressedKeys.end())
 		moveVector.x = 1 * movement_speed;
 	else if (pressedKeys.find('s') != pressedKeys.end())
 		moveVector.x = -1 * movement_speed;
-    
+
 	if (pressedKeys.find('a') != pressedKeys.end())
 		moveVector.y = 1 * movement_speed;
 	else if (pressedKeys.find('d') != pressedKeys.end())
 		moveVector.y = -1 * movement_speed;
-	
+
+	//{DEBUGGING
+	else if (pressedKeys.find('p') != pressedKeys.end()) {
+		if (debug) debug = false;
+		else debug = true;
+	}
+
+	else if (pressedKeys.find(SDLK_LCTRL) != pressedKeys.end()) {
+		debug_target_height += .1;
+		cout << "target_height:" << debug_target_height << endl;
+	}
+	else if (pressedKeys.find(SDLK_LALT) != pressedKeys.end()) {
+		debug_target_height -= .1;
+		cout << "target_height:" << debug_target_height << endl;
+	}
+	//DEBUGGING}
 
     // Did the user request jump?
     if (pressedKeys.find(' ') != pressedKeys.end())

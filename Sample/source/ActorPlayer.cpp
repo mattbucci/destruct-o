@@ -16,7 +16,8 @@ ActorPlayer::ActorPlayer() {
 	position = vec3(170,112,0);
     deltaPosition = 0.0;
     onGround = true;
-    
+	debug = true;
+	debug_target_height = 0;
 }
 ActorPlayer::~ActorPlayer() {
 
@@ -62,17 +63,33 @@ void ActorPlayer::Update(float delta, float now) {
             });
         }
     }
-    
-	//Lets check if you're in the air or on the ground currently
 
+    //this code lets you fly
+
+	//update our debug values
+	debug = Game()->FirstPerson->GetDebug();
+	debug_target_height = Game()->FirstPerson->GetDebugHeight();
+
+	if (debug && debug_target_height > position.z+.5) {
+		velocity.z += .1;
+	}
+	else if (debug && debug_target_height < position.z-.5) {
+		velocity.z -= .1;
+	}
+	else if(debug) {
+		velocity.z = 0;
+	}
+
+
+	//Lets check if you're in the air or on the ground currently
 	float posHeight = Game()->Voxels.GetPositionHeight(vec2(position.x,position.y));
 	float relativeHeight = position.z-posHeight;
-	if (relativeHeight > groundThreshold) {
+	if (relativeHeight > groundThreshold && !debug) {
 		//You're off the grund, apply gravity
 		velocity.z += gravity*delta;
         onGround = false;
 	}
-    else if (relativeHeight < -groundThreshold) {
+    else if (relativeHeight < -groundThreshold && !debug) {
 		//You're below the ground, correct
 		if (velocity.z < 0)
 			velocity.z = 0;
@@ -87,7 +104,7 @@ void ActorPlayer::Update(float delta, float now) {
 	//Check if you're under terrain
 	posHeight = Game()->Voxels.GetPositionHeight(vec2(newPos.x,newPos.y));
 	relativeHeight = newPos.z-posHeight;
-	if (relativeHeight > groundThreshold)
+	if (relativeHeight > groundThreshold || debug)
 		//Position is good, allow it
 		position = newPos;
 	else if (relativeHeight < -groundThreshold) {
