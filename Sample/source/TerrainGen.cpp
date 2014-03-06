@@ -78,6 +78,7 @@ TerrainGen::TerrainGen() {
 	time_t t;
 	time(&t);
 	srand(t);
+    setSeed(0);
 }
 TerrainGen::~TerrainGen() {
 }
@@ -108,6 +109,7 @@ void TerrainGen::setTileSize(int x, int y) {
 }
 
 unsigned char* TerrainGen::generateTile(int x, int y) {
+    _ASSERTE(getSeed() == 0);
 	unsigned char* d = (unsigned char*)malloc(sizeof(char)*tilex*tiley);
 	double bx0 = x * tilesx;
 	double bx1 = bx0 + tilesx;
