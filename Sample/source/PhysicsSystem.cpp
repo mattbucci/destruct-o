@@ -188,6 +188,9 @@ void PhysicsSystem::Update(double delta, double now) {
 			floorTiles[1] = vec2(floor(allVoxels[a]->Position.x),ceil(allVoxels[a]->Position.y));
 			floorTiles[2] = vec2(ceil(allVoxels[a]->Position.x),floor(allVoxels[a]->Position.y));
 			floorTiles[3] = vec2(ceil(allVoxels[a]->Position.x),ceil(allVoxels[a]->Position.y));
+			//If the voxel is fully below the surface of each floor tile checked, than it shall be teleported to the lowest surface
+			int depthTilesViolated = 0;
+			float lowestHeight = 300;
 			//Use these four blocks as a support for any blocks on top of the ground
 			for (int i = 0; i < 4; i++) {
 				//check if the square is under the ground for this ground tile
@@ -195,10 +198,12 @@ void PhysicsSystem::Update(double delta, double now) {
 				if ((height+.5) < allVoxels[a]->Position.z)
 					continue;
 
-				//temp patch for underground voxels
-				if (height > allVoxels[a]->Position.z + 1) 
-					allVoxels[a]->Position.z = voxelSystem->GetPositionHeight(floorTiles[i]) + 1;
-
+				//Check if the depth constraint of this tile is being violated
+				if ((height-2.5) > allVoxels[a]->Position.z) {
+					depthTilesViolated++;
+					lowestHeight = min(lowestHeight,height);
+				}
+				
 				//So the block must be penetrating this block of terrain
 				//time to reject it
 				//simulate a block next to the penetrating voxel
@@ -220,6 +225,12 @@ void PhysicsSystem::Update(double delta, double now) {
 				allVoxels[a]->Velocity += vel*forceDirection;
 				//Apply extra enhanced friction while they're touching
 				allVoxels[a]->Velocity *= .98;
+			}
+
+			if (depthTilesViolated == 4) {
+				//The tile is fully underground, force it to the surface
+				allVoxels[a]->Position.z = lowestHeight+.5;
+				allVoxels[a]->Velocity.z = 2;
 			}
 
 
