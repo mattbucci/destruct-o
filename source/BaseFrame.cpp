@@ -209,9 +209,6 @@ void BaseFrame::Draw(double width, double height) {
 	//The physics system uses the same texture that the voxels above binds every time it draws
 	//so it must always immediately follow Voxels.draw()
 	Physics.Draw(shaders);
-
-	//The particle system will use a different shader entirely soon
-	Particles.Draw(shaders);
     
     // Setup the mesh shader
     GL3DProgram * shadersMesh = (GL3DProgram *)shaders->GetShader("mesh");
@@ -242,6 +239,9 @@ void BaseFrame::Draw(double width, double height) {
         shadersMesh->Model.PopMatrix();
         shadersMesh->Model.PopMatrix();
     }
+
+	//The particle system will use a different shader entirely soon
+	Particles.Draw(shaders);
 	
 	//Update the voxel debug counter
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();

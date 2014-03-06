@@ -1,0 +1,40 @@
+ambient-creepy sounds/effects/ambient/creepy.ogg
+ambient-horror sounds/effects/ambient/horror.ogg
+ambient-wind sounds/effects/ambient/wind.ogg
+
+building-destroy sounds/effects/building/destroy.ogg
+building-shaking sounds/effects/building/shaking.ogg
+building-window-hit sounds/effects/building/window.hit.ogg
+
+enemies-attack sounds/effects/enemies/attack.ogg
+enemies-attacking sounds/effects/enemies/attacking.ogg
+enemies-burning sounds/effects/enemies/burning.ogg
+enemies-burning2 sounds/effects/enemies/burning2.ogg
+enemies-creepy-oh-yeah sounds/effects/enemies/creepy-oh-yeah.ogg
+enemies-fall-to-death sounds/effects/enemies/fall-to-death.ogg
+enemies-monster sounds/effects/enemies/monster.ogg
+enemies-multiscream sounds/effects/enemies/multiscream.ogg
+enemies-whistle sounds/effects/enemies/whistle.ogg
+
+explosions-cannon sounds/effects/explosions/cannon.ogg
+explosions-deep sounds/effects/explosions/deep.ogg
+explosions-far sounds/effects/explosions/far.ogg
+explosions-grenade sounds/effects/explosions/grenade.ogg
+
+guns-bulletimpact sounds/effects/guns/bulletimpact.ogg
+guns-gun sounds/effects/guns/gun.ogg
+guns-gun2 sounds/effects/guns/gun2.ogg
+
+player-death sounds/effects/player/death.ogg
+player-left-foot sounds/effects/player/left-foot.ogg
+player-right-foot sounds/effects/player/right-foot.ogg
+player-jump sounds/effects/player/jump.ogg
+player-hurt sounds/effects/player/hurt.ogg
+player-land sounds/effects/player/land.ogg
+player-melee sounds/effects/player/melee.ogg
+
+ui-achievement sounds/effects/ui/achievement.ogg
+ui-electronicboom sounds/effects/ui/electronicboom.ogg
+ui-newability sounds/effects/ui/newability.ogg
+ui-notification sounds/effects/ui/notification.ogg
+ui-slow sounds/effects/ui/slow.ogg

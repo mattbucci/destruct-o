@@ -1,0 +1,176 @@
+
+#Welcome to the particle file format
+#All particle files should end in the extension .vpart for consistency
+#
+#Particle files have three sections
+#Sections are denoted by headers ending in ':' and should always be
+#on their own line.
+#The three sections, and a description of that section are:
+#SystemRules:
+#	Particle systems have various rules which effect the generation
+#	of new particles as well as rules which are only used to determine
+#	starting properties
+#	NOTE: For ParticleRules the time component is normalized. It goes
+#	from 0.0 to 1.0 during the life of the SYSTEM (starts at 0.0 and 
+#	is 1.0 as the SYSTEM expires)
+#ParticleRules:
+#	Particle rules are rules which effect particles throughout their
+#	life and can actively 
+#	NOTE: For ParticleRules the time component is normalized. It goes
+#	from 0.0 to 1.0 during the life of the PARTICLE (starts at 0.0 and 
+#	is 1.0 as the PARTICLE expires)
+#Properties:
+#	The properties section does not contain rules, instead it contains
+#	a small set of global properties which effect all particles
+#
+#Rules
+#The first two sections contain only rules. Rules are a series of 
+#values attached to time (see notes above). Values are interpolated
+#over time.
+#For example, if you want the particle to start one size, and slowly
+#get larger and then suddenly get smaller you can specify that like this:
+#	ParticleRules:
+#		Scale = {0: .1, .8: .5, 1: .05}
+#So breaking that down, first we have the section header (since scale
+#belongs in the ParticleRules section) Then we have the name of the 
+#value "Scale" and then a list of key frames for scale
+#At 0% of the life of the particle, the scale will be .1
+#from 0% to 80% of its life the scale will go from .1 to .5
+#from 80% to 100% of its life the scale will go from .5 to .05
+#Some values (such as velocity) are vectors made of multiple values (xyz)
+#Multiple values are handled by separating them with spaces.
+#If you wanted a particle system to start by firing particles downwards
+#and slowly begin firing them upwards over a period of 10 seconds
+#it would look like this:
+#	SystemRules:
+#		Velocity = {0: 0 0 -5, 10: 0 0 5}
+#Breaking this down, first Velocity is in the SystemRules section
+#this section uses seconds since emitter spawn, for the time.
+#Our first particle velocity vector is <0,0,-5> at 0 seconds
+#The second particle velocity vector is <0,0,5> after the emitter has been
+#alive for 10 seconds. This change will gradually occur over the 10 
+#seconds.
+#
+#Rule Notation shortcuts:
+#If all the values of a vector are the same
+#such as:
+#		Velocity = {0: 0 0 0, 10: 2 2 2}
+#the values can be abbreviated to a single value, like this:
+#		Velocity = {0: 0, 10: 2}
+#If the rule consists of only a single keyframe like this:
+#		Velocity = {0: 5 -3 2}
+#The rule can drop {0:} and be abbreviated like this:
+#		Velocity = 5 -3 2
+#
+#Properties:
+#All properties take the form valueName="value"
+#all values must be surrounded in quotes
+#
+#A line-by-line explanation of each property of particles follows:
+
+#System rules usually go first
+#Note, system rules (like all rules) can change over time
+#while no examples of time based keyframes exist in this
+#feel free to experiment
+#Particle Systems (unlike particles) do not have a predefined life
+#instead the length of the life of a system is decided in C++ when
+#an instance of the system is created. The life will always be
+#scaled from 0.0 to 1.0 for the rules 
+
+SystemRules:
+
+#Generation rate is the amount of particles per second produced by the
+#emitter
+	GenerationRate = 1000
+	
+#Velocity is the initial velocity vector (xyz), +z is up
+	Velocity = 0 0 1.5
+	
+#Latitude is the amount of rotation around the x axis applied to the
+#velocity vector of the particles. An easy way to think about this is
+#if you had a vector pointing from the center of the earth to some point
+#on the earth, and you rotated it to a different latitude
+#Latitude is a vec2 because x is the minimum latitude and y is the max
+#a random value is chosen between those two for every particle
+#latitude is in degrees
+	Latitude = 0 20
+	
+#Longitude works exactly like latitude, except it rotates around the z
+#axis. Again it is a vec2, a min and max
+#longitude is in degrees
+	Longitude = 0 360
+	
+#Life is the life of spawned particles in seconds
+#Life also has an x,y representing the min,max life a particle will be
+#spawned with. A random value between the two is chosen for each particle
+	Life = .5 .7
+	
+#Emitter size is a vec2 (width,height) of the emitter
+#particles spawn at the particle position at a random point within this
+#width,height
+	EmitterSize = .6
+	
+#Animated particle support exists. Particle textures are assumed to be
+#a series of frames (defined in the property section)
+#the frame each particle starts at is decided by a random value between
+#the min and max FrameOffset
+#the max is never achieved, so if the frames are 0-15 (for 16 frames)
+#the frame offset should be 0 to 16 to randomly start each particle
+#on a different frame.
+	FrameOffset = 0 16
+	
+#This is the % variation of velocity for each particle, it should be 
+#between 0 and .9
+#A .1 variation leads to velocities which are between 90% to 110% of the 
+#original
+	VelocityVariation = .6
+	
+#Scale variation is the % variation of scale for each particle. Again it
+#should be between 0 and .9
+#a .1 variation leads to particles which are between 90% and 110% the 
+#normal particle scale (defined in the particle section)
+	ScaleVariation = .4
+
+	
+#Particle rules use 0-1 timescale
+	
+ParticleRules:
+
+#Color is the color the particle is tinted. It is RGBA
+#though alpha may not work depending on the chosen material style (in 
+#properties) All component values are from 0 (not at all) to 1 (full)
+	Color = {0: 	1 .4509 .2353 1, 
+			.8:	.5 .2255 .1176 1,
+			1 : 0 0 0 1}
+			
+#Scale is the size of the particle
+#a scale of 1 would be the size of a voxel
+	Scale = .3
+	
+#Acceleration is a vec3 (xyz) of the acceleration applied to a particle
+#it can be used to apply gravity (for example)
+	Acceleration = 0
+	
+#The frames per second played for animated particles
+	AnimationSpeed = 0
+
+
+#The properties section works differently and does not contain rules
+#properties cannot change over time and must use ""	
+Properties:
+
+#Possible styles are:
+#NONE : No blending (no alpha)
+#BLEND : Blending (alpha), currently draw order will be incorrect which may lead to odd results
+#ADDITIVE : Add colors to existing colors in the FBO, works for like fire
+#SCREEN : Similar to additive except inverts the color before adding it (photoshop screen filter)
+	MaterialStyle = "SCREEN"
+	
+#This should be the texture path relative to the particles/textures folder
+	MaterialTexture = "fire.png"
+	
+#For animated textures this indicates the number of rows there are
+	Rows = "4"
+	
+#For animated textures this indicates the number of columns there are
+	Columns = "4"
