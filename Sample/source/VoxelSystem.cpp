@@ -122,12 +122,8 @@ TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
 		}
 	}
 	//convert to relative position
-	pos.x = int(pos.x) % 256;
-	pos.y = int(pos.y) % 256;
-
-	//account for negative position
-	if (pos.x < 0) pos.x = 255 + pos.x;
-	if (pos.y < 0) pos.y = 255 + pos.y;
+	pos.x -= tileData->tile_x*256;
+	pos.y -= tileData->tile_y*256;
 
 	if ((pos.x < 0) || (pos.y < 0))
 		return NULL;
