@@ -143,35 +143,10 @@ TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
 //it will have to check which tile the position is in
 //in the future. For now only one tile is loaded
 float VoxelSystem::GetPositionHeight(vec2 pos) {
-	//The height where there is no tiles
-	//right now causes the player to fall
-	//because that's fun?
-	GameTile * tileData = NULL;
-	static const float floorHeight = -1000.0f;
-
-	for (int j = 0; j < world.size(); j++) {
-		if ((world[j])->tile_x == floor(pos.x / 256) && world[j]->tile_y == floor(pos.y / 256)) {
-			tileData = world[j];
-			break;
-		}
-	}
 	TileCell * cell = GetTileCellAt(pos);
 
-	if (tileData != NULL){
-
-		
-		if (cell == NULL)
-			return floorHeight;
-
-		//Player is within the set of valid tiles
-
-
-		//Now get the height of that tile
-		//we add 1 because voxels have 1 height
-		//so the visible floor is 1 above the corner they draw from
-		return cell->height + 1.0f;
-	}
-	return  floorHeight;
+	_ASSERTE(cell != NULL);
+	return cell->height + 1.0f;
 }
 
 //Get the stack size of a specific position
@@ -312,8 +287,7 @@ int VoxelSystem::GetLastVoxelCount() {
 void VoxelSystem::Paint(vec2 pos, int newMaterial) {
 	TileCell * cell = GetTileCellAt(pos);
 
-	if (cell == NULL)
-		return;
+	_ASSERTE(cell != NULL);
 
 	//Player is within the set of valid tiles
 	//Paint the tile material
