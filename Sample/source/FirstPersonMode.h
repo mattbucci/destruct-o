@@ -14,7 +14,7 @@ protected:
 	//the x,y angles making up the lookVector currently
 	vec2 aggregateMouseVector;
 	bool firstPersonEnabled;
-    
+
     // Since the ActorPlayer polls this object per frame, GameEvents don't comply with the way the
     // rest of the object is implemented
     bool jumpRequested;

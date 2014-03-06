@@ -31,13 +31,13 @@ void ActorPlayer::Update(float delta, float now) {
 	//isn't that handy
 	velocity.x = playerMotion.x;
 	velocity.y = playerMotion.y;
-    
+	
     if(deltaPosition>200 && onGround) {
         //Let everyone know we walked
         PlayerWalked.Fire([this](function<void(ActorPlayer*)> subscriber) {
             subscriber(this);
         });
-		
+		cout << "Player Position: " << position.x << "," << position.y << "," << position.z << endl;
         deltaPosition -=200;
     } else {
         if(onGround) {

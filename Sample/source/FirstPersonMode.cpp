@@ -1,5 +1,6 @@
 #include "FirstPersonMode.h"
 
+int movement_speed = 1;
 
 FirstPersonMode::FirstPersonMode()
 {
@@ -56,15 +57,16 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 	moveVector = vec2(0,0);
     
     if (pressedKeys.find('w') != pressedKeys.end())
-		moveVector.x = 1;
+		moveVector.x = 1 * movement_speed;
 	else if (pressedKeys.find('s') != pressedKeys.end())
-		moveVector.x = -1;
+		moveVector.x = -1 * movement_speed;
     
 	if (pressedKeys.find('a') != pressedKeys.end())
-		moveVector.y = 1;
+		moveVector.y = 1 * movement_speed;
 	else if (pressedKeys.find('d') != pressedKeys.end())
-		moveVector.y = -1;
-    
+		moveVector.y = -1 * movement_speed;
+	
+
     // Did the user request jump?
     if (pressedKeys.find(' ') != pressedKeys.end())
     {
@@ -83,6 +85,18 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 		if (e.Event == InputEvent::MouseMove)
         {
 			mouseDeltaSum -= vec2(e.RelX,e.RelY);
+		}
+		else if (e.Event == InputEvent::KeyboardUp) {
+			if (e.Key == SDLK_LSHIFT) {
+				movement_speed = 1;
+			}
+
+		}
+		else if (e.Event == InputEvent::KeyboardDown) {
+			if (e.Key == SDLK_LSHIFT) {
+				movement_speed = 2;
+			}
+
 		}
 	}
     
