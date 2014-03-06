@@ -43,6 +43,7 @@ public:
 	//debug getters
 	bool GetDebug();
 	float GetDebugHeight();
+	void SetDebugHeight(int height);
 
 	//Enable or disable first person mode on platforms which require this
 	void Enable(bool enableFirstPerson);

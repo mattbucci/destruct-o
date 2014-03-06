@@ -52,6 +52,12 @@ float FirstPersonMode::GetDebugHeight()
 	return debug_target_height;
 }
 
+void FirstPersonMode::SetDebugHeight(int height)
+{
+	this->debug_target_height = height;
+}
+
+
 //Enable or disable first person mode 
 void FirstPersonMode::Enable(bool enableFirstPerson) {
 #ifndef __MOBILE__
@@ -97,8 +103,14 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 		cout << "target_height:" << debug_target_height << endl;
 	}
 	else if (pressedKeys.find('p') != pressedKeys.end()) {
-		if (debug) debug = false;
-		else debug = true;
+		if (debug) {
+			debug = false;
+			cout << "DEBUG OFF" << endl;
+		}
+		else {
+			debug = true;
+			cout << "DEBUG ON" << endl;
+		}
 	}
 
 	else if (pressedKeys.find(SDLK_LCTRL) != pressedKeys.end()) {
