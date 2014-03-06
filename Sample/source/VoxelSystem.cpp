@@ -233,15 +233,16 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
         rectEndY -= current_tile.tile_y * 256;
 
 		
-		shader->Model.PushMatrix();
-		shader->Model.Translate(vec3(current_tile.tile_x * 256, current_tile.tile_y * 256, 0));
-		shader->Model.Apply();
+
         TileCell * cells = current_tile.Cells;
 
 		//Skip zero length segments
 		if ((rectStartY == rectEndY) || (rectStartX == rectEndX))
 			continue;
-
+		//offset rendering for tile location
+		shader->Model.PushMatrix();
+		shader->Model.Translate(vec3(current_tile.tile_x * 256, current_tile.tile_y * 256, 0));
+		shader->Model.Apply();
 		renderer->startDraw(shader);
 		for (int y = rectStartY; y <= rectEndY; y++) {
 			//It is important for x to be the inner loop
