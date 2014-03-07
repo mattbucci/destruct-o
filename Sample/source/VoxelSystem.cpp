@@ -20,6 +20,8 @@ VoxelSystem::VoxelSystem() {
 	//Init Terrain Generator
 	generator = new TerrainGen();
 	generator->setTileSize(tile_width, tile_height);
+	//Set up random function
+	srand(time(NULL));
 
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
 
@@ -306,15 +308,6 @@ void VoxelSystem::Update(vec3 player_pos){
 		}
 	}
 	
-}
-
-//Get map width
-int VoxelSystem::GetWidth() {
-	return tile_width * 255; //tileData->Width*5;
-}
-//Get map height
-int VoxelSystem::GetHeight() {
-	return tile_height * 255; //tileData->Height;
 }
 
 int VoxelSystem::GetLastVoxelCount() {

@@ -2,10 +2,6 @@
 #include <noise/noise.h>
 #include "noiseutils.h"
 #include "TerrainGen.h"
-#include <ctime>
-#include <iostream>
-#include <climits>
-
 
 TerrainGen::TerrainGen() {
 
@@ -56,33 +52,30 @@ TerrainGen::TerrainGen() {
 	detailNoise.SetScale(0.015);
 	detailNoise.SetBias(0.0);
 
+	//Set up Blend Level 3
 	blend3Blender.SetSourceModule(0, blend2Blender);
 	blend3Blender.SetSourceModule(1, detailNoise);
-
-	//Initialize Material Builder
-	//matMapBuilder.SetSourceModule(matBlend);
-	//matMapBuilder.SetDestNoiseMap(matMap);
 
 	//Initialize Heightmap Builder
 	heightMapBuilder.SetSourceModule(blend3Blender);
 	heightMapBuilder.SetDestNoiseMap(heightMap);
 
-	//Default Scale and Size Variables
+	//Default Scale to 1
 	tilesx = 1;
 	tilesy = 1;
-	tilex = 256;
-	tiley = 256;
+
+	//Default Tile Size to 0 (Invalid Tile Size)
+	tilex = 0;
+	tiley = 0;
 
 	//Set Default Dest Size
 	heightMapBuilder.SetDestSize(tilex, tiley);
 
-	//Randomly Seed Terrain
-	time_t t;
-	time(&t);
-	srand(t);
-    setSeed(0);
+	//Seed with -1 (Invalid Seed Marker)
+	setSeed(-1);
 }
 TerrainGen::~TerrainGen() {
+	//Nothing to Free
 }
 
 void TerrainGen::setSeed(int seed) {
@@ -111,8 +104,15 @@ void TerrainGen::setTileSize(int x, int y) {
 }
 
 unsigned char* TerrainGen::generateTile(int x, int y) {
-    _ASSERTE(getSeed() == 0);
+	//Ensure Tile Size Selected
+	_ASSERTE(tilex != 0 && tiley != 0);
+	//Ensure Seed Changed
+	_ASSERTE(getSeed() != -1);
+
+	//Allocate Raw Tile Data
 	unsigned char* d = (unsigned char*)malloc(sizeof(char)*tilex*tiley);
+
+	//Calculate Tile Bounds
 	double bx0 = x * tilesx;
 	double bx1 = bx0 + tilesx;
 	double by0 = y * tilesx;
@@ -122,9 +122,8 @@ unsigned char* TerrainGen::generateTile(int x, int y) {
 	heightMapBuilder.SetBounds(bx0, bx1, by0, by1);
 	heightMapBuilder.Build();
 
-	//Get Pointers to Raw Terrain Data
+	//Get Pointer to Raw Terrain Data
 	float* rawTerrain = heightMap.GetSlabPtr();
-	//float* rawMaterial = matMap.GetSlabPtr();
 
 	//Allocate Space for Compiled Tile
 	int s = tilex * tiley;

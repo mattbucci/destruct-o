@@ -49,7 +49,7 @@ void ViewDistanceCalc::CalculateAndApply(GL3DProgram * shader,float currentFPS) 
 }
 
 //Retrieve a pair of coordinates representing the appropriate draw section
-pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 mapExtents, vec2 userPosition, float userAngle) {
+pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 userPosition, float userAngle) {
 	//New strategy for determining draw box
 	//Create a rectangle with the user on the bottom center, with the top of the rectangle
 	//far away from the user in his view direction
@@ -72,7 +72,7 @@ pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 map
 		//Top Right
 		userPosition + vec2(cos(-rectHalfDiagonal+userAngle),sin(-rectHalfDiagonal+userAngle))*rectDiagonalLength,
 	};
-	vec2 minPoint = mapExtents;
+	vec2 minPoint = vec2(0,0); // (0,0) instead of MapExtents (removed)
 	vec2 maxPoint = vec2(0,0);
 	for (int i = 0; i < 4; i++) {
 		minPoint = glm::min(minPoint,testPoints[i]);
