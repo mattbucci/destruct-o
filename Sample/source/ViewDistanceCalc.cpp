@@ -72,9 +72,9 @@ pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 use
 		//Top Right
 		userPosition + vec2(cos(-rectHalfDiagonal+userAngle),sin(-rectHalfDiagonal+userAngle))*rectDiagonalLength,
 	};
-	vec2 minPoint = vec2(0,0); // (0,0) instead of MapExtents (removed)
-	vec2 maxPoint = vec2(0,0);
-	for (int i = 0; i < 4; i++) {
+	vec2 minPoint = testPoints[0];
+	vec2 maxPoint = testPoints[0];
+	for (int i = 1; i < 4; i++) {
 		minPoint = glm::min(minPoint,testPoints[i]);
 		maxPoint = glm::max(maxPoint,testPoints[i]);
 	}
