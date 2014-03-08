@@ -20,14 +20,6 @@ class VoxelSystem {
 
 	VoxelDrawSystem * renderer;
 
-	struct tile_renderinfo {
-		float x_start;
-		float x_end;
-		float y_start;
-		float y_end;
-		int   tile_x;
-		int   tile_y;
-	};
 public:
 	VoxelSystem();
 	~VoxelSystem();
@@ -38,10 +30,14 @@ public:
 	//Attempt to Generate a new world
 	bool GenWorld(int seed);
 
-	//Generate a Tile
-	bool LoadTile(int seed, int x, int y);
+	//Load a tile, NULL if fail
+	GameTile * LoadTile(vec2 pos);
 
-	bool GenTile(int x, int y);
+	//Generate a Tile, NULL if fail, should never be fail so assert
+	GameTile * GenTile(vec2 pos);
+
+	//Get a Tile
+	GameTile * GetTile(vec2 pos);
 
 	//Get the number of voxels drawn last frame
 	int GetLastVoxelCount();
@@ -69,8 +65,4 @@ public:
 	//of voxels which will be rendered
 	void Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int tox, int toy);
 	void Update(vec3 player_pos);
-	//Get map width
-	int GetWidth();
-	//Get map height
-	int GetHeight();
 };

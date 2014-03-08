@@ -67,6 +67,7 @@ void ActorPlayer::Update(float delta, float now) {
     //this code lets you fly
 
 	//update our debug values
+	if (!debug) Game()->FirstPerson->SetDebugHeight(position.z);
 	debug = Game()->FirstPerson->GetDebug();
 	debug_target_height = Game()->FirstPerson->GetDebugHeight();
 

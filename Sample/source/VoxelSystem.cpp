@@ -20,6 +20,8 @@ VoxelSystem::VoxelSystem() {
 	//Init Terrain Generator
 	generator = new TerrainGen();
 	generator->setTileSize(tile_width, tile_height);
+	//Set up random function
+	srand(time(NULL));
 
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
 
@@ -48,42 +50,88 @@ VoxelSystem::~VoxelSystem() {
 	delete renderer;
 }
 
-//Attempt to load a tile from disc
 bool VoxelSystem::LoadWorld(string saveName) {
+	//Attempt to load a tile from disc
+	//This happens syncronously before the player loads, Generate just what we need and setup the terrain generator
 	if (0) {
-
+		//hey there's save data, let's load it
+		//please don't actually use this, just load the seed from the Save
+		//Genworld sets the seed, it will also handle loading prebuilt tiles
+		GenWorld(stoi(saveName));
 	}
 	else {
-		//todo, set seed
-		GenWorld(128);
-
+		//World failed to load
+		GenWorld(rand());
 	}
 
 	return true;
 }
 
-bool VoxelSystem::LoadTile(int seed, int x, int y) {
-	stringstream s;
-	s << "saves/" << seed << "-" << x << "-" << y << ".txt";
-	GameTile * tileData = GameTile::LoadTileFromDisk(s.str());
+bool VoxelSystem::GenWorld(int seed) {
+	//Generate the tile the player is standing on, the case we don't have save data it's 0,0
+	GameTile * tileData = NULL;
 
-	if (tileData != NULL) {
-		tileData->tile_x = x;
-		tileData->tile_y = y;
-		world.insert(tileData);
-		return true;
+	//this call is pointless if we use a random seed. Generator already initalizes with one
+	generator->setSeed(seed);
 
-	}
-	else {
-		GenTile(x, y);
-		return false;
-	}
+	tileData = LoadTile(vec2(0, 0));
 
+	//failed to load from disk cache, generate the tile
+	if (tileData == NULL)
+		tileData = GenTile(vec2(0, 0));
+
+	//this function garuntees a tile is generated so fail if it's not
+	_ASSERTE(tileData != NULL);
+
+	return true;
 }
 
-bool VoxelSystem::GenTile(int x, int y) {
+GameTile * VoxelSystem::GetTile(vec2 pos) {
+	//return a tile, even if it doesn't exist yet
+	GameTile * tileData = NULL;
+
+
+	//search for the tile
+	for (int j = 0; j < world.size(); j++) {
+		if ((world[j])->tile_x == floor(pos.x / 256) && world[j]->tile_y == floor(pos.y / 256)) {
+			//we found the tile
+			return  world[j];
+		}
+	}
+
+	tileData = LoadTile(pos);
+	//failed to load from disk cache, generate the tile
+	if (tileData == NULL)
+		tileData = GenTile(pos);
+
+	//this function garuntees a tile is generated so fail if it's not
+	_ASSERTE(tileData != NULL);
+
+	return tileData;
+}
+
+GameTile * VoxelSystem::LoadTile(vec2 pos) {
+	GameTile * tileData = NULL;
+	stringstream s;
+
+	//get the seed from the terrain generator
+	int seed = generator->getSeed();
+	s << "saves/" << seed << "-" << pos.x << "-" << pos.y << ".txt";
+	tileData = GameTile::LoadTileFromDisk(s.str());
+
+	if (tileData != NULL) {
+		tileData->tile_x = pos.x;
+		tileData->tile_y = pos.y;
+		world.insert(tileData);
+		return world[world.size() - 1];
+	}
+
+	return NULL;
+}
+
+GameTile * VoxelSystem::GenTile(vec2 pos) {
 	//Generate Terrain Tile
-	unsigned char* rawTile = generator->generateTile(x, y);
+	unsigned char* rawTile = generator->generateTile(pos.x, pos.y);
 
 	//Create and Fill Terrain Data Vector
 	vector<unsigned char> tile;
@@ -93,34 +141,23 @@ bool VoxelSystem::GenTile(int x, int y) {
 	free(rawTile);
 
 	GameTile * tileData = GameTile::LoadTileFromMemory(tile, tile_width, tile_height);
-	tileData->tile_x = x;
-	tileData->tile_y = y;
+	tileData->tile_x = pos.x;
+	tileData->tile_y = pos.y;
 	world.insert(tileData);
-	return true;
+	return world[world.size() - 1];
 }
 
 
-bool VoxelSystem::GenWorld(int seed) {
-	//todo, call set seed
-	//for (int x = 0; x < 3; x++) {
-	//	for (int y = 0; y < 3; y++) {
-	//		LoadTile(seed, x, y);
-	//	}
-	//}
-	LoadTile(seed, 0, 0);
-	return true;
-}
 
 TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
 	GameTile * tileData = NULL;
 
-	//Check that the position is valid
-	for (int j = 0; j < world.size(); j++) {
-		if ((world[j])->tile_x == floor(pos.x / 256) && world[j]->tile_y == floor(pos.y / 256)) {
-			tileData = world[j];
-			break;
-		}
-	}
+	//get the current tile
+	tileData = GetTile(pos);
+
+	//that better not be null or we fucked up hard
+	_ASSERTE(tileData != NULL);
+
 	//convert to relative position
 	pos.x -= tileData->tile_x*256;
 	pos.y -= tileData->tile_y*256;
@@ -251,29 +288,26 @@ void VoxelSystem::Update(vec3 player_pos){
 		for (int y_offset = -1; y_offset <= 1; y_offset++) {
 			//make sure tile exists
 			GameTile * tileData = NULL;
+
+			//if you use gettile it will block and create a tile, search yourself
 			for (int j = 0; j < world.size(); j++) {
 				if ((world[j])->tile_x == floor(player_pos.x / 256) +x_offset && world[j]->tile_y == floor(player_pos.y / 256) + y_offset) {
 					tileData = world[j];
 					break;
 				}
 			}
+
 			if (tileData == NULL) {
+				//Player entered a new area
+
 				cout << "Generating: " << floor(player_pos.x / 256) + x_offset << "," << floor(player_pos.y / 256) + y_offset;
-				GenTile(floor(player_pos.x / 256) + x_offset, floor(player_pos.y / 256) + y_offset);
+				//this can happen async
+				GenTile(vec2(floor(player_pos.x / 256) + x_offset, floor(player_pos.y / 256) + y_offset));
 			}
 
 		}
 	}
 	
-}
-
-//Get map width
-int VoxelSystem::GetWidth() {
-	return tile_width * 255; //tileData->Width*5;
-}
-//Get map height
-int VoxelSystem::GetHeight() {
-	return tile_height * 255; //tileData->Height;
 }
 
 int VoxelSystem::GetLastVoxelCount() {
