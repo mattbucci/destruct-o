@@ -17,11 +17,11 @@
 static const int tile_width = 256;
 static const int tile_height = 256;
 
-TerrainGen* VoxelSystem::generator = new TerrainGen();
+TerrainGen * VoxelSystem::generator = new TerrainGen();
 
 VoxelSystem::VoxelSystem() {
 	//Init Terrain Generator
-	generator = new TerrainGen();
+	//generator = new TerrainGen();
 	generator->setTileSize(tile_width, tile_height);
 	//Set up random function
 	srand(time(NULL));
@@ -133,37 +133,38 @@ GameTile * VoxelSystem::LoadTile(vec2 pos) {
 }
 
 GameTile * VoxelSystem::GenTileAsync(vec2 pos) {
-	GameTile * newTile = new GameTile(tile_width, tile_height);
+	//Initialize Gametile
+	GameTile * newTile = new GameTile((int)tile_width, (int)tile_height);
 	newTile->tile_x = pos.x;
 	newTile->tile_y = pos.y;
 
-	std::thread genThread(this->GenThread, newTile);
+	//Insert Tile Into World
+	int ind = world.insert(newTile);
+
+	//Begin ASYNC Generation Thread
+	std::thread genThread(VoxelSystem::GenThread, newTile);
 	genThread.detach();
 
-	int ind = world.insert(newTile);
+	//Return Tile Index in World
 	return world[ind];
-
-	/*//Generate Terrain Tile
-	unsigned char* rawTile = generator->generateTile(pos.x, pos.y);
-	vector<unsigned char> tile;
-	tile.assign(rawTile, rawTile + (tile_width * tile_height * 4));
-	free(rawTile);
-	GameTile * tileData = GameTile::LoadTileFromMemory(tile, tile_width, tile_height);
-	tileData->tile_x = pos.x;
-	tileData->tile_y = pos.y;
-	int ind = world.insert(tileData);
-	tileData->ready = true;
-	return world[ind];*/
 }
 
 void VoxelSystem::GenThread(GameTile * newTile) {
+	//Generate Tile Data
 	unsigned char* rawTile = generator->generateTile(newTile->tile_x, newTile->tile_y);
+	
+	//Assign Data to Container
 	vector<unsigned char> tile;
 	tile.assign(rawTile, rawTile + (tile_width * tile_height * 4));
+
+	//Free Generated Tile Data
 	free(rawTile);
+
+	//Load Tile Data into GameTile
 	GameTile::LoadTileFromMemory2(newTile, tile);
+
+	//Set Ready Flag
 	newTile->ready = true;
-	return;
 }
 
 GameTile * VoxelSystem::GenTile(vec2 pos) {
