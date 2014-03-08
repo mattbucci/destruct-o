@@ -10,8 +10,15 @@ struct StructureCell {
 
 class Structure {
 public:
-	
+	//Load a structure or floor out of disc
+	static Structure * LoadStructure(string structureName);
+	//Save a structure or floor to disc
+	void SaveStructure(string structureName);
+
+	//A list of each voxel in the structure
 	ContiguousList<StructureCell> Cells; 
+
+	bool TraceToStructure(
 
 	Structure();
 	~Structure();
