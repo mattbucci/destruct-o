@@ -12,9 +12,12 @@
 #include "InstancedVoxelRenderSystem.h"
 #include "BasicVoxelRenderSystem.h"
 #include <sstream>
+#include <thread>
 
 static const int tile_width = 256;
 static const int tile_height = 256;
+
+TerrainGen* VoxelSystem::generator = new TerrainGen();
 
 VoxelSystem::VoxelSystem() {
 	//Init Terrain Generator
@@ -102,7 +105,7 @@ GameTile * VoxelSystem::GetTile(vec2 pos) {
 	tileData = LoadTile(pos);
 	//failed to load from disk cache, generate the tile
 	if (tileData == NULL)
-		tileData = GenTile(pos);
+		tileData = GenTileAsync(pos);
 
 	//this function garuntees a tile is generated so fail if it's not
 	_ASSERTE(tileData != NULL);
@@ -129,7 +132,47 @@ GameTile * VoxelSystem::LoadTile(vec2 pos) {
 	return NULL;
 }
 
+GameTile * VoxelSystem::GenTileAsync(vec2 pos) {
+	GameTile * newTile = new GameTile(tile_width, tile_height);
+	newTile->tile_x = pos.x;
+	newTile->tile_y = pos.y;
+
+	std::thread genThread(this->GenThread, newTile);
+	genThread.detach();
+
+	int ind = world.insert(newTile);
+	return world[ind];
+
+	/*//Generate Terrain Tile
+	unsigned char* rawTile = generator->generateTile(pos.x, pos.y);
+	vector<unsigned char> tile;
+	tile.assign(rawTile, rawTile + (tile_width * tile_height * 4));
+	free(rawTile);
+	GameTile * tileData = GameTile::LoadTileFromMemory(tile, tile_width, tile_height);
+	tileData->tile_x = pos.x;
+	tileData->tile_y = pos.y;
+	int ind = world.insert(tileData);
+	tileData->ready = true;
+	return world[ind];*/
+}
+
+void VoxelSystem::GenThread(GameTile * newTile) {
+	unsigned char* rawTile = generator->generateTile(newTile->tile_x, newTile->tile_y);
+	vector<unsigned char> tile;
+	tile.assign(rawTile, rawTile + (tile_width * tile_height * 4));
+	free(rawTile);
+	GameTile::LoadTileFromMemory2(newTile, tile);
+	newTile->ready = true;
+	return;
+}
+
 GameTile * VoxelSystem::GenTile(vec2 pos) {
+	static int asdf = 1;
+	if(asdf > 0) {
+		asdf--;
+	} else {
+		_ASSERTE(false);
+	}
 	//Generate Terrain Tile
 	unsigned char* rawTile = generator->generateTile(pos.x, pos.y);
 
@@ -302,7 +345,7 @@ void VoxelSystem::Update(vec3 player_pos){
 
 				cout << "Generating: " << floor(player_pos.x / 256) + x_offset << "," << floor(player_pos.y / 256) + y_offset;
 				//this can happen async
-				GenTile(vec2(floor(player_pos.x / 256) + x_offset, floor(player_pos.y / 256) + y_offset));
+				GenTileAsync(vec2(floor(player_pos.x / 256) + x_offset, floor(player_pos.y / 256) + y_offset));
 			}
 
 		}

@@ -6,14 +6,15 @@
 #include "TileCell.h"
 
 class GameTile {
-	GameTile(int width, int height);
 public:
+	GameTile(int width, int height);
 	~GameTile();
 
 	//Load a game tile from disk
 	static GameTile * LoadTileFromDisk(string tileImagePath);
 	//Load a game tile from memory
 	static GameTile * LoadTileFromMemory(const vector<unsigned char> & tileData, unsigned int tileWidth, unsigned int tileHeight);
+	static void GameTile::LoadTileFromMemory2(GameTile * newTile, const vector<unsigned char> & tileData);
 
 	//Recalculate stack heights for the given region of tile cells
 	void CalculateStackSizes(unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy);
@@ -31,6 +32,7 @@ public:
 	void Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vector<vec4> & removedVoxels);
 
 	//Loaded tile information is public for fastest access
+	bool ready;
 	TileCell * Cells;
 	int Width;
 	int Height;

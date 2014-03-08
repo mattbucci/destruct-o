@@ -11,7 +11,7 @@ class TerrainGen;
 class VoxelSystem {
 	//Tile data loaded
 	ContiguousList<GameTile> world;
-	TerrainGen * generator;
+	//TerrainGen * generator;
 	//A debug counter for the number of voxels rendered last frame
 	int voxelCount;
 
@@ -24,6 +24,8 @@ public:
 	VoxelSystem();
 	~VoxelSystem();
 
+	static TerrainGen* generator;
+
 	//Attempt to load a world from disc
 	bool LoadWorld(string saveName);
 
@@ -32,6 +34,10 @@ public:
 
 	//Load a tile, NULL if fail
 	GameTile * LoadTile(vec2 pos);
+
+	//Generate a Tile Asyncronously
+	GameTile * GenTileAsync(vec2 pos);
+	static void GenThread(GameTile * newTile);
 
 	//Generate a Tile, NULL if fail, should never be fail so assert
 	GameTile * GenTile(vec2 pos);

@@ -6,6 +6,7 @@ GameTile::GameTile(int width, int height) {
 	this->Width = width;
 	this->Height = height;
 	Cells = new TileCell[width*height];
+	ready = false;
 }
 GameTile::~GameTile() {
 	delete [] Cells;
@@ -56,6 +57,27 @@ GameTile * GameTile::LoadTileFromMemory(const vector<unsigned char> & tileData, 
 
 	cout << "\tTile Load Complete.\n";
 	return tile;
+}
+
+void GameTile::LoadTileFromMemory2(GameTile * newTile, const vector<unsigned char> & tileData) {
+	_ASSERTE(tileData.size() == (newTile->Width * newTile->Height * 4));
+	cout << "Starting ASYNC Load of tile from memory\n";
+	for(unsigned int i = 0; i < tileData.size(); i += 4) {
+		newTile->Cells[i/4].height = tileData[i+0];
+		newTile->Cells[i/4].materialId = tileData[i+1];
+		newTile->Cells[i/4].stackHeight = 0;
+	}
+	cout << "\tLoaded game tile data. Now building stacks.\n";
+	newTile->CalculateStackSizes(1,1,newTile->Width-1,newTile->Height-1);
+	for (unsigned int i = 0; i < newTile->Width; i++) {
+		newTile->Cells[i].stackHeight = 2;
+		newTile->Cells[i+(newTile->Height-1)*newTile->Width].stackHeight = 2;
+	}
+	for (unsigned int i = 0; i < newTile->Height; i++) {
+		newTile->Cells[i*newTile->Width + 0].stackHeight = 2;
+		newTile->Cells[i*newTile->Width + newTile->Height - 1].stackHeight = 2;
+	}
+	cout << "\tTile Load Complete.\n";
 }
 
 void GameTile::CalculateStackSizes(unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy) {
