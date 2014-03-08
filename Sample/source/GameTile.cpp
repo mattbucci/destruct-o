@@ -12,6 +12,13 @@ GameTile::~GameTile() {
 	delete [] Cells;
 }
 
+GameTile * GameTile::CreateGameTile(int width, int height, int x, int y) {
+	GameTile * newTile = new GameTile(width, height);
+	newTile->tile_x = x;
+	newTile->tile_y = y;
+	return newTile;
+}
+
 //Load a game tile from disk
 GameTile * GameTile::LoadTileFromDisk(string tileImagePath) {
 	unsigned int width;
@@ -59,7 +66,7 @@ GameTile * GameTile::LoadTileFromMemory(const vector<unsigned char> & tileData, 
 	return tile;
 }
 
-void GameTile::LoadTileFromMemory2(GameTile * newTile, const vector<unsigned char> & tileData) {
+void GameTile::LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tileData, GameTile * newTile) {
 	_ASSERTE(tileData.size() == (newTile->Width * newTile->Height * 4));
 	//cout << "Starting ASYNC Load of tile from memory\n";
 	for (unsigned int i = 0; i < tileData.size(); i+= 4) {

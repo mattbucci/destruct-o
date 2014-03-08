@@ -93,7 +93,6 @@ void TerrainGen::setTileScale(double x, double y) {
 void TerrainGen::setTileSize(int x, int y) {
 	tilex = x;
 	tiley = y;
-	//heightMapBuilder.SetDestSize(tilex, tiley);
 }
 
 unsigned char* TerrainGen::generateTile(int x, int y) {

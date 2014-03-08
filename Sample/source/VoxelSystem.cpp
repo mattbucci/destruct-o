@@ -134,7 +134,7 @@ GameTile * VoxelSystem::LoadTile(vec2 pos) {
 
 GameTile * VoxelSystem::GenTileAsync(vec2 pos) {
 	//Initialize Gametile
-	GameTile * newTile = new GameTile((int)tile_width, (int)tile_height);
+	GameTile * newTile = GameTile::CreateGameTile(tile_width, tile_height, pos.x, pos.y);
 	newTile->tile_x = pos.x;
 	newTile->tile_y = pos.y;
 
@@ -150,30 +150,24 @@ GameTile * VoxelSystem::GenTileAsync(vec2 pos) {
 }
 
 void VoxelSystem::GenThread(GameTile * newTile) {
-	//Generate Tile Data
+	//Generate Terrain Data
 	unsigned char* rawTile = generator->generateTile(newTile->tile_x, newTile->tile_y);
 	
 	//Assign Data to Container
 	vector<unsigned char> tile;
 	tile.assign(rawTile, rawTile + (tile_width * tile_height * 4));
 
-	//Free Generated Tile Data
+	//Free Generated Terain Data
 	free(rawTile);
 
 	//Load Tile Data into GameTile
-	GameTile::LoadTileFromMemory2(newTile, tile);
+	GameTile::LoadTileFromMemoryIntoExisting(tile, newTile);
 
 	//Set Ready Flag
 	newTile->ready = true;
 }
 
 GameTile * VoxelSystem::GenTile(vec2 pos) {
-	static int asdf = 1;
-	if(asdf > 0) {
-		asdf--;
-	} else {
-		_ASSERTE(false);
-	}
 	//Generate Terrain Tile
 	unsigned char* rawTile = generator->generateTile(pos.x, pos.y);
 
@@ -344,7 +338,7 @@ void VoxelSystem::Update(vec3 player_pos){
 			if (tileData == NULL) {
 				//Player entered a new area
 
-				cout << "Generating: " << floor(player_pos.x / 256) + x_offset << "," << floor(player_pos.y / 256) + y_offset;
+				cout << "Generating: " << floor(player_pos.x / 256) + x_offset << "," << floor(player_pos.y / 256) + y_offset << endl;
 				//this can happen async
 				GenTileAsync(vec2(floor(player_pos.x / 256) + x_offset, floor(player_pos.y / 256) + y_offset));
 			}

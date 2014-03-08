@@ -6,15 +6,18 @@
 #include "TileCell.h"
 
 class GameTile {
-public:
 	GameTile(int width, int height);
+public:
 	~GameTile();
 
+	//Create Empty Gametile (Necessary for ASYNC)
+	static GameTile * CreateGameTile(int width, int height, int x, int y);
 	//Load a game tile from disk
 	static GameTile * LoadTileFromDisk(string tileImagePath);
 	//Load a game tile from memory
 	static GameTile * LoadTileFromMemory(const vector<unsigned char> & tileData, unsigned int tileWidth, unsigned int tileHeight);
-	static void GameTile::LoadTileFromMemory2(GameTile * newTile, const vector<unsigned char> & tileData);
+	//Load a game tile from Memory (into existing GameTile)
+	static void GameTile::LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tileData, GameTile * newTile);
 
 	//Recalculate stack heights for the given region of tile cells
 	void CalculateStackSizes(unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy);
