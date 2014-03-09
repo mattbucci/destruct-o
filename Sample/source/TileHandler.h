@@ -15,7 +15,7 @@ class TileHandler
 	static std::mutex mtx;
 	static std::condition_variable cv;
 	static std::unique_lock<std::mutex> lck;
-	static std::queue<GameTile*> genQueue;
+	static std::queue<vec2> genQueue;
 
 	static std::mutex readyMtx;
 	static std::condition_variable readyCv;

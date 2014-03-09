@@ -113,6 +113,9 @@ void BaseFrame::OnFrameFocus() {
 }
 
 void BaseFrame::Build() {
+	//Initialize Tile Handler
+	TileHandler::init();
+
 	//load the audio
 	audio = new AudioPlayer(100);
 	audio->Subscribe(player);

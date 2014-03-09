@@ -37,23 +37,16 @@ void TileHandler::handlerLoop() {
 			cv.wait(lck);
 		}
 
-		//Grab Lock
-		lck.lock();
-
 		//Assign Work Items
 		while(genQueue.size() > 0) {
-
 			//Grab Work from Queue
-			GameTile * tile = genQueue.front();
+			vec2 pos = genQueue.front();
+			GameTile * tile = GameTile::CreateGameTile(256, 256, pos.x, pos.y);
 			genQueue.pop();
 
-			//Assign Work to Thread
 			std::thread t(genThread, tile);
 			t.detach();
 		}
-
-		//Release Lock
-		lck.unlock();
 	}
 
 	//Tile Handler Should Never Exit
@@ -103,14 +96,11 @@ void TileHandler::genProcess(GameTile * newTile) {
 
 void TileHandler::predictTile(vec2 pos) {
 
-	//TODO: REPLACE WITH VARIABLE TILE SIZE
-	GameTile* predTile = GameTile::CreateGameTile(256, 256, pos.x, pos.y);
-
 	//Grab Lock
 	lck.lock();
 
 	//Add to Queue & Notify Handler
-	genQueue.push(predTile);
+	genQueue.push(pos);
 	cv.notify_one();
 
 	//Release Lock
@@ -138,11 +128,11 @@ GameTile * TileHandler::getTile(vec2 pos) {
 
 	if(tile != NULL) {
 		//If Cached Tile Found, Return that
-		std::cout << "CACHED TILE LOAD" << std::endl;
+		//std::cout << "CACHED TILE LOAD" << std::endl;
 		return tile;
 	} else {
 		//Otherwise, Cached Tile not Found, Generate it Syncronously
-		std::cout << "SYNCRONOUS TILE LOAD" << std::endl;
+		//std::cout << "SYNCRONOUS TILE LOAD" << std::endl;
 		tile = GameTile::CreateGameTile(256, 256, pos.x, pos.y);
 		genProcess(tile);
 		return tile;
@@ -154,7 +144,7 @@ TerrainGen* TileHandler::generator = NULL;
 std::mutex TileHandler::mtx;
 std::condition_variable TileHandler::cv;
 std::unique_lock<std::mutex> TileHandler::lck(mtx, std::defer_lock);
-std::queue<GameTile*> TileHandler::genQueue = std::queue<GameTile*>();
+std::queue<vec2> TileHandler::genQueue = std::queue<vec2>();
 
 std::mutex TileHandler::readyMtx;
 std::condition_variable TileHandler::readyCv;

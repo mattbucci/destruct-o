@@ -20,13 +20,12 @@ static const int tile_height = 256;
 TerrainGen * VoxelSystem::generator = new TerrainGen();
 
 VoxelSystem::VoxelSystem() {
-	TileHandler::init();
-
+	//TODO: Remove This
 	//Init Terrain Generator
 	//generator = new TerrainGen();
-	generator->setTileSize(tile_width, tile_height);
+	//generator->setTileSize(tile_width, tile_height);
 	//Set up random function
-	srand(time(NULL));
+	//srand(time(NULL));
 
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
 
@@ -83,7 +82,7 @@ bool VoxelSystem::GenWorld(int seed) {
 
 	//failed to load from disk cache, generate the tile
 	if (tileData == NULL)
-		tileData = GenTile(vec2(0, 0));
+		tileData = TileHandler::getTile(vec2(0, 0));
 
 	//this function garuntees a tile is generated so fail if it's not
 	_ASSERTE(tileData != NULL);
@@ -107,7 +106,7 @@ GameTile * VoxelSystem::GetTile(vec2 pos) {
 	tileData = LoadTile(pos);
 	//failed to load from disk cache, generate the tile
 	if (tileData == NULL)
-		tileData = GenTileAsync(pos);
+		tileData = TileHandler::getTile(pos);
 
 	//this function garuntees a tile is generated so fail if it's not
 	_ASSERTE(tileData != NULL);
@@ -344,7 +343,6 @@ void VoxelSystem::Update(vec3 player_pos){
 
 		}
 	}
-	
 }
 
 int VoxelSystem::GetLastVoxelCount() {
