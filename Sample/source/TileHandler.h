@@ -20,12 +20,13 @@ class TileHandler
 	static std::mutex readyMtx;
 	static std::condition_variable readyCv;
 	static std::unique_lock<std::mutex> readyLck;
-	static std::list<GameTile*> readyTiles;
+	static std::list<GameTile*> readyList;
 
 	static std::thread* handlerThread;
 
 	static void handlerLoop();
-	static void genThread(GameTile * tile);
+	static void genThread(GameTile * newTile);
+	static void genProcess(GameTile * newTile);
 
 	TileHandler(void);
 	~TileHandler(void);

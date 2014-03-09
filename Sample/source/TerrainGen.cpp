@@ -124,7 +124,7 @@ unsigned char* TerrainGen::generateTile(int x, int y) {
 
 	//Allocate Space for Compiled Tile
 	int s = tilex * tiley;
-	unsigned char* tile = (unsigned char*)malloc(sizeof(unsigned char) * s * 4);
+	unsigned char* tile = new unsigned char[s * 4];
 
 	//Compile Tile Data
 	for(int i = 0; i < s; i++) {

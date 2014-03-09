@@ -1,7 +1,5 @@
 #include "TileHandler.h"
 
-#define TILE_CACHE_SIZE 16
-
 TileHandler::TileHandler(void)
 {
 }
@@ -14,6 +12,12 @@ TileHandler::~TileHandler(void)
 void TileHandler::init() {
 	//Prevent Double Init
 	_ASSERTE(handlerThread == NULL);
+
+	//Initialize Terrain Generator
+	generator = new TerrainGen();
+	generator->setTileSize(256, 256);
+	srand(time(NULL));
+	generator->setSeed(rand());
 
 	//Create & Run Handler Thread
 	handlerThread = new std::thread(handlerLoop);
@@ -70,11 +74,31 @@ void TileHandler::genThread(GameTile * newTile) {
 	//Load Tile Data into GameTile
 	GameTile::LoadTileFromMemoryIntoExisting(tile, newTile);
 
+	//Obtain Lock on Ready List
 	std::unique_lock<std::mutex> readyLck(readyMtx);
 	_ASSERTE(readyLck.owns_lock());
+
+	//Push New Tile into Ready List
 	readyList.push_front(newTile);
 	readyCv.notify_all();
+
+	//Release Lock on Ready List
 	readyLck.unlock();
+}
+
+void TileHandler::genProcess(GameTile * newTile) {
+	//Generate Terrain Data
+	unsigned char* rawTile = generator->generateTile(newTile->tile_x, newTile->tile_y);
+
+	//Assign Data to Container
+	vector<unsigned char> tile;
+	tile.assign(rawTile, rawTile + (newTile->Width * newTile->Height *  4));
+
+	//Free Generatored Terrain Data
+	delete rawTile;
+
+	//Load Tile Data into GameTile
+	GameTile::LoadTileFromMemoryIntoExisting(tile, newTile);
 }
 
 void TileHandler::predictTile(vec2 pos) {
@@ -94,16 +118,38 @@ void TileHandler::predictTile(vec2 pos) {
 }
 
 GameTile * TileHandler::getTile(vec2 pos) {
-	//return GameTile::CreateGameTile(256, 256, 0, 0);
+	GameTile* tile = NULL;
+
+	//Obtain Lock on Ready List
 	readyLck.lock();
+
+	//Search Ready List for Cached Tile
 	int s = readyList.size();
-	for(int i = 0; i < s; i++) {
-		if
+	for(std::list<GameTile*>::iterator i = readyList.begin(); i != readyList.end(); i++) {
+		if(pos.x == (*i)->tile_x && pos.y == (*i)->tile_y) {
+			tile = *i;
+			readyList.erase(i);
+			break;
+		}
 	}
+
+	//Release Lock on Ready List
 	readyLck.unlock();
+
+	if(tile != NULL) {
+		//If Cached Tile Found, Return that
+		std::cout << "CACHED TILE LOAD" << std::endl;
+		return tile;
+	} else {
+		//Otherwise, Cached Tile not Found, Generate it Syncronously
+		std::cout << "SYNCRONOUS TILE LOAD" << std::endl;
+		tile = GameTile::CreateGameTile(256, 256, pos.x, pos.y);
+		genProcess(tile);
+		return tile;
+	}
 }
 
-TerrainGen* TileHandler::generator = new TerrainGen();
+TerrainGen* TileHandler::generator = NULL;
 
 std::mutex TileHandler::mtx;
 std::condition_variable TileHandler::cv;

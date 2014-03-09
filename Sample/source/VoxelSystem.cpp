@@ -339,9 +339,7 @@ void VoxelSystem::Update(vec3 player_pos){
 				//Player entered a new area
 
 				cout << "Generating: " << floor(player_pos.x / 256) + x_offset << "," << floor(player_pos.y / 256) + y_offset << endl;
-				//this can happen async
-				GenTileAsync(vec2(floor(player_pos.x / 256) + x_offset, floor(player_pos.y / 256) + y_offset));
-				TileHandler::predictTile(vec2(floor(player_pos.x / 256) + x_offset, floor(player_pos.y / 256) + y_offset));
+				world.insert(TileHandler::getTile(vec2(floor(player_pos.x / 256) + x_offset, floor(player_pos.y / 256) + y_offset)));
 			}
 
 		}
