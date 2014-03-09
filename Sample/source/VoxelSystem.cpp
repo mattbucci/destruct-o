@@ -20,6 +20,8 @@ static const int tile_height = 256;
 TerrainGen * VoxelSystem::generator = new TerrainGen();
 
 VoxelSystem::VoxelSystem() {
+	TileHandler::init();
+
 	//Init Terrain Generator
 	//generator = new TerrainGen();
 	generator->setTileSize(tile_width, tile_height);
@@ -135,8 +137,6 @@ GameTile * VoxelSystem::LoadTile(vec2 pos) {
 GameTile * VoxelSystem::GenTileAsync(vec2 pos) {
 	//Initialize Gametile
 	GameTile * newTile = GameTile::CreateGameTile(tile_width, tile_height, pos.x, pos.y);
-	newTile->tile_x = pos.x;
-	newTile->tile_y = pos.y;
 
 	//Insert Tile Into World
 	int ind = world.insert(newTile);
@@ -341,6 +341,7 @@ void VoxelSystem::Update(vec3 player_pos){
 				cout << "Generating: " << floor(player_pos.x / 256) + x_offset << "," << floor(player_pos.y / 256) + y_offset << endl;
 				//this can happen async
 				GenTileAsync(vec2(floor(player_pos.x / 256) + x_offset, floor(player_pos.y / 256) + y_offset));
+				TileHandler::predictTile(vec2(floor(player_pos.x / 256) + x_offset, floor(player_pos.y / 256) + y_offset));
 			}
 
 		}

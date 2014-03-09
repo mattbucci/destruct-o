@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 #include "ContiguousList.h"
+#include "TileHandler.h"
 class GL3DProgram;
 class GameTile;
 class VoxelDrawSystem;
