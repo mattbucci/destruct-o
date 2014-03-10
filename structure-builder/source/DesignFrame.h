@@ -6,6 +6,13 @@
 
 class DesignFrame : public GameSystem {
 	Editor editor;
+
+	bool panning;
+	bool mouseDown;
+	double mouseHeldAt;
+	vec2 prevMousePos;
+
+	Structure * toEdit;
 public:
 	DesignFrame(ShaderGroup * shaders);
 	~DesignFrame();

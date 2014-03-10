@@ -40,6 +40,7 @@ bool Structure::EditorTraceToVoxel(const vec3 & from, const vec3 & direction, ve
 				collision = true;
 				voxelCollidedWith = Cells[i].pos;
 				surfaceNormal = candidateNormal;
+				_ASSERTE(candidateNormal.z < 1.5);
 			}
 		}
 	}
@@ -73,6 +74,9 @@ void Structure::EditorAddVoxel(vec3 position, int materialId) {
 void Structure::EditorRenderStructure(GL3DProgram * shader, VoxelDrawSystem * drawSystem) {
 	//Draw every voxel independantly like the terrain is drawn
 	drawSystem->startDraw(shader);
+
 	for (auto cell : Cells)
-		drawSystem->finishDraw(shader);
+		drawSystem->pushVoxel(shader,cell.pos,cell.material);
+
+	drawSystem->finishDraw(shader);
 }

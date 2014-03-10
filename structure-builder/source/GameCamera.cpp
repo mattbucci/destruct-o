@@ -7,7 +7,7 @@
 #endif
 
 GameCamera::GameCamera() {
-	
+	Pan=Tilt=0;
 }
 
 void GameCamera::UpdateViewSize(vec2 viewSize) {
@@ -15,11 +15,23 @@ void GameCamera::UpdateViewSize(vec2 viewSize) {
 }
 
 void GameCamera::Draw(GL3DProgram * shaders) {
-	shaders->Camera.SetCameraPosition(position,position+direction,vec3(1,0,0));
+	shaders->Camera.SetCameraPosition(vec3(20,0,0),vec3(),vec3(0,0,1));
 	//IF YOU CHANGE NEAR/FAR CLIPPING PLANE, PLEASE CHANGE UNPROJECT (below) AS WELL
 	shaders->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25,1000); //width/height
 	shaders->Camera.Apply();
 
+	//Center the model matrix around the rotation
+//	shaders->Model.Translate(position);
+	//Apply a rotation to the model matrix
+	shaders->Model.Rotate(Pan,0,0,1);
+	//Rotate the tilt axis
+	vec3 tiltAxis = vec3(0,1,0);
+	tiltAxis = vec3(glm::rotate(-Pan,vec3(0,0,1)) * vec4(tiltAxis,0.0));
+	//Apply the tilt
+	shaders->Model.Rotate(Tilt,tiltAxis);
+	//Move the structure to put the center in the center of the camera
+	shaders->Model.Translate(-1.0f * position);
+	shaders->Model.Apply();
 
 	//Setup sun here for now
 	//translate it to follow world coordinates
@@ -36,19 +48,14 @@ void GameCamera::Draw(GL3DProgram * shaders) {
 }
 
 //Move the camera view point
-void GameCamera::SetCameraView(vec3 position, vec3 direction) {
-	_ASSERTE(direction != vec3());
-	this->position = position;
-	this->direction = direction;
+void GameCamera::SetCameraView(vec3 focusPoint) {
+	this->position = focusPoint;
 }
 //get camera position
 vec3 GameCamera::GetPosition() {
 	return position;
 }
-//get camera direction
-vec3 GameCamera::GetDirection() {
-	return direction;
-}
+
 
 //Cut's dependency on gluUnproject
 //made frome code found at
@@ -76,6 +83,10 @@ static void unproject(vec3 win,mat4 modelView, mat4 projection, GLint * viewport
 }
 
 pair<vec3,vec3> GameCamera::Unproject(vec2 pos) {
+	//If no view port has been set yet, return a vector pointing straight up
+	if (viewPortSize.x <= 0)
+		return pair<vec3,vec3>(vec3(),vec3(0,0,1));
+
 	//Reverse y to match SDL's position frame
 	pos.y = viewPortSize.y - pos.y;
 	//First unproject two points, near and far clipping plane

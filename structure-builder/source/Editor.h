@@ -20,14 +20,19 @@ public:
 		MODE_STICKY,
 		//Remove the voxel the cursor is over
 		MODE_DELETE,
+
+		//This is not actually a mode, but it used to track the size of the mode list
+		//it must always be at the end
+		MODE_LAST
 	};
 private:
 	//Draw any rect or region the editor needs
 	class Region : GLDynamicVertexGroup {
 		//add a side to this region
 		void pushSide(vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d, int & vertNumber);
-		string texture;
 	public:
+		string Texture;
+
 		Region(vec3 cornerA, vec3 cornerB, string textureName);
 		void Resize(vec3 cornerA, vec3 cornerB);
 		void Draw(GL3DProgram * shader, vec3 pos);
@@ -44,14 +49,12 @@ private:
 	EditorMode mode;
 	
 	//The currently selected voxel
+	bool selectionValid;
 	vec3 selectedVoxel;
 
 	//The current level for LEVELBYLEVEL
 	int currentLevel;
 
-	//The size of the drawable area
-	int width;
-	int height;
 
 	//The structure being modified by the editor
 	Structure * beingEdited;
@@ -67,7 +70,7 @@ public:
 
 	//Specify the structure to edit
 	//and the size of one side of the square (starts at 0,0 and goes to size,size)
-	void EditStructure(Structure * structure,int size);
+	void EditStructure(Structure * structure);
 
 	//Read input not consumed by the dialog system
 	void ReadInput(vector<InputEvent> input);
@@ -77,6 +80,9 @@ public:
 
 	//Set the new editor mode
 	void SetMode(EditorMode newMode);
+
+	//The user has requested the editor place a voxel at the current position
+	void PlaceVoxel();
 
 	//Draw the editor guidelines  
 	void Draw(GL3DProgram * shader);

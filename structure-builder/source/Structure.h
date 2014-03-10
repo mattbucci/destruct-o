@@ -18,6 +18,9 @@ public:
 	//Save a structure or floor to disc
 	void SaveStructure(string structureName);
 
+	//Extents used by the editor and the game
+	vec3 Extents;
+
 	//A list of each voxel in the structure
 	vector<StructureCell> Cells; 
 
