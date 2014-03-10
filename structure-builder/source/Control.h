@@ -73,9 +73,9 @@ protected:
 	void useNinePatch(NinePatchBinary * ninePatch);
 
 	//Draws the children of this control
-	void drawChildren(GL2DProgram * shaders);
+	virtual void drawChildren(GL2DProgram * shaders);
 	//Draws the background of this control IF this control is only 4 vertex
-	void drawBackground(GL2DProgram * shaders);
+	virtual void drawBackground(GL2DProgram * shaders);
 	//Construct calculatedPosition from position,pin,and parent
 	//Automatically called before draw()
 	virtual void recalculatePosition();

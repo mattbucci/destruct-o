@@ -10,6 +10,7 @@
 #include "Listbox.h"
 
 #include "Structure.h"
+#include "MaterialSelectionControl.h"
 
 #include "OS.h"
 
@@ -24,6 +25,15 @@ DesignFrame::DesignFrame(ShaderGroup * shaders) : GameSystem(shaders),
 	Camera.SetCameraView(toEdit->Extents*.5f);
 	mouseDown = false;
 	panning = false;
+
+
+	matWindow.position = Rect(0,0,200,200);
+	matWindow.hPin = Control::MAX;
+	matWindow.vPin = Control::CENTER;
+	matSelector = new MaterialSelectionControl();
+	matSelector->position = Rect(10,10,180,180);
+	matWindow.AddControl(matSelector);
+	Controls.AddWindow(&matWindow);
 }
 DesignFrame::~DesignFrame() {
 
@@ -53,6 +63,7 @@ bool DesignFrame::Update(double delta,double now, vector<InputEvent> inputEvents
 		else if (e.Event == InputEvent::MouseUp) {
 			if (!panning) {
 				//The user clicked this position
+				editor.SetMaterial(matSelector->GetSelectedMaterial());
 				editor.PlaceVoxel();
 			}
 			panning = false;

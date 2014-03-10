@@ -202,6 +202,10 @@ void Editor::ReadInput(vector<InputEvent> input) {
 	}
 }
 
+void Editor::SetMaterial(int materialId) {
+	this->materialId = materialId;
+}
+
 //Retrieve the editor mode
 Editor::EditorMode Editor::GetMode() {
 	return mode;
@@ -219,7 +223,7 @@ void Editor::PlaceVoxel() {
 		if (mode == MODE_DELETE)
 			beingEdited->EditorRemoveVoxel(selectedVoxel);
 		else
-			beingEdited->EditorAddVoxel(selectedVoxel,0);
+			beingEdited->EditorAddVoxel(selectedVoxel,materialId);
 	}
 		
 }

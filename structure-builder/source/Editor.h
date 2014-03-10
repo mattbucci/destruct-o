@@ -55,6 +55,8 @@ private:
 	//The current level for LEVELBYLEVEL
 	int currentLevel;
 
+	//The material of the next voxel you are going to place
+	int materialId;
 
 	//The structure being modified by the editor
 	Structure * beingEdited;
@@ -80,6 +82,9 @@ public:
 
 	//Set the new editor mode
 	void SetMode(EditorMode newMode);
+
+	//change the current material id 
+	void SetMaterial(int materialId);
 
 	//The user has requested the editor place a voxel at the current position
 	void PlaceVoxel();
