@@ -43,6 +43,7 @@ void Editor::Region::Resize(vec3 cornerA, vec3 cornerB) {
 		else
 			vat(i).z = cornerB.z;
 	}
+	//cout << "{" << 
 }
 
 
@@ -111,11 +112,14 @@ void Editor::UpdateCurrentVoxel(vec2 cursorPosition) {
 		else
 			//Failing that trace to the ground
 			selectedVoxel = vec3(camera->UnprojectToGround(cursorPosition,0.0f),0.0f);
+
+		selectedVoxel = glm::floor(selectedVoxel);
 	}
 		break;
 	case MODE_LEVELBYLEVEL: {
 		//Trace to the current level
 		selectedVoxel = vec3(camera->UnprojectToGround(cursorPosition,currentLevel),currentLevel);
+		selectedVoxel = glm::floor(selectedVoxel);
 	}
 		break;
 	case MODE_BUILDUP: {
@@ -131,6 +135,8 @@ void Editor::UpdateCurrentVoxel(vec2 cursorPosition) {
 		else
 			//Failing that trace to the ground
 			selectedVoxel = vec3(camera->UnprojectToGround(cursorPosition,0.0f),0.0f);
+
+		selectedVoxel = glm::floor(selectedVoxel);
 
 		//MODE_BUILDUP works exactly like MODE_STICKY until this point
 		//at this point disregard the x,y and find the highest point to place 
@@ -149,6 +155,8 @@ void Editor::UpdateCurrentVoxel(vec2 cursorPosition) {
 		break;
 	}
 	//Now limit the selectedVoxel to the permitted region
+
+	cout << "<" << selectedVoxel.x << "," << selectedVoxel.y << "," << selectedVoxel.z << ">\n";
 }
 
 //Specify the structure to edit
@@ -181,8 +189,9 @@ void Editor::SetMode(EditorMode newMode) {
 
 //Draw the editor guidelines  
 void Editor::Draw(GL3DProgram * shader) {
+	_ASSERTE(beingEdited);
 	//Draw the structure
 	beingEdited->EditorRenderStructure(shader,drawSystem);
 	//Draw transparent objects
-	drawVoxel.Draw(shader,selectedVoxel);
+	drawVoxel.Draw(shader,vec3());
 }

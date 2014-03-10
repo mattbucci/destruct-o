@@ -2,9 +2,10 @@
 
 #include "GameSystem.h"
 #include "GameCamera.h"
-
+#include "Editor.h"
 
 class DesignFrame : public GameSystem {
+	Editor editor;
 public:
 	DesignFrame(ShaderGroup * shaders);
 	~DesignFrame();

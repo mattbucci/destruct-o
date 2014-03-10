@@ -15,7 +15,7 @@ void GameCamera::UpdateViewSize(vec2 viewSize) {
 }
 
 void GameCamera::Draw(GL3DProgram * shaders) {
-	shaders->Camera.SetCameraPosition(position,position+direction,vec3(0,0,1));
+	shaders->Camera.SetCameraPosition(position,position+direction,vec3(1,0,0));
 	//IF YOU CHANGE NEAR/FAR CLIPPING PLANE, PLEASE CHANGE UNPROJECT (below) AS WELL
 	shaders->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25,1000); //width/height
 	shaders->Camera.Apply();
@@ -76,6 +76,8 @@ static void unproject(vec3 win,mat4 modelView, mat4 projection, GLint * viewport
 }
 
 pair<vec3,vec3> GameCamera::Unproject(vec2 pos) {
+	//Reverse y to match SDL's position frame
+	pos.y = viewPortSize.y - pos.y;
 	//First unproject two points, near and far clipping plane
 	vec3 vnear = vec3(pos.x,pos.y,.25);
 	vec3 vfar = vec3(pos.x,pos.y,2000);
@@ -124,7 +126,7 @@ vec2 GameCamera::UnprojectToGround(vec2 pos, float groundHeight) {
 	double dist = CalculateIntersectionDistance(unprojected.first,unprojected.second,vec3(0,0,groundHeight),vec3(0,0,1));
 
 	//If the dist isn't right, (it's behind you) correct it as much as possible
-	if (dist > 0) {
+	if (dist < 0) {
 		double x = 0;
 		double y = 0;
 		const static double value = 100000;

@@ -9,10 +9,15 @@
 #include "Button.h"
 #include "Listbox.h"
 
+#include "Structure.h"
+
 #include "OS.h"
 
-DesignFrame::DesignFrame(ShaderGroup * shaders) : GameSystem(shaders) {
-
+DesignFrame::DesignFrame(ShaderGroup * shaders) : GameSystem(shaders), 
+	//Setup the editor with a connection to the camera
+	editor(&Camera) {
+	Camera.SetCameraView(vec3(0,0,2),vec3(0,0,-1));
+	editor.EditStructure(new Structure(),10);
 }
 DesignFrame::~DesignFrame() {
 
@@ -27,6 +32,13 @@ void DesignFrame::Build() {
 }
 
 bool DesignFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {
+	//Issue events to dialog
+	//Run the dialog system and monitor pressed keys
+	//events read by the dialog system are removed from the list of events
+	passEventsToControl(inputEvents);
+
+	//Pass events to the editor
+	editor.ReadInput(inputEvents);
 
 	return true;
 }
@@ -54,14 +66,14 @@ void DesignFrame::Draw(double width, double height) {
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		
+	
+	//Apply the camera
+	Camera.Draw(shaders3d);
+
+	//Draw the editor
+	editor.Draw(shaders3d);
+
 	//Call the parent draw to draw interface
 	GameSystem::Draw(width,height);
-	/*
-	// Draw the UI for joysticks
-	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
-	shaders2d->UseProgram();
-	shaders2d->SetWidthHeight((float)width, (float)height);
-	FirstPerson->Draw(width, height, shaders2d);
-	*/
+
 } 
