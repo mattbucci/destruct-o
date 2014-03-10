@@ -3,6 +3,9 @@
 #include "stdafx.h"
 #include "ContiguousList.h"
 
+class GL3DProgram;
+class VoxelDrawSystem;
+
 struct StructureCell {
 	vec3 pos;
 	unsigned int material;
@@ -16,10 +19,20 @@ public:
 	void SaveStructure(string structureName);
 
 	//A list of each voxel in the structure
-	ContiguousList<StructureCell> Cells; 
+	vector<StructureCell> Cells; 
 
-	bool TraceToStructure(
+	//Attempt to ray trace to this structure
+	bool Trace(const vec3 & from, const vec3 & direction, vec3 & rayCollision, vec3 & surfaceNormal);
 
-	Structure();
-	~Structure();
+	//Ray trace to a specific voxel position instead of intersection
+	bool EditorTraceToVoxel(const vec3 & from, const vec3 & direction, vec3 & voxelCollidedWith, vec3 & surfaceNormal);
+
+	//Remove voxel at position
+	void EditorRemoveVoxel(vec3 position);
+
+	//Add voxel at position. If a voxel already exists in that position do nothing
+	void EditorAddVoxel(vec3 position, int materialId);
+
+	//Render all voxels in this structure in a single pass
+	void EditorRenderStructure(GL3DProgram * shader, VoxelDrawSystem * drawSystem);
 };
