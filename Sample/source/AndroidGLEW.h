@@ -23,6 +23,6 @@ extern MYBIND_GLDRAWELEMENTSINSTANCED glDrawElementsInstanced;
 //call only after a gl context has been returned
 //only one call is necessary
 //returns true if successful, otherwise false
-bool initAndroidGlew();
+int initAndroidGlew();
 
 #endif

@@ -9,7 +9,6 @@
 #include "VoxEngine.h"
 #include "LoadingScreen.h"
 
-
 SDL_Renderer* displayRenderer;
 
 //A variable which at runtime can be used to figure out what version is running
@@ -65,7 +64,7 @@ void VoxEngine::Start() {
 	if (displayWindow == NULL) {
 		displayWindow = BuildSDLContext(2,0,0.0f);
 		GLSLVersion = 110;
-#ifdef __MOBILE__
+#ifdef __IPHONEOS__
 		//For iOS, globally force the newer opengl version
 		OpenglVersion = 31;
 #else
@@ -99,7 +98,9 @@ void VoxEngine::Start() {
 
 	//Start our version of GLEW for android
 #ifdef __ANDROID__
-	if (initAndroidGlew())
+	//Let the android GLEW decide which opengl version to act like
+	OpenglVersion = initAndroidGlew();
+	if (OpenglVersion > 0)
 		cout << "AndroidGLEW loaded successfully\n";
 	else {
 		cout << "Failed to load some necessary extensions for android glew\n";
@@ -160,6 +161,7 @@ void VoxEngine::Start() {
 	cout << "TESTING[2]: " << (unsigned int)eglGetProcAddress("glGenVertexArraysOES") << "\n";
 	cout << "TESTING[3]: " << (unsigned int)eglGetProcAddress("glGenVertexArrays") << "\n";*/
 
+	cout << "Using an external opengl version of: " << (char*)glGetString(GL_VERSION) << "\n";
 	cout << "Using internal opengl version of: " << OpenglVersion << "\n";
 
 	//Initialze the dialog constants
@@ -188,6 +190,9 @@ void VoxEngine::Start() {
 			glViewport(0, 0, curWidth, curHeight);
 			load.Draw(curWidth,curHeight,shader);
 			SDL_GL_SwapWindow(displayWindow);
+
+			//Sleep softly and use no cpu power
+			OS::SleepTime(.15);
 		}
 	}
 
@@ -204,7 +209,7 @@ void VoxEngine::Start() {
 	gameSimulationTime = 0;
 	gameEventDelta = gameSimulationTime-OS::Now();
 	gameSimulationTime = -SIMULATION_TIME;
-
+	
 	//The game loop begins
 	while (continueGameLoop) {
 
