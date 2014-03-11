@@ -3,6 +3,8 @@
 #include "stdafx.h"
 #include "ContiguousList.h"
 #include "TileHandler.h"
+#include "Rect.h"
+
 class GL3DProgram;
 class GameTile;
 class VoxelDrawSystem;
@@ -20,6 +22,9 @@ class VoxelSystem {
 	GLuint textureId;
 
 	VoxelDrawSystem * renderer;
+
+	//Calls foreachFunction for each tile contained in the Rect "region"
+	void forTilesInRect(Rect region, function<void(GameTile * tile)> foreachFunction);
 
 public:
 	VoxelSystem();

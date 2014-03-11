@@ -232,9 +232,28 @@ int VoxelSystem::GetPositionStackSize(vec2 pos) {
 	return cell->stackHeight + 1;
 }
 
+void VoxelSystem::forTilesInRect(Rect region, function<void(GameTile * tile)> foreachFunction) {
+	float xend = region.X + region.Width;
+	float yend = region.Y + region.Height;
+	for (float x = region.X;; x+=256) {
+		for (float y = region.Y;; y+=256) {
+			//Retrieve a valid tile for this position
+			//and call the foreachFunction
+			foreachFunction(GetTile(glm::floor(vec2(x/256,y/256))));
+
+			//Exit only after an iteration past the end
+			if (y >= yend)
+				break;
+		}
+		//Exit only after an iteration past the end
+		if (x >= xend)
+			break;
+	}
+}
+
 //intersects two ranges
 //places the output into rangeA
-void intersect1D(int & rangeAStart, int & rangeAEnd, int rangeBStart, int rangeBEnd) {
+static void intersect1D(int & rangeAStart, int & rangeAEnd, int rangeBStart, int rangeBEnd) {
     //No intersection
     if ((rangeAStart > rangeBEnd) || (rangeAEnd < rangeBStart)) {
         rangeAEnd = rangeAStart;
@@ -258,8 +277,8 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 
 	//render each viewable rectangle
 
-	for (int i = 0; i < world.size(); i++) {
-        GameTile & current_tile = *world[i];
+	forTilesInRect(Rect(atx,aty,tox-atx,toy-aty),[this,shader,atx,aty,tox,toy](GameTile * tile) {
+        GameTile & current_tile = *tile;
 		int rectStartX, rectStartY, rectEndX, rectEndY;
 		//Get the region this tile is in
         rectStartX = current_tile.tile_x * 256;
@@ -283,7 +302,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 
 		//Skip zero length segments
 		if ((rectStartY == rectEndY) || (rectStartX == rectEndX))
-			continue;
+			return;
 		//offset rendering for tile location
 		shader->Model.PushMatrix();
 		shader->Model.Translate(vec3(current_tile.tile_x * 256, current_tile.tile_y * 256, 0));
@@ -315,7 +334,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 		}
 		renderer->finishDraw(shader);
 		shader->Model.PopMatrix();
-	}
+	});
 
 }
 
@@ -365,8 +384,7 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 	GameTile * current_tile;
 	//render each viewable rectangle
 	vector<vec4> removedVoxels;
-	for (int i = 0; i < world.size(); i++) {
-		current_tile = world[i];
+	forTilesInRect(Rect(pos.x - size / 2,pos.x - size / 2,size,size),[this,&removedVoxels,pos,size](GameTile * current_tile) {
 		int rectStartX, rectStartY, rectEndX, rectEndY;
 		//Get the region this tile is in
 		rectStartX = current_tile->tile_x * 256;
@@ -386,11 +404,11 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 
 		//Skip zero length segments
 		if ((rectStartY == rectEndY) || (rectStartX == rectEndX))
-			continue;
+			return;
 
 		current_tile->Crater(rectStartX, rectStartY, rectEndX, rectEndY, (int)(pos.z - size / 2.0), removedVoxels);
 
-	}
+	});
 	//Return all removed voxels
 	return removedVoxels;
 }
