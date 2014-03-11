@@ -177,6 +177,14 @@ void TileHandler::forceTile(vec2 pos) {
 
 }
 
+void TileHandler::setSeed(int seed) {
+	generator->setSeed(seed);
+}
+
+int TileHandler::getSeed() {
+	return generator->getSeed();
+}
+
 GameTile * TileHandler::getTile(vec2 pos) {
 	GameTile* tile = NULL;
 
@@ -220,6 +228,9 @@ GameTile * TileHandler::getTile(vec2 pos) {
 	}
 
 	worldLck.unlock();
+
+	//Guarantee a Tile is Returned
+	_ASSERTE(tile != NULL);
 
 	return tile;
 }

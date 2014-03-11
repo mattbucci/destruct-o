@@ -120,8 +120,9 @@ void BaseFrame::Build() {
 	audio = new AudioPlayer(100);
 	audio->Subscribe(player);
 
+	//TODO: Implement TileHandler Loading
 	//Load the sample tile
-	Voxels.LoadWorld("A Save File");
+	//Voxels.LoadWorld("A Save File");
 }
 
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {

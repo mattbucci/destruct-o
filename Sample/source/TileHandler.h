@@ -33,11 +33,15 @@ class TileHandler
 	static void genRoutine(GameTile * newTile);
 
 	static void forceTile(vec2 pos);
+	static void predictTile(vec2 pos);
 
 	TileHandler(void);
 	~TileHandler(void);
 public:
 	static void init();
-	static void predictTile(vec2 pos);
+
+	static void setSeed(int seed);
+	static int getSeed();
+
 	static GameTile * getTile(vec2 pos);
 };
