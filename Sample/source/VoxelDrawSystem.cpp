@@ -10,7 +10,7 @@ VoxelDrawSystem::~VoxelDrawSystem() {
 
 VoxelDrawSystem * VoxelDrawSystem::BuildAppropriateSystem()
 {
-#if (defined __IPHONEOS__)
+#ifdef __MOBILE__
     // iOS will ALWAYS use the instanced render system
     return new InstancedVoxelRenderSystem();
 #else
@@ -20,11 +20,9 @@ VoxelDrawSystem * VoxelDrawSystem::BuildAppropriateSystem()
 		return new BasicVoxelRenderSystem();
 		break;
 //Android can't use instanced rendering so its not even an option
-#ifndef __ANDROID__
 	case 31:
 		return new InstancedVoxelRenderSystem();
 		break;
-#endif
 	}
 #endif
     

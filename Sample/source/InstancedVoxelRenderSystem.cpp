@@ -2,7 +2,6 @@
 #include "InstancedVoxelRenderSystem.h"
 #include "GL3DProgram.h"
 
-#ifndef __ANDROID__
 
 InstancedVoxelRenderSystem::InstancedVoxelRenderSystem() {
 	glGenBuffers(1,&vertexBuffer);
@@ -89,6 +88,8 @@ void InstancedVoxelRenderSystem::startDraw(GL3DProgram * shader) {
 
 	allocated = true;
 
+	cout << "!!<>!! Successfully instanced a voxel instance system\n";
+
 	//Allocate the space for the gpu buffers now
 	//and send the static data
 	//Rebind the array to bring them into the current context
@@ -156,4 +157,3 @@ void InstancedVoxelRenderSystem::finishDraw(GL3DProgram * shader) {
 		draw(shader);
 }
 
-#endif

@@ -65,7 +65,7 @@ void VoxEngine::Start() {
 	if (displayWindow == NULL) {
 		displayWindow = BuildSDLContext(2,0,0.0f);
 		GLSLVersion = 110;
-#ifdef __IPHONEOS__
+#ifdef __MOBILE__
 		//For iOS, globally force the newer opengl version
 		OpenglVersion = 31;
 #else
@@ -160,6 +160,7 @@ void VoxEngine::Start() {
 	cout << "TESTING[2]: " << (unsigned int)eglGetProcAddress("glGenVertexArraysOES") << "\n";
 	cout << "TESTING[3]: " << (unsigned int)eglGetProcAddress("glGenVertexArrays") << "\n";*/
 
+	cout << "Using internal opengl version of: " << OpenglVersion << "\n";
 
 	//Initialze the dialog constants
 	VisualInterface.init();
