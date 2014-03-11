@@ -365,6 +365,8 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, openglMajorVersion);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, openglMinorVersion);
 #ifndef __MOBILE__
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
 
@@ -411,6 +413,10 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 			return NULL;
 		}
 	}
+
+#ifndef __MOBILE__
+	glEnable(GL_MULTISAMPLE);
+#endif
 
 	return displayWindow;
 }
