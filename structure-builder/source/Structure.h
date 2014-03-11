@@ -12,6 +12,27 @@ struct StructureCell {
 };
 
 class Structure {
+	//Write the raw memory in both formats automatically
+	template<class T>
+	static void Write(T value, vector<unsigned char> & platformEndian, vector<unsigned char> & swappedEndian) {
+		unsigned char * byte = (unsigned char*)&value;
+		for (unsigned int i = 0; i < sizeof(T); i++)
+			platformEndian.push_back(byte[i]);
+		for (unsigned int i = sizeof(T)-1; i >= 0; i--)
+			swappedEndian.push_back(byte[i]);
+	}
+
+	//Read from raw memory
+	template<class T>
+	static void Read(T & readValue, vector<unsigned char> & platformFile, int & filePos) {
+		unsigned char * byte = (unsigned char*)&readValue;
+		for (int i = 0; i < sizeof(T); i++)
+			byte[i] = platformFile[filePos+i];
+		filePos += sizeof(T);
+	}
+
+	static bool WriteFile(string name, vector<unsigned char> data);
+	static vector<unsigned char> ReadFile(string name);
 public:
 	//Load a structure or floor out of disc
 	static Structure * LoadStructure(string structureName);
