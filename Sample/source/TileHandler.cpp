@@ -61,8 +61,9 @@ void TileHandler::handlerLoop() {
 			int s = worldSet.size();
 			for(int i = 0; i < s; i++) {
 				if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y) {
-					delete worldSet[i];
+					GameTile * tmp = worldSet[i];
 					worldSet[i] = tile;
+					delete tmp;
 					//std::cout << "TILE X -> " << worldSet[i]->tile_x << " && TILE Y -> " << worldSet[i]->tile_y << "\n";
 					break;
 				}
@@ -147,8 +148,8 @@ void TileHandler::predictTile(vec2 pos) {
 
 	//Add to Queue & Notify Handler
 	genQueue.push_back(pos);
-	//Add Empty Tile to WorldSet for Duplicate Prevention
-	worldSet.push_back(GameTile::CreateGameTile(tile_width, tile_height, pos.x, pos.y));
+	//Add Placeholder Tile to WorldSet for Duplicate Prevention
+	worldSet.push_back(GameTile::CreatePlaceholderTile(pos.x, pos.y));
 	genCv.notify_one();
 
 	//std::cout << "MAIN - PREDICTED TILE X -> " << pos.x << " && TILE Y -> " << pos.y << "\n";
@@ -167,8 +168,8 @@ void TileHandler::forceTile(vec2 pos) {
 
 	//Add to Queue & Notify Handler
 	genQueue.push_back(pos);
-	//Add Empty Tile to WorldSet for Duplicate Prevention
-	worldSet.push_back(GameTile::CreateGameTile(tile_width, tile_height, pos.x, pos.y));
+	//Add Placeholder Tile to WorldSet for Duplicate Prevention
+	worldSet.push_back(GameTile::CreatePlaceholderTile(pos.x, pos.y));
 	genCv.notify_one();
 
 	//Release Gen Queue Lock
@@ -185,7 +186,7 @@ GameTile * TileHandler::getTile(vec2 pos) {
 	//Search World Set for Loaded Tile
 	int s = worldSet.size();
 	for(int i = 0; i < s; i++) {
-		if(pos.x == worldSet[i]->tile_x && pos.y == worldSet[i]->tile_y) {
+		if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y && worldSet[i]->Cells != NULL) {
 			//std::cout << "MATCHED EXISTING TILE - TILE X -> " << pos.x << " && TILE Y -> " << pos.y << std::endl;
 			tile = worldSet[i];
 			break;
@@ -203,7 +204,7 @@ GameTile * TileHandler::getTile(vec2 pos) {
 			int s = worldSet.size();
 			for(int i = 0; i < s; i++) {
 				//std::cout << "\tTILE X -> " << worldSet[i]->tile_x << " && TILE Y -> " << worldSet[i]->tile_y << std::endl;
-				if(pos.x == worldSet[i]->tile_x && pos.y == worldSet[i]->tile_y) {
+				if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y && worldSet[i]->Cells != NULL) {
 					//std::cout << "TILE MATCH\n";
 					tile = worldSet[i];
 					break;

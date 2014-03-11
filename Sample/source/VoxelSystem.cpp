@@ -161,9 +161,6 @@ void VoxelSystem::GenThread(GameTile * newTile) {
 
 	//Load Tile Data into GameTile
 	GameTile::LoadTileFromMemoryIntoExisting(tile, newTile);
-
-	//Set Ready Flag
-	newTile->ready = true;
 }
 
 GameTile * VoxelSystem::GenTile(vec2 pos) {
