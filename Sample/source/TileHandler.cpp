@@ -1,5 +1,8 @@
 #include "TileHandler.h"
 
+static const int tile_width = 256;
+static const int tile_height = 256;
+
 TileHandler::TileHandler(void)
 {
 }
@@ -15,7 +18,7 @@ void TileHandler::init() {
 
 	//Initialize Terrain Generator
 	generator = new TerrainGen();
-	generator->setTileSize(256, 256);
+	generator->setTileSize(tile_width, tile_height);
 	srand(time(NULL));
 	generator->setSeed(rand());
 
@@ -25,27 +28,49 @@ void TileHandler::init() {
 }
 
 void TileHandler::handlerLoop() {
-	//Lock for Shared Structures (Lock by Default)
-	std::unique_lock<std::mutex> lck(mtx);
+	//Lock for Generation List (Default to Locked)
+	std::unique_lock<std::mutex> gLck(genMtx);
+	std::unique_lock<std::mutex> wLck(worldMtx, std::defer_lock);
 
 	//Ensure the Lock is Secured
-	_ASSERTE(lck.owns_lock());
+	_ASSERTE(gLck.owns_lock());
 
 	//Begin Work Loop
 	while(true) {
 		while(genQueue.size() <= 0) {
-			cv.wait(lck);
+			//std::cout << "HANDLER THREAD WAIT\n";
+			genCv.wait(gLck);
+			//std::cout << "HANDLER THREAD WAKE\n";
 		}
+
+		//std::cout << "HANDLER THREAD START\n";
 
 		//Assign Work Items
 		while(genQueue.size() > 0) {
+			//std::cout << "GRABBING WORK\n";
 			//Grab Work from Queue
 			vec2 pos = genQueue.front();
-			GameTile * tile = GameTile::CreateGameTile(256, 256, pos.x, pos.y);
-			genQueue.pop();
+			GameTile * tile = GameTile::CreateGameTile(tile_width, tile_height, pos.x, pos.y);
+			genQueue.pop_front();
+			gLck.unlock();
 
-			std::thread t(genThread, tile);
-			t.detach();
+			genRoutine(tile);
+			//std::cout << "GENERATION COMPLETE\n";
+			wLck.lock();
+			//std::cout << "GRABBED WORLD LOCK\n";
+			int s = worldSet.size();
+			for(int i = 0; i < s; i++) {
+				if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y) {
+					delete worldSet[i];
+					worldSet[i] = tile;
+					//std::cout << "TILE X -> " << worldSet[i]->tile_x << " && TILE Y -> " << worldSet[i]->tile_y << "\n";
+					break;
+				}
+			}
+			worldCv.notify_all();
+			wLck.unlock();
+
+			gLck.lock();
 		}
 	}
 
@@ -54,6 +79,8 @@ void TileHandler::handlerLoop() {
 }
 
 void TileHandler::genThread(GameTile * newTile) {
+	_ASSERTE(false); // DO NOT CALL, PHASE OUT
+
 	//Generate Terrain Data
 	unsigned char* rawTile = generator->generateTile(newTile->tile_x, newTile->tile_y);
 
@@ -67,19 +94,19 @@ void TileHandler::genThread(GameTile * newTile) {
 	//Load Tile Data into GameTile
 	GameTile::LoadTileFromMemoryIntoExisting(tile, newTile);
 
-	//Obtain Lock on Ready List
-	std::unique_lock<std::mutex> readyLck(readyMtx);
-	_ASSERTE(readyLck.owns_lock());
+	//Obtain Lock on World Set
+	std::unique_lock<std::mutex> wLck(worldMtx);
+	_ASSERTE(wLck.owns_lock());
 
-	//Push New Tile into Ready List
-	readyList.push_front(newTile);
-	readyCv.notify_all();
+	//Push New Tile into World Set
+	//worldSet[vec2(newTile->tile_x, newTile->tile_y)] = newTile;
+	worldCv.notify_all();
 
-	//Release Lock on Ready List
-	readyLck.unlock();
+	//Release Lock on World Set
+	wLck.unlock();
 }
 
-void TileHandler::genProcess(GameTile * newTile) {
+void TileHandler::genRoutine(GameTile * newTile) {
 	//Generate Terrain Data
 	unsigned char* rawTile = generator->generateTile(newTile->tile_x, newTile->tile_y);
 
@@ -96,59 +123,116 @@ void TileHandler::genProcess(GameTile * newTile) {
 
 void TileHandler::predictTile(vec2 pos) {
 
+	//Ensure World Set Lock Owned
+	_ASSERTE(worldLck.owns_lock());
+
+	// Check if Tile Already Exists
+	bool exists = false;
+	int s = worldSet.size();
+	for(int i = 0; i < s; i++) {
+		if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y) {
+			exists = true;
+			break;
+		}
+	}
+	if(exists) {
+		// If Exists, Don't Add to Queue
+		return;
+	}
+
+	//std::cout << "MAIN - ATTEMPTING GRAB GEN LOCK\n";
 	//Grab Lock
-	lck.lock();
+	genLck.lock();
+	//std::cout << "MAIN - SUCCESSFUL GRAB GEN LOCK\n";
 
 	//Add to Queue & Notify Handler
-	genQueue.push(pos);
-	cv.notify_one();
+	genQueue.push_back(pos);
+	//Add Empty Tile to WorldSet for Duplicate Prevention
+	worldSet.push_back(GameTile::CreateGameTile(tile_width, tile_height, pos.x, pos.y));
+	genCv.notify_one();
+
+	//std::cout << "MAIN - PREDICTED TILE X -> " << pos.x << " && TILE Y -> " << pos.y << "\n";
 
 	//Release Lock
-	lck.unlock();
+	genLck.unlock();
+}
+
+void TileHandler::forceTile(vec2 pos) {
+
+	//Ensure World Set Lock Owned
+	_ASSERTE(worldLck.owns_lock());
+
+	//Grab Gen Queue Lock
+	genLck.lock();
+
+	//Add to Queue & Notify Handler
+	genQueue.push_back(pos);
+	//Add Empty Tile to WorldSet for Duplicate Prevention
+	worldSet.push_back(GameTile::CreateGameTile(tile_width, tile_height, pos.x, pos.y));
+	genCv.notify_one();
+
+	//Release Gen Queue Lock
+	genLck.unlock();
+
 }
 
 GameTile * TileHandler::getTile(vec2 pos) {
 	GameTile* tile = NULL;
 
-	//Obtain Lock on Ready List
-	readyLck.lock();
+	//Obtain Lock on World Set
+	worldLck.lock();
 
-	//Search Ready List for Cached Tile
-	int s = readyList.size();
-	for(std::list<GameTile*>::iterator i = readyList.begin(); i != readyList.end(); i++) {
-		if(pos.x == (*i)->tile_x && pos.y == (*i)->tile_y) {
-			tile = *i;
-			readyList.erase(i);
+	//Search World Set for Loaded Tile
+	int s = worldSet.size();
+	for(int i = 0; i < s; i++) {
+		if(pos.x == worldSet[i]->tile_x && pos.y == worldSet[i]->tile_y) {
+			//std::cout << "MATCHED EXISTING TILE - TILE X -> " << pos.x << " && TILE Y -> " << pos.y << std::endl;
+			tile = worldSet[i];
 			break;
 		}
 	}
 
-	//Release Lock on Ready List
-	readyLck.unlock();
-
-	if(tile != NULL) {
-		//If Cached Tile Found, Return that
-		//std::cout << "CACHED TILE LOAD" << std::endl;
-		return tile;
-	} else {
-		//Otherwise, Cached Tile not Found, Generate it Syncronously
-		//std::cout << "SYNCRONOUS TILE LOAD" << std::endl;
-		tile = GameTile::CreateGameTile(256, 256, pos.x, pos.y);
-		genProcess(tile);
-		return tile;
+	//If Tile Not Already in Worldset
+	if(tile == NULL) {
+		forceTile(pos);
+		while(tile == NULL) {
+			//std::cout << "MAIN THREAD WAIT\n";
+			worldCv.wait(worldLck);
+			//std::cout << "MAIN THREAD WAKE\n";
+			//std::cout << "LOOKING FOR TILE X -> " << pos.x << " && TILE Y -> " << pos.y << std::endl;
+			int s = worldSet.size();
+			for(int i = 0; i < s; i++) {
+				//std::cout << "\tTILE X -> " << worldSet[i]->tile_x << " && TILE Y -> " << worldSet[i]->tile_y << std::endl;
+				if(pos.x == worldSet[i]->tile_x && pos.y == worldSet[i]->tile_y) {
+					//std::cout << "TILE MATCH\n";
+					tile = worldSet[i];
+					break;
+				}
+			}
+		}
 	}
+
+	for(int x_offset = -1; x_offset <= 1; x_offset++) {
+		for(int y_offset = -1; y_offset <= 1; y_offset++) {
+			predictTile(vec2(pos.x + x_offset, pos.y + y_offset));
+		}
+	}
+
+	worldLck.unlock();
+
+	return tile;
 }
 
 TerrainGen* TileHandler::generator = NULL;
 
-std::mutex TileHandler::mtx;
-std::condition_variable TileHandler::cv;
-std::unique_lock<std::mutex> TileHandler::lck(mtx, std::defer_lock);
-std::queue<vec2> TileHandler::genQueue = std::queue<vec2>();
+std::mutex TileHandler::genMtx;
+std::condition_variable TileHandler::genCv;
+std::unique_lock<std::mutex> TileHandler::genLck(genMtx, std::defer_lock);
+std::list<vec2> TileHandler::genQueue = std::list<vec2>();
 
-std::mutex TileHandler::readyMtx;
-std::condition_variable TileHandler::readyCv;
-std::unique_lock<std::mutex> TileHandler::readyLck(mtx, std::defer_lock);
-std::list<GameTile*> TileHandler::readyList = std::list<GameTile*>();
+std::mutex TileHandler::worldMtx;
+std::condition_variable TileHandler::worldCv;
+std::unique_lock<std::mutex> TileHandler::worldLck(worldMtx, std::defer_lock);
+std::vector<GameTile*> TileHandler::worldSet = std::vector<GameTile*>();
 
 std::thread* TileHandler::handlerThread = NULL;
