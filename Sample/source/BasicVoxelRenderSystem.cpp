@@ -5,11 +5,15 @@
 //This voxel render system uses glsl 110 but still
 //needs to make a special case for android
 
+
+
+
+
+
+
 BasicVoxelRenderSystem::BasicVoxelRenderSystem() {
-#ifndef __ANDROID__
 	glGenBuffers(1,&vertexBuffer);
 	glGenVertexArrays(1,&vertexArray);
-#endif
 	bufferedVoxels = 0;
 	vertices = new vec4[36*VOXEL_RENDER_SWEEP];
 
@@ -18,10 +22,8 @@ BasicVoxelRenderSystem::BasicVoxelRenderSystem() {
 
 BasicVoxelRenderSystem::~BasicVoxelRenderSystem() {
 	delete [] vertices;
-#ifndef __ANDROID__
 	glDeleteBuffers(1,&vertexBuffer);
 	glDeleteVertexArrays(1,&vertexArray);
-#endif
 }
 
 void BasicVoxelRenderSystem::pushSide(vec3 pos, vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d, int & vertNumber,int materialId) {
@@ -47,7 +49,6 @@ void BasicVoxelRenderSystem::startDraw(GL3DProgram * shader) {
 
 	allocated = true;
 	glEnableVertexAttribArray ( 0 );
-#ifndef __ANDROID__
 	//Allocate the space for the gpu buffers now
 	//and send the static data
 	//Rebind the array to bring them into the current context
@@ -58,20 +59,15 @@ void BasicVoxelRenderSystem::startDraw(GL3DProgram * shader) {
 	glBufferData ( GL_ARRAY_BUFFER, VOXEL_RENDER_SWEEP*36*sizeof(vec4), vertices, GL_DYNAMIC_DRAW );
 	glEnableVertexAttribArray ( shader->AttributePosition() );
 	glVertexAttribPointer ( shader->AttributePosition(), 4, GL_FLOAT, GL_FALSE, 0, 0 );
-#endif
 }
 
 void BasicVoxelRenderSystem::draw(GL3DProgram * shader) {
 	glEnableVertexAttribArray ( 0 );
-#ifndef __ANDROID__
 	glBindVertexArray ( vertexArray );
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
 	glBufferSubData ( GL_ARRAY_BUFFER, 0,bufferedVoxels*36*sizeof(vec4), vertices );
 	glEnableVertexAttribArray ( shader->AttributePosition() );
 	glVertexAttribPointer ( shader->AttributePosition(), 4, GL_FLOAT, GL_FALSE, 0, 0 );	
-#else
-	glVertexAttribPointer ( shader->AttributePosition(), 4, GL_FLOAT, GL_FALSE, 0, vertices );	
-#endif
 
 	glDrawArrays( GL_TRIANGLES, 0, bufferedVoxels*36 );
 	//All buffered voxels now drawn

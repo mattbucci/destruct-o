@@ -57,7 +57,7 @@ bool VoxelSystem::LoadWorld(string saveName) {
 		//hey there's save data, let's load it
 		//please don't actually use this, just load the seed from the Save
 		//Genworld sets the seed, it will also handle loading prebuilt tiles
-		GenWorld(stoi(saveName));
+		GenWorld(atoi(saveName.c_str()));
 	}
 	else {
 		//World failed to load

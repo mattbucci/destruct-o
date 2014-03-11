@@ -97,6 +97,18 @@ void VoxEngine::Start() {
 
 #endif
 
+	//Start our version of GLEW for android
+#ifdef __ANDROID__
+	if (initAndroidGlew())
+		cout << "AndroidGLEW loaded successfully\n";
+	else {
+		cout << "Failed to load some necessary extensions for android glew\n";
+		cout << "PROGRAM IS NOW EXITING\n";
+		return;
+	}
+		
+#endif
+
 	//Setup sensible basics for opengl
 	glEnable ( GL_DEPTH_TEST );
 	glDepthFunc(GL_LEQUAL);
@@ -142,6 +154,12 @@ void VoxEngine::Start() {
 		printf("Using joystick = %s\n", SDL_JoystickName(joystick));
 	}
 #endif
+
+	/*cout << "TESTING[0]: " << (unsigned int)eglGetProcAddress("glGenBuffers") << "\n";
+	cout << "TESTING[1]: " << (unsigned int)eglGetProcAddress("glDrawElementsInstanced") << "\n";
+	cout << "TESTING[2]: " << (unsigned int)eglGetProcAddress("glGenVertexArraysOES") << "\n";
+	cout << "TESTING[3]: " << (unsigned int)eglGetProcAddress("glGenVertexArrays") << "\n";*/
+
 
 	//Initialze the dialog constants
 	VisualInterface.init();
