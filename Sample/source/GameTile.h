@@ -6,12 +6,15 @@
 #include "TileCell.h"
 
 class GameTile {
+	GameTile();
 	GameTile(int width, int height);
 public:
 	~GameTile();
 
-	//Create Empty Gametile (Necessary for ASYNC)
+	//Create Empty Tile (Allocated but Uninitialized Terrain Data)
 	static GameTile * CreateGameTile(int width, int height, int x, int y);
+	//Create Placeholder Tile (Tile_X & Tile_Y Initialized ONLY)
+	static GameTile * CreatePlaceholderTile(int x, int y);
 	//Load a game tile from disk
 	static GameTile * LoadTileFromDisk(string tileImagePath);
 	//Load a game tile from memory
@@ -35,7 +38,6 @@ public:
 	void Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vector<vec4> & removedVoxels);
 
 	//Loaded tile information is public for fastest access
-	bool ready;
 	TileCell * Cells;
 	int Width;
 	int Height;

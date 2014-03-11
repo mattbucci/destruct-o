@@ -2,18 +2,32 @@
 #include "GameTile.h"
 #include "lodepng.h"
 
+GameTile::GameTile() {
+	this->Width = 0;
+	this->Height = 0;
+	Cells = NULL;
+}
+
 GameTile::GameTile(int width, int height) {
 	this->Width = width;
 	this->Height = height;
 	Cells = new TileCell[width*height];
-	ready = false;
 }
 GameTile::~GameTile() {
-	delete [] Cells;
+	if(Cells != NULL) {
+		delete [] Cells;
+	}
 }
 
 GameTile * GameTile::CreateGameTile(int width, int height, int x, int y) {
 	GameTile * newTile = new GameTile(width, height);
+	newTile->tile_x = x;
+	newTile->tile_y = y;
+	return newTile;
+}
+
+GameTile * GameTile::CreatePlaceholderTile(int x, int y) {
+	GameTile * newTile = new GameTile();
 	newTile->tile_x = x;
 	newTile->tile_y = y;
 	return newTile;
