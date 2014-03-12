@@ -5,11 +5,13 @@ static const int tile_height = 256;
 
 TileHandler::TileHandler(void)
 {
+	_ASSERTE(false); //This Class should never be Instantiated
 }
 
 
 TileHandler::~TileHandler(void)
 {
+	_ASSERTE(false); //This Class should never be Instantiated
 }
 
 void TileHandler::init() {
@@ -37,34 +39,28 @@ void TileHandler::handlerLoop() {
 
 	//Begin Work Loop
 	while(true) {
+		//Wait until work available
 		while(genQueue.size() <= 0) {
-			//std::cout << "HANDLER THREAD WAIT\n";
 			genCv.wait(gLck);
-			//std::cout << "HANDLER THREAD WAKE\n";
 		}
 
-		//std::cout << "HANDLER THREAD START\n";
-
-		//Assign Work Items
+		//Get Terrain Generation Work
 		while(genQueue.size() > 0) {
-			//std::cout << "GRABBING WORK\n";
 			//Grab Work from Queue
 			vec2 pos = genQueue.front();
 			GameTile * tile = GameTile::CreateGameTile(tile_width, tile_height, pos.x, pos.y);
 			genQueue.pop_front();
 			gLck.unlock();
 
+			//Generation Routine
 			genRoutine(tile);
-			//std::cout << "GENERATION COMPLETE\n";
+
 			wLck.lock();
-			//std::cout << "GRABBED WORLD LOCK\n";
 			int s = worldSet.size();
 			for(int i = 0; i < s; i++) {
 				if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y) {
-					GameTile * tmp = worldSet[i];
+					delete worldSet[i];
 					worldSet[i] = tile;
-					delete tmp;
-					//std::cout << "TILE X -> " << worldSet[i]->tile_x << " && TILE Y -> " << worldSet[i]->tile_y << "\n";
 					break;
 				}
 			}
@@ -77,34 +73,6 @@ void TileHandler::handlerLoop() {
 
 	//Tile Handler Should Never Exit
 	_ASSERTE(false);
-}
-
-void TileHandler::genThread(GameTile * newTile) {
-	_ASSERTE(false); // DO NOT CALL, PHASE OUT
-
-	//Generate Terrain Data
-	unsigned char* rawTile = generator->generateTile(newTile->tile_x, newTile->tile_y);
-
-	//Assign Data to Container
-	vector<unsigned char> tile;
-	tile.assign(rawTile, rawTile + (newTile->Width * newTile->Height *  4));
-
-	//Free Generatored Terrain Data
-	delete rawTile;
-
-	//Load Tile Data into GameTile
-	GameTile::LoadTileFromMemoryIntoExisting(tile, newTile);
-
-	//Obtain Lock on World Set
-	std::unique_lock<std::mutex> wLck(worldMtx);
-	_ASSERTE(wLck.owns_lock());
-
-	//Push New Tile into World Set
-	//worldSet[vec2(newTile->tile_x, newTile->tile_y)] = newTile;
-	worldCv.notify_all();
-
-	//Release Lock on World Set
-	wLck.unlock();
 }
 
 void TileHandler::genRoutine(GameTile * newTile) {
@@ -141,18 +109,14 @@ void TileHandler::predictTile(vec2 pos) {
 		return;
 	}
 
-	//std::cout << "MAIN - ATTEMPTING GRAB GEN LOCK\n";
 	//Grab Lock
 	genLck.lock();
-	//std::cout << "MAIN - SUCCESSFUL GRAB GEN LOCK\n";
 
 	//Add to Queue & Notify Handler
 	genQueue.push_back(pos);
 	//Add Placeholder Tile to WorldSet for Duplicate Prevention
 	worldSet.push_back(GameTile::CreatePlaceholderTile(pos.x, pos.y));
 	genCv.notify_one();
-
-	//std::cout << "MAIN - PREDICTED TILE X -> " << pos.x << " && TILE Y -> " << pos.y << "\n";
 
 	//Release Lock
 	genLck.unlock();
@@ -195,7 +159,6 @@ GameTile * TileHandler::getTile(vec2 pos) {
 	int s = worldSet.size();
 	for(int i = 0; i < s; i++) {
 		if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y && worldSet[i]->Cells != NULL) {
-			//std::cout << "MATCHED EXISTING TILE - TILE X -> " << pos.x << " && TILE Y -> " << pos.y << std::endl;
 			tile = worldSet[i];
 			break;
 		}
@@ -203,17 +166,19 @@ GameTile * TileHandler::getTile(vec2 pos) {
 
 	//If Tile Not Already in Worldset
 	if(tile == NULL) {
+		//Force Tile to front of Generation Queue
 		forceTile(pos);
+
+		//While tile not Generated
 		while(tile == NULL) {
-			//std::cout << "MAIN THREAD WAIT\n";
+			//Wait for World Update
 			worldCv.wait(worldLck);
-			//std::cout << "MAIN THREAD WAKE\n";
-			//std::cout << "LOOKING FOR TILE X -> " << pos.x << " && TILE Y -> " << pos.y << std::endl;
+
+			//Check for Expected Tile
 			int s = worldSet.size();
 			for(int i = 0; i < s; i++) {
-				//std::cout << "\tTILE X -> " << worldSet[i]->tile_x << " && TILE Y -> " << worldSet[i]->tile_y << std::endl;
 				if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y && worldSet[i]->Cells != NULL) {
-					//std::cout << "TILE MATCH\n";
+					//On Match, Grab Reference
 					tile = worldSet[i];
 					break;
 				}
@@ -221,12 +186,14 @@ GameTile * TileHandler::getTile(vec2 pos) {
 		}
 	}
 
+	//Predict Neighboring Tiles
 	for(int x_offset = -1; x_offset <= 1; x_offset++) {
 		for(int y_offset = -1; y_offset <= 1; y_offset++) {
 			predictTile(vec2(pos.x + x_offset, pos.y + y_offset));
 		}
 	}
 
+	//Release World Set Lock
 	worldLck.unlock();
 
 	//Guarantee a Tile is Returned
