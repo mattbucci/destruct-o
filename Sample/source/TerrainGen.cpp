@@ -56,10 +56,6 @@ TerrainGen::TerrainGen() {
 	blend3Blender.SetSourceModule(0, blend2Blender);
 	blend3Blender.SetSourceModule(1, detailNoise);
 
-	//Initialize Heightmap Builder
-	heightMapBuilder.SetSourceModule(blend3Blender);
-	heightMapBuilder.SetDestNoiseMap(heightMap);
-
 	//Default Scale to 1
 	tilesx = 1;
 	tilesy = 1;
@@ -67,9 +63,6 @@ TerrainGen::TerrainGen() {
 	//Default Tile Size to 0 (Invalid Tile Size)
 	tilex = 0;
 	tiley = 0;
-
-	//Set Default Dest Size
-	heightMapBuilder.SetDestSize(tilex, tiley);
 
 	//Seed with -1 (Invalid Seed Marker)
 	setSeed(-1);
@@ -100,7 +93,6 @@ void TerrainGen::setTileScale(double x, double y) {
 void TerrainGen::setTileSize(int x, int y) {
 	tilex = x;
 	tiley = y;
-	heightMapBuilder.SetDestSize(tilex, tiley);
 }
 
 unsigned char* TerrainGen::generateTile(int x, int y) {
@@ -109,17 +101,22 @@ unsigned char* TerrainGen::generateTile(int x, int y) {
 	//Ensure Seed Changed
 	_ASSERTE(getSeed() != -1);
 
-	//Allocate Raw Tile Data
-	unsigned char* d = (unsigned char*)malloc(sizeof(char)*tilex*tiley);
-
 	//Calculate Tile Bounds
 	double bx0 = x * tilesx;
 	double bx1 = bx0 + tilesx;
 	double by0 = y * tilesx;
 	double by1 = by0 + tilesy;
 
-	//Setup and Build Tile to be Generated
+	//Create Local HeightMap and HeightMapBuilder
+	noise::utils::NoiseMap heightMap;
+	noise::utils::NoiseMapBuilderPlane heightMapBuilder;
+
+	//Initialize HeightmapBuilder
+	heightMapBuilder.SetDestSize(tilex, tiley);
+	heightMapBuilder.SetSourceModule(blend3Blender);
+	heightMapBuilder.SetDestNoiseMap(heightMap);
 	heightMapBuilder.SetBounds(bx0, bx1, by0, by1);
+	//Build Tile
 	heightMapBuilder.Build();
 
 	//Get Pointer to Raw Terrain Data
@@ -127,7 +124,7 @@ unsigned char* TerrainGen::generateTile(int x, int y) {
 
 	//Allocate Space for Compiled Tile
 	int s = tilex * tiley;
-	unsigned char* tile = (unsigned char*)malloc(sizeof(unsigned char) * s * 4);
+	unsigned char* tile = new unsigned char[s * 4];
 
 	//Compile Tile Data
 	for(int i = 0; i < s; i++) {

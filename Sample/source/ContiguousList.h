@@ -190,12 +190,13 @@ public:
 		return data[index];
 	}
 	//Now the complicated methods
-	void insert(T * toInsert) {
+	int insert(T * toInsert) {
 		if (listSize == listCapacity)
 			//Not enough room, make some more
 			resize((int)(listCapacity * 1.5 + 4));
 		//Assume the space after listSize is empty
 		data[listSize++] = toInsert;
+		return listSize-1;
 	}
 	//Erase somthing based off an iterator
 	//returns a new valid iterator
