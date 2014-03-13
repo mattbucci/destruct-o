@@ -64,14 +64,22 @@ private:
 	//A reference to the camera is necessary to properly translate screen space to 3d space
 	GameCamera * camera;
 
+	//Whether or not the editor is currently enabled
+	bool enabled;
+
 	Region drawFloor;
 	Region drawVoxel;
 	Region drawArea;
 public:
 	Editor(GameCamera * camera);
 
+	//Whether or not the editor is currently enabled
+	//a disabled editor will not react to input or draw anything
+	void EnableEditor(bool enable);
+
 	//Specify the structure to edit
 	//and the size of one side of the square (starts at 0,0 and goes to size,size)
+	//do not specify NULL
 	void EditStructure(Structure * structure);
 
 	//Read input not consumed by the dialog system

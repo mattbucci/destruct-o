@@ -4,6 +4,7 @@
 #include "GameCamera.h"
 #include "Editor.h"
 #include "Window.h"
+#include "FileMenuWindow.h"
 
 class MaterialSelectionControl;
 
@@ -15,13 +16,13 @@ class DesignFrame : public GameSystem {
 	double mouseHeldAt;
 	vec2 prevMousePos;
 
+	FileMenuWindow * fileMenu;
 	MaterialSelectionControl * matSelector;
 	Window matWindow;
 	Structure * toEdit;
 public:
 	DesignFrame(ShaderGroup * shaders);
 	~DesignFrame();
-
 
 
 	//This is the main game object

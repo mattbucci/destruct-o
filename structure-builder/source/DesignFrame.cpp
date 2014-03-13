@@ -34,6 +34,9 @@ DesignFrame::DesignFrame(ShaderGroup * shaders) : GameSystem(shaders),
 	matSelector->position = Rect(10,10,180,180);
 	matWindow.AddControl(matSelector);
 	Controls.AddWindow(&matWindow);
+
+	fileMenu = new FileMenuWindow(&editor);
+	Controls.AddWindow(fileMenu);
 }
 DesignFrame::~DesignFrame() {
 
@@ -136,24 +139,3 @@ void DesignFrame::Draw(double width, double height) {
 	GameSystem::Draw(width,height);
 
 } 
-//code to used to iterate structures
-/*
-	DIR *dir;
-	struct dirent *ent;
-	//Read and compile the lua snippets
-	if ((dir = opendir(path.c_str())) != NULL) {
-		while ((ent = readdir (dir)) != NULL) {
-			string fname = ent->d_name;
-			//(attempt to) Compile/run all lua files
-			if ((fname.length() >= 4) && (fname.substr(fname.length()-4,4) == ".lua")) {
-				if (!executeFile(path + "\\" + fname)) {
-					Console::log(MERROR,"\tFailed to load file '%s' from '%s'",fname.c_str(),path.c_str());
-					Console::log(MERROR,"\tError: %s",lastError.c_str());
-					//Mark an error but keep executing files
-					loadedAll = false;
-				}
-			}
-		}
-		closedir (dir);
-	} 
-*/

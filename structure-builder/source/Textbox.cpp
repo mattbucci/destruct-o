@@ -5,7 +5,7 @@
 #include "OS.h"
 #include "GameSystem.h"
 
-Textbox::Textbox() : textboxFont("times.ttf",20), innerShape(4), selectionShape(4) {
+Textbox::Textbox() : innerShape(4), selectionShape(4) {
 	selectionShape.vset(0) = innerShape.vset(0) = vec2(0,0);
 	selectionShape.vset(1) = innerShape.vset(1) = vec2(10,0);
 	selectionShape.vset(2) = innerShape.vset(2) = vec2(0,10);
@@ -40,7 +40,8 @@ void Textbox::Draw(GL2DProgram * shaders) {
 	//Size the selection shape to match the selection color
 	selectionShape.position.Width = 2;
 	selectionShape.position.Height = 20;
-	vec2 size = textboxFont.GetSizeString(text.Text().substr(0,cursorPos));
+	
+	vec2 size = VisualInterface.FontControlText->GetSizeString(text.Text().substr(0,cursorPos));
 	selectionShape.position.X = 8+size.x;
 	selectionShape.position.Y = position.Height/2.0f - size.y/2.0f;
 	
@@ -78,7 +79,7 @@ void Textbox::OnMousePress(vec2 mousePos, int button, bool down) {
 		string writtenText = text.Text();
 		for (unsigned int i = 0; i <  writtenText.size(); i++) {
 			temp +=  writtenText[i];
-			if (mousePos.x < textboxFont.GetSizeString(temp).x) {
+			if (mousePos.x < VisualInterface.FontControlText->GetSizeString(temp).x) {
 				cursorPos = i;
 				return;
 			}
@@ -130,6 +131,7 @@ void Textbox::OnKeyPress(int key) {
 			
 	}
 
+	SetText(writtenText);
 	OnTextChange(writtenText);
 
 	//Keep the cursor between normal values

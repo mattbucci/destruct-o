@@ -99,7 +99,13 @@ Editor::Editor(GameCamera * camera) : drawFloor(vec3(),vec3(),"Interface/drawAre
 	beingEdited = NULL;
 	drawSystem = VoxelDrawSystem::BuildAppropriateSystem();
 	selectionValid = false;
+	//Editor starts disabled
+	enabled = false;
 };
+
+void Editor::EnableEditor(bool enable) {
+	enabled = enable;
+}
 
 void Editor::UpdateCurrentVoxel(vec2 cursorPosition) {
 	switch (mode) {
@@ -187,6 +193,10 @@ void Editor::EditStructure(Structure * structure) {
 
 //Read input not consumed by the dialog system
 void Editor::ReadInput(vector<InputEvent> input) {
+	//If not enabled do not process input
+	if (!enabled)
+		return;
+
 	for (auto e : input) {
 		//Process mouse movements
 		if (e.Event == InputEvent::MouseMove)
@@ -231,6 +241,10 @@ void Editor::PlaceVoxel() {
 //Draw the editor guidelines  
 void Editor::Draw(GL3DProgram * shader) {
 	_ASSERTE(beingEdited);
+	//If not enabled draw nothing
+	if (!enabled)
+		return;
+
 	//Draw the structure
 	glDisable(GL_CULL_FACE);
 	CurrentSystem->Textures.GetTexture("terrain/tiles-lowres.png")->Bind();

@@ -275,6 +275,9 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 						eventQueue.back().RelX = (float)event.motion.xrel;
 						eventQueue.back().RelY = (float)event.motion.yrel;
 						break;
+					case SDL_MOUSEWHEEL:
+						eventQueue.push_back(InputEvent(InputEvent::MouseScroll,OS::Now(),(float)event.button.x,(float)event.button.y, event.wheel.y));
+						break;
 #endif
 					case SDL_KEYDOWN:
 						eventQueue.push_back(InputEvent(InputEvent::KeyboardDown,OS::Now(),event.key.keysym.sym));
