@@ -150,26 +150,41 @@ int TileHandler::getSeed() {
 }
 
 GameTile * TileHandler::getTile(vec2 pos) {
-	GameTile* tile = NULL;
-
 	//Obtain Lock on World Set
 	worldLck.lock();
 
-	//Search World Set for Loaded Tile
+	//Tile Pointer
+	GameTile* tile = NULL;
+
+	//Search World Set for Tile
 	int s = worldSet.size();
 	for(int i = 0; i < s; i++) {
-		if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y && worldSet[i]->Cells != NULL) {
+		if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y) {
 			tile = worldSet[i];
 			break;
 		}
 	}
 
-	//If Tile Not Already in Worldset
+	bool wait = true;
+
+	//If Tile Not Already Generating
 	if(tile == NULL) {
 		//Force Tile to front of Generation Queue
 		forceTile(pos);
+	} else {
+		//If Tile Exists, but Data not There
+		if(tile->Cells != NULL) {
+			//Tile Exists & Ready
+			//No Waiting Necessary
+			wait = false;
+		} else {
+			//Tile Being Generated
+		}
+	}
 
-		//While tile not Generated
+	if(wait) {
+		tile = NULL;
+		//While tile not Ready
 		while(tile == NULL) {
 			//Wait for World Update
 			worldCv.wait(worldLck);
@@ -198,6 +213,8 @@ GameTile * TileHandler::getTile(vec2 pos) {
 
 	//Guarantee a Tile is Returned
 	_ASSERTE(tile != NULL);
+	//Guarantee Tile Returned is Generated
+	_ASSERTE(tile->Cells != NULL);
 
 	return tile;
 }
