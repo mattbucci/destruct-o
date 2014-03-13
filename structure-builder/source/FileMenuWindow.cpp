@@ -31,7 +31,8 @@ FileMenuWindow::FileMenuWindow(Editor * designer) : fileSelect(".struct") {
 	AddChild(&Close);
 	AddChild(&Save);
 	AddChild(&SaveAs);
-	AddChild(&fileSelect);
+	//Add window to the window system
+	//CurrentSystem->Controls.AddWindow(&fileSelect);
 
 	//Set defaults
 	fileOpen = false;
@@ -54,6 +55,7 @@ FileMenuWindow::FileMenuWindow(Editor * designer) : fileSelect(".struct") {
 
 			//Open that file
 			Structure * toLoad = Structure::LoadStructure(filePath);
+			beingEdited = toLoad;
 			if (toLoad == NULL) {
 				ShowError("Failed to open that structure file.");
 				return;
@@ -64,7 +66,6 @@ FileMenuWindow::FileMenuWindow(Editor * designer) : fileSelect(".struct") {
 			this->designer->EnableEditor(true);
 		});
 	});
-	//Setup behavior of each button
 	Subscribe<void(Button*)>(&Close.EventClicked,[this](Button * clicked) {
 		//Prevent them from opening something if something else is open
 		if (!fileOpen) {
@@ -76,9 +77,23 @@ FileMenuWindow::FileMenuWindow(Editor * designer) : fileSelect(".struct") {
 		fileOpen = false;
 		currentFilePath = "";
 	});
+	Subscribe<void(Button*)>(&Save.EventClicked,[this](Button * clicked) {
+		//Prevent them from opening something if something else is open
+		if (!fileOpen) {
+			ShowError("Nothing to close.");
+			return;
+		}
+		//Check there is a file path to save to
+		if (currentFilePath.size() >= 0) 
+			//Do the save
+			beingEdited->SaveStructure(currentFilePath);
+		else
+			//Force a save as for the user to set a path
+			DoSaveAs();
+	});
 }
 
-void FileMenuWindow::SaveAs() {
+void FileMenuWindow::DoSaveAs() {
 	if (!fileOpen) {
 		ShowError("Nothing to save.");
 		return;
@@ -92,7 +107,10 @@ void FileMenuWindow::SaveAs() {
 		//If it has the extension, cut it off
 		if ((filePath.size() >= 7) && (filePath.substr(filePath.size()-7,7) == ".struct")) 
 			filePath = filePath.substr(0,filePath.size()-7);
-		
+		//Now save the file
+		beingEdited->SaveStructure(filePath);
+		//Save the path for fast saving
+		currentFilePath = filePath;
 	});
 }
 

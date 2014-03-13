@@ -7,8 +7,10 @@
 #include "ErrorWindow.h"
 
 class Editor;
+class Structure;
 
 class FileMenuWindow : public Window {
+	Structure * beingEdited;
 	Editor * designer;
 	//Interface elements
 	FileDialog fileSelect;
@@ -22,7 +24,7 @@ class FileMenuWindow : public Window {
 	//Show an error
 	void ShowError(string error);
 	//Do a save-as (called by save if a normal save fails)
-	void SaveAs();
+	void DoSaveAs();
 public:
 	FileMenuWindow(Editor * designer);
 	~FileMenuWindow();
