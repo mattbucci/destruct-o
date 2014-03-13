@@ -213,6 +213,8 @@ GameTile * TileHandler::getTile(vec2 pos) {
 
 	//Guarantee a Tile is Returned
 	_ASSERTE(tile != NULL);
+	//Guarantee Tile Returned is Generated
+	_ASSERTE(tile->Cells != NULL);
 
 	return tile;
 }
