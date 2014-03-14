@@ -2,6 +2,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include <string.h>
 
 //A contiguous list is an implementation which 
 //supports pushing members at the end
@@ -202,7 +203,9 @@ public:
 	//returns a new valid iterator
 	iterator erase(iterator toErase) {
 		_ASSERTE(toErase != end());
+#ifndef __linux__
 		_ASSERTE(listSize > 0);
+#endif
 
 		//When you remove something from the list, move something to fill its place if there is anything left
 		*toErase = data[listSize-1];
