@@ -28,13 +28,11 @@ public:
 private:
 	//Draw any rect or region the editor needs
 	class Region : GLDynamicVertexGroup {
-		//add a side to this region
-		void pushSide(vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d, int & vertNumber);
 	public:
 		string Texture;
 
 		Region(vec3 cornerA, vec3 cornerB, string textureName);
-		void Resize(vec3 cornerA, vec3 cornerB);
+		void Resize(vec3 cornerA, vec3 cornerB, bool renderTop = true);
 		void Draw(GL3DProgram * shader, vec3 pos);
 	};
 

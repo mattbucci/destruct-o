@@ -10,7 +10,7 @@ Editor::Region::Region(vec3 cornerA, vec3 cornerB, string textureName) {
 	Resize(cornerA,cornerB);
 	Texture = textureName;
 }
-void Editor::Region::Resize(vec3 cornerA, vec3 cornerB) {
+void Editor::Region::Resize(vec3 cornerA, vec3 cornerB, bool renderTop) {
 	static vec3 sides[3][3] = {
 		//First two are the coordinates that vary, the third is the coordinate that does not
 		{vec3(1,0,0),vec3(0,1,0),vec3(0,0,1)},
@@ -20,6 +20,7 @@ void Editor::Region::Resize(vec3 cornerA, vec3 cornerB) {
 	int vertex = 0;
 
 	vec3 extents = cornerB-cornerA;
+	//Add two sides to the region per set of coordiantes. Very messy
 	for (int i = 0; i < 3; i++) {
 		vec3 pos;
 		//First do one side
@@ -48,7 +49,7 @@ void Editor::Region::Resize(vec3 cornerA, vec3 cornerB) {
 		vat(vertex++) = cornerA*(1.0f-pos) + cornerB*pos;
 
 		//Then the other side
-		if (i == 0)
+		if ((i == 0) && (!renderTop))
 			//Skip the top
 			continue;
 		pos = vec3();
@@ -80,32 +81,6 @@ void Editor::Region::Resize(vec3 cornerA, vec3 cornerB) {
 		xat(i) *= 4.0f;
 }
 
-
-void Editor::Region::pushSide(vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d, int & vertNumber) {
-	xat(vertNumber) = vec2(0,0);
-	nat(vertNumber) = normal;
-	vat(vertNumber++) = vec3(a);
-
-	xat(vertNumber) = vec2(1,0);
-	nat(vertNumber) = normal;
-	vat(vertNumber++) = vec3(b);
-
-	xat(vertNumber) = vec2(0,1);
-	nat(vertNumber) = normal;
-	vat(vertNumber++) = vec3(c);
-
-	xat(vertNumber) = vec2(1,0);
-	nat(vertNumber) = normal;
-	vat(vertNumber++) = vec3(b);
-
-	xat(vertNumber) = vec2(1,1);
-	nat(vertNumber) = normal;
-	vat(vertNumber++) = vec3(d);
-
-	xat(vertNumber) = vec2(0,1);
-	nat(vertNumber) = normal;
-	vat(vertNumber++) = vec3(c);
-}
 
 void Editor::Region::Draw(GL3DProgram * shader, vec3 pos) {
 	//Apply the position
@@ -220,7 +195,7 @@ void Editor::UpdateCurrentVoxel(vec2 cursorPosition) {
 //and the size of one side of the square (starts at 0,0 and goes to size,size)
 void Editor::EditStructure(Structure * structure) {
 	beingEdited = structure;
-	drawFloor.Resize(vec3(),structure->Extents);
+	drawFloor.Resize(vec3(),structure->Extents,false);
 }
 
 //Read input not consumed by the dialog system

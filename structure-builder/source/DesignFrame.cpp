@@ -96,7 +96,7 @@ bool DesignFrame::Update(double delta,double now, vector<InputEvent> inputEvents
 			}
 		}
 		else if (e.Event == InputEvent::MouseScroll) {
-			Camera.Distance += e.Key*5;
+			Camera.Distance += e.Key*-5;
 			if (Camera.Distance > 100)
 				Camera.Distance = 100;
 			if (Camera.Distance < 5)

@@ -8,9 +8,12 @@
 MaterialSelectionControl::MaterialSelectionControl() :
 	selectionShape(4) {
 	selectionShape.SetToSquare();
+	currentlySelectedMaterial = 0;
 }
 MaterialSelectionControl::MaterialSelectionControl(Rect position) :
 	selectionShape(4)  {
+	selectionShape.SetToSquare();
+	currentlySelectedMaterial = 0;
 	this->position = position;
 }
 MaterialSelectionControl::~MaterialSelectionControl() {
@@ -23,7 +26,6 @@ void MaterialSelectionControl::OnMousePress(vec2 mousePos, int button, bool down
 	int tileX = floor(mousePos.x/position.Width*4);
 	int tileY = floor(mousePos.y/position.Height*4);
 	currentlySelectedMaterial = tileX + tileY*4;
-	cout << "selected: " << currentlySelectedMaterial << "\n";
 }
 
 void MaterialSelectionControl::Draw(GL2DProgram * shaders) {
@@ -49,12 +51,15 @@ void MaterialSelectionControl::Draw(GL2DProgram * shaders) {
 	if (currentlySelectedMaterial >= 0) {
 		Rect pos = Rect((currentlySelectedMaterial % 4)*1.0f/4.0f*position.Width,
 			(int)(currentlySelectedMaterial / 4)*1.0f/4.0f*position.Height
-			,position.Width/4.0f+10,position.Height/4.0f+10);
+			,position.Width/4.0f-20,position.Height/4.0f-20);
 
-		shaders->Model.Translate(pos.X-5,pos.Y-5,0);
+		shaders->Model.PushMatrix();
+		shaders->Model.Translate(pos.X+10,pos.Y+10,0);
+		shaders->Model.Apply();
 		selectionShape.color = vec4(1,1,1,.5);
 		selectionShape.OverrideCalculatedSize(pos);
 		selectionShape.Draw(shaders);
+		shaders->Model.PopMatrix();
 	}
 }
 

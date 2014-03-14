@@ -74,6 +74,8 @@ FileMenuWindow::FileMenuWindow(Editor * designer) {
 			this->designer->EnableEditor(true);
 			//center the camera on the structure
 			((DesignFrame*)CurrentSystem)->Camera.SetCameraView(beingEdited->Extents*.5f);
+			//Save the path for fast saving
+			currentFilePath = filePath;
 		});
 	});
 	Subscribe<void(Button*)>(&New.EventClicked,[this](Button * clicked) {
@@ -138,7 +140,16 @@ void FileMenuWindow::DoSaveAs() {
 		//Make sure they made a selection
 		if (filePath.size() <= 0)
 			return;
-		//If it has the extension, cut it off
+
+		//if it has .be.struct extension, cut it off
+		if ((filePath.size() >= 10) && (filePath.substr(filePath.size()-10,10) == ".be.struct")) 
+			filePath = filePath.substr(0,filePath.size()-10);
+
+		//if it has .le.struct extension, cut it off
+		if ((filePath.size() >= 10) && (filePath.substr(filePath.size()-10,10) == ".le.struct")) 
+			filePath = filePath.substr(0,filePath.size()-10);
+
+		//If it has only the .struct the extension, cut it off
 		if ((filePath.size() >= 7) && (filePath.substr(filePath.size()-7,7) == ".struct")) 
 			filePath = filePath.substr(0,filePath.size()-7);
 		//Now save the file
