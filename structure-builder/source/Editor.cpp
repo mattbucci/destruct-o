@@ -210,10 +210,14 @@ void Editor::ReadInput(vector<InputEvent> input) {
 			UpdateCurrentVoxel(vec2(e.MouseX,e.MouseY));
 		if (e.Event == InputEvent::KeyboardUp) {
 			//Cycle modes using q and e
-			if (e.Key == 'q')
+			if (e.Key == 'e')
 				mode = (EditorMode)(((int)mode+1) % (int)MODE_LAST);
-			else if (e.Key == 'e')
+			else if (e.Key == 'q')
 				mode = (EditorMode)(((int)mode == 0) ? ((int)MODE_LAST - 1) : ((int)mode - 1));
+			else if (e.Key == 'r')
+				currentLevel++;
+			else if (e.Key == 'f')
+				currentLevel--;
 		}
 
 	}

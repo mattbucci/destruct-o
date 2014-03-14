@@ -5,6 +5,7 @@
 #include "Editor.h"
 #include "Window.h"
 #include "FileMenuWindow.h"
+#include "ModeWindow.h"
 
 class MaterialSelectionControl;
 
@@ -20,6 +21,7 @@ class DesignFrame : public GameSystem {
 	MaterialSelectionControl * matSelector;
 	Window matWindow;
 	Structure * toEdit;
+	ModeWindow modeSelector;
 public:
 	DesignFrame(ShaderGroup * shaders);
 	~DesignFrame();

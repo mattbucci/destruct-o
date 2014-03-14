@@ -16,7 +16,8 @@
 
 DesignFrame::DesignFrame(ShaderGroup * shaders) : GameSystem(shaders), 
 	//Setup the editor with a connection to the camera
-	editor(&Camera) {
+	editor(&Camera),
+	modeSelector(&editor) {
 	//Move this into a load section
 	toEdit = new Structure();
 	toEdit->Extents = vec3(10,10,5);
@@ -37,6 +38,8 @@ DesignFrame::DesignFrame(ShaderGroup * shaders) : GameSystem(shaders),
 
 	fileMenu = new FileMenuWindow(&editor);
 	Controls.AddWindow(fileMenu);
+
+	Controls.AddWindow(&modeSelector);
 }
 DesignFrame::~DesignFrame() {
 
@@ -107,6 +110,9 @@ bool DesignFrame::Update(double delta,double now, vector<InputEvent> inputEvents
 	//Pass events to the editor if the user isn't holding the mouse
 	if (!mouseDown)
 		editor.ReadInput(inputEvents);
+
+	//Update which mode is shown
+	modeSelector.Update();
 
 	return true;
 }
