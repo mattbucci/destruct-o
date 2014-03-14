@@ -262,6 +262,7 @@ void Editor::Draw(GL3DProgram * shader) {
 	beingEdited->EditorRenderStructure(shader,drawSystem);
 	//Draw Regions
 
+	glDepthMask(GL_FALSE);
 	//Flip the lights off to render things without shading
 	shader->Lights.Off();
 	if (selectionValid && (mode != MODE_DELETE))
@@ -271,4 +272,5 @@ void Editor::Draw(GL3DProgram * shader) {
 	drawVoxel.Draw(shader,selectedVoxel-vec3(.05,.05,.05));
 	drawFloor.Draw(shader,vec3());
 	shader->Lights.On();
+	glDepthMask(GL_TRUE);
 }
