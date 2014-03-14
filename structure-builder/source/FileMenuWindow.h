@@ -15,6 +15,7 @@ class FileMenuWindow : public Window {
 	//Interface elements
 	Button Open;
 	Button Close;
+	Button New;
 	Button Save;
 	Button SaveAs;
 	//Button/path

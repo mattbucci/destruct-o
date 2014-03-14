@@ -95,6 +95,13 @@ bool DesignFrame::Update(double delta,double now, vector<InputEvent> inputEvents
 
 			}
 		}
+		else if (e.Event == InputEvent::MouseScroll) {
+			Camera.Distance += e.Key*5;
+			if (Camera.Distance > 100)
+				Camera.Distance = 100;
+			if (Camera.Distance < 5)
+				Camera.Distance = 5;
+		}
 	}
 
 	//Pass events to the editor if the user isn't holding the mouse
@@ -122,7 +129,7 @@ void DesignFrame::Draw(double width, double height) {
 	//Acid factor currently managed by the demo system
 	//this will be moved to a more powerful game logic system in the future
 	shaders3d->Acid.SetAcidFactor(0.0);
-	shaders3d->Fog.SetFogDistance(1000.0f);
+	shaders3d->Fog.SetFogDistance(5000.0f);
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);

@@ -11,41 +11,73 @@ Editor::Region::Region(vec3 cornerA, vec3 cornerB, string textureName) {
 	Texture = textureName;
 }
 void Editor::Region::Resize(vec3 cornerA, vec3 cornerB) {
+	static vec3 sides[3][3] = {
+		//First two are the coordinates that vary, the third is the coordinate that does not
+		{vec3(1,0,0),vec3(0,1,0),vec3(0,0,1)},
+		{vec3(1,0,0),vec3(0,0,1),vec3(0,1,0)},
+		{vec3(0,1,0),vec3(0,0,1),vec3(1,0,0)},
+	}; 
 	int vertex = 0;
 
-	//Top
-	pushSide(vec3(0,0,1),vec3(0,0,1),vec3(1,0,1),vec3(0,1,1),vec3(1,1,1),vertex);
-	//Bottom
-	pushSide(vec3(0,0,-1),vec3(0,0,0),vec3(0,1,0),vec3(1,0,0),vec3(1,1,0),vertex);
-	//Left
-	pushSide(vec3(1,0,0),vec3(1,0,0),vec3(1,1,0),vec3(1,0,1),vec3(1,1,1),vertex);
-	//Right
-	pushSide(vec3(-1,0,0),vec3(0,0,0),vec3(0,0,1),vec3(0,1,0),vec3(0,1,1),vertex);
-	//Back
-	pushSide(vec3(0,1,0),vec3(0,1,0),vec3(0,1,1),vec3(1,1,0),vec3(1,1,1),vertex);
-	//Front
-	pushSide(vec3(0,-1,0),vec3(0,0,0),vec3(1,0,0),vec3(0,0,1),vec3(1,0,1),vertex);
+	vec3 extents = cornerB-cornerA;
+	for (int i = 0; i < 3; i++) {
+		vec3 pos;
+		//First do one side
+		pos = vec3();
+		xat(vertex) = vec2();
+		vat(vertex++) = cornerA*(1.0f-pos) + cornerB*pos;
 
-	//Go through all the sides and apply the corners so instead of 0,0,0 to 1,1,1 it's from cornerA, to cornerB
-	for (int i = 0; i < vertex; i++) {
-		//X coordinate
-		if (vat(i).x < .001)
-			vat(i).x = cornerA.x;
-		else
-			vat(i).x = cornerB.x;
-		//Y coordinate
-		if (vat(i).y < .001)
-			vat(i).y = cornerA.y;
-		else
-			vat(i).y = cornerB.y;
-		//Z coordinate
-		if (vat(i).z < .001)
-			vat(i).z = cornerA.z;
-		else
-			vat(i).z = cornerB.z;
-		//cout << "{" << vat(i).x << "," << vat(i).y << "," << vat(i).z << "}\n";
+		pos = (sides[i][0]);
+		xat(vertex) = vec2(glm::dot(vec3(1,1,1),(sides[i][0]*extents)),0);
+		vat(vertex++) = cornerA*(1.0f-pos) + cornerB*pos;
+
+		pos = (sides[i][1]);
+		xat(vertex) = vec2(0,glm::dot(vec3(1,1,1),(sides[i][1]*extents)));
+		vat(vertex++) = cornerA*(1.0f-pos) + cornerB*pos;
+
+		pos = (sides[i][0]);
+		xat(vertex) = vec2(glm::dot(vec3(1,1,1),(sides[i][0]*extents)),0);
+		vat(vertex++) = cornerA*(1.0f-pos) + cornerB*pos;
+
+		pos = (sides[i][0]+sides[i][1]);
+		xat(vertex) = vec2(glm::dot(vec3(1,1,1),(sides[i][0]*extents)),glm::dot(vec3(1,1,1),(sides[i][1]*extents)));
+		vat(vertex++) = cornerA*(1.0f-pos) + cornerB*pos;
+
+		pos = (sides[i][1]);
+		xat(vertex) = vec2(0,glm::dot(vec3(1,1,1),(sides[i][1]*extents)));
+		vat(vertex++) = cornerA*(1.0f-pos) + cornerB*pos;
+
+		//Then the other side
+		if (i == 0)
+			//Skip the top
+			continue;
+		pos = vec3();
+		xat(vertex) = vec2();
+		vat(vertex++) = cornerA*(1.0f-pos) + cornerB*pos+extents*sides[i][2];
+
+		pos = (sides[i][0]);
+		xat(vertex) = vec2(glm::dot(vec3(1,1,1),(sides[i][0]*extents)),0);
+		vat(vertex++) = cornerA*(1.0f-pos) + cornerB*pos+extents*sides[i][2];
+
+		pos = (sides[i][1]);
+		xat(vertex) = vec2(0,glm::dot(vec3(1,1,1),(sides[i][1]*extents)));
+		vat(vertex++) = cornerA*(1.0f-pos) + cornerB*pos+extents*sides[i][2];
+
+		pos = (sides[i][0]);
+		xat(vertex) = vec2(glm::dot(vec3(1,1,1),(sides[i][0]*extents)),0);
+		vat(vertex++) = cornerA*(1.0f-pos) + cornerB*pos+extents*sides[i][2];
+
+		pos = (sides[i][0]+sides[i][1]);
+		xat(vertex) = vec2(glm::dot(vec3(1,1,1),(sides[i][0]*extents)),glm::dot(vec3(1,1,1),(sides[i][1]*extents)));
+		vat(vertex++) = cornerA*(1.0f-pos) + cornerB*pos+extents*sides[i][2];
+
+		pos = (sides[i][1]);
+		xat(vertex) = vec2(0,glm::dot(vec3(1,1,1),(sides[i][1]*extents)));
+		vat(vertex++) = cornerA*(1.0f-pos) + cornerB*pos+extents*sides[i][2];
 	}
-	//cout << "";
+	//Adjust all the texture coordinates to work with the voxel renderer
+	for (int i = 0; i < vertex; i++)
+		xat(i) *= 4.0f;
 }
 
 
@@ -249,13 +281,15 @@ void Editor::Draw(GL3DProgram * shader) {
 	glDisable(GL_CULL_FACE);
 	CurrentSystem->Textures.GetTexture("terrain/tiles-lowres.png")->Bind();
 	beingEdited->EditorRenderStructure(shader,drawSystem);
-	//Draw transparent objects
-	//Use culling so sorting isn't necessary 
-	glEnable(GL_CULL_FACE);
+	//Draw Regions
+
+	//Flip the lights off to render things without shading
+	shader->Lights.Off();
 	if (selectionValid && (mode != MODE_DELETE))
 		drawVoxel.Texture = "Interface/drawVoxel.png";
 	else
 		drawVoxel.Texture = "Interface/drawError.png";
 	drawVoxel.Draw(shader,selectedVoxel-vec3(.05,.05,.05));
 	drawFloor.Draw(shader,vec3());
+	shader->Lights.On();
 }

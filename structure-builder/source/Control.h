@@ -58,11 +58,6 @@ protected:
 	//used for drawing
 	bool textureEnabled;
 
-	//draw this control before all others
-	void sendToFront();
-	//draw this control last
-	void sendToBack();
-
 	//Attempts to set the control to use a ninepatch
 	//if the ninepatch is not valid, does nothing
 	//the pointer must remain valid for the life of this control
@@ -120,4 +115,9 @@ public:
 
 	virtual void Draw(GL2DProgram * shaders);
 
+
+	//draw this control before all others
+	void SendToFront();
+	//draw this control last
+	void SendToBack();
 };

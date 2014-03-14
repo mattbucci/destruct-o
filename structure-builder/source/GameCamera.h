@@ -36,6 +36,7 @@ public:
 	float Pan;
 	float Tilt;
 
+	float Distance;
 
 	//Given a screen coordinate, what 3d vector does that coordinate represent
 	//in game

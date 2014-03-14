@@ -87,7 +87,7 @@ Structure * Structure::LoadStructure(string structureName) {
 	//Load the file type appropriate for this platform
 	//first determine the endian-ness of this platform
 	unsigned char check[4] = {0,0,0,1};
-	unsigned int * checkInt = (unsigned int*)checkInt;
+	unsigned int * checkInt = (unsigned int*)check;
 	bool platformIsLargeEndian = (*checkInt == 1);
 	//Now load the file
 	vector<unsigned char> fileData;
@@ -177,7 +177,7 @@ void Structure::SaveStructure(string structureName) {
 	//Generate a save file for small endian and large endian files at the same time
 	//first determine the endian-ness of this platform
 	unsigned char check[4] = {0,0,0,1};
-	unsigned int * checkInt = (unsigned int*)checkInt;
+	unsigned int * checkInt = (unsigned int*)check;
 	bool platformIsLargeEndian = (*checkInt == 1);
 	//Now make a copy of the file in platform endian format and swapped endian format
 	vector<unsigned char> platformFile;

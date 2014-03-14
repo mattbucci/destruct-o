@@ -16,9 +16,9 @@ class Structure {
 	template<class T>
 	static void Write(T value, vector<unsigned char> & platformEndian, vector<unsigned char> & swappedEndian) {
 		unsigned char * byte = (unsigned char*)&value;
-		for (unsigned int i = 0; i < sizeof(T); i++)
+		for (int i = 0; i < sizeof(T); i++)
 			platformEndian.push_back(byte[i]);
-		for (unsigned int i = sizeof(T)-1; i >= 0; i--)
+		for (int i = sizeof(T)-1; i >= 0; i--)
 			swappedEndian.push_back(byte[i]);
 	}
 

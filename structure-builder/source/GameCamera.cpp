@@ -8,6 +8,7 @@
 
 GameCamera::GameCamera() {
 	Pan=Tilt=0;
+	Distance = 20;
 }
 
 void GameCamera::UpdateViewSize(vec2 viewSize) {
@@ -15,7 +16,7 @@ void GameCamera::UpdateViewSize(vec2 viewSize) {
 }
 
 void GameCamera::Draw(GL3DProgram * shaders) {
-	shaders->Camera.SetCameraPosition(vec3(20,0,0),vec3(),vec3(0,0,1));
+	shaders->Camera.SetCameraPosition(vec3(Distance,0,0),vec3(),vec3(0,0,1));
 	//IF YOU CHANGE NEAR/FAR CLIPPING PLANE, PLEASE CHANGE UNPROJECT (below) AS WELL
 	shaders->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25,1000); //width/height
 	shaders->Camera.Apply();
