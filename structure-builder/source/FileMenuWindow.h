@@ -13,7 +13,6 @@ class FileMenuWindow : public Window {
 	Structure * beingEdited;
 	Editor * designer;
 	//Interface elements
-	FileDialog fileSelect;
 	Button Open;
 	Button Close;
 	Button Save;
@@ -21,8 +20,6 @@ class FileMenuWindow : public Window {
 	//Button/path
 	bool fileOpen;
 	string currentFilePath;
-	//Show an error
-	void ShowError(string error);
 	//Do a save-as (called by save if a normal save fails)
 	void DoSaveAs();
 public:

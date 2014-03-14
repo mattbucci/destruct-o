@@ -30,11 +30,14 @@ class FileDialog : public Window {
 	void updatePath();
 	FileCallback onComplete;
 	bool isSaving;
+
+
 public:
-	FileDialog(string extension);
+	//If saveDialog is true, is a save dialog
+	//otherwise is a load dialog
+	//startPath should be "." for the current directory
+	FileDialog(bool saveDialog, string extension, string startPath, FileCallback onComplete);
 	~FileDialog();
 
-	//onComplete is fired when OK or Cancel is pressed. filePath is empty if cancel was pressed
-	void ShowSaveDialog(string startPath, FileCallback onComplete);
-	void ShowLoadDialog(string startPath, FileCallback onComplete);
+	static void ShowFileDialog(bool saveDialog, string extension, string startPath, FileCallback onComplete);
 };

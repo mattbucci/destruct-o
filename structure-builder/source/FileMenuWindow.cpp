@@ -6,7 +6,7 @@
 #include "Structure.h"
 #include "Editor.h"
 
-FileMenuWindow::FileMenuWindow(Editor * designer) : fileSelect(".struct") {
+FileMenuWindow::FileMenuWindow(Editor * designer) {
 	//Setup file menu in the upper left
 	position = Rect(20,20,350,50);
 
@@ -41,11 +41,11 @@ FileMenuWindow::FileMenuWindow(Editor * designer) : fileSelect(".struct") {
 	Subscribe<void(Button*)>(&Open.EventClicked,[this](Button * clicked) {
 		//Prevent them from opening something if something else is open
 		if (fileOpen) {
-			ShowError("You must close the current file first.");
+			ErrorWindow::ShowError("Error","You must close the current file first.");
 			return;
 		}
 
-		fileSelect.ShowLoadDialog(".",[this](FileDialog * clickedDialog, string filePath) {
+		FileDialog::ShowFileDialog(false,".struct",".",[this](FileDialog * clickedDialog, string filePath) {
 			//Make sure they made a selection
 			if (filePath.size() <= 0)
 				return;
@@ -57,7 +57,7 @@ FileMenuWindow::FileMenuWindow(Editor * designer) : fileSelect(".struct") {
 			Structure * toLoad = Structure::LoadStructure(filePath);
 			beingEdited = toLoad;
 			if (toLoad == NULL) {
-				ShowError("Failed to open that structure file.");
+				ErrorWindow::ShowError("Error","Failed to open that structure file.");
 				return;
 			}
 			//File has been opened
@@ -69,7 +69,7 @@ FileMenuWindow::FileMenuWindow(Editor * designer) : fileSelect(".struct") {
 	Subscribe<void(Button*)>(&Close.EventClicked,[this](Button * clicked) {
 		//Prevent them from opening something if something else is open
 		if (!fileOpen) {
-			ShowError("Nothing to close.");
+			ErrorWindow::ShowError("Error","Nothing to close.");
 			return;
 		}
 		//Just disable the designer and mark the file as closed
@@ -80,7 +80,7 @@ FileMenuWindow::FileMenuWindow(Editor * designer) : fileSelect(".struct") {
 	Subscribe<void(Button*)>(&Save.EventClicked,[this](Button * clicked) {
 		//Prevent them from opening something if something else is open
 		if (!fileOpen) {
-			ShowError("Nothing to close.");
+			ErrorWindow::ShowError("Error","Nothing to close.");
 			return;
 		}
 		//Check there is a file path to save to
@@ -95,12 +95,12 @@ FileMenuWindow::FileMenuWindow(Editor * designer) : fileSelect(".struct") {
 
 void FileMenuWindow::DoSaveAs() {
 	if (!fileOpen) {
-		ShowError("Nothing to save.");
+		ErrorWindow::ShowError("Error","Nothing to save.");
 		return;
 	}
 
 	//Open the save dialog
-	fileSelect.ShowSaveDialog(".",[this](FileDialog * clickedDialog, string filePath) {
+	FileDialog::ShowFileDialog(true,".struct",".",[this](FileDialog * clickedDialog, string filePath) {
 		//Make sure they made a selection
 		if (filePath.size() <= 0)
 			return;
@@ -114,9 +114,6 @@ void FileMenuWindow::DoSaveAs() {
 	});
 }
 
-void FileMenuWindow::ShowError(string error) {
-
-}
 
 FileMenuWindow::~FileMenuWindow() {
 

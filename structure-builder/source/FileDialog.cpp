@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "dirent.h"
 #include "FileDialog.h"
+#include "Frames.h"
+#include "GameSystem.h"
 
 
-FileDialog::FileDialog(string extension) {
+FileDialog::FileDialog(bool saveDialog, string extension, string startPath, FileCallback onComplete) {
 	//Setup window size/position
 	position = Rect(0,0,500,350);
 	hPin = Control::CENTER;
@@ -39,7 +41,6 @@ FileDialog::FileDialog(string extension) {
 	AddChild(&pathLabel);
 	AddChild(&pathName);
 
-	SetVisible(false);
 	this->extension = extension;
 
 	//Handle single clicking for setting filename
@@ -62,8 +63,8 @@ FileDialog::FileDialog(string extension) {
 		else {
 			//Mark this operation complete
 			//Select the file double clicked on
-			onComplete(this,currentPath + "/" + name);
-			SetVisible(false);
+			this->onComplete(this,currentPath + "/" + name);
+			CurrentSystem->Controls.RequestControlDestroyed(this);
 		}
 	});
 
@@ -71,16 +72,32 @@ FileDialog::FileDialog(string extension) {
 	Subscribe<void(Button*)>(&ok.EventClicked,[this](Button * b) {
 		//Mark this operation complete
 		//Select the text entered
-		onComplete(this,currentPath + "/" + pathName.GetText());
-		SetVisible(false);
+		this->onComplete(this,currentPath + "/" + pathName.GetText());
+		CurrentSystem->Controls.RequestControlDestroyed(this);
 	});
 	Subscribe<void(Button*)>(&cancel.EventClicked,[this](Button * b) {
 		//Mark this operation complete
 		//Send empty text since they clicked cancel
-		onComplete(this,"");
-		SetVisible(false);
+		this->onComplete(this,"");
+		CurrentSystem->Controls.RequestControlDestroyed(this);
 	});
 
+	//Clear the settings and show default files
+	currentPath = startPath;
+	this->onComplete = onComplete;
+	pathName.SetText("");
+	updatePath();
+
+	if (saveDialog) {
+		ok.SetText("Save");
+		//Mark that you're saving
+		isSaving = true;
+	}
+	else {
+		ok.SetText("Open");
+		//Mark that you're opening
+		isSaving = false;
+	}
 
 	//this->extension = ".sln";
 	//ShowSaveDialog(".",[](FileDialog * c, string s){});
@@ -121,27 +138,7 @@ void FileDialog::updatePath() {
 	files.SetEntries(fileNames);
 }
 
-void FileDialog::ShowSaveDialog(string startPath, FileCallback onComplete) {
-	//Clear the settings and show default files
-	currentPath = startPath;
-	this->onComplete = onComplete;
-	pathName.SetText("");
-	updatePath();
-	//Update button text to reflect saving
-	ok.SetText("Save");
-	SetVisible(true);
-	//Mark that you're saving
-	isSaving = true;
-}
-void FileDialog::ShowLoadDialog(string startPath, FileCallback onComplete) {
-	//Clear the settings and show default files
-	currentPath = startPath;
-	this->onComplete = onComplete;
-	pathName.SetText("");
-	updatePath();
-	//Update button text to reflect loading
-	ok.SetText("Open");
-	SetVisible(true);
-	//Mark that you're opening
-	isSaving = false;
+
+void FileDialog::ShowFileDialog(bool saveDialog, string extension, string startPath, FileCallback onComplete) {
+	CurrentSystem->Controls.AddWindow(new FileDialog(saveDialog,extension,startPath,onComplete));
 }

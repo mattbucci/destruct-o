@@ -29,3 +29,7 @@ ErrorWindow::ErrorWindow(string title, string error) : Window(Rect(0,0,300,160),
 ErrorWindow::~ErrorWindow() {
 
 }
+
+void ErrorWindow::ShowError(string title, string error) {
+	CurrentSystem->Controls.AddWindow(new ErrorWindow(title,error));
+}
