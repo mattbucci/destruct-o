@@ -1,4 +1,5 @@
 
+APP_PLATFORM = android-18
 # use this to select gcc instead of clang
 NDK_TOOLCHAIN_VERSION := 4.8
 

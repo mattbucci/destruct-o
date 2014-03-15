@@ -6,7 +6,7 @@
 #include "PhysicsSystem.h"
 #include "ParticleSystem.h"
 #include "ParticleData.h"
-
+#include "Utilities.h"
 
 Demo::Demo() {
 	CurrentAcidStrength = 0;
@@ -126,6 +126,62 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 						for (int b = p; b < 6-p; b++) {
 							vec3 randomness = vec3((rand() % 10)/100.0,(rand() % 10)/100.0,(rand() % 10)/100.0);
 							game->Physics.BuildVoxel(cubePos+vec3(a,b,2+3*p)+randomness );
+						}
+					}
+				}
+			}
+			else if (eve.Key == 'z') {
+				const float initialEnergy = 20.0f;
+				const float initialDisplacement = 0.5f;
+				vec3 hit, norm;
+				if (game->Physics.Raytrace(playerPos+vec3(0,0,2.5),playerFacing,hit,norm)) {
+
+					vector<vec4> displacedVoxels = game->Voxels.Crater(hit,5);
+					for (vec4 & voxRemoved : displacedVoxels) {
+						vec3 vox = vec3(voxRemoved);
+						//add a bit of random noise
+						vox += vec3(Utilities::random(-initialDisplacement,initialDisplacement),Utilities::random(-initialDisplacement,initialDisplacement),Utilities::random(-initialDisplacement,initialDisplacement));
+						//Build the voxel
+						PhysicsVoxel * ph = game->Physics.BuildVoxel(vox);
+						//Set the material
+						ph->MaterialId = (int)voxRemoved.w;
+						//and some energy (velocity)
+						ph->Velocity = vec3(Utilities::random(-initialEnergy,initialEnergy),Utilities::random(-initialEnergy,initialEnergy),Utilities::random(-initialEnergy,initialEnergy));
+					}
+
+				}
+					
+			}
+			else if (eve.Key == 'x') {
+				const float initialEnergy = 50.0f;
+				const float initialDisplacement = 2.0f;
+				vec3 hit, norm;
+				if (game->Physics.Raytrace(playerPos + vec3(0, 0, 2.5), playerFacing, hit, norm)) {
+
+					vector<vec4> displacedVoxels = game->Voxels.Crater(hit, 5);
+					for (vec4 & voxRemoved : displacedVoxels) {
+						vec3 vox = vec3(voxRemoved);
+						//add a bit of random noise
+						vox += vec3(Utilities::random(-initialDisplacement, initialDisplacement), Utilities::random(-initialDisplacement, initialDisplacement), Utilities::random(-initialDisplacement, initialDisplacement));
+						//Build the voxel
+						PhysicsVoxel * ph = game->Physics.BuildVoxel(vox);
+						//Set the material
+						ph->MaterialId = (int)voxRemoved.w;
+						//and some energy (velocity)
+						ph->Velocity = vec3(Utilities::random(-initialEnergy, initialEnergy), Utilities::random(-initialEnergy, initialEnergy), Utilities::random(-initialEnergy, initialEnergy));
+					}
+
+				}
+
+			}
+			else if (eve.Key == 't') {
+				//takeover an area
+				vec3 hit, norm;
+				int size = 20;
+				if(game->Physics.Raytrace(playerPos + vec3(0, 0, 2.5), playerFacing, hit, norm)) {
+					for (int x = -size/2; x < size/2; x++) {
+						for (int y = -size/2; y < size/2; y++) {
+							game->Voxels.Paint(vec2(hit.x+x, hit.y+y), 3);
 						}
 					}
 				}

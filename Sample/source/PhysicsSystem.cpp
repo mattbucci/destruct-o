@@ -5,12 +5,14 @@
 #include "ShaderGroup.h"
 #include "PhysicsVoxel.h"
 #include "VoxelSystem.h"
+#include "PhysicsTriangle.h"
+#include "VoxEngine.h"
 
 PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	//Build a voxel renderer
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
 	voxelSystem = system;
-
+	section.autoredeuce(false);
 }
 PhysicsSystem::~PhysicsSystem() {
 	//cleanup all the voxels
@@ -21,6 +23,9 @@ PhysicsSystem::~PhysicsSystem() {
 
 PhysicsSystem::Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxelBPosition) {
 	PhysicsSystem::Intersection data;
+
+	if (voxelAPosition == voxelBPosition)
+		voxelAPosition += .0001;
 
 	//Estimate penetration depth as the greatest difference between A and B
 	//this works for cubes only
@@ -57,20 +62,15 @@ PhysicsSystem::Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxe
 	return data;
 }
 
-//Should be called by Actor.cpp only
-//no one else call these
-void PhysicsSystem::Register(PhysicsVoxel * toRegister) {
-	allVoxels.push_back(toRegister);
-}
-void PhysicsSystem::Unregister(PhysicsVoxel * toUnregister) {
-	allVoxels.erase(toUnregister);
-}
-
-PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate) {
+PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate,double lifeTime) {
 	PhysicsVoxel * voxel = new PhysicsVoxel();
 	voxel->Position = voxelCoordinate + vec3(.5,.5,.5);
-	Register(voxel);
-	cout << "Physics Voxel Count: " << allVoxels.size() << "\n";
+	voxel->MaterialId = 1;
+	if (lifeTime <= 0)
+		voxel->DeathAt = -1;
+	else
+		voxel->DeathAt = lifeTime + VoxEngine::GetGameSimTime();
+	allVoxels.insert(voxel);
 	return voxel;
 }
 float removeInDirection(vec3 & force, vec3 direction) {
@@ -86,49 +86,74 @@ float removeInDirection(vec3 & force, vec3 direction) {
 void PhysicsSystem::Update(double delta, double now) {
 
 
-	//Set all voxels to not colliding
-	for (unsigned int i = 0; i < allVoxels.size(); i++) {
-		allVoxels[i]->colliding = false;
-		allVoxels[i]->Acceleration = vec3();
+	//Set all voxels to have no forces
+	//And check if any voxels should expire
+	for (auto it = allVoxels.begin(); it != allVoxels.end();){
+		PhysicsVoxel * voxel = *it;
+		voxel->Acceleration = vec3();
+		/*if ((voxel->DeathAt > 0) && (voxel->DeathAt < now)) {
+			//disintegrate voxel
+			//remove voxel
+			it = allVoxels.erase(it);
+		}
+		else*/
+			it++;
 	}
+	allVoxels.sort([](PhysicsVoxel * a, PhysicsVoxel * b) -> bool {
+		return a->Position.x < b->Position.x;
+	});
+	//Clear the valid section
+	section.clear();
+	//Use space partitioning to only check within sections
+	for (unsigned int s = 0; s < allVoxels.size(); s++) {
+		float limit = allVoxels[s]->Position.x;
+		//Search for pieces that should no longer be in this section
+		for (auto it = section.begin(); it != section.end();) {
+			PhysicsVoxel * p = *it;
+			if (abs(p->Position.x - limit) > 1.0)
+				it = section.erase(it);
+			else
+				it++;
+		}
+		section.insert(allVoxels[s]);
+		if (section.size() > 50)
+			cout << "";
+
+		//Now do the O(n^2) which checks for collisions
+		for (unsigned int a = 0; a < section.size(); a++) {
+			for (unsigned int b = a+1; b < section.size(); b++) {
+				//Do AABB before you do full physics check... or things will be slow
+				if (section[a]->AabColiding(section[b]->Position)) {
+					Intersection intr = CalculateIntersection(section[a]->Position,section[b]->Position);
+
+					float depth = intr.Depth;
+					float force = 100*depth;
+
+					//No two voxels can occupy the same position, push one voxel a little out of the other
+					if (section[a]->Position == section[b]->Position)
+						section[b]->Position += vec3(.01,.01,.01);
+
+					vec3 forceDirection = intr.Normal;
+					//one idea is to mix the ideal direction (face aligned) with 
+					//the natural direction (collision aligned)
+					//to add instabilities which cause blocks on the edge to fall over
 
 
-	//Now do the O(n^2) which checks for collisions
-	for (unsigned int a = 0; a < allVoxels.size(); a++) {
-		for (unsigned int b = a+1; b < allVoxels.size(); b++) {
-			//Do AABB before you do full physics check... or things will be slow
-			if (allVoxels[a]->AabColiding(allVoxels[b]->Position)) {
-				Intersection intr = CalculateIntersection(allVoxels[a]->Position,allVoxels[b]->Position);
-
-
-				allVoxels[a]->colliding = allVoxels[b]->colliding = true;
-				float depth = intr.Depth;
-				float force = 500*depth;
-
-				//No two voxels can occupy the same position, push one voxel a little out of the other
-				if (allVoxels[a]->Position == allVoxels[b]->Position)
-					allVoxels[b]->Position += vec3(.01,.01,.01);
-
-				vec3 forceDirection = intr.Normal;
-				//one idea is to mix the ideal direction (face aligned) with 
-				//the natural direction (collision aligned)
-				//to add instabilities which cause blocks on the edge to fall over
-
-
-				allVoxels[a]->Acceleration += forceDirection*force;
-				allVoxels[b]->Acceleration += -forceDirection*force; 
-				//Remove Velocity in that direction
-				float vel = 0.0f;
-				vel += removeInDirection(allVoxels[a]->Velocity,-forceDirection);
-				vel += removeInDirection(allVoxels[b]->Velocity,forceDirection);
-				//The removed Velocity will now be thirded (instead of average since some is lost)
-				//and added back in the opposite direction
-				vel /= 3.0f;
-				allVoxels[a]->Velocity += vel*forceDirection;
-				allVoxels[b]->Velocity += vel*-forceDirection;
-				//Apply enhanced friction while they're touching
-				allVoxels[a]->Velocity *= .99;
-				allVoxels[b]->Velocity *= .99;
+					section[a]->Acceleration += forceDirection*force;
+					section[b]->Acceleration += -forceDirection*force; 
+					//Remove Velocity in that direction
+					float vel = 0.0f;
+					vel += removeInDirection(section[a]->Velocity,-forceDirection);
+					vel += removeInDirection(section[b]->Velocity,forceDirection);
+					//The removed Velocity will now be thirded (instead of average since some is lost)
+					//and added back in the opposite direction
+					vel /= 3.0f;
+					section[a]->Velocity += vel*forceDirection;
+					section[b]->Velocity += vel*-forceDirection;
+					//Apply enhanced friction while they're touching
+					section[a]->Velocity *= .99;
+					section[b]->Velocity *= .99;
+				}
 			}
 		}
 	}
@@ -163,12 +188,22 @@ void PhysicsSystem::Update(double delta, double now) {
 			floorTiles[1] = vec2(floor(allVoxels[a]->Position.x),ceil(allVoxels[a]->Position.y));
 			floorTiles[2] = vec2(ceil(allVoxels[a]->Position.x),floor(allVoxels[a]->Position.y));
 			floorTiles[3] = vec2(ceil(allVoxels[a]->Position.x),ceil(allVoxels[a]->Position.y));
+			//If the voxel is fully below the surface of each floor tile checked, than it shall be teleported to the lowest surface
+			int depthTilesViolated = 0;
+			float lowestHeight = 300;
 			//Use these four blocks as a support for any blocks on top of the ground
 			for (int i = 0; i < 4; i++) {
 				//check if the square is under the ground for this ground tile
 				float height = voxelSystem->GetPositionHeight(floorTiles[i]);
 				if ((height+.5) < allVoxels[a]->Position.z)
 					continue;
+
+				//Check if the depth constraint of this tile is being violated
+				if ((height-2.5) > allVoxels[a]->Position.z) {
+					depthTilesViolated++;
+					lowestHeight = min(lowestHeight,height);
+				}
+				
 				//So the block must be penetrating this block of terrain
 				//time to reject it
 				//simulate a block next to the penetrating voxel
@@ -192,6 +227,12 @@ void PhysicsSystem::Update(double delta, double now) {
 				allVoxels[a]->Velocity *= .98;
 			}
 
+			if (depthTilesViolated == 4) {
+				//The tile is fully underground, force it to the surface
+				allVoxels[a]->Position.z = lowestHeight+.5; 
+				allVoxels[a]->Velocity.z = 2;
+			}
+
 
 			//Now apply velocity/acceleration
 			//Always decrease the total energy in the system
@@ -201,6 +242,144 @@ void PhysicsSystem::Update(double delta, double now) {
 			allVoxels[a]->Position += allVoxels[a]->Velocity*(float)delta;
 		}
 	}
+}
+
+bool PhysicsSystem::checkForCollision(const vec3 & from, const vec3 & direction, vec3 at, vec3 & rayCollision, vec3 & surfaceNormal) {
+	static PhysicsTriangle voxelTriangles[12] = {
+		//Top
+		PhysicsTriangle(vec3( 0.0f,0.0f,1.0f),
+		vec3( 1.0f,0.0f,1.0f),
+		vec3( 0.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3(1.0f,1.0f,1.0f),
+		vec3(-1.0f,1.0f,1.0f),
+		vec3(1.0f,0.0f,1.0f)),
+		//Bottom
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,0.0f),
+		vec3( 0.0f,1.0f,0.0f)),
+		PhysicsTriangle(vec3(1.0f,1.0f,0.0f),
+		vec3(-1.0f,1.0f,0.0f),
+		vec3(1.0f,0.0f,0.0f)),
+		//left
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 0.0f,1.0f,0.0f),
+		vec3( 0.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 0.0f,0.0f,1.0f),
+		vec3( 0.0f,1.0f,1.0f)),
+		//right
+		PhysicsTriangle(vec3( 1.0f,0.0f,0.0f),
+		vec3( 1.0f,1.0f,0.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3( 1.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,1.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+		//front
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,1.0f)),
+		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
+		vec3( 0.0f,0.0f,1.0f),
+		vec3( 1.0f,0.0f,1.0f)),
+		//back
+		PhysicsTriangle(vec3( 0.0f,1.0f,0.0f),
+		vec3( 1.0f,1.0f,0.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3( 0.0f,1.0f,0.0f),
+		vec3( 0.0f,1.0f,1.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+	};
+	//Check every triangle in this voxel for a collision
+	for (int i = 0 ; i < 12; i++) {
+		double surf;
+		vec3 norm;
+		if (PhysicsTriangle::RayIntersects(voxelTriangles[i],at,from,direction,&surf,&norm)) {
+			rayCollision = ((float)surf)*direction+from;
+			surfaceNormal = norm;
+			//Paint colliding voxels
+			voxelSystem->Paint(vec2(at.x,at.y),1);
+			//Stop checking voxels
+			return true;
+		}
+	}
+    return false;
+}
+
+
+bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec3 & surfaceNormal) {
+	//Ray trace in 2d to get a short list of possible colliding voxels from the terrain
+	vec2 p0 = vec2(from);
+	//Hits surfaces up to 200 away
+	vec2 p1 = vec2(from+direction*200.0f);
+
+	//2d ray tracing adapted from
+	//http://playtechs.blogspot.com/2007/03/raytracing-on-grid.html
+	vec2 d = glm::abs(p1-p0);
+
+	int x = int(floor(p0.x));
+	int y = int(floor(p0.y));
+
+	int n = 1;
+	int x_inc, y_inc;
+	float error;
+
+	if (d.x == 0) {
+		x_inc = 0;
+		error = std::numeric_limits<float>::infinity();
+	}
+	else if (p1.x > p0.x) {
+		x_inc = 1;
+		n += int(floor(p1.x)) - x;
+		error = (floor(p0.x) + 1 - p0.x) * d.y;
+	}
+	else {
+		x_inc = -1;
+		n += x - int(floor(p1.x));
+		error = (p0.x - floor(p0.x)) * d.y;
+	}
+
+	if (d.y == 0) {
+		y_inc = 0;
+		error -= std::numeric_limits<float>::infinity();
+	}
+	else if (p1.y > p0.y) {
+		y_inc = 1;
+		n += int(floor(p1.y)) - y;
+		error -= (floor(p0.y) + 1 - p0.y) * d.x;
+	}
+	else {
+		y_inc = -1;
+		n += y - int(floor(p1.y));
+		error -= (p0.y - floor(p0.y)) * d.x;
+	}
+
+	for (; n > 0; --n) {
+		//Paint it to mark it as visited
+		voxelSystem->Paint(vec2(x,y),5);
+		//Check the voxel for a ray collision in 3d space
+		//Check every voxel that's in this 2d region
+		float height = voxelSystem->GetPositionHeight(vec2(x,y));
+		int stackSize = voxelSystem->GetPositionStackSize(vec2(x,y));
+		for (int stack = 0; stack <= stackSize; stack++) {
+			if (checkForCollision(from,direction,vec3(x,y,height-(float)stack),rayCollision,surfaceNormal))
+				//Collided with terrain
+				return true;
+		}
+
+
+		//Move to the next voxel
+		if (error > 0) {
+			y += y_inc;
+			error -= d.x;
+		}
+		else {
+			x += x_inc;
+			error += d.y;
+		}
+	}
+
+	//No collision found
+	return false;
 }
 
 
@@ -220,7 +399,7 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 	//Draw all the voxels
 	for (unsigned int i = 0; i < allVoxels.size(); i++) {
 		//Draw the voxel
-		renderer->pushVoxel(shader,allVoxels[i]->Position,1);
+		renderer->pushVoxel(shader,allVoxels[i]->Position,allVoxels[i]->MaterialId);
 	}
 
 	renderer->finishDraw(shader);

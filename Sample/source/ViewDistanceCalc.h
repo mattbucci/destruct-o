@@ -25,7 +25,7 @@ public:
 	//Retrieve a pair of coordinates representing the appropriate draw section
 	//the pair of coordinates is min point and max point
 	//they form the upper left and lower right corners of a rectangle of voxels to draw
-	pair<vec2,vec2> VoxDrawCoordinates(vec2 viewPortSize, vec2 mapExtents, vec2 playerPosition, float playerFacing);
+	pair<vec2,vec2> VoxDrawCoordinates(vec2 viewPortSize, vec2 playerPosition, float playerFacing);
 
 	//Get's the view distance in units
 	//note the last voxel the user can actually see is about 80% of this

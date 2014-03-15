@@ -18,13 +18,13 @@ class PhysicsSystem {
 	//designed for fast insert/removal
 	//stored objects are always contiguous
 	ContiguousList<PhysicsVoxel*> allVoxels;
+	
+	//this contiguous list is a sub buffer used to severely decrease the AABB checks needed for physics voxels
+	ContiguousList<PhysicsVoxel> section;
+
 
 	//The voxel draw renderer
 	VoxelDrawSystem * renderer;
-
-	//Physics Voxel
-	void Register(PhysicsVoxel * toRegister);
-	void Unregister(PhysicsVoxel * toUnregister);
 
 	//Once an intersection is found, calculate this information about it
 	struct Intersection {
@@ -39,7 +39,8 @@ class PhysicsSystem {
 	//A tie to the voxel system used to lookup the terrain height at various points
 	VoxelSystem * voxelSystem;
 
-
+	//3d ray trace to a single voxel placed at "at"
+	bool checkForCollision(const vec3 & from, const vec3 & direction, vec3 at, vec3 & rayCollision, vec3 & surfaceNormal) ;
 
 	//C style function for performance reasons
 	friend Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxelBPosition);
@@ -47,9 +48,12 @@ public:
 	PhysicsSystem(VoxelSystem * system);
 	~PhysicsSystem();
 
+	//Traces a line to the first intersecting terrain or physics voxel
+	bool Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec3 & surfaceNormal);
+
 	//Constructs a voxel at the given coordinate
 	//returns the voxel
-	PhysicsVoxel * BuildVoxel(vec3 voxelCoordinate);
+	PhysicsVoxel * BuildVoxel(vec3 voxelCoordinate, double lifeTime=-1.0);
 
 	//Update the physics voxels, called by base frame
 	void Update(double delta, double now);

@@ -21,6 +21,8 @@ include_directories("../includes/json")
 # Are we compiling on Window?
 IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
+	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/game/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+
     # Windows should consume headers bundles with source
     include_directories("../includes/SDL")
     include_directories("../includes/glew")
@@ -325,3 +327,26 @@ FILE(GLOB ControlFiles
 	GameCamera.cpp
 )
 source_group(GameControl FILES ${ControlFiles})
+
+
+##########################################################################################
+#start the unit test voxel group
+project (VoxEngineUnitTests)
+
+file(GLOB VoxEngineUnitTests_SRC
+	"../unittests/*.h"
+	"../unittests/*.cpp"
+	"ContiguousList.h"
+)
+
+
+# Unit Test Executable
+add_executable(VoxEngineUnitTests ${VoxEngineUnitTests_SRC})
+SET_TARGET_PROPERTIES(VoxEngineUnitTests PROPERTIES COMPILE_FLAGS -D__UNIT_TESTING__)
+
+
+#Add universal includes
+include_directories("../includes/json")
+
+#Reset the project to set the main project name (at least on windows)
+project (VoxEngine)

@@ -1,10 +1,13 @@
 #include "FirstPersonMode.h"
 
+int movement_speed = 1;
 
 FirstPersonMode::FirstPersonMode()
 {
 	firstPersonEnabled = false;
     jumpRequested = false;
+	debug = false;
+	debug_target_height = 0;
 }
 FirstPersonMode::~FirstPersonMode() {
 
@@ -37,6 +40,24 @@ bool FirstPersonMode::GetJumpRequested(bool clearFlag)
     return _t;
 }
 
+
+//debug getters
+bool FirstPersonMode::GetDebug()
+{
+	return debug;
+}
+
+float FirstPersonMode::GetDebugHeight()
+{
+	return debug_target_height;
+}
+
+void FirstPersonMode::SetDebugHeight(int height)
+{
+	this->debug_target_height = height;
+}
+
+
 //Enable or disable first person mode 
 void FirstPersonMode::Enable(bool enableFirstPerson) {
 #ifndef __MOBILE__
@@ -51,26 +72,52 @@ void FirstPersonMode::Enable(bool enableFirstPerson) {
 void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> input) {
 	if (!firstPersonEnabled)
 		return;
-    
+
 	//Desktop method of calculating move vector
-	moveVector = vec2(0,0);
-    
-    if (pressedKeys.find('w') != pressedKeys.end())
-		moveVector.x = 1;
+	moveVector = vec2(0, 0);
+
+	if (pressedKeys.find('w') != pressedKeys.end())
+		moveVector.x = 1 * movement_speed;
 	else if (pressedKeys.find('s') != pressedKeys.end())
-		moveVector.x = -1;
-    
+		moveVector.x = -1 * movement_speed;
+
 	if (pressedKeys.find('a') != pressedKeys.end())
-		moveVector.y = 1;
+		moveVector.y = 1 * movement_speed;
 	else if (pressedKeys.find('d') != pressedKeys.end())
-		moveVector.y = -1;
-    
+		moveVector.y = -1 * movement_speed;
+
+	
+
+	
+
     // Did the user request jump?
-    if (pressedKeys.find(' ') != pressedKeys.end())
+    if (pressedKeys.find(' ') != pressedKeys.end() && !debug)
     {
         // User requested jump
         jumpRequested = true;
-    }
+	}
+
+	//{DEBUGGING
+	else if (pressedKeys.find(' ') != pressedKeys.end()) {
+		debug_target_height += .1;
+		cout << "target_height:" << debug_target_height << endl;
+	}
+	else if (pressedKeys.find('p') != pressedKeys.end()) {
+		if (debug) {
+			debug = false;
+			cout << "DEBUG OFF" << endl;
+		}
+		else {
+			debug = true;
+			cout << "DEBUG ON" << endl;
+		}
+	}
+
+	else if (pressedKeys.find(SDLK_LCTRL) != pressedKeys.end()) {
+		debug_target_height -= .1;
+		cout << "target_height:" << debug_target_height << endl;
+	}
+	//DEBUGGING}
 
 	//Sum up the mouse deltas into the current looking vector
 	//Mouse sensitivity constants for now
@@ -79,10 +126,22 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 	vec2 mouseDeltaSum;
 	for (auto e : input)
     {
-        // If the input event is that the mouse moved
+		// If the input event is that the mouse moved
 		if (e.Event == InputEvent::MouseMove)
-        {
-			mouseDeltaSum -= vec2(e.RelX,e.RelY);
+		{
+			mouseDeltaSum -= vec2(e.RelX, e.RelY);
+		}
+		else if (e.Event == InputEvent::KeyboardUp) {
+			if (e.Key == SDLK_LSHIFT) {
+				movement_speed = 1;
+			}
+		}
+		else if (e.Event == InputEvent::KeyboardDown) {
+			if (e.Key == SDLK_LSHIFT) {
+				if(!debug) movement_speed = 2;
+				else movement_speed = 5;
+			}
+
 		}
 	}
     

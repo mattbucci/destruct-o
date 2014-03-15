@@ -25,6 +25,9 @@ bool ParticleSystem::UpdateEmitter(double now, double delta) {
 	//Adjust the time so it's relative to you
 	double systemTime = now-creationTime;
 	BaseFrame * game = (BaseFrame*)CurrentSystem;
+	float systemLifeFactor = (float)(systemTime/(deathAt-creationTime));
+	if (deathAt < 0)
+		systemLifeFactor = 1;
 	
 	//A negative death time indicates infinite life
 	if ((deathAt < 0) || (deathAt > now)) {
@@ -32,10 +35,10 @@ bool ParticleSystem::UpdateEmitter(double now, double delta) {
 			nextParticle = systemTime;
 
 		//Generate as many new particles as are necessary to catch up
-		double perParticle = 1.0f/particleSystemDescription.GenerationRate.ValueAtSequence((float)now);
+		double perParticle = 1.0f/particleSystemDescription.GenerationRate.ValueAtSequence(systemLifeFactor);
 		while (nextParticle < systemTime) {
 			nextParticle += perParticle;
-			Particle * p = new Particle(now,(float)systemTime,this,&particleSystemDescription);
+			Particle * p = new Particle(now,systemLifeFactor,this,&particleSystemDescription);
 			particleList.push_back(p);
 		}
 	}
@@ -67,27 +70,27 @@ void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shade
 	//Enforce the selected material
 	switch(particleSystemDescription.MaterialStyle) {
 	case ParticleData::NONE:
+		glDepthMask(GL_TRUE);
 		glDisable (GL_BLEND);
 		break;
 	case ParticleData::ADDITIVE:
+		glDepthMask(GL_FALSE);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_COLOR, GL_ONE);
 		break;
 	case ParticleData::BLEND:
+		//For now this is false, but when sorting is correctly
+		//implemented, this will become true
+		glDepthMask(GL_FALSE);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		break;
 	case ParticleData::SCREEN:
+		glDepthMask(GL_FALSE);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
 		break;
 	}
-    
-// Was defined in every single case
-#if !(defined __MOBILE__)
-    // Not supported on mobile
-    glDisable(GL_ALPHA_TEST);
-#endif
     
 	//Enable the texture used for this particle system
 	GLTexture * texture = CurrentSystem->Textures.GetTexture(particleSystemDescription.MaterialTexture);

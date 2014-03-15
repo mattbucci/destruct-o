@@ -13,10 +13,10 @@ class Particle {
 	//How long this particle will live in total
 	float lifeSpan;
 public:
-	//"systemTime" is the time relative to the spawning particle system
-	//that is, if the game has been running for 100 seconds and the particle system has been alive for 10
-	//game time would be 100, system time would be 10
-	Particle(double gameTime, float systemTime, ParticleSystem * owner, ParticleData * systemData);
+	//systemLifeFactor is a a value 0 - 1 which represents how long the system (not the particle) has been
+	//alive for, 0 is just started, and 1 being the end point of the system
+	//if the particle system has infinite life, this will always be 1
+	Particle(double gameTime, float systemLifeFactor, ParticleSystem * owner, ParticleData * systemData);
 	//Data calculated by last Update
 	vec3 Position;
 	int Frame;

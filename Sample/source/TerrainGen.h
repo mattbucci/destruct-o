@@ -36,14 +36,11 @@ class TerrainGen {
 	// Blend Level 3 Modules
 	noise::module::Add blend3Blender;
 
-	// Heightmap and Builder
-	noise::utils::NoiseMap heightMap;
-	noise::utils::NoiseMapBuilderPlane heightMapBuilder;
-
 public:
 	TerrainGen();
 	~TerrainGen();
 
+	int getSeed();
 	void setSeed(int seed);
 	void setTileScale(double x, double y);
 	void setTileSize(int x, int y);

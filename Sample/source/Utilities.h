@@ -23,6 +23,12 @@ public:
 		return ss.str();
 	}
 
+	//Create a random something
+	template <class T>
+	static T random(T min, T max) {
+		return ((float)rand()/(float)(RAND_MAX))*(max-min)+min;
+	}
+
 	//Move string to memory with max length specified
 	static void MoveString(string original, char * copyLocation, int maxSize);
 };

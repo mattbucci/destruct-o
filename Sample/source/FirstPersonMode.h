@@ -14,7 +14,11 @@ protected:
 	//the x,y angles making up the lookVector currently
 	vec2 aggregateMouseVector;
 	bool firstPersonEnabled;
-    
+
+	// for debugging movement control
+	bool debug;
+	float debug_target_height;
+
     // Since the ActorPlayer polls this object per frame, GameEvents don't comply with the way the
     // rest of the object is implemented
     bool jumpRequested;
@@ -35,6 +39,11 @@ public:
     
     // Get if the controller wants to cause the player to jump.  Checking clears the flag
     bool GetJumpRequested(bool clearFlag = true);
+
+	//debug getters
+	bool GetDebug();
+	float GetDebugHeight();
+	void SetDebugHeight(int height);
 
 	//Enable or disable first person mode on platforms which require this
 	void Enable(bool enableFirstPerson);

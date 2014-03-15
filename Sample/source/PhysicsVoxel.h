@@ -1,35 +1,27 @@
 #include "stdafx.h"
 
-struct face {
-	vec3 normal;
-	vec3 point;
-};
-
-struct VoxelHull {
-	vec3 vertices[8];
-	face faces[6];
-};
-
 class PhysicsVoxel {
 public:
-	PhysicsVoxel() {}
 	//Almost all properties are public for speed
 
+	//Assuming this voxel is axis aligned check if it is colliding
+	//with another voxel whos center of mass is	'otherBox'
 	bool AabColiding(vec3 otherBox);
-
-
-	bool colliding;
-
-	//Up to date hull being used by this voxel
-	VoxelHull Hull;
-
 
 	//Acceleration calculated every frame
 	vec3 Acceleration;
 
 	//Velocity (momentum) of the voxel
 	vec3 Velocity;
+
 	//The position of the center of mass
-	//the draw position is -.5,-.5 from this position (I think?)
+	//the draw position is -.5,-.5 from this position 
 	vec3 Position;
+
+	//Voxel will use this material
+	int MaterialId;
+
+	//If the current time is greater than this the voxel is disintegrated
+	//if<0 voxel lives forever
+	double DeathAt;
 };

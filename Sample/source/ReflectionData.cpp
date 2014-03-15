@@ -226,7 +226,8 @@ void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, L
 
 void Savable::Save(Json::Value & parentValue) {
 	//load reflection information for this class
-	vector<ReflectionData::savable> members = ReflectionStore::Data().LookupClassMembers(this);
+	vector<ReflectionData::savable> members;
+	savesystem_reflect(members);
 	//save every member of the class
 	for (auto member : members)
 		SaveValue(member,parentValue[member.memberName]);
@@ -234,7 +235,8 @@ void Savable::Save(Json::Value & parentValue) {
 
 void Savable::Load(Json::Value & parentValue, LoadData & loadData) {
 	//load reflection information for this class
-	vector<ReflectionData::savable> members = ReflectionStore::Data().LookupClassMembers(this);
+	vector<ReflectionData::savable> members;
+	savesystem_reflect(members);
 	//Load every member of the class
 	for (auto member : members) {
 		if (!parentValue.isMember(member.memberName))
@@ -251,56 +253,16 @@ ReflectionStore & ReflectionStore::Data() {
 }
 
 
-
-void ReflectionStore::RegisterClassType(string name, ReflectionData * data) {
-	//Check that a class isn't being registered twice
-	_ASSERTE(reflectionStore.find(name) == reflectionStore.end());
-	//Save the reflection information
-	reflectionStore[name] = data;
-	inheritanceTable[name] = vector<string>(0);
-}
-void ReflectionStore::RegisterInheritance(string derivingClass, string baseClass) {
-	inheritanceTable[derivingClass].push_back(baseClass);
-}
-
-void ReflectionStore::GetDataFromClass(string classname,Savable * classToLookup, vector<ReflectionData::savable> & members) {
-	_ASSERTE(reflectionStore.find(classname) != reflectionStore.end());
-
-	//Retrieve the members of this class which can be saved
-	vector<ReflectionData::savable> savableMembers = reflectionStore[classname]->RetrieveReflectionData(classToLookup);
-	//Add this classes data
-	members.insert(members.end(),savableMembers.begin(),savableMembers.end());
-
-	//All the classes which make up this one class (excluding itself)
-	vector<string> & classes = inheritanceTable[classname];
-	//recurse over all classes this class inherits from
-	for (auto iclass : classes)
-		GetDataFromClass(iclass,classToLookup,members);
-}
-
-vector<ReflectionData::savable> ReflectionStore::LookupClassMembers(Savable * classToLookup) {
-	vector<ReflectionData::savable> allMembers;
-	//Call the recursive function to retrieve the members of this class and everything in inherits from
-	GetDataFromClass(classToLookup->Name(),classToLookup,allMembers);
-
-	return allMembers;
-
-}
 Savable * ReflectionStore::RetrieveClassInstance(string name) {
 	auto iterator = reflectionStore.find(name);
 	//Unable to find an appropriate constructor
 	if (iterator == reflectionStore.end())
 		return NULL;
 
-	ReflectionData * refData = iterator->second;
+	function<Savable*()> coonstructor = iterator->second;
 
-	//check that a constructor was supplied for this type
-	if (!refData->constructor)
-		return NULL;
-	
-	
 	//Create a class of the instance requested
-	return refData->constructor();
+	return constructor();
 }
 
 //Serialize data
@@ -308,6 +270,8 @@ vector<unsigned char> Savable::Serialize(Savable * classToSerialize) {
 	Json::Value root;
 	//Serialize the class into the root value
 	classToSerialize->Save(root);
+	//Add the type as a special root type value
+	root["__ROOTTYPE__"] = classToSerialize->Name();
 	//For now use a styled writer so we can look at pretty json
 	Json::StyledWriter writer;
 	string json = writer.write(root);
@@ -319,14 +283,34 @@ vector<unsigned char> Savable::Serialize(Savable * classToSerialize) {
 	return rawData;
 }
 
+void Savable::DeserializeJson(Json::Value & root, Savable * loadInto) {
+	LoadData load;
+	//Load the object form the json
+	loadInto->Load(root,load);
+	//Rebuild pointers registered in load data
+	load.FinishLoading();
+}
+
 //Deserialize data into a new class and return it
 Savable * Savable::Deserialize(vector<unsigned char> serializedData) {
 	Json::Reader reader;
 	Json::Value root;
-	reader.readArray(
+	//parse the json object 
+	reader.parse(string((char*)&serializedData[0],serializedData.size()),root);
+	//create a new object for the serialized data
+	Savable * createdObject = ReflectionStore::Data().RetrieveClassInstance(root["__ROOTTYPE__"].asString());
+	//Load all the data into the new object
+	DeserializeJson(root,createdObject);
+
+	return createdObject;
 }
 	
 //Deserialize data into an existing class
-Savable * Savable::Deserialize(vector<unsigned char> serializedData, Savable * saveInto) {
-
+void Savable::Deserialize(vector<unsigned char> serializedData, Savable * saveInto) {
+	Json::Reader reader;
+	Json::Value root;
+	//parse the json object 
+	reader.parse(string((char*)&serializedData[0],serializedData.size()),root);
+	//Load all the data into the new object
+	DeserializeJson(root,saveInto);
 }

@@ -49,7 +49,7 @@ void ViewDistanceCalc::CalculateAndApply(GL3DProgram * shader,float currentFPS) 
 }
 
 //Retrieve a pair of coordinates representing the appropriate draw section
-pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 mapExtents, vec2 userPosition, float userAngle) {
+pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 userPosition, float userAngle) {
 	//New strategy for determining draw box
 	//Create a rectangle with the user on the bottom center, with the top of the rectangle
 	//far away from the user in his view direction
@@ -72,9 +72,9 @@ pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 map
 		//Top Right
 		userPosition + vec2(cos(-rectHalfDiagonal+userAngle),sin(-rectHalfDiagonal+userAngle))*rectDiagonalLength,
 	};
-	vec2 minPoint = mapExtents;
-	vec2 maxPoint = vec2(0,0);
-	for (int i = 0; i < 4; i++) {
+	vec2 minPoint = testPoints[0];
+	vec2 maxPoint = testPoints[0];
+	for (int i = 1; i < 4; i++) {
 		minPoint = glm::min(minPoint,testPoints[i]);
 		maxPoint = glm::max(maxPoint,testPoints[i]);
 	}
@@ -82,8 +82,8 @@ pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 map
 	minPoint = glm::floor(minPoint);
 	maxPoint = glm::ceil(maxPoint);
 	//Limit points to valid ranges (vec2() creates a zero vector)
-	minPoint = glm::max(vec2(),minPoint);
-	maxPoint = glm::min(mapExtents-vec2(1,1),maxPoint);
+	//minPoint = glm::max(vec2(),minPoint);
+	//maxPoint = glm::min(mapExtents-vec2(1,1),maxPoint);
 	return pair<vec2,vec2>(minPoint,maxPoint);
 }
 

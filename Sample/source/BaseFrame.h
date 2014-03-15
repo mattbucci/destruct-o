@@ -14,6 +14,7 @@
 #include "ParticleCloud.h"
 #include "Audio.h"
 #include "DemoWindow.h"
+#include "Notification.h"
 
 class ActorPlayer;
 class ParticleSystem;
@@ -28,6 +29,7 @@ class BaseFrame : public GameSystem {
 
 	Demo * demo;
 	DemoWindow * demoWindow;
+	Notification * notification;
 public:
 	BaseFrame(ShaderGroup * shaders);
 	~BaseFrame();

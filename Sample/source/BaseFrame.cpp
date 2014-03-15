@@ -108,16 +108,21 @@ void BaseFrame::OnFrameFocus() {
 	demoWindow = new DemoWindow(demo);
 	Controls.AddWindow(demoWindow);
 #endif
+	notification = Notification::init();
+	Controls.AddWindow(notification);
 }
 
 void BaseFrame::Build() {
+	//Initialize Tile Handler
+	TileHandler::init();
+
 	//load the audio
 	audio = new AudioPlayer(100);
 	audio->Subscribe(player);
+
+	//TODO: Implement TileHandler Loading
 	//Load the sample tile
-	if (!Voxels.LoadTile("basic-h.png")) {
-		cout << "Failed to load voxel tile\n";
-	}
+	//Voxels.LoadWorld("A Save File");
 }
 
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {
@@ -131,11 +136,15 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	//The player is the only actor which reads input
 	//player->ReadInput(inputEvents);
 
+    Voxels.Update(player->GetPosition());
+
 	//Update actors
 	Actors.Update(delta,now);
 
 	demo->OnInput(inputEvents,player->GetPosition(),FirstPerson->GetLookVector());
 	demo->Update(now,delta);
+
+	
 
 	//Update physics/Particles
 	Physics.Update(delta,now);
@@ -152,7 +161,6 @@ void BaseFrame::Draw(double width, double height) {
 	vec2 viewPortSize = vec2((float)width,(float)height);
 	//Save size in camera as well (for unprojection)
 	Camera.UpdateViewSize(viewPortSize);
-	vec2 mapExtents = vec2(Voxels.GetWidth(),Voxels.GetHeight());
 
 	//Update the texture caching system
 	Textures.Refresh();
@@ -183,7 +191,7 @@ void BaseFrame::Draw(double width, double height) {
 	//The player is 3 height right now
 	pos.z += 2.5;
 	//Calculate voxel draw rectangle
-	pair<vec2,vec2> drawRectangle = ViewDistance.VoxDrawCoordinates(viewPortSize,mapExtents,vec2(pos),FirstPerson->GetAngleVector().x/180.0f*(float)M_PI);
+	pair<vec2,vec2> drawRectangle = ViewDistance.VoxDrawCoordinates(viewPortSize,vec2(pos),FirstPerson->GetAngleVector().x/180.0f*(float)M_PI);
 	vec2 minPoint = drawRectangle.first;
 	vec2 maxPoint = drawRectangle.second;
 
