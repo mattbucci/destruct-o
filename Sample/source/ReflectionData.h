@@ -29,9 +29,9 @@ public:
 	void FinishLoading();
 };
 
+class Savable;
 
-class ReflectionData {
-public:
+namespace ReflectionData {
 	//The different types which can be saved
 	enum SaveType {
 		SAVE_INT8,
@@ -72,10 +72,6 @@ public:
 		string memberName;
 	};
 
-
-	virtual ~ReflectionData();
-
-	virtual vector<savable> RetrieveReflectionData(void * classdata) = 0;
 };
 
 
@@ -219,39 +215,41 @@ class Savable {
 			_ASSERTE(false);
 		}
 	}
-	
+
 protected:
-	/*//Saves standard types automatically
-	template<T>
-	void SaveValue(Json::Value classObject,string name, T * valueToSave) {
-		classObject[name] = *valueToSave;
-	}
-	//Loads standard types automatically
-	template<T>
-	void LoadValue(Json::Value classObject,string name, T * valueToLoad) {
-
-	}*/
-
-	virtual string Name() = 0;
 
 	virtual void Save(Json::Value & parentValue);
 
 	virtual void Load(Json::Value & parentValue, LoadData & loadData);
 
 public:
+	//Serialize data
+	static vector<unsigned char> Serialize(Savable * classToSerialize);
+
+	//Deserialize data into a new class and return it
+	static Savable * Deserialize(vector<unsigned char> serializedData);
+	
+	//Deserialize data into an existing class
+	static Savable * Deserialize(vector<unsigned char> serializedData, Savable * saveInto);
+
+
+	virtual string Name() = 0;
 
 };
 
+	//A constructor to build this savable
+	function<Savable*()> constructor;
 
 class ReflectionStore {
+	//Map each class to its reflection data
+	map<string,function<Savable*()>> reflectionStore;
 public:
 	static ReflectionStore & Data();
 
-	void RegisterClassType(string name, ReflectionData * data);
-	void RegisterInheritance(string derivingClass, string baseClass);
-	void RegisterClassBuilder(string name, function<Savable*()> constructor);
+	//Register a class which can be constructed by the save system using a no-argument constructor
+	void RegisterConstructableClass(string name, function<Savable*()> constructor);
 
-	vector<ReflectionData::savable> LookupClassMembers(string classname);
+	//Retrieve an instance of a class with the given name
 	Savable * RetrieveClassInstance(string name);
 };
 
@@ -260,18 +258,52 @@ public:
 #define CLASS_TNAME(classname) CLASS_CONCAT_A(classname,_TypeData)
 
 
-#define CLASS_DECLARATION(classname) class CLASS_TNAME : public ReflectionData { \
+
+//A class with no inheritance, and can not be reconstructed by the save system
+#define CLASS_DECLARATION(classname) class CLASS_TNAME(classname) : public ReflectionData { \
 					ReflectionData(){ \
 						string name = #classname;\
-						ReflectionStore::Data().RegisterClassType(name,this);\
-					}\
+						ReflectionStore::Data().RegisterClassType(name,this); \
+					} \
 					vector<savable> RetrieveReflectionData(void * classdata) {\
 						vector<savable> members;	\
 						classname * instance = (classname*)classdata;
-//#define INHERITS_FROM(otherclassname) ReflectionStroe::Data().RegisterInheritance(name,#otherclassname);
+
+//A class with inheritance that can not be reconstructed by the save system
+#define CLASS_DECLARATION_I(classname) class CLASS_TNAME(classname) : public ReflectionData { \
+					ReflectionData(){ \
+						string name = #classname;\
+						ReflectionStore::Data().RegisterClassType(name,this);
+#define BEGIN_INHERITANCE
+#define INHERITS_FROM(otherclassname) ReflectionStroe::Data().RegisterInheritance(name,#otherclassname);
+#define END_INHERITANCE } \
+					vector<savable> RetrieveReflectionData(void * classdata) {\
+						vector<savable> members;	\
+						classname * instance = (classname*)classdata;
+
+//A class with no inheritance, and can be reconstructed by the save system
+#define CLASS_DECLARATION_S(classname) class CLASS_TNAME(classname) : public ReflectionData { \
+					ReflectionData(){ \
+						string name = #classname;\
+						ReflectionStore::Data().RegisterClassType(name,this); \
+						constructor = []{return (Savable*)new classname();}; \
+					} \
+					vector<savable> RetrieveReflectionData(void * classdata) {\
+						vector<savable> members;	\
+						classname * instance = (classname*)classdata;
+
+//A class with inheritance that can be reconstructed by the save system
+#define CLASS_DECLARATION_IS(classname) class CLASS_TNAME(classname) : public ReflectionData { \
+					ReflectionData(){ \
+						string name = #classname;\
+						ReflectionStore::Data().RegisterClassType(name,this); \
+						constructor = []{return (Savable*)new classname();}; \
+
 #define CLASS_MEMBER(member,type) members.push_back(savable(type,&instance->member,#member));
 
 #define END_CLASS_DECLARATION return members;}}
+
+#define SAVABLE_REFLECTION_DATA(classname) static CLASS_TNAME(classname) __InternalReflectionData;
 
 
 
