@@ -45,7 +45,7 @@ vec2 Font::GetSizeString(string text) {
 	//For now we'll skip word-wrap support
 	int width, height;
 	TTF_SizeUTF8(sdlfont,text.c_str(),&width,&height);
-	return vec2(width,height);
+	return vec2(width,height) * (float)fontHeight/(float)height;
 }
 SDL_Surface * Font::DrawToSurface(vec4 color, string text) {
 	/*shader->SetTexture(fontSheet);

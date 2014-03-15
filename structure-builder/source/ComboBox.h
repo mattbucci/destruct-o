@@ -35,7 +35,7 @@ protected:
 	virtual void recalculatePosition() override;
 
 public:
-	ComboBox(float x, float y, float width, float height);
+	ComboBox(Rect size = Rect(0,0,100,100));
 	~ComboBox();
 
 	GameEvent<void(ComboBox*,int)> EventSelectionChanged;

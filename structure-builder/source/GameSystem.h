@@ -20,7 +20,7 @@ protected:
 	ShaderGroup * shaders;
 
 	//Handle key events, recording held keys and sending events to dialogs
-	virtual void passEventsToControl(vector<InputEvent> inputEvents);
+	virtual void passEventsToControl(vector<InputEvent> & inputEvents);
 
 	//For basic game system draw controls
 	double nextFrameTime;

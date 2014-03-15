@@ -95,7 +95,7 @@ void VoxEngine::Start() {
 	//Setup sensible basics for opengl
 	glEnable ( GL_DEPTH_TEST );
 	glDepthFunc(GL_LEQUAL);
-	glClearColor(.5,.5,.5,1.0);
+	glClearColor(1,1,1,1.0);
 
 	//Enable basic alpha blending
 	glEnable(GL_BLEND);
@@ -274,6 +274,9 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 						//Add in the relative motion information
 						eventQueue.back().RelX = (float)event.motion.xrel;
 						eventQueue.back().RelY = (float)event.motion.yrel;
+						break;
+					case SDL_MOUSEWHEEL:
+						eventQueue.push_back(InputEvent(InputEvent::MouseScroll,OS::Now(),(float)event.button.x,(float)event.button.y, event.wheel.y));
 						break;
 #endif
 					case SDL_KEYDOWN:

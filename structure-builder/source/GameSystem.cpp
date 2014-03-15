@@ -18,7 +18,9 @@ void GameSystem::Build() {
 
 }
 
-void GameSystem::passEventsToControl(vector<InputEvent> inputEvents) {
+void GameSystem::passEventsToControl(vector<InputEvent> & inputEvents) {
+	//Compile a list of events not used by the dialog system
+	vector<InputEvent> unusedEvents;
 	//Process key events
 	for (InputEvent & event : inputEvents) {
 		bool used = Controls.FireEvent(event);
@@ -35,7 +37,12 @@ void GameSystem::passEventsToControl(vector<InputEvent> inputEvents) {
 			if (at == currentlyPressedKeys.end())
 				currentlyPressedKeys.insert(event.Key);
 		}
+
+		if (!used)
+			unusedEvents.push_back(event);
 	}
+	//Save the unused events
+	inputEvents = unusedEvents;
 }
 
 

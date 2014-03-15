@@ -21,6 +21,7 @@ LoadingScreen::LoadingScreen() : GL2DVertexGroup(GL_TRIANGLE_STRIP,4) {
     if(error)
     {
         SDL_Log("Lodepng error (%u) - %s", error, lodepng_error_text(error));
+		return;
     }
     
 	//I should have moved the png->texture into a utility library

@@ -58,11 +58,6 @@ protected:
 	//used for drawing
 	bool textureEnabled;
 
-	//draw this control before all others
-	void sendToFront();
-	//draw this control last
-	void sendToBack();
-
 	//Attempts to set the control to use a ninepatch
 	//if the ninepatch is not valid, does nothing
 	//the pointer must remain valid for the life of this control
@@ -73,9 +68,9 @@ protected:
 	void useNinePatch(NinePatchBinary * ninePatch);
 
 	//Draws the children of this control
-	void drawChildren(GL2DProgram * shaders);
+	virtual void drawChildren(GL2DProgram * shaders);
 	//Draws the background of this control IF this control is only 4 vertex
-	void drawBackground(GL2DProgram * shaders);
+	virtual void drawBackground(GL2DProgram * shaders);
 	//Construct calculatedPosition from position,pin,and parent
 	//Automatically called before draw()
 	virtual void recalculatePosition();
@@ -120,4 +115,9 @@ public:
 
 	virtual void Draw(GL2DProgram * shaders);
 
+
+	//draw this control before all others
+	void SendToFront();
+	//draw this control last
+	void SendToBack();
 };

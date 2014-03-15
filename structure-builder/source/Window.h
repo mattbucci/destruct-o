@@ -23,6 +23,9 @@ public:
 	void SetTitle(string text);
 	string GetTitle();
 
+	//If this window is on top and returns true, no other windows will receive input
+	//defaults to false
+	virtual bool IsDialog();
 
 	virtual void Draw(GL2DProgram * shaders) override;
 };
