@@ -36,10 +36,6 @@ class TerrainGen {
 	// Blend Level 3 Modules
 	noise::module::Add blend3Blender;
 
-	// Heightmap and Builder
-	noise::utils::NoiseMap heightMap;
-	noise::utils::NoiseMapBuilderPlane heightMapBuilder;
-
 public:
 	TerrainGen();
 	~TerrainGen();

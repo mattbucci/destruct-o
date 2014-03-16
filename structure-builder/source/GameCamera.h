@@ -8,7 +8,6 @@
 
 class GameCamera {
 	vec3 position;
-	vec3 direction;
 
 	//Matrices needed for unproject
 	//taken from the last frame
@@ -26,13 +25,18 @@ public:
 	//Apply the camera and global lighting
 	void Draw(GL3DProgram * shaders);
 
-	//Move the camera view point
-	void SetCameraView(vec3 position, vec3 direction);
+	//Move the camera focus point
+	void SetCameraView(vec3 focusPoint);
 	//get camera position
 	vec3 GetPosition();
 	//get camera direction
 	vec3 GetDirection();
 
+	
+	float Pan;
+	float Tilt;
+
+	float Distance;
 
 	//Given a screen coordinate, what 3d vector does that coordinate represent
 	//in game

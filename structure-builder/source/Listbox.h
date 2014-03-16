@@ -38,6 +38,9 @@ class Listbox : public Control {
 	vec2 lastMousePos;
 	vec2 lastScrollPos; //Used to detect movement when dragging the scroll bar
 
+	//The last time an item in the list was selected
+	double selectedAt;
+
 	//Draws the scroll button in question
 	//returns true if this button is being held down during draw
 	bool drawScrollButton(GL2DProgram * shaders,bool isTop);
@@ -74,9 +77,13 @@ public:
 	//Set or get the list of entries
 	//entries are rasterized during Set() so avoid redundant calls
 	void SetEntries(const vector<string> & entries);
+	void SetEntries(const list<string> & entries);
 	vector<string> GetEntries();
 
 	//When the current selection changes
 	//returns the string representing the selection
 	GameEvent<void(Listbox*,int)> EventSelectionChanged;
+
+	//When the current selection is double clicked
+	GameEvent<void(Listbox*,int)> EventSelectionDoubleClicked;
 };

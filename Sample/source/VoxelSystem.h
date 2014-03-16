@@ -2,6 +2,9 @@
 
 #include "stdafx.h"
 #include "ContiguousList.h"
+#include "TileHandler.h"
+#include "Rect.h"
+
 class GL3DProgram;
 class GameTile;
 class VoxelDrawSystem;
@@ -9,9 +12,6 @@ class TileCell;
 class TerrainGen;
 
 class VoxelSystem {
-	//Tile data loaded
-	ContiguousList<GameTile> world;
-	TerrainGen * generator;
 	//A debug counter for the number of voxels rendered last frame
 	int voxelCount;
 
@@ -20,21 +20,12 @@ class VoxelSystem {
 
 	VoxelDrawSystem * renderer;
 
+	//Calls foreachFunction for each tile contained in the Rect "region"
+	void forTilesInRect(Rect region, function<void(GameTile * tile)> foreachFunction);
+
 public:
 	VoxelSystem();
 	~VoxelSystem();
-
-	//Attempt to load a world from disc
-	bool LoadWorld(string saveName);
-
-	//Attempt to Generate a new world
-	bool GenWorld(int seed);
-
-	//Load a tile, NULL if fail
-	GameTile * LoadTile(vec2 pos);
-
-	//Generate a Tile, NULL if fail, should never be fail so assert
-	GameTile * GenTile(vec2 pos);
 
 	//Get a Tile
 	GameTile * GetTile(vec2 pos);
@@ -65,8 +56,4 @@ public:
 	//of voxels which will be rendered
 	void Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int tox, int toy);
 	void Update(vec3 player_pos);
-	//Get map width
-	int GetWidth();
-	//Get map height
-	int GetHeight();
 };

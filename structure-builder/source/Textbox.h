@@ -11,9 +11,7 @@
 
 class Textbox : public Control {
 	int cursorPos;
-
-	Font textboxFont;
-
+	
 	vec4 textColor;
 	vec4 borderColor;
 	vec4 backColor;

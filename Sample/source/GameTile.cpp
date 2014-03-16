@@ -2,13 +2,35 @@
 #include "GameTile.h"
 #include "lodepng.h"
 
+GameTile::GameTile() {
+	this->Width = 0;
+	this->Height = 0;
+	Cells = NULL;
+}
+
 GameTile::GameTile(int width, int height) {
 	this->Width = width;
 	this->Height = height;
 	Cells = new TileCell[width*height];
 }
 GameTile::~GameTile() {
-	delete [] Cells;
+	if(Cells != NULL) {
+		delete [] Cells;
+	}
+}
+
+GameTile * GameTile::CreateGameTile(int width, int height, int x, int y) {
+	GameTile * newTile = new GameTile(width, height);
+	newTile->tile_x = x;
+	newTile->tile_y = y;
+	return newTile;
+}
+
+GameTile * GameTile::CreatePlaceholderTile(int x, int y) {
+	GameTile * newTile = new GameTile();
+	newTile->tile_x = x;
+	newTile->tile_y = y;
+	return newTile;
 }
 
 //Load a game tile from disk
@@ -56,6 +78,26 @@ GameTile * GameTile::LoadTileFromMemory(const vector<unsigned char> & tileData, 
 
 	cout << "\tTile Load Complete.\n";
 	return tile;
+}
+
+void GameTile::LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tileData, GameTile * newTile) {
+	_ASSERTE(tileData.size() == (newTile->Width * newTile->Height * 4));
+
+	for (unsigned int i = 0; i < tileData.size(); i+= 4) {
+		newTile->Cells[i/4].height = tileData[i+0];
+		newTile->Cells[i/4].materialId = tileData[i+1];
+		newTile->Cells[i/4].stackHeight = 0;
+	}
+
+	newTile->CalculateStackSizes(1,1,newTile->Width-1,newTile->Height-1);
+	for (unsigned int i = 0; i < newTile->Width; i++) {
+		newTile->Cells[i].stackHeight = 2;
+		newTile->Cells[i+(newTile->Height-1)*newTile->Width].stackHeight = 2;
+	}
+	for (unsigned int i = 0; i < newTile->Height; i++) {
+		newTile->Cells[i*newTile->Width + 0].stackHeight = 2;
+		newTile->Cells[i*newTile->Width + newTile->Height - 1].stackHeight = 2;
+	}
 }
 
 void GameTile::CalculateStackSizes(unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy) {

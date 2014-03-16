@@ -3,66 +3,6 @@
 #include "GLModel.h"
 #include "GL2DProgram.h"
 
-//For opengl es without extensions
-#ifdef __ANDROID__
-
-//Build the arrays to create the vertex group
-GL2DVertexGroup::GL2DVertexGroup(GLenum gltype, int vertexCount) {
-	vertices = new vec2[vertexCount];
-	vertexTextureCoords = new vec2[vertexCount];
-
-	memset(vertexTextureCoords,0,sizeof(vec2)*vertexCount);
-
-	this->gltype = gltype;
-	this->vertexCount = vertexCount;
-}
-
-void GL2DVertexGroup::ResizeVertexGroup(int newSize) {
-	delete[] vertices;
-	delete[] vertexTextureCoords;
-
-	this->vertexCount = newSize;
-
-	vertices = new vec2[vertexCount];
-	vertexTextureCoords = new vec2[vertexCount];
-}
-
-GL2DVertexGroup::~GL2DVertexGroup() {
-	delete [] vertices;
-	delete [] vertexTextureCoords;
-}
-	
-//For modifying vertices
-vec2 & GL2DVertexGroup::vat(const int index) {
-	return vertices[index];
-}
-
-vec2 & GL2DVertexGroup::xat(const int index) {
-	return vertexTextureCoords[index];
-}
-
-
-void GL2DVertexGroup::Draw(GL2DProgram * shader) {
-
-	//If there are no vertices, abort
-	if (vertexCount == 0)
-		return;
-
-	//positions
-	glVertexAttribPointer ( shader->AttributePosition(), 2, GL_FLOAT, GL_FALSE, 0, vertices );
-	glEnableVertexAttribArray ( shader->AttributePosition() );
-
-
-	// texture coordinates
-	glVertexAttribPointer ( shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, 0, vertexTextureCoords );
-	glEnableVertexAttribArray ( shader->AttributeTexture() );
-	
-   
-	glDrawArrays( gltype, 0, vertexCount );
-}
-#else
-//For desktops
-
 //Build the arrays to create the vertex group
 GL2DVertexGroup::GL2DVertexGroup(GLenum gltype, int vertexCount) {
 	vertices = new vec2[vertexCount];
@@ -159,5 +99,3 @@ void GL2DVertexGroup::Draw(GL2DProgram * shader) {
 
 	glDrawArrays( gltype, 0, vertexCount );
 }
-
-#endif

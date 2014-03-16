@@ -19,9 +19,13 @@ public:
 
 	}
 	~GameEvent() {
+		//Note when you unsubscribe something, it forces you to forget its existence by
+		//editing your list of subscribers. SO to prevent the list frmo being modified while you're
+		//iterating over it. Just copy it here
+		auto subscriberListCopy = subscriberList;
 		//On destruction notify everyone subscribed to you
 		//that they no longer have to worry about cleanup
-		for (auto subscriber : subscriberList) 
+		for (auto subscriber : subscriberListCopy) 
 			subscriber.object->Unsubscribe(this);
 	}
 

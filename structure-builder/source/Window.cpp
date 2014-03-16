@@ -47,3 +47,7 @@ void Window::SetTitle(string text) {
 string Window::GetTitle() {
 	return title.Text();
 }
+
+bool Window::IsDialog() {
+	return false;
+}

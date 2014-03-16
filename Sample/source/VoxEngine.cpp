@@ -9,7 +9,6 @@
 #include "VoxEngine.h"
 #include "LoadingScreen.h"
 
-
 SDL_Renderer* displayRenderer;
 
 //A variable which at runtime can be used to figure out what version is running
@@ -97,6 +96,20 @@ void VoxEngine::Start() {
 
 #endif
 
+	//Start our version of GLEW for android
+#ifdef __ANDROID__
+	//Let the android GLEW decide which opengl version to act like
+	OpenglVersion = initAndroidGlew();
+	if (OpenglVersion > 0)
+		cout << "AndroidGLEW loaded successfully\n";
+	else {
+		cout << "Failed to load some necessary extensions for android glew\n";
+		cout << "PROGRAM IS NOW EXITING\n";
+		return;
+	}
+		
+#endif
+
 	//Setup sensible basics for opengl
 	glEnable ( GL_DEPTH_TEST );
 	glDepthFunc(GL_LEQUAL);
@@ -143,6 +156,14 @@ void VoxEngine::Start() {
 	}
 #endif
 
+	/*cout << "TESTING[0]: " << (unsigned int)eglGetProcAddress("glGenBuffers") << "\n";
+	cout << "TESTING[1]: " << (unsigned int)eglGetProcAddress("glDrawElementsInstanced") << "\n";
+	cout << "TESTING[2]: " << (unsigned int)eglGetProcAddress("glGenVertexArraysOES") << "\n";
+	cout << "TESTING[3]: " << (unsigned int)eglGetProcAddress("glGenVertexArrays") << "\n";*/
+
+	cout << "Using an external opengl version of: " << (char*)glGetString(GL_VERSION) << "\n";
+	cout << "Using internal opengl version of: " << OpenglVersion << "\n";
+
 	//Initialze the dialog constants
 	VisualInterface.init();
 	//Populate the list of game systems
@@ -169,6 +190,9 @@ void VoxEngine::Start() {
 			glViewport(0, 0, curWidth, curHeight);
 			load.Draw(curWidth,curHeight,shader);
 			SDL_GL_SwapWindow(displayWindow);
+
+			//Sleep softly and use no cpu power
+			OS::SleepTime(.15);
 		}
 	}
 
@@ -185,7 +209,7 @@ void VoxEngine::Start() {
 	gameSimulationTime = 0;
 	gameEventDelta = gameSimulationTime-OS::Now();
 	gameSimulationTime = -SIMULATION_TIME;
-
+	
 	//The game loop begins
 	while (continueGameLoop) {
 
@@ -365,6 +389,8 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, openglMajorVersion);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, openglMinorVersion);
 #ifndef __MOBILE__
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
 
@@ -411,6 +437,10 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 			return NULL;
 		}
 	}
+
+#ifndef __MOBILE__
+	glEnable(GL_MULTISAMPLE);
+#endif
 
 	return displayWindow;
 }

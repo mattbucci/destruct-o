@@ -3,7 +3,6 @@
 
 #include "VoxelDrawSystem.h"
 
-#ifndef __ANDROID__
 
 //Defines how many instances will be rendered (max) per
 //draw call
@@ -53,4 +52,3 @@ public:
 	void finishDraw(GL3DProgram * shader) override;
 };
 
-#endif

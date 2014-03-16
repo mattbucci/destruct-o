@@ -2,12 +2,30 @@
 
 #include "GameSystem.h"
 #include "GameCamera.h"
+#include "Editor.h"
+#include "Window.h"
+#include "FileMenuWindow.h"
+#include "ModeWindow.h"
 
+class MaterialSelectionControl;
 
 class DesignFrame : public GameSystem {
+	Editor editor;
+
+	bool panning;
+	bool mouseDown;
+	double mouseHeldAt;
+	vec2 prevMousePos;
+
+	FileMenuWindow * fileMenu;
+	MaterialSelectionControl * matSelector;
+	Window matWindow;
+	Structure * toEdit;
+	ModeWindow modeSelector;
 public:
 	DesignFrame(ShaderGroup * shaders);
 	~DesignFrame();
+
 
 	//This is the main game object
 	//so it contains all the subsystems
