@@ -205,13 +205,3 @@ void FirstPersonMode::Draw(double width, double height, GL2DProgram * shader)
 {
 
 }
-
-void FirstPersonMode::Load(Json::Value & parentValue, LoadData & loadData) {
-
-	int x = 5;
-
-	Savable::Load(parentValue,loadData);
-
-
-	int y = 4;
-}

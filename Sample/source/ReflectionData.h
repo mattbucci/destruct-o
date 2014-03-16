@@ -77,7 +77,7 @@ namespace ReflectionData {
 };
 
 
-
+//Helper defines, dont' use
 #define CLASS_CONCAT_B(a,b) a##b
 #define CLASS_CONCAT_A(a,b) CLASS_CONCAT_B(a,b)
 #define CLASS_TNAME(classname) CLASS_CONCAT_A(classname,_TypeData)
@@ -85,19 +85,26 @@ namespace ReflectionData {
 
 
 
-
+//This should be at the start of a save block inside any savable class
+//savable classes must inherit Savable, or inherit something else that does
 #define CLASS_DECLARATION(classname) public: string Name() {return #classname;} protected: \
 								virtual void savesystem_reflect(vector<ReflectionData::savable> & reflectMembersInto) { 
 
-
+//If the current class inherits from another class, this must be in the save block indicating that class
 #define INHERITS_FROM(derived) derived::savesystem_reflect(reflectMembersInto);
 
+//Declare a member of a specific type (Look in ReflectionData:: for the types)
 #define CLASS_MEMBER(member,type) reflectMembersInto.push_back(ReflectionData::savable(type,&member,#member));
+//Declare a member of a container type
 #define CLASS_CONTAINER_MEMBER(member,containerType,type) reflectMembersInto.push_back(ReflectionData::savable(containerType,&member,#member,type));
 
+//End the savable declaration block
 #define END_DECLARATION } private:
 
 
-
+//If a class is owned by the save system, CLASS_SAVE_CONSTRUCTOR(yourclass) must be in the .h file
 #define CLASS_SAVE_CONSTRUCTOR(classname) struct CLASS_TNAME(classname) { CLASS_TNAME(classname)(){ReflectionStore::Data().RegisterConstructableClass(#classname,[](){return new classname();});}}; \
 	static CLASS_TNAME(classname) CLASS_VNAME(classname);
+
+//If your class contains one or more members which are user owned handles, you must overload Load and call REPAIR_HANDLE for each user owned handle before calling Savable::Load
+#define REPAIR_HANDLE(variable) loadData.RegisterLoadedHandle(parentValue[#variable]["__HANDLE__"].asInt64(),variable);

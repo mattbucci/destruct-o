@@ -81,7 +81,10 @@ bool BaseFrame::Load(string saveFile) {
 }
 
 void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
-	loadData.RegisterLoadedHandle(parentValue["FirstPerson"]["__HANDLE__"].asInt64(),FirstPerson);
+	//This is necessary because FirstPerson is a user owned handle
+	//so we must notify the save system we have constructed it
+	REPAIR_HANDLE(FirstPerson);
+	//Continue loading
 	Savable::Load(parentValue,loadData);
 }
 
