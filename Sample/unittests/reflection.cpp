@@ -3,9 +3,16 @@
 //add cppjson to compile in this file
 #include "../source/jsoncpp.cpp"
 
+//Add the entire save system here
 #include "../source/ReflectionData.h"
+#include "../source/ReflectionStore.h"
+#include "../source/Savable.h"
+#include "../source/LoadData.h"
 //Add the reflection code to this file
 #include "../source/ReflectionData.cpp"
+#include "../source/ReflectionStore.cpp"
+#include "../source/Savable.cpp"
+#include "../source/LoadData.cpp"
 
 #include <fstream>
 
