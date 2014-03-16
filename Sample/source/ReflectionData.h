@@ -32,6 +32,16 @@ namespace ReflectionData {
 		//Saves the handle, and saves what it points to
 		//will reconstruct the object automatically upon load
 		SAVE_OWNEDHANDLE,
+		//Exactly like the above except the constructor of the savable is expected
+		//to automatically repair the OWNEDHANDLE by itself
+		//though the object is still created/destroyed by the save system
+		//and SAVE_HANDLE will still be repaired automatically
+		SAVE_OWNEDHANDLEAR,
+		//Exactly like the above except the object is not created/destroyed
+		//the user must do that himself
+		//and during Load() REPAIR_HANDLE(variable) should be called so that SAVE_HANDLE
+		//to the object are repaired correctly
+		SAVE_USEROWNEDHANDLE,
 		//Save an instance of something savable, (not a pointer)
 		SAVE_INSTANCE,
 		SAVE_LIST,

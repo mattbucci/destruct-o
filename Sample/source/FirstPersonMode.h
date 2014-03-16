@@ -54,6 +54,8 @@ public:
 	virtual void Draw(double width, double height, GL2DProgram * shader);
 
 
+	virtual void Load(Json::Value & parentValue, LoadData & loadData);
+
 	CLASS_DECLARATION(FirstPersonMode)
 		CLASS_MEMBER(lookVector,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(moveVector,ReflectionData::SAVE_VEC2)

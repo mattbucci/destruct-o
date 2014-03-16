@@ -18,6 +18,14 @@ void LoadData::RegisterHandleToLoad(uint64_t original, void ** handleToLoad) {
 	handlesToLoad.push_back(lh);
 }
 
+void * LoadData::RetrieveConstructedHandle(uint64_t original) {
+	//If the handle is missing then the user forgot to register the object
+	//they constructed using the necessary REPAIR_HANDLE(variable)
+	_ASSERTE(handlesRebuilt.find(original) != handlesRebuilt.end());
+
+	return handlesRebuilt[original];
+}
+
 //Use the list of built handles and the
 //originalHandles to match created objects
 //to old pointers to created objects
@@ -38,4 +46,5 @@ void LoadData::FinishLoading() {
 			//Restore the pointer to a new valid value
 			*handleToPatch.handleToLoad = handlesRebuilt[handleToPatch.originalHandle];
 	}
+	handlesToLoad.clear();
 }

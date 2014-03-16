@@ -71,7 +71,7 @@ public:
 
 	//Define how the base frame saves
 	CLASS_DECLARATION(BaseFrame)
-		CLASS_MEMBER(FirstPerson,ReflectionData::SAVE_HANDLE)
+		CLASS_MEMBER(FirstPerson,ReflectionData::SAVE_USEROWNEDHANDLE)
 		CLASS_MEMBER(Physics,ReflectionData::SAVE_INSTANCE)
 		CLASS_MEMBER(Actors,ReflectionData::SAVE_INSTANCE)
 		CLASS_MEMBER(player,ReflectionData::SAVE_HANDLE)

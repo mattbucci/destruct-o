@@ -70,8 +70,11 @@ void Savable::SaveValue(ReflectionData::savable valueData,Json::Value & value) {
 			//Assume 64 bit
 			value = *(uint64_t*)valueData.member;
 		return;
+
 	//Saves the handle: and saves what it points to
 	//will reconstruct the object automatically upon load
+	case ReflectionData::SAVE_USEROWNEDHANDLE:
+	case ReflectionData::SAVE_OWNEDHANDLEAR:
 	case ReflectionData::SAVE_OWNEDHANDLE: {
 		//Retrieve the pointer value
 		uint64_t handle;
@@ -184,9 +187,21 @@ void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, L
 			*(void**)valueData.member = nullptr;
 		return;
 	}
+	case ReflectionData::SAVE_USEROWNEDHANDLE: {
+		uint64_t loadedValue = value["__HANDLE__"].asUInt64();
+
+		//Assume the user has told you where you can find the given object
+		//if not, then the user is missing a REPAIR_HANDLE(variable) in the load routine
+		Savable * loadedInstance = (Savable*)loadData.RetrieveConstructedHandle(loadedValue);
+		//Load the object
+		loadedInstance->Load(value,loadData);
+
+		return;
+	}
 
 	//Saves the handle: and saves what it points to
 	//will reconstruct the object automatically upon load
+	case ReflectionData::SAVE_OWNEDHANDLEAR:
 	case ReflectionData::SAVE_OWNEDHANDLE: {
 		uint64_t loadedValue;
 		loadedValue = value["__HANDLE__"].asUInt64();
@@ -199,8 +214,9 @@ void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, L
 			//Delete the previous instance of whatever was owned
 			delete *(Savable**)valueData.member;
 
-			//Set it to the new instance
-			*(void**)valueData.member = (void*)classInstance;
+			if (valueData.dataType != ReflectionData::SAVE_OWNEDHANDLEAR)
+				//Unless, this handle autoregisters, set it to the new instance
+				*(void**)valueData.member = (void*)classInstance;
 
 			//Load the class
 			classInstance->Load(value,loadData);

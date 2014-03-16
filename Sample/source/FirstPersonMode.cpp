@@ -5,7 +5,7 @@ int movement_speed = 1;
 FirstPersonMode::FirstPersonMode()
 {
 	firstPersonEnabled = false;
-    jumpRequested = false;
+	jumpRequested = false;
 	debug = false;
 	debug_target_height = 0;
 }
@@ -32,12 +32,12 @@ vec2 FirstPersonMode::GetAngleVector() {
 
 bool FirstPersonMode::GetJumpRequested(bool clearFlag)
 {
-    bool _t = jumpRequested;
-    if(clearFlag)
-    {
-        jumpRequested = false;
-    }
-    return _t;
+	bool _t = jumpRequested;
+	if(clearFlag)
+	{
+		jumpRequested = false;
+	}
+	return _t;
 }
 
 
@@ -90,11 +90,11 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 
 	
 
-    // Did the user request jump?
-    if (pressedKeys.find(' ') != pressedKeys.end() && !debug)
-    {
-        // User requested jump
-        jumpRequested = true;
+	// Did the user request jump?
+	if (pressedKeys.find(' ') != pressedKeys.end() && !debug)
+	{
+		// User requested jump
+		jumpRequested = true;
 	}
 
 	//{DEBUGGING
@@ -125,7 +125,7 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 	static const float mouseYSensitivity = 1.0f/6.0f;
 	vec2 mouseDeltaSum;
 	for (auto e : input)
-    {
+	{
 		// If the input event is that the mouse moved
 		if (e.Event == InputEvent::MouseMove)
 		{
@@ -144,52 +144,52 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 
 		}
 	}
-    
-    // If we have an active joystick, override keyboard with joystick
-    if(joystick)
-    {
-        // Get the x and y axes of the left joystick. (Xbox 360 gamepad)
-        Sint32 axisX = SDL_JoystickGetAxis(joystick, 0);
-        Sint32 axisY = SDL_JoystickGetAxis(joystick, 1);
-        
-        // Get the x and y axes of the right joystick. (Xbox 360 gamepad)
-        Sint32 axisLX = SDL_JoystickGetAxis(joystick, 3);
-        Sint32 axisLY = SDL_JoystickGetAxis(joystick, 4);
-        
-        // Get the button to check if we want jump requests (left bumper)
-        if(SDL_JoystickGetButton(joystick, 4))
-        {
-            jumpRequested = true;
-        }
-        
-        // Check if we should override the movement vector
-        if(axisX != 0 || axisY != 0)
-        {
-            // Override motion vector
-            moveVector.x = static_cast<float>(-axisY) / 32767.0f;
-            moveVector.y = static_cast<float>(-axisX) / 32767.0f;
-        }
-        
-        // Check if we should override the mouse delta sum
-        if(axisLX != 0 || axisLY != 0)
-        {
-            // Override motion vector
-            mouseDeltaSum.x = (static_cast<float>(-axisLX) / 32767.0f) * 16.0f;
-            mouseDeltaSum.y = (static_cast<float>(-axisLY) / 32767.0f) * 16.0f;
-        }
-    }
-    
+	
+	// If we have an active joystick, override keyboard with joystick
+	if(joystick)
+	{
+		// Get the x and y axes of the left joystick. (Xbox 360 gamepad)
+		Sint32 axisX = SDL_JoystickGetAxis(joystick, 0);
+		Sint32 axisY = SDL_JoystickGetAxis(joystick, 1);
+		
+		// Get the x and y axes of the right joystick. (Xbox 360 gamepad)
+		Sint32 axisLX = SDL_JoystickGetAxis(joystick, 3);
+		Sint32 axisLY = SDL_JoystickGetAxis(joystick, 4);
+		
+		// Get the button to check if we want jump requests (left bumper)
+		if(SDL_JoystickGetButton(joystick, 4))
+		{
+			jumpRequested = true;
+		}
+		
+		// Check if we should override the movement vector
+		if(axisX != 0 || axisY != 0)
+		{
+			// Override motion vector
+			moveVector.x = static_cast<float>(-axisY) / 32767.0f;
+			moveVector.y = static_cast<float>(-axisX) / 32767.0f;
+		}
+		
+		// Check if we should override the mouse delta sum
+		if(axisLX != 0 || axisLY != 0)
+		{
+			// Override motion vector
+			mouseDeltaSum.x = (static_cast<float>(-axisLX) / 32767.0f) * 16.0f;
+			mouseDeltaSum.y = (static_cast<float>(-axisLY) / 32767.0f) * 16.0f;
+		}
+	}
+	
 	//No update at this time
 	if ((mouseDeltaSum == vec2()) && (aggregateMouseVector != vec2()))
 		return;
-    
+	
 	//Now use the current mouse delta to build an aggregate
 	aggregateMouseVector += mouseDeltaSum*vec2(mouseXSensitivity,mouseYSensitivity);
 
 	//Limit the aggregate appropriately
 	aggregateMouseVector.x = glm::mod(aggregateMouseVector.x,360.0f);
-    aggregateMouseVector.y = clamp<float>(aggregateMouseVector.y, -60.0f, 75.0f);
-    
+	aggregateMouseVector.y = clamp<float>(aggregateMouseVector.y, -60.0f, 75.0f);
+	
 	//Calculate the looking vector from the new aggregate angle vector
 	//this part adapted from a previous FPS engine I wrote, so its a bit contrived
 	float f = aggregateMouseVector.x/180.f*(float)M_PI;
@@ -204,4 +204,14 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 void FirstPersonMode::Draw(double width, double height, GL2DProgram * shader)
 {
 
+}
+
+void FirstPersonMode::Load(Json::Value & parentValue, LoadData & loadData) {
+
+	int x = 5;
+
+	Savable::Load(parentValue,loadData);
+
+
+	int y = 4;
 }

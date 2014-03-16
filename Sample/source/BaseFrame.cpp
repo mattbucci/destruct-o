@@ -81,7 +81,7 @@ bool BaseFrame::Load(string saveFile) {
 }
 
 void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
-	loadData.RegisterLoadedHandle(parentValue["FirstPerson"].asInt64(),FirstPerson);
+	loadData.RegisterLoadedHandle(parentValue["FirstPerson"]["__HANDLE__"].asInt64(),FirstPerson);
 	Savable::Load(parentValue,loadData);
 }
 

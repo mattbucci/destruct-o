@@ -17,6 +17,9 @@ public:
 	//Register a pointer to a recreated object which has not been created yet
 	void RegisterHandleToLoad(uint64_t original, void ** handleToLoad);
 
+	//Retrieves a handle which has already been constructed 
+	void * RetrieveConstructedHandle(uint64_t original);
+
 	//Use the list of built handles and the
 	//originalHandles to match created objects
 	//to old pointers to created objects

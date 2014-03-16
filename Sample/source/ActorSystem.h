@@ -28,6 +28,6 @@ public:
 
 	//Actor system is essentially a list of actors
 	CLASS_DECLARATION(ActorSystem)
-		CLASS_CONTAINER_MEMBER(allActors,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
+		CLASS_CONTAINER_MEMBER(allActors,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLEAR)
 	END_DECLARATION
 };

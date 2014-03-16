@@ -56,8 +56,9 @@ class Savable {
 			//Load the value
 			LoadValue(saveData, value[i],loadData);
 
-			//Push the value into the container
-			container.push_back(valueToLoad);
+			//Push the value into the container, unless the handle autoregisters
+			if (valueData.internalType != ReflectionData::SAVE_OWNEDHANDLEAR)
+				container.push_back(valueToLoad);
 		}
 	}
 
@@ -109,6 +110,7 @@ class Savable {
 		case ReflectionData::SAVE_STRING:
 			LoadSpecificContainer<ContainerType,AllocaterType,string>(valueData,value,loadData);
 			break;
+		case ReflectionData::SAVE_OWNEDHANDLEAR:
 		case ReflectionData::SAVE_OWNEDHANDLE:
 			LoadSpecificOwnedHandleContainer<ContainerType,AllocaterType,void*>(valueData,value,loadData);
 			break;
@@ -117,6 +119,8 @@ class Savable {
 			break;
 		default:
 			//Illegal type in container
+			//SAVE_USEROWNEDHANDLE
+			//not supported in containers
 			_ASSERTE(false);
 		}
 	}
@@ -188,16 +192,22 @@ class Savable {
 			SaveSpecificContainer<ContainerType,AllocaterType,string>(valueData,value);
 			break;
 		//This is actually unsafe but I doubt it'll break anything
+		case ReflectionData::SAVE_OWNEDHANDLEAR:
 		case ReflectionData::SAVE_OWNEDHANDLE:
 		case ReflectionData::SAVE_HANDLE:
 			SaveSpecificContainer<ContainerType,AllocaterType,void*>(valueData,value);
 			break;
 		default:
 			//Illegal type in container
+			//SAVE_USEROWNEDHANDLE
+			//not supported in containers
 			_ASSERTE(false);
 		}
 	}
 
+
+	//Handle the json deserialize after the file has already been decoded
+	static void DeserializeJson(Json::Value & root, Savable * loadInto);
 protected:
 
 	virtual void Save(Json::Value & parentValue);
@@ -206,8 +216,6 @@ protected:
 
 	virtual void savesystem_reflect(vector<ReflectionData::savable> & reflectMembersInto) = 0;
 
-	//Handle the json deserialize
-	static void DeserializeJson(Json::Value & root, Savable * loadInto);
 public:
 	//Serialize data
 	static vector<unsigned char> Serialize(Savable * classToSerialize);
