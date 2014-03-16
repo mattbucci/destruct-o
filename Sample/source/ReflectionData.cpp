@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ReflectionData.h"
 #include "ContiguousList.h"
+#include "lodepng.h"
 
 //Register a recreated object
 void LoadData::RegisterLoadedHandle(uint64_t original, void * newHandle) {
@@ -278,6 +279,110 @@ Savable * ReflectionStore::RetrieveClassInstance(string name) {
 	return iterator->second();
 }
 
+/*
+Compresses data with Zlib. Reallocates the out buffer and appends the data.
+Zlib adds a small header and trailer around the deflate data.
+The data is output in the format of the zlib specification.
+Either, *out must be NULL and *outsize must be 0, or, *out must be a valid
+buffer and *outsize its size in bytes. out must be freed by user after usage.
+
+unsigned lodepng_zlib_decompress(unsigned char** out, size_t* outsize,
+                                 const unsigned char* in, size_t insize,
+                                 const LodePNGDecompressSettings* settings);
+
+
+
+
+unsigned lodepng_zlib_compress(unsigned char** out, size_t* outsize,
+                               const unsigned char* in, size_t insize,
+                               const LodePNGCompressSettings* settings);
+
+*/
+
+  /*LZ77 related settings*/
+  unsigned btype; /*the block type for LZ (0, 1, 2 or 3, see zlib standard). Should be 2 for proper compression.*/
+  unsigned use_lz77; /*whether or not to use LZ77. Should be 1 for proper compression.*/
+  unsigned windowsize; /*the maximum is 32768, higher gives more compression but is slower. Typical value: 2048.*/
+  unsigned minmatch; /*mininum lz77 length. 3 is normally best, 6 can be better for some PNGs. Default: 0*/
+  unsigned nicematch; /*stop searching if >= this length found. Set to 258 for best compression. Default: 128*/
+  unsigned lazymatching; /*use lazy matching: better compression but a bit slower. Default: true*/
+
+  /*use custom zlib encoder instead of built in one (default: null)*/
+  unsigned (*custom_zlib)(unsigned char**, size_t*,
+                          const unsigned char*, size_t,
+                          const LodePNGCompressSettings*);
+  /*use custom deflate encoder instead of built in one (default: null)
+  if custom_zlib is used, custom_deflate is ignored since only the built in
+  zlib function will call custom_deflate*/
+  unsigned (*custom_deflate)(unsigned char**, size_t*,
+                             const unsigned char*, size_t,
+                             const LodePNGCompressSettings*);
+
+  void* custom_context; /*optional custom settings for custom functions*/
+
+
+//zlib functions borrowed from lodepng
+//already embedded in our program so we might as well reuse them
+vector<unsigned char> deflateArray(vector<unsigned char> toDeflate) {
+	vector<unsigned char> buffer;
+	//lodepng requires a c style buffer
+	//it automatically resizes the buffer to the desired size
+	unsigned char * cbuffer = (unsigned char *)malloc(1);
+
+	LodePNGCompressSettings compressSettings;
+	compressSettings.btype = 2;
+	compressSettings.use_lz77 = 1;
+	compressSettings.windowsize = 2048;
+	compressSettings.minmatch = 3;
+	compressSettings.nicematch = 128;
+	compressSettings.lazymatching = true;
+	compressSettings.custom_context = NULL;
+	compressSettings.custom_zlib = NULL;
+	compressSettings.custom_deflate = NULL;
+
+	size_t outsize = 0;
+	lodepng_zlib_compress(&cbuffer,&outsize,&toDeflate.front(),toDeflate.size(),&compressSettings);
+	
+	//Now copy to a vector buffer
+	buffer.resize(outsize);
+	for (int i = 0; i < outsize; i++)
+		buffer[i] = cbuffer[i];
+
+	//free the cbuffer
+	free(cbuffer);
+
+	return buffer;
+}
+
+vector<unsigned char> inflateArray(vector<unsigned char> toInflate) {
+	vector<unsigned char> buffer;
+	//lodepng requires a c style buffer
+	//it automatically resizes the buffer to the desired size
+	unsigned char * cbuffer = (unsigned char *)malloc(1);
+
+	LodePNGDecompressSettings decompressSettings;
+	decompressSettings.ignore_adler32 = 0;
+	decompressSettings.custom_context = NULL;
+	decompressSettings.custom_inflate = NULL;
+	decompressSettings.custom_zlib = NULL;
+
+
+	size_t outsize = 0;
+	lodepng_zlib_decompress(&cbuffer,&outsize,&toInflate.front(),toInflate.size(),&decompressSettings);
+	
+	//Now copy to a vector buffer
+	buffer.resize(outsize);
+	for (int i = 0; i < outsize; i++)
+		buffer[i] = cbuffer[i];
+
+	//free the cbuffer
+	free(cbuffer);
+
+	return buffer;
+}
+
+
+
 //Serialize data
 vector<unsigned char> Savable::Serialize(Savable * classToSerialize) {
 	Json::Value root;
@@ -292,6 +397,9 @@ vector<unsigned char> Savable::Serialize(Savable * classToSerialize) {
 	vector<unsigned char> rawData(json.size());
 	for (int i = 0; i < json.size();i++)
 		rawData[i] = json[i];
+
+	//Deflate the vector
+	rawData = deflateArray(rawData);
 
 	return rawData;
 }
@@ -308,6 +416,10 @@ void Savable::DeserializeJson(Json::Value & root, Savable * loadInto) {
 Savable * Savable::Deserialize(vector<unsigned char> serializedData) {
 	Json::Reader reader;
 	Json::Value root;
+
+	//Decompress data
+	serializedData = inflateArray(serializedData);
+
 	//parse the json object 
 	reader.parse(string((char*)&serializedData[0],serializedData.size()),root);
 	//create a new object for the serialized data
@@ -322,6 +434,10 @@ Savable * Savable::Deserialize(vector<unsigned char> serializedData) {
 void Savable::Deserialize(vector<unsigned char> serializedData, Savable * saveInto) {
 	Json::Reader reader;
 	Json::Value root;
+
+	//Decompress data
+	serializedData = inflateArray(serializedData);
+
 	//parse the json object 
 	reader.parse(string((char*)&serializedData[0],serializedData.size()),root);
 	//Load all the data into the new object

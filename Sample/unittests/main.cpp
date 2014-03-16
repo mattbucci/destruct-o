@@ -2,7 +2,20 @@
 
 #include "../source/ContiguousList.h"
 
+#include <stdio.h>
 
+//Compile lodepng
+//Use defines to override SDL read/write with normal read write
+#define SDL_RWops FILE
+#define SDL_RWFromFile fopen
+#define SDL_RWseek fseek
+#define SDL_RWtell ftell
+#define SDL_RWread(context,ptr,size,maxnum) fread(ptr,size,maxnum,context)
+#define SDL_RWwrite(context,ptr,size,maxnum) fwrite(ptr,size,maxnum,context)
+#define SDL_RWclose fclose
+#define RW_SEEK_END SEEK_END
+#define RW_SEEK_SET SEEK_SET
+#include "../source/lodepng.cpp"
 
 
 //Register unit tests
