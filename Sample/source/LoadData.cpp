@@ -6,6 +6,8 @@
 void LoadData::RegisterLoadedHandle(uint64_t original, void * newHandle) {
 	//If the handle is being rebuilt twice, we have a problem
 	_ASSERTE(handlesRebuilt.find(original) == handlesRebuilt.end());
+
+
 	handlesRebuilt[original] = newHandle;
 }
 //Register a pointer to a recreated object which has not been created yet
@@ -26,7 +28,14 @@ void LoadData::FinishLoading() {
 		//If no object was built you can't fix the handle, and there's a problem!
 		_ASSERTE(handlesRebuilt.find(handleToPatch.originalHandle) != handlesRebuilt.end());
 
-		//Restore the pointer to a new valid value
-		*handleToPatch.handleToLoad = handlesRebuilt[handleToPatch.originalHandle];
+		//Search for the handle
+		map<uint64_t,void*>::iterator handle = handlesRebuilt.find(handleToPatch.originalHandle);
+		
+		if (handle == handlesRebuilt.end())
+			//If you fail to restore the handle, set it to NULL
+			*handleToPatch.handleToLoad = NULL;
+		else
+			//Restore the pointer to a new valid value
+			*handleToPatch.handleToLoad = handlesRebuilt[handleToPatch.originalHandle];
 	}
 }

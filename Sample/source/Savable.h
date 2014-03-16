@@ -33,6 +33,34 @@ class Savable {
 		}
 	}
 
+	template <template<class, class> class ContainerType, template<class> class AllocaterType, class InternalType>
+	void LoadSpecificOwnedHandleContainer(ReflectionData::savable valueData,Json::Value & value, LoadData & loadData) {
+		//First get a pointer to the class in question
+		ContainerType<InternalType,AllocaterType<InternalType>> & container =  *(ContainerType<InternalType,AllocaterType<InternalType>>*)valueData.member;
+		//clear out any data already in the class
+		//Owned handles must be deleted, they can't just be cleared
+		//copy the container encase the members have auto-deregistration or something like that
+		ContainerType<InternalType,AllocaterType<InternalType>> containerCopy = container;
+		for (auto member : container)
+			delete (Savable*)member;
+		container.clear();
+		//Now load values into the class
+		for (unsigned int i = 0; i < value.size(); i++) {
+			InternalType valueToLoad;
+
+			ReflectionData::savable saveData;
+			saveData.dataType = valueData.internalType;
+			saveData.internalType = ReflectionData::SAVE_NOTHING;
+			saveData.member = &valueToLoad;
+			saveData.memberName = ""; //No name since its part of an array
+			//Load the value
+			LoadValue(saveData, value[i],loadData);
+
+			//Push the value into the container
+			container.push_back(valueToLoad);
+		}
+	}
+
 	template <template<class, class> class ContainerType, template<class> class AllocaterType>
 	void LoadContainerValue(ReflectionData::savable valueData,Json::Value & value, LoadData & loadData) {
 		switch (valueData.internalType) {
@@ -81,8 +109,9 @@ class Savable {
 		case ReflectionData::SAVE_STRING:
 			LoadSpecificContainer<ContainerType,AllocaterType,string>(valueData,value,loadData);
 			break;
-		//This is actually unsafe but I doubt it'll break anything
 		case ReflectionData::SAVE_OWNEDHANDLE:
+			LoadSpecificOwnedHandleContainer<ContainerType,AllocaterType,void*>(valueData,value,loadData);
+			break;
 		case ReflectionData::SAVE_HANDLE:
 			LoadSpecificContainer<ContainerType,AllocaterType,void*>(valueData,value,loadData);
 			break;

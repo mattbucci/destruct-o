@@ -80,6 +80,11 @@ bool BaseFrame::Load(string saveFile) {
 	return 0;
 }
 
+void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
+	loadData.RegisterLoadedHandle(parentValue["FirstPerson"].asInt64(),FirstPerson);
+	Savable::Load(parentValue,loadData);
+}
+
 void BaseFrame::OnFrameFocus() {
 	//Build actors, right now just the player
 	player = new ActorPlayer();

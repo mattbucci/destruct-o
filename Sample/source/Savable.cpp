@@ -195,6 +195,10 @@ void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, L
 			//Save the fact you constructed a class so that anything else
 			//that was supposed to have a handle to that class can have their handles reconstructed
 			loadData.RegisterLoadedHandle(loadedValue,classInstance);
+
+			//Delete the previous instance of whatever was owned
+			delete *(Savable**)valueData.member;
+
 			//Set it to the new instance
 			*(void**)valueData.member = (void*)classInstance;
 
@@ -230,7 +234,7 @@ void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, L
 		LoadContainerValue<vector,allocator>(valueData,value,loadData);
 		return;
 	case ReflectionData::SAVE_CONTIGOUSLIST:
-		LoadContainerValue<ContiguousList,allocator>(valueData,value,loadData);
+		LoadContainerValue<ContiguousList,__listdummyallocator>(valueData,value,loadData);
 		return;
 	default:
 		_ASSERTE(false);

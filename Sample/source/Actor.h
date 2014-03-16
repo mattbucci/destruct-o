@@ -8,9 +8,6 @@ class BaseFrame;
 
 class Actor : public Savable {
 protected:
-	//The actor system that this actor uses
-	ActorSystem * actorSystem;
-
 	//Every actor has position
 	vec3 position;
 	//Right now actors are pseudo physical
@@ -42,7 +39,7 @@ public:
 	virtual void Draw();
 
 	CLASS_DECLARATION(ActorSystem)
-		CLASS_MEMBER(actorSystem,ReflectionData::SAVE_HANDLE)
+		//CLASS_MEMBER(actorSystem,ReflectionData::SAVE_HANDLE)
 		CLASS_MEMBER(position,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(velocity,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(acceleration,ReflectionData::SAVE_VEC3)

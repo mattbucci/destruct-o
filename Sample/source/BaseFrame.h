@@ -27,6 +27,10 @@ class BaseFrame : public GameSystem, public Savable {
 	Demo * demo;
 	DemoWindow * demoWindow;
 	Notification * notification;
+protected:
+	//Overload to tell the save system about handles created in the system
+	virtual void Load(Json::Value & parentValue, LoadData & loadData);
+
 public:
 	BaseFrame(ShaderGroup * shaders);
 	~BaseFrame();
@@ -59,6 +63,7 @@ public:
 	//synchronously loads the game over any existing data
 	//returns true if successful
 	bool Load(string saveFile);
+
 
 	//Draw happens whenever possible
 	void Draw(double width, double height) override;
