@@ -154,11 +154,11 @@ public:
 		}
 	};
 
-	void sort(function<bool(T * a,T * b)> aLessThanB) {
+	void sort(function<bool(T a,T b)> aLessThanB) {
 		//Perform an insertion sort
 		//favored for its speed with already sorted data
-		for (int a = 1; a < listSize; a++) {
-			T * temp = data[a];
+		for (unsigned int a = 1; a < listSize; a++) {
+			T temp = data[a];
 			int b = a;
 			for (; b > 0; b--) {
 				if (aLessThanB(temp,data[b-1]))
@@ -202,7 +202,7 @@ public:
 			resize((int)(listCapacity * 1.5 + 4));
 		//Assume the space after listSize is empty
 		data[listSize++] = toInsert;
-		return listSize-1;
+		//return listSize-1;
 	}
 	//Erase somthing based off an iterator
 	//returns a new valid iterator

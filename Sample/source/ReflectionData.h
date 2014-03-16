@@ -34,6 +34,7 @@ class Savable;
 namespace ReflectionData {
 	//The different types which can be saved
 	enum SaveType {
+		SAVE_BOOL,
 		SAVE_INT8,
 		SAVE_UINT8,
 		SAVE_INT16,
@@ -59,7 +60,17 @@ namespace ReflectionData {
 		SAVE_NOTHING,
 	};
 	struct savable {
-		savable(SaveType type, void * member, string name);
+		savable(SaveType type, void * member, string name) {
+			this->dataType = type;
+			this->member = member;
+			this->memberName = name;
+		}
+		savable(SaveType type, void * member, string name, SaveType internalType) {
+			this->dataType = type;
+			this->member = member;
+			this->memberName = name;
+			this->internalType = internalType;
+		}
 		savable(){}
 		//The type of data to save/load
 		SaveType dataType;
@@ -76,8 +87,6 @@ namespace ReflectionData {
 
 
 class Savable {
-	Savable(){}
-	virtual ~Savable(){}
 
 	void SaveValue(ReflectionData::savable valueData,Json::Value & value);
 
@@ -239,6 +248,9 @@ public:
 
 	virtual string Name() = 0;
 
+
+	Savable(){}
+	virtual ~Savable(){}
 };
 
 	//A constructor to build this savable
@@ -260,20 +272,23 @@ public:
 #define CLASS_CONCAT_B(a,b) a##b
 #define CLASS_CONCAT_A(a,b) CLASS_CONCAT_B(a,b)
 #define CLASS_TNAME(classname) CLASS_CONCAT_A(classname,_TypeData)
+#define CLASS_VNAME(classname) CLASS_CONCAT_A(classname,_TypeDataStaticValue)
 
 
 
 
-#define CLASS_DECLARATION(classname) protected: \
+#define CLASS_DECLARATION(classname) public: string Name() {return #classname;} protected: \
 								virtual void savesystem_reflect(vector<ReflectionData::savable> & reflectMembersInto) { 
 
 
 #define INHERITS_FROM(derived) derived::savesystem_reflect(reflectMembersInto);
 
-#define CLASS_MEMBER(member,type) reflectMembersInto.push_back(savable(type,&member,#member));
+#define CLASS_MEMBER(member,type) reflectMembersInto.push_back(ReflectionData::savable(type,&member,#member));
+#define CLASS_CONTAINER_MEMBER(member,containerType,type) reflectMembersInto.push_back(ReflectionData::savable(containerType,&member,#member,type));
 
 #define END_DECLARATION } private:
 
 
 
-
+#define CLASS_SAVE_CONSTRUCTOR(classname) struct CLASS_TNAME(classname) { CLASS_TNAME(classname)(){ReflectionStore::Data().RegisterConstructableClass(#classname,[](){return new classname();});}}; \
+	static CLASS_TNAME(classname) CLASS_VNAME(classname);

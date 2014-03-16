@@ -33,6 +33,9 @@ void LoadData::FinishLoading() {
 
 void Savable::SaveValue(ReflectionData::savable valueData,Json::Value & value) {
 	switch (valueData.dataType) {
+	case ReflectionData::SAVE_BOOL:
+		value = *(bool*)valueData.member;
+		return;
 	case ReflectionData::SAVE_INT8:
 		value = *(int8_t*)valueData.member;
 		return;
@@ -127,6 +130,9 @@ void Savable::SaveValue(ReflectionData::savable valueData,Json::Value & value) {
 
 void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, LoadData & loadData) {
 	switch (valueData.dataType) {
+	case ReflectionData::SAVE_BOOL:
+		*(bool*)valueData.member = (bool)value.asInt();
+		return;
 	case ReflectionData::SAVE_INT8:
 		*(int8_t*)valueData.member = (int8_t)value.asInt();
 		return;
@@ -163,7 +169,7 @@ void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, L
 	//Saves the handle: but does not save what the handle points to
 	case ReflectionData::SAVE_HANDLE: {
 		uint64_t loadedValue;
-		loadedValue = value.get(valueData.memberName,0).asUInt64();
+		loadedValue = value.asUInt64();
 		if (loadedValue != 0)
 			//Register it to be connected to an actual class
 			loadData.RegisterHandleToLoad(loadedValue,(void**)valueData.member);
@@ -177,12 +183,15 @@ void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, L
 	//will reconstruct the object automatically upon load
 	case ReflectionData::SAVE_OWNEDHANDLE: {
 		uint64_t loadedValue;
-		loadedValue = value["__HANDLE__"].get(valueData.memberName,0).asUInt64();
+		loadedValue = value["__HANDLE__"].asUInt64();
 		if (loadedValue != 0) {
 			Savable * classInstance = ReflectionStore::Data().RetrieveClassInstance(value["__TYPE__"].asString());
 			//Save the fact you constructed a class so that anything else
 			//that was supposed to have a handle to that class can have their handles reconstructed
 			loadData.RegisterLoadedHandle(loadedValue,classInstance);
+			//Set it to the new instance
+			*(void**)valueData.member = (void*)classInstance;
+
 			//Load the class
 			classInstance->Load(value,loadData);
 		}
@@ -194,7 +203,7 @@ void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, L
 
 	case ReflectionData::SAVE_INSTANCE: {
 		uint64_t loadedValue;
-		loadedValue = value["__HANDLE__"].get(valueData.memberName,0).asUInt64();
+		loadedValue = value["__HANDLE__"].asUInt64();
 		if (loadedValue != 0) {
 			//Save the fact you constructed a class so that anything else
 			//that was supposed to have a handle to that class can have their handles reconstructed
@@ -253,16 +262,20 @@ ReflectionStore & ReflectionStore::Data() {
 }
 
 
+void ReflectionStore::RegisterConstructableClass(string name, function<Savable*()> constructor) {
+	_ASSERTE(reflectionStore.find(name) == reflectionStore.end());
+
+	reflectionStore[name] = constructor;
+}
+
 Savable * ReflectionStore::RetrieveClassInstance(string name) {
 	auto iterator = reflectionStore.find(name);
 	//Unable to find an appropriate constructor
 	if (iterator == reflectionStore.end())
 		return NULL;
 
-	function<Savable*()> coonstructor = iterator->second;
-
 	//Create a class of the instance requested
-	return constructor();
+	return iterator->second();
 }
 
 //Serialize data

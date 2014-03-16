@@ -20,7 +20,7 @@ class PhysicsSystem {
 	ContiguousList<PhysicsVoxel*> allVoxels;
 	
 	//this contiguous list is a sub buffer used to severely decrease the AABB checks needed for physics voxels
-	ContiguousList<PhysicsVoxel> section;
+	ContiguousList<PhysicsVoxel*> section;
 
 
 	//The voxel draw renderer

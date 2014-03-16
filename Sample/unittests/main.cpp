@@ -1,17 +1,9 @@
-#define FAIL throw 1
-#include "../source/stdafx.h"
+#include "stdafx.h"
+
 #include "../source/ContiguousList.h"
 
 
-class unittest {
-public:
-	string name;
-	function<void()> test;
-	unittest(string name, function<void()> test) {
-		this->name = name;
-		this->test = test;
-	}
-};
+
 
 //Register unit tests
 vector<unittest> units;
@@ -24,11 +16,11 @@ int main(int argc, char** argv) {
 	//Each unit test is added here
 	TEST("contiguous list iterate",[]() {
 		int test[] = {5, -3, 12, 976, 0, 1, 25, -5, -18, -5, 20};
-		ContiguousList<int> listOfNumberPointers;
+		ContiguousList<int*> listOfNumberPointers;
 		for (int i = 0; i < sizeof(test)/sizeof(int);i++) {
 			int * n = new int;
 			*n = test[i];
-			listOfNumberPointers.insert(n);
+			listOfNumberPointers.push_back(n);
 		}
 		int x = 0;
 		for (auto it : listOfNumberPointers) {
@@ -40,12 +32,12 @@ int main(int argc, char** argv) {
 	});
 	TEST("contiguous list sort",[]() {
 		int test[] = {5, -3, 12, 976, 0, 1, 25, -5, -18, -5, 20};
-		ContiguousList<int> listOfNumberPointers;
+		ContiguousList<int*> listOfNumberPointers;
 		vector<int*> correctList;
 		for (int i = 0; i < sizeof(test)/sizeof(int);i++) {
 			int * n = new int;
 			*n = test[i];
-			listOfNumberPointers.insert(n);
+			listOfNumberPointers.push_back(n);
 			correctList.push_back(n);
 		}
 
@@ -66,6 +58,9 @@ int main(int argc, char** argv) {
 		}
 	});
 
+	//Add refleciton unit tests
+	reflectiontestsRegister();
+
 	int testsPassed = 0;
 	//Unit tests are executed here
 	for (auto test : units) {
@@ -73,10 +68,11 @@ int main(int argc, char** argv) {
 			test.test();
 			testsPassed++;
 		}
-		catch (...) {
+		catch (int & err) {
 			cout << "TEST \"" << test.name << "\" FAILED\n";
 		}
 	}
+
 	cout << "Tests passed: (" << testsPassed << "/" << units.size() << ")\n";
  	return 0;
 }

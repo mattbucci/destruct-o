@@ -70,7 +70,7 @@ PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate,double lifeTime) {
 		voxel->DeathAt = -1;
 	else
 		voxel->DeathAt = lifeTime + VoxEngine::GetGameSimTime();
-	allVoxels.insert(voxel);
+	allVoxels.push_back(voxel);
 	return voxel;
 }
 float removeInDirection(vec3 & force, vec3 direction) {
@@ -115,7 +115,7 @@ void PhysicsSystem::Update(double delta, double now) {
 			else
 				it++;
 		}
-		section.insert(allVoxels[s]);
+		section.push_back(allVoxels[s]);
 		if (section.size() > 50)
 			cout << "";
 

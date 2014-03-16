@@ -8,7 +8,7 @@
 class GL3DProgram;
 class GameTile;
 class VoxelDrawSystem;
-class TileCell;
+struct TileCell;
 class TerrainGen;
 
 class VoxelSystem {
