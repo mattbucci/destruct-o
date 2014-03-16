@@ -43,6 +43,7 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
     }
     
     // Initialize all of the submeshes
+    std::cout << "Loading mesh: " << filename << std::endl;
     for(unsigned int i = 0; i < pScene->mNumMeshes; i++)
     {
         // Get a pointer to the mesh in question
@@ -88,6 +89,7 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
         
         // Add this submesh to the mesh
         submeshes.push_back(submesh);
+        std::cout << "  Loaded submesh@" << i + 1 << " with " << mesh->mNumFaces << " faces" << std::endl;
     }
     
     // Load textures for this model
@@ -95,6 +97,14 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
     {
         // Get a pointer to the material
         const aiMaterial* material = pScene->mMaterials[i];
+        
+        // Path of the texture to use
+        std::string path = "error.texture.this.should.fail";
+        
+        //std::cout << "Ambient = " << material->GetTextureCount(aiTextureType_AMBIENT) << std::endl;
+        //std::cout << "Diffuse = " << material->GetTextureCount(aiTextureType_DIFFUSE) << std::endl;
+        //std::cout << "Normals = " << material->GetTextureCount(aiTextureType_NORMALS) << std::endl;
+        //std::cout << "Emissive = " << material->GetTextureCount(aiTextureType_EMISSIVE) << std::endl;
         
         // If this maerial has textures associated with it
         if (material->GetTextureCount(aiTextureType_DIFFUSE))
@@ -106,16 +116,26 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
             if (material->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
             {
                 // Calculate the path to the mesh
-                std::string path = directory + "/" + Path.data;
+                path = directory + "/" + Path.data;
+                std::cout << "    Using texture: " << path << std::endl;
                 
                 // Cache this texture
                 textureCache.GetTexture(path);
-                
-                // Push back this path
-                textures.push_back(path);
             }
         }
+
+        // Push back this path
+        textures.push_back(path);
+        
+        // Yay material
+        std::cout << "  Loaded material@" << i + 1 << std::endl;
     }
+    
+    
+    std::cout << "Aniamtion count = " << pScene->mNumAnimations << std::endl;
+    aiAnimation *animation = pScene->mAnimations[0];
+    std::cout << animation->mName.C_Str() << ", Ticks = " << animation->mDuration << ", per second = " << animation->mTicksPerSecond << std::endl;
+    
     
     // Success
     std::cout << "Loaded mesh: \"" << filename.c_str() << "\"" << std::endl;

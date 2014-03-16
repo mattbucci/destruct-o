@@ -89,7 +89,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	FirstPerson->Enable(true);
     
     // Test load a mesh
-    mesh = new GLMesh("meshes", "phoenix_ugv.md2", Textures);
+    mesh = new GLMesh("meshes", "mech.x", Textures);
 	
 	cout << "\t Finished base frame\n";
 	//testSystem = NULL;
