@@ -21,7 +21,7 @@ void TileHandler::init() {
 	//Initialize Terrain Generator
 	generator = new TerrainGen();
 	generator->setTileSize(tile_width, tile_height);
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	generator->setSeed(rand());
 
 	//Create & Run Handler Thread
@@ -48,7 +48,7 @@ void TileHandler::handlerLoop() {
 		while(genQueue.size() > 0) {
 			//Grab Work from Queue
 			vec2 pos = genQueue.front();
-			GameTile * tile = GameTile::CreateGameTile(tile_width, tile_height, pos.x, pos.y);
+			GameTile * tile = GameTile::CreateGameTile(tile_width, tile_height, (int)pos.x, (int)pos.y);
 			genQueue.pop_front();
 			gLck.unlock();
 
@@ -115,7 +115,7 @@ void TileHandler::predictTile(vec2 pos) {
 	//Add to Queue & Notify Handler
 	genQueue.push_back(pos);
 	//Add Placeholder Tile to WorldSet for Duplicate Prevention
-	worldSet.push_back(GameTile::CreatePlaceholderTile(pos.x, pos.y));
+	worldSet.push_back(GameTile::CreatePlaceholderTile((int)pos.x, (int)pos.y));
 	genCv.notify_one();
 
 	//Release Lock
@@ -133,7 +133,7 @@ void TileHandler::forceTile(vec2 pos) {
 	//Add to Queue & Notify Handler
 	genQueue.push_back(pos);
 	//Add Placeholder Tile to WorldSet for Duplicate Prevention
-	worldSet.push_back(GameTile::CreatePlaceholderTile(pos.x, pos.y));
+	worldSet.push_back(GameTile::CreatePlaceholderTile((int)pos.x, (int)pos.y));
 	genCv.notify_one();
 
 	//Release Gen Queue Lock

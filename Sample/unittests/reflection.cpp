@@ -27,7 +27,7 @@ void TESTSERIALIZE() {
 	vector<unsigned char> serialized = Savable::Serialize(&original);
 
 	ofstream savefile("savefile.json",ios::binary);
-	for (int i = 0; i < serialized.size();i++)
+	for (unsigned int i = 0; i < serialized.size();i++)
 		savefile << serialized[i];
 
 	//Create a new instance to load data into
@@ -57,7 +57,7 @@ public:
 
 	void FillWithData(int starter = 1) {
 		a = 52348 * starter;
-		b = 9486.981392;
+		b = 9486.981392f;
 		c = 94539068.983423478;
 		d = "heiyjse geosjo 398059 lsjafiop 8646+894 opfjeowaf83yu295y djsfjaaa";
 		e = false;

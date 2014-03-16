@@ -131,7 +131,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 
 	//render each viewable rectangle
 
-	forTilesInRect(Rect(atx,aty,tox-atx,toy-aty),[this,shader,atx,aty,tox,toy](GameTile * tile) {
+	forTilesInRect(Rect((float)atx,(float)aty,(float)(tox-atx),(float)(toy-aty)),[this,shader,atx,aty,tox,toy](GameTile * tile) {
         GameTile & current_tile = *tile;
 		int rectStartX, rectStartY, rectEndX, rectEndY;
 		//Get the region this tile is in

@@ -90,11 +90,11 @@ void GameTile::LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tile
 	}
 
 	newTile->CalculateStackSizes(1,1,newTile->Width-1,newTile->Height-1);
-	for (unsigned int i = 0; i < newTile->Width; i++) {
+	for (int i = 0; i < newTile->Width; i++) {
 		newTile->Cells[i].stackHeight = 2;
 		newTile->Cells[i+(newTile->Height-1)*newTile->Width].stackHeight = 2;
 	}
-	for (unsigned int i = 0; i < newTile->Height; i++) {
+	for (int i = 0; i < newTile->Height; i++) {
 		newTile->Cells[i*newTile->Width + 0].stackHeight = 2;
 		newTile->Cells[i*newTile->Width + newTile->Height - 1].stackHeight = 2;
 	}

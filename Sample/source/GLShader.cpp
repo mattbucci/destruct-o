@@ -55,7 +55,7 @@ GLShader::GLShader(GLCommonShaderFile * commonShader, string filename,GLenum sha
 				break;
 		//Now write the shader
 		ofstream debugOutput(string("debug_") + filename.substr(firstChar),ios::binary);
-		for (int i = 0; i < virtualShader.size(); i++)
+		for (unsigned int i = 0; i < virtualShader.size(); i++)
 			debugOutput << virtualShader[i];
 	}
 

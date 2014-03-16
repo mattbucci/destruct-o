@@ -256,7 +256,7 @@ static vector<unsigned char> deflateArray(vector<unsigned char> toDeflate) {
 	
 	//Now copy to a vector buffer
 	buffer.resize(outsize);
-	for (int i = 0; i < outsize; i++)
+	for (unsigned int i = 0; i < outsize; i++)
 		buffer[i] = cbuffer[i];
 
 	//free the cbuffer
@@ -283,7 +283,7 @@ static vector<unsigned char> inflateArray(vector<unsigned char> toInflate) {
 	
 	//Now copy to a vector buffer
 	buffer.resize(outsize);
-	for (int i = 0; i < outsize; i++)
+	for (unsigned int i = 0; i < outsize; i++)
 		buffer[i] = cbuffer[i];
 
 	//free the cbuffer
@@ -306,7 +306,7 @@ vector<unsigned char> Savable::Serialize(Savable * classToSerialize) {
 	string json = writer.write(root);
 	//Copy to a vector
 	vector<unsigned char> rawData(json.size());
-	for (int i = 0; i < json.size();i++)
+	for (unsigned int i = 0; i < json.size();i++)
 		rawData[i] = json[i];
 
 	//Deflate the vector

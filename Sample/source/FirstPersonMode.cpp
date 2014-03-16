@@ -54,7 +54,7 @@ float FirstPersonMode::GetDebugHeight()
 
 void FirstPersonMode::SetDebugHeight(int height)
 {
-	this->debug_target_height = height;
+	this->debug_target_height = (float)height;
 }
 
 
@@ -77,14 +77,14 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 	moveVector = vec2(0, 0);
 
 	if (pressedKeys.find('w') != pressedKeys.end())
-		moveVector.x = 1 * movement_speed;
+		moveVector.x = 1.0f * movement_speed;
 	else if (pressedKeys.find('s') != pressedKeys.end())
-		moveVector.x = -1 * movement_speed;
+		moveVector.x = -1.0f * movement_speed;
 
 	if (pressedKeys.find('a') != pressedKeys.end())
-		moveVector.y = 1 * movement_speed;
+		moveVector.y = 1.0f * movement_speed;
 	else if (pressedKeys.find('d') != pressedKeys.end())
-		moveVector.y = -1 * movement_speed;
+		moveVector.y = -1.0f * movement_speed;
 
 	
 
@@ -114,7 +114,7 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 	}
 
 	else if (pressedKeys.find(SDLK_LCTRL) != pressedKeys.end()) {
-		debug_target_height -= .1;
+		debug_target_height -= .1f;
 		cout << "target_height:" << debug_target_height << endl;
 	}
 	//DEBUGGING}
