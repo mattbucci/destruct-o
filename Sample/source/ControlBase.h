@@ -2,6 +2,7 @@
 
 #include "Control.h"
 #include "InputEvent.h"
+#include "DebugWindow.h"
 
 class Window;
 class Label;
@@ -28,6 +29,9 @@ public:
 	//Schedule a control for destruction upon next time an event ends
 	//controls scheduled multiple times are automatically ignored
 	void RequestControlDestroyed(Control * toDestroy);
+	
+	//Used for showing debug info in the upper left
+	DebugWindow Debug;
 
 	//Draw all contrls
 	void Draw(GL2DProgram * prg, Rect size);

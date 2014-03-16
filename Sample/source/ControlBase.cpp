@@ -8,6 +8,7 @@
 ControlBase::ControlBase() {
 	color = vec4(0,0,0,0);
 	pressedKey = -1;
+	AddChild(&Debug);
 }
 
 void ControlBase::DestroyRequestedObjects() {
