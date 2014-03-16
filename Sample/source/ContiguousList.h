@@ -2,6 +2,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include <string.h>
 
 //A dummy allocator to make contiguouslist's template signature
 //the same as vector and list
@@ -208,7 +209,9 @@ public:
 	//returns a new valid iterator
 	iterator erase(iterator toErase) {
 		_ASSERTE(toErase != end());
+#ifndef __linux__
 		_ASSERTE(listSize > 0);
+#endif
 
 		//When you remove something from the list, move something to fill its place if there is anything left
 		*toErase = data[listSize-1];

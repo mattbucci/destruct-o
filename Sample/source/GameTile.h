@@ -20,7 +20,7 @@ public:
 	//Load a game tile from memory
 	static GameTile * LoadTileFromMemory(const vector<unsigned char> & tileData, unsigned int tileWidth, unsigned int tileHeight);
 	//Load a game tile from Memory (into existing GameTile)
-	static void GameTile::LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tileData, GameTile * newTile);
+	static void LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tileData, GameTile * newTile);
 
 	//Recalculate stack heights for the given region of tile cells
 	void CalculateStackSizes(unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy);
