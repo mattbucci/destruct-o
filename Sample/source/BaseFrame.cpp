@@ -19,65 +19,7 @@
 
 BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxels) {
 	cout << "\t Constructing base frame\n";
-
-	
-	// Get the 3D shader program
-	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
-	uniformModelView = glGetUniformLocation(shaders3d->GetId(), "MV");
-	uniformModelViewProjection = glGetUniformLocation(shaders3d->GetId(), "MVP");
-
-	//Build the sample dialog 
-	//Build a window that says "On Top"
-	Window * window = new Window(Rect(0,0,200,400),"On Bottom");
-	window->hPin = Control::CENTER;
-	window->vPin = Control::MAX;
-	window->SetVisible(false);
-	Controls.AddWindow(window);
-	//Give it a list box with a bunch of random crap
-	vector<string> randomCrap;
-	randomCrap.push_back("Monkey");
-	randomCrap.push_back("Walrus");
-	randomCrap.push_back("Cheeto");
-	randomCrap.push_back("Spaghetii");
-	randomCrap.push_back("Canada");
-	randomCrap.push_back("Banana");
-	randomCrap.push_back("One");
-	randomCrap.push_back("Seventeen");
-	randomCrap.push_back("Lamp");
-	randomCrap.push_back("Voxel");
-	randomCrap.push_back("Game");
-	randomCrap.push_back("Walrus");
-	randomCrap.push_back("Still Walrus");
-	randomCrap.push_back("Cloud");
-	Listbox * list = new Listbox();
-	list->position = Rect(0,0,180,150);
-	list->hPin = list->vPin = Control::CENTER;
-	list->SetEntries(randomCrap);
-	//When the user selects something, change the title to the 
-	//selected item
-	Subscribe<void(Listbox*,int)>(&list->EventSelectionChanged, [window](Listbox* list,int changedTo) {
-		if (changedTo >= 0)
-			window->SetTitle(list->GetEntries()[changedTo]);
-	});
-	window->AddControl(list);
-
-	//Start another window (visible by default)
-	Window * wm = new Window(Rect(0,0,300,300),"HELLO =)");
-	wm->hPin = wm->vPin = Control::CENTER;
-	//Controls.AddWindow(wm);
-	//Add a button to this window that when pressed
-	//switches which window is visible
-	Button * windowButton = new Button(Rect(0,-10,100,30),"PRESS ME");
-	windowButton->hPin = Control::CENTER;
-	windowButton->vPin = Control::MAX;
-	Subscribe<void(Button*)>(&windowButton->EventClicked,[window,wm](Button* button) {
-		//Make the current window invisible
-		wm->SetVisible(false);
-		//Make the next window visible
-		window->SetVisible(true);
-	});
-	wm->AddControl(windowButton);
-	
+		
 	// Create the first person controller depending on the current platform
 #ifdef __MOBILE__
 	FirstPerson = new FirstPersonModeMobile();
@@ -136,7 +78,7 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	//The player is the only actor which reads input
 	//player->ReadInput(inputEvents);
 
-    Voxels.Update(player->GetPosition());
+	Voxels.Update(player->GetPosition());
 
 	//Update actors
 	Actors.Update(delta,now);

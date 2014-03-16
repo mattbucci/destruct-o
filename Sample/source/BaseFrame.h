@@ -22,10 +22,7 @@ class Demo;
 
 class BaseFrame : public GameSystem {
 	ActorPlayer * player;
-    AudioPlayer * audio;
-	
-	GLint uniformModelView;
-	GLint uniformModelViewProjection;
+	AudioPlayer * audio;
 
 	Demo * demo;
 	DemoWindow * demoWindow;
@@ -40,8 +37,8 @@ public:
 	VoxelSystem Voxels;
 	ViewDistanceCalc ViewDistance;
 	ActorSystem Actors;
-    
-    // First person mode will either be desktop or mobile variant, so use a pointer
+	
+	// First person mode will either be desktop or mobile variant, so use a pointer
 	FirstPersonMode *FirstPerson;
 	PhysicsSystem Physics;
 	ParticleCloud Particles;
