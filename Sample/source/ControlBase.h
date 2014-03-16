@@ -2,7 +2,6 @@
 
 #include "Control.h"
 #include "InputEvent.h"
-#include "DebugWindow.h"
 
 class Window;
 class Label;
@@ -15,6 +14,7 @@ class ControlBase : Control {
 	double lastKeyProcessedAt;
 	//First key press is special, it has a long gap after it
 	bool firstKeyPressRecorded;
+
 public:
 	ControlBase();
 
@@ -29,9 +29,6 @@ public:
 	//controls scheduled multiple times are automatically ignored
 	void RequestControlDestroyed(Control * toDestroy);
 
-	//Used for showing debug info in the upper left
-	DebugWindow Debug;
-
 	//Draw all contrls
-	void Draw(GL2DProgram * prg, vec2 originalSize);
+	void Draw(GL2DProgram * prg, Rect size);
 };
