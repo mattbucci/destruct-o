@@ -41,12 +41,12 @@ class Savable {
 		//Owned handles must be deleted, they can't just be cleared
 		//copy the container encase the members have auto-deregistration or something like that
 		ContainerType<InternalType,AllocaterType<InternalType>> containerCopy = container;
-		for (auto member : container)
+		for (auto member : containerCopy)
 			delete (Savable*)member;
 		container.clear();
 		//Now load values into the class
 		for (unsigned int i = 0; i < value.size(); i++) {
-			InternalType valueToLoad;
+			InternalType valueToLoad = NULL;
 
 			ReflectionData::savable saveData;
 			saveData.dataType = valueData.internalType;
