@@ -170,7 +170,7 @@ ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 #Code should be organized
 #opengl files are really easy to organize
-FILE(GLOB GLFiles "GL*" "IOSGL.h" "MaxDistanceFog.h" "MaxDistanceFog.cpp" "ShaderGroup.h" "ShaderGroup.cpp" "TextureCache.h" "TextureCache.cpp")
+FILE(GLOB GLFiles "GL*" "IOSGL.h" "AndroidGLEW.h" "AndroidGLEW.cpp" "MaxDistanceFog.h" "MaxDistanceFog.cpp" "ShaderGroup.h" "ShaderGroup.cpp" "TextureCache.h" "TextureCache.cpp")
 source_group(OpenGL FILES ${GLFiles})
 
 #actors
@@ -215,6 +215,8 @@ FILE(GLOB InterfaceFiles
 	RasterizedText.cpp
 	Shape.h
 	Shape.cpp
+	Notification.h
+	Notifiaction.cpp
 )
 source_group(Interface FILES ${InterfaceFiles})
 
@@ -239,25 +241,39 @@ FILE(GLOB PhysicsFiles
 	ParticleRenderer.cpp
 	PhysicsVoxel.h
 	PhysicsVoxel.cpp
+	PhysicsTriangle.h
+	PhysicsTriangle.cpp
 	PhysicsSystem.h
 	PhysicsSystem.cpp
 )
 source_group(Physics FILES ${PhysicsFiles})
+
+FILE(GLOB LibraryFiles
+	lodepng.h
+	lodepng.cpp
+	jsoncpp.cpp
+	noiseutils.h
+	noiseutils.cpp	
+)
+source_group(Libraries FILES ${LibraryFiles})
+
+FILE(GLOB SaveFiles
+	ReflectionData.h
+	ReflectionData.cpp
+	LoadData.h
+	LoadData.cpp
+	ReflectionStore.h
+	ReflectionStore.cpp
+	Savable.h
+	Savable.cpp
+)
+source_group(Saving FILES ${SaveFiles})
 
 FILE(GLOB UtilityFiles
 	AuxLogger.h
 	AuxLogger.cpp
 	GameEvent.h
 	GameEvent.cpp
-	GObject.h
-	GObject.cpp
-	ReflectionData.h
-	ReflectionData.cpp
-	lodepng.h
-	lodepng.cpp
-	jsoncpp.cpp
-	noiseutils.h
-	noiseutils.cpp
 	OS.h
 	OS.cpp
 	Semaphore.h
@@ -291,6 +307,8 @@ FILE(GLOB VoxelFiles
 	VoxelSystem.h
 	VoxelSystem.cpp
 	TileCell.h
+	TileHandler.h
+	TileHandler.cpp
 	GameTile.h
 	GameTile.cpp
 )

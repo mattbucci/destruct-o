@@ -2,7 +2,6 @@
 #pragma once
 
 #include "stdafx.h"
-#include "GObject.h"
 #include "ContiguousList.h"
 #include <json/json.h>
 
