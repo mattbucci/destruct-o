@@ -217,7 +217,7 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 	GameTile * current_tile;
 	//render each viewable rectangle
 	vector<vec4> removedVoxels;
-	forTilesInRect(Rect(pos.x - size / 2,pos.x - size / 2,size,size),[this,&removedVoxels,pos,size](GameTile * current_tile) {
+	forTilesInRect(Rect(pos.x - size / 2,pos.y - size / 2,size,size),[this,&removedVoxels,pos,size](GameTile * current_tile) {
 		int rectStartX, rectStartY, rectEndX, rectEndY;
 		//Get the region this tile is in
 		rectStartX = current_tile->tile_x * 256;
