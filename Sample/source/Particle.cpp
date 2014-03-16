@@ -40,7 +40,7 @@ Particle::Particle(double gameTime, float systemLifeFactor, ParticleSystem * own
 
 	//Save the scale variation that applies to you
 	float possibleVariation = systemData->ScaleVariation.ValueAtSequence(systemLifeFactor);
-	scaleVariation = Utilities::random(1-possibleVariation,possibleVariation);;
+	scaleVariation = 1+Utilities::random(-possibleVariation,possibleVariation);;
 
 	//Set your spawn time to right now
 	spawnedAt = gameTime;
