@@ -15,6 +15,7 @@
 #include "ParticleSystem.h"
 #include "ParticleData.h"
 
+
 #include "Demo.h"
 
 BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxels) {
@@ -110,8 +111,17 @@ void BaseFrame::Build() {
 	TileHandler::init();
 
 	//load the audio
+	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
 	audio->Subscribe(player);
+	cout << "Loading basic tiles around player\n";
+	//Force generation of tiles during load cycle
+	for (float x = -1; x <= 1; x++) {
+		for (float y= -1; y <= 1; y++) {
+			cout << "Loading tile: " << x << "," << y << "\n";
+			TileHandler::getTile(vec2(x,y));
+		}
+	}
 }
 
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {
