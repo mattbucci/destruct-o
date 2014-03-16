@@ -14,6 +14,8 @@ class Savable {
 	void LoadSpecificContainer(ReflectionData::savable valueData,Json::Value & value, LoadData & loadData) {
 		//First get a pointer to the class in question
 		ContainerType<InternalType,AllocaterType<InternalType>> & container =  *(ContainerType<InternalType,AllocaterType<InternalType>>*)valueData.member;
+		//clear out any data already in the class
+		container.clear();
 		//Now load values into the class
 		for (unsigned int i = 0; i < value.size(); i++) {
 			InternalType valueToLoad;
@@ -34,6 +36,18 @@ class Savable {
 	template <template<class, class> class ContainerType, template<class> class AllocaterType>
 	void LoadContainerValue(ReflectionData::savable valueData,Json::Value & value, LoadData & loadData) {
 		switch (valueData.internalType) {
+		case ReflectionData::SAVE_VEC2:
+			LoadSpecificContainer<ContainerType,AllocaterType,vec2>(valueData,value,loadData);
+			break;
+		case ReflectionData::SAVE_VEC3:
+			LoadSpecificContainer<ContainerType,AllocaterType,vec3>(valueData,value,loadData);
+			break;
+		case ReflectionData::SAVE_VEC4:
+			LoadSpecificContainer<ContainerType,AllocaterType,vec4>(valueData,value,loadData);
+			break;
+		case ReflectionData::SAVE_BOOL:
+			LoadSpecificContainer<ContainerType,AllocaterType,bool>(valueData,value,loadData);
+			break;
 		case ReflectionData::SAVE_INT8:
 			LoadSpecificContainer<ContainerType,AllocaterType,int8_t>(valueData,value,loadData);
 			break;
@@ -99,6 +113,18 @@ class Savable {
 	//Selects the appropriate type argument and calls SaveSpecificContainer
 	void SaveContainerValue(ReflectionData::savable valueData,Json::Value & value) {
 		switch (valueData.internalType) {
+		case ReflectionData::SAVE_VEC2:
+			SaveSpecificContainer<ContainerType,AllocaterType,vec2>(valueData,value);
+			break;
+		case ReflectionData::SAVE_VEC3:
+			SaveSpecificContainer<ContainerType,AllocaterType,vec3>(valueData,value);
+			break;
+		case ReflectionData::SAVE_VEC4:
+			SaveSpecificContainer<ContainerType,AllocaterType,vec4>(valueData,value);
+			break;
+		case ReflectionData::SAVE_BOOL:
+			SaveSpecificContainer<ContainerType,AllocaterType,bool>(valueData,value);
+			break;
 		case ReflectionData::SAVE_INT8:
 			SaveSpecificContainer<ContainerType,AllocaterType,int8_t>(valueData,value);
 			break;

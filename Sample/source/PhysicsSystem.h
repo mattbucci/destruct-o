@@ -13,7 +13,7 @@ class VoxelSystem;
 #include "stdafx.h"
 
 //The true physics system
-class PhysicsSystem {
+class PhysicsSystem : public Savable {
 	//Voxel list now uses a contiguous list for speed
 	//designed for fast insert/removal
 	//stored objects are always contiguous
@@ -60,4 +60,9 @@ public:
 
 	//Draw all the actors
 	void Draw(ShaderGroup * shaders);
+
+
+	CLASS_DECLARATION(PhysicsSystem)
+		CLASS_CONTAINER_MEMBER(allVoxels,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
+	END_DECLARATION
 };

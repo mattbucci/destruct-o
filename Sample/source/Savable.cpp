@@ -9,6 +9,21 @@
 
 void Savable::SaveValue(ReflectionData::savable valueData,Json::Value & value) {
 	switch (valueData.dataType) {
+	case ReflectionData::SAVE_VEC2:
+		value["x"] = ((vec2*)valueData.member)->x;
+		value["y"] = ((vec2*)valueData.member)->y;
+		return;
+	case ReflectionData::SAVE_VEC3:
+		value["x"] = ((vec3*)valueData.member)->x;
+		value["y"] = ((vec3*)valueData.member)->y;
+		value["z"] = ((vec3*)valueData.member)->z;
+		return;
+	case ReflectionData::SAVE_VEC4:
+		value["x"] = ((vec4*)valueData.member)->x;
+		value["y"] = ((vec4*)valueData.member)->y;
+		value["z"] = ((vec4*)valueData.member)->z;
+		value["w"] = ((vec4*)valueData.member)->w;
+		return;
 	case ReflectionData::SAVE_BOOL:
 		value = *(bool*)valueData.member;
 		return;
@@ -106,8 +121,23 @@ void Savable::SaveValue(ReflectionData::savable valueData,Json::Value & value) {
 
 void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, LoadData & loadData) {
 	switch (valueData.dataType) {
+	case ReflectionData::SAVE_VEC2:
+		((vec2*)valueData.member)->x = value["x"].asFloat();
+		((vec2*)valueData.member)->y = value["y"].asFloat();
+		return;
+	case ReflectionData::SAVE_VEC3:
+		((vec3*)valueData.member)->x = value["x"].asFloat();
+		((vec3*)valueData.member)->y = value["y"].asFloat();
+		((vec3*)valueData.member)->z = value["z"].asFloat();
+		return;
+	case ReflectionData::SAVE_VEC4:
+		((vec4*)valueData.member)->x = value["x"].asFloat();
+		((vec4*)valueData.member)->y = value["y"].asFloat();
+		((vec4*)valueData.member)->z = value["z"].asFloat();
+		((vec4*)valueData.member)->w = value["w"].asFloat();
+		return;
 	case ReflectionData::SAVE_BOOL:
-		*(bool*)valueData.member = (bool)value.asInt();
+		*(bool*)valueData.member = (bool)value.asBool();
 		return;
 	case ReflectionData::SAVE_INT8:
 		*(int8_t*)valueData.member = (int8_t)value.asInt();

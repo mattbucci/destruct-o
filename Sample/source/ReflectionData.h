@@ -24,6 +24,9 @@ namespace ReflectionData {
 		SAVE_FLOAT,
 		SAVE_DOUBLE,
 		SAVE_STRING,
+		SAVE_VEC2,
+		SAVE_VEC3,
+		SAVE_VEC4,
 		//Saves the handle, but does not save what the handle points to
 		SAVE_HANDLE,
 		//Saves the handle, and saves what it points to

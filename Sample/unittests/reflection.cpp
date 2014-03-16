@@ -1,5 +1,16 @@
 #include "stdafx.h"
 
+//FAKE glm so that the unit tests compile
+struct vec2 {
+	float x,y;
+};
+struct vec3 {
+	float x,y,z;
+};
+struct vec4 {
+	float x,y,z,w;
+};
+
 //add cppjson to compile in this file
 #include "../source/jsoncpp.cpp"
 
@@ -15,6 +26,9 @@
 #include "../source/LoadData.cpp"
 
 #include <fstream>
+
+
+
 
 
 template <class T>

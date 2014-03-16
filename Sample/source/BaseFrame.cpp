@@ -37,6 +37,49 @@ BaseFrame::~BaseFrame() {
 
 }
 
+
+//synchronously saves the game
+bool BaseFrame::Save(string saveFile) {
+	//Serialize this class
+	vector<unsigned char> saveData = Savable::Serialize(this);
+
+	//Open for writing binary data
+	SDL_RWops *file = SDL_RWFromFile(saveFile.c_str(), "wb"); 
+
+	//Check the file opened
+	if(!file) 
+		return false;
+	//Write the file containing all the save data
+	SDL_RWwrite(file,(char*)&saveData.front(),1,saveData.size());
+	SDL_RWclose(file);
+
+	return true;
+}
+//synchronously loads the game over any existing data
+bool BaseFrame::Load(string saveFile) {
+	SDL_RWops *file = SDL_RWFromFile(saveFile.c_str(), "rb"); 
+	long size;
+	
+	//Check the file opened
+	if(!file) 
+		return false;
+
+	//Determine file size
+	SDL_RWseek(file , 0 , RW_SEEK_END);
+	size = (long)SDL_RWtell(file);
+	SDL_RWseek(file,0,RW_SEEK_SET);
+
+	//allocate space for file data
+	vector<unsigned char> fileData(size);
+	SDL_RWread(file,&fileData.front(), 1, (size_t)size);
+	SDL_RWclose(file);
+	
+	//Deserialize the data
+	Savable::Deserialize(fileData,this);
+
+	return 0;
+}
+
 void BaseFrame::OnFrameFocus() {
 	//Build actors, right now just the player
 	player = new ActorPlayer();
@@ -61,10 +104,6 @@ void BaseFrame::Build() {
 	//load the audio
 	audio = new AudioPlayer(100);
 	audio->Subscribe(player);
-
-	//TODO: Implement TileHandler Loading
-	//Load the sample tile
-	//Voxels.LoadWorld("A Save File");
 }
 
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {
@@ -86,8 +125,6 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	demo->OnInput(inputEvents,player->GetPosition(),FirstPerson->GetLookVector());
 	demo->Update(now,delta);
 
-	
-
 	//Update physics/Particles
 	Physics.Update(delta,now);
 	Particles.UpdateCloud(now,delta);
@@ -98,6 +135,7 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	demo->CheckTouchInput(player->GetPosition(),FirstPerson->GetLookVector());
 	return true;
 }
+
 
 void BaseFrame::Draw(double width, double height) {
 	vec2 viewPortSize = vec2((float)width,(float)height);

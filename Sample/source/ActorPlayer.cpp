@@ -4,6 +4,8 @@
 #include "PhysicsSystem.h"
 #include "PhysicsVoxel.h"
 
+CLASS_SAVE_CONSTRUCTOR(ActorPlayer);
+
 //Right now there's no physics system and this actor is a pseudo physics object
 //so here are the constants involved
 static const float groundThreshold = .05f;

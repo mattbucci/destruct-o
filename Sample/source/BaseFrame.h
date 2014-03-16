@@ -20,7 +20,7 @@ class ActorPlayer;
 class ParticleSystem;
 class Demo;
 
-class BaseFrame : public GameSystem {
+class BaseFrame : public GameSystem, public Savable {
 	ActorPlayer * player;
 	AudioPlayer * audio;
 
@@ -53,8 +53,22 @@ public:
 	//provided by the game system
 	virtual bool Update(double delta,double now, vector<InputEvent> inputEvents);
 
-
+	//synchronously saves the game
+	//returns true if successful
+	bool Save(string saveFile);
+	//synchronously loads the game over any existing data
+	//returns true if successful
+	bool Load(string saveFile);
 
 	//Draw happens whenever possible
 	void Draw(double width, double height) override;
+
+
+	//Define how the base frame saves
+	CLASS_DECLARATION(BaseFrame)
+		CLASS_MEMBER(FirstPerson,ReflectionData::SAVE_HANDLE)
+		CLASS_MEMBER(Physics,ReflectionData::SAVE_INSTANCE)
+		CLASS_MEMBER(Actors,ReflectionData::SAVE_INSTANCE)
+		CLASS_MEMBER(player,ReflectionData::SAVE_HANDLE)
+	END_DECLARATION
 };

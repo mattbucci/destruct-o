@@ -235,6 +235,12 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				if (CurrentAcidStrength < 0.0)
 					CurrentAcidStrength = 0.0f;
 			}
+			else if (eve.Key == 'n') {
+				((BaseFrame*)CurrentSystem)->Save("testsavefile.json.compressed");
+			}
+			else if (eve.Key == 'm') {
+				((BaseFrame*)CurrentSystem)->Load("testsavefile.json.compressed");
+			}
 		}
 	}
 }

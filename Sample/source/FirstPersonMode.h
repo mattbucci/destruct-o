@@ -6,8 +6,7 @@
 #include "InputEvent.h"
 #include "GL2DProgram.h"
 
-class FirstPersonMode
-{
+class FirstPersonMode : public Savable {
 protected:
 	vec3 lookVector;
 	vec2 moveVector;
@@ -53,4 +52,11 @@ public:
 
 	//In the future this will be used to draw the virtual joysticks on mobile
 	virtual void Draw(double width, double height, GL2DProgram * shader);
+
+
+	CLASS_DECLARATION(FirstPersonMode)
+		CLASS_MEMBER(lookVector,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(moveVector,ReflectionData::SAVE_VEC2)
+		CLASS_MEMBER(aggregateMouseVector,ReflectionData::SAVE_VEC2)
+	END_DECLARATION
 };
