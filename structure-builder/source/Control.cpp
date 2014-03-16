@@ -175,6 +175,9 @@ void Control::ClaimKeyboardFocus(Control * childControl) {
 }
 
 Control::~Control() {
+	//Disable visibility removing claims on keyboard control
+	SetVisible(false);
+
 	//If this control has a parent, unregister yourself as a child
 	if (parent != NULL) {
 		//parent->children.erase(this);

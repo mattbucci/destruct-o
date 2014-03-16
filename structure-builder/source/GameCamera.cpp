@@ -119,7 +119,7 @@ pair<vec3,vec3> GameCamera::Unproject(vec2 pos) {
 
 //Calculates when a ray emanating from rayStart going towards rayDirection
 //will come in contact with the plane defined by planePoint, planeNormal
-double CalculateIntersectionDistance(vec3 rayStart, vec3 rayDirection, vec3 planePoint, vec3 planeNormal) {
+double GameCamera::CalculateIntersectionDistance(vec3 rayStart, vec3 rayDirection, vec3 planePoint, vec3 planeNormal) {
 	/*double D = glm::dot(planePoint,planeNormal);
 	double s = D-(glm::dot(rayStart,planeNormal));
 	return s/(glm::dot(rayDirection,planeNormal));*/

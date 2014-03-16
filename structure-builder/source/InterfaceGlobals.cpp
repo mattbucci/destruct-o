@@ -13,7 +13,7 @@ void InterfaceGlobals::init() {
 	//Default colors
 	ColorWindowBackground = vec4(.7,.7,.7,1);
 	ColorWindowBorder = vec4(1,1,1,1);
-	ColorControlBackground = vec4(.2,.2,.2,1);
+	ColorControlBackground = vec4(.5,.5,.5,1);
 	ColorControlSelection = vec4(.4,.4,.4,1);
 	ColorControlHighlight = vec4(.6,.6,.6,1);
 	ColorControlText = vec4(0,0,0,1);
