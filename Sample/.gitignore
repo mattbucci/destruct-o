@@ -3,3 +3,4 @@ bin/
 obj\
 obj/
 androidproject/obj
+androidproject/libs

@@ -39,6 +39,7 @@ void Frames::BuildSystemList() {
 			system.second->Build();
 		//Mark the system list as loaded
 		loadingComplete = true;
+		cout << "Finished async build.\n";
 	});
 	//Thread will automatically cleanup on end
 	thr.detach();
