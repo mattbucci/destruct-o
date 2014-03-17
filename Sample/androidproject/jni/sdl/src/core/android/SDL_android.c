@@ -128,13 +128,13 @@ void SDL_Android_Init(JNIEnv* mEnv, jclass cls)
                                 "audioWriteByteBuffer", "([B)V");
     midAudioQuit = (*mEnv)->GetStaticMethodID(mEnv, mActivityClass,
                                 "audioQuit", "()V");
-    midPollInputDevices = (*mEnv)->GetStaticMethodID(mEnv, mActivityClass,
-                                "pollInputDevices", "()V");
+   // midPollInputDevices = (*mEnv)->GetStaticMethodID(mEnv, mActivityClass,
+    //                            "pollInputDevices", "()V");
 
     bHasNewData = false;
 
     if(!midGetNativeSurface || !midFlipBuffers || !midAudioInit ||
-       !midAudioWriteShortBuffer || !midAudioWriteByteBuffer || !midAudioQuit || !midPollInputDevices) {
+       !midAudioWriteShortBuffer || !midAudioWriteByteBuffer || !midAudioQuit /* || !midPollInputDevices*/) {
         __android_log_print(ANDROID_LOG_WARN, "SDL", "SDL: Couldn't locate Java callbacks, check that they're named and typed correctly");
     }
     __android_log_print(ANDROID_LOG_INFO, "SDL", "SDL_Android_Init() finished!");
@@ -1282,8 +1282,10 @@ int Android_JNI_GetTouchDeviceIds(int **ids) {
 
 void Android_JNI_PollInputDevices()
 {
+/*
     JNIEnv *env = Android_JNI_GetEnv();
     (*env)->CallStaticVoidMethod(env, mActivityClass, midPollInputDevices);    
+	*/
 }
 
 /* sends message to be handled on the UI event dispatch thread */
