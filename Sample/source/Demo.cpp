@@ -214,13 +214,28 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				rules->MaterialStyle = ParticleData::SCREEN;
 				rules->MaterialTexture = "particles/textures/fire.png"; */
 
-				rules = ParticleData::LoadParticleData("particles/fire.vpart");
+				rules = ParticleData::LoadParticleData("particles/explosion.vpart");
 				if (rules == NULL)
 					return;
 
 				//rules->Velocity
-				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,-1);
+				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,.1);
 				testSystem->Position = cubePos; 
+
+				rules = ParticleData::LoadParticleData("particles/smoke.vpart");	
+				if (rules == NULL)
+					return;
+
+				testSystem = game->Particles.BuildParticleSystem(*rules, .1);
+				testSystem->Position = cubePos;
+
+				/*rules = ParticleData::LoadParticleData("particles/blood.vpart");
+				if (rules == NULL)
+					return;
+
+				//rules->Velocity
+				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,.1);
+				testSystem->Position = cubePos; */
 			}
 			else if (eve.Key == 'c') {
 				SwitchDemo(0,playerPos,playerFacing);
