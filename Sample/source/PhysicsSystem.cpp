@@ -7,6 +7,7 @@
 #include "VoxelSystem.h"
 #include "PhysicsTriangle.h"
 #include "VoxEngine.h"
+#include "Tracer.h"
 
 PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	//Build a voxel renderer
@@ -91,12 +92,12 @@ void PhysicsSystem::Update(double delta, double now) {
 	for (auto it = allVoxels.begin(); it != allVoxels.end();){
 		PhysicsVoxel * voxel = *it;
 		voxel->Acceleration = vec3();
-		/*if ((voxel->DeathAt > 0) && (voxel->DeathAt < now)) {
+		if ((voxel->DeathAt > 0) && (voxel->DeathAt < now)) {
 			//disintegrate voxel
 			//remove voxel
 			it = allVoxels.erase(it);
 		}
-		else*/
+		else
 			it++;
 	}
 	allVoxels.sort([](PhysicsVoxel * a, PhysicsVoxel * b) -> bool {
@@ -157,9 +158,6 @@ void PhysicsSystem::Update(double delta, double now) {
 			}
 		}
 	}
-	//set the current voxel to 0
-
-
 
 	//Update all the voxels
 	for (unsigned int a = 0; a < allVoxels.size(); a++) {
@@ -244,67 +242,6 @@ void PhysicsSystem::Update(double delta, double now) {
 	}
 }
 
-bool PhysicsSystem::checkForCollision(const vec3 & from, const vec3 & direction, vec3 at, vec3 & rayCollision, vec3 & surfaceNormal) {
-	static PhysicsTriangle voxelTriangles[12] = {
-		//Top
-		PhysicsTriangle(vec3( 0.0f,0.0f,1.0f),
-		vec3( 1.0f,0.0f,1.0f),
-		vec3( 0.0f,1.0f,1.0f)),
-		PhysicsTriangle(vec3(1.0f,1.0f,1.0f),
-		vec3(-1.0f,1.0f,1.0f),
-		vec3(1.0f,0.0f,1.0f)),
-		//Bottom
-		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
-		vec3( 1.0f,0.0f,0.0f),
-		vec3( 0.0f,1.0f,0.0f)),
-		PhysicsTriangle(vec3(1.0f,1.0f,0.0f),
-		vec3(-1.0f,1.0f,0.0f),
-		vec3(1.0f,0.0f,0.0f)),
-		//left
-		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
-		vec3( 0.0f,1.0f,0.0f),
-		vec3( 0.0f,1.0f,1.0f)),
-		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
-		vec3( 0.0f,0.0f,1.0f),
-		vec3( 0.0f,1.0f,1.0f)),
-		//right
-		PhysicsTriangle(vec3( 1.0f,0.0f,0.0f),
-		vec3( 1.0f,1.0f,0.0f),
-		vec3( 1.0f,1.0f,1.0f)),
-		PhysicsTriangle(vec3( 1.0f,0.0f,0.0f),
-		vec3( 1.0f,0.0f,1.0f),
-		vec3( 1.0f,1.0f,1.0f)),
-		//front
-		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
-		vec3( 1.0f,0.0f,0.0f),
-		vec3( 1.0f,0.0f,1.0f)),
-		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
-		vec3( 0.0f,0.0f,1.0f),
-		vec3( 1.0f,0.0f,1.0f)),
-		//back
-		PhysicsTriangle(vec3( 0.0f,1.0f,0.0f),
-		vec3( 1.0f,1.0f,0.0f),
-		vec3( 1.0f,1.0f,1.0f)),
-		PhysicsTriangle(vec3( 0.0f,1.0f,0.0f),
-		vec3( 0.0f,1.0f,1.0f),
-		vec3( 1.0f,1.0f,1.0f)),
-	};
-	//Check every triangle in this voxel for a collision
-	for (int i = 0 ; i < 12; i++) {
-		double surf;
-		vec3 norm;
-		if (PhysicsTriangle::RayIntersects(voxelTriangles[i],at,from,direction,&surf,&norm)) {
-			rayCollision = ((float)surf)*direction+from;
-			surfaceNormal = norm;
-			//Paint colliding voxels
-			voxelSystem->Paint(vec2(at.x,at.y),1);
-			//Stop checking voxels
-			return true;
-		}
-	}
-    return false;
-}
-
 
 bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec3 & surfaceNormal) {
 	//Ray trace in 2d to get a short list of possible colliding voxels from the terrain
@@ -361,7 +298,7 @@ bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec
 		float height = voxelSystem->GetPositionHeight(vec2(x,y));
 		int stackSize = voxelSystem->GetPositionStackSize(vec2(x,y));
 		for (int stack = 0; stack <= stackSize; stack++) {
-			if (checkForCollision(from,direction,vec3(x,y,height-(float)stack),rayCollision,surfaceNormal))
+			if (Tracer::TraceToVoxel(from,direction,vec3(x,y,height-(float)stack),rayCollision,surfaceNormal))
 				//Collided with terrain
 				return true;
 		}

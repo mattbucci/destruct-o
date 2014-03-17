@@ -5,7 +5,7 @@
 
 class PhysicsTriangle {
 public:
-	PhysicsTriangle(vec3 a, vec3 b, vec3 c);
+	PhysicsTriangle(vec3 normal, vec3 a, vec3 b, vec3 c);
 	vec3 a;
 	vec3 b;
 	vec3 c;

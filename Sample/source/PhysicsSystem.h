@@ -39,9 +39,6 @@ class PhysicsSystem : public Savable {
 	//A tie to the voxel system used to lookup the terrain height at various points
 	VoxelSystem * voxelSystem;
 
-	//3d ray trace to a single voxel placed at "at"
-	bool checkForCollision(const vec3 & from, const vec3 & direction, vec3 at, vec3 & rayCollision, vec3 & surfaceNormal) ;
-
 	//C style function for performance reasons
 	friend Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxelBPosition);
 public:
