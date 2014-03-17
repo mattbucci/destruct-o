@@ -77,7 +77,7 @@ void ParticleRenderer::Render(GLParticleProgram * shader, Particle ** particles,
 		}
 		//Generate the vertex data for the given particle
 		Particle * p = particles[i];
-		int offset = i*6;
+		int offset = curParticles*6;
 		float halfScale = p->Scale/2.0f;
 		//Generate position data
 		vertices[offset+0] = vec4(p->Position*vec3(1,1,1),halfScale);
