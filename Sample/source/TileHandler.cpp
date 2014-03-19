@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "TileHandler.h"
 
 static const int tile_width = 256;

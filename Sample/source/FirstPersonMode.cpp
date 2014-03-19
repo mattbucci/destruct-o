@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "FirstPersonMode.h"
 
 int movement_speed = 1;
