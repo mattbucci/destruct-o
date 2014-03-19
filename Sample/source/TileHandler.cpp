@@ -131,7 +131,7 @@ void TileHandler::forceTile(vec2 pos) {
 	genLck.lock();
 
 	//Add to Queue & Notify Handler
-	genQueue.push_back(pos);
+	genQueue.push_front(pos);
 	//Add Placeholder Tile to WorldSet for Duplicate Prevention
 	worldSet.push_back(GameTile::CreatePlaceholderTile((int)pos.x, (int)pos.y));
 	genCv.notify_one();

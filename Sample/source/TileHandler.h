@@ -23,9 +23,6 @@ class TileHandler
 	static std::unique_lock<std::mutex> worldLck;
 	static std::vector<GameTile*> worldSet;
 
-	static void addGenQueue(vec2 pos);
-	static void addGenQueueFront(vec2 pos);
-
 	static std::thread* handlerThread;
 	static void handlerLoop();
 
