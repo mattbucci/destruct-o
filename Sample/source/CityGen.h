@@ -1,0 +1,5 @@
+class CityGen {
+
+public:
+	CityGen(){}; 
+};

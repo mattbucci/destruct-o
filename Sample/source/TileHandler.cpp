@@ -6,27 +6,29 @@ static const int tile_height = 256;
 
 TileHandler::TileHandler(void)
 {
-	_ASSERTE(false); //This Class should never be Instantiated
+	terraingenerator = NULL;
+	genQueue = std::list<vec2>();
+	worldSet = vector<GameTile*>();
+	handlerThread = NULL;
 }
 
 
 TileHandler::~TileHandler(void)
 {
-	_ASSERTE(false); //This Class should never be Instantiated
 }
 
 void TileHandler::init() {
-	//Prevent Double Init
-	_ASSERTE(handlerThread == NULL);
 
-	//Initialize Terrain Generator
-	generator = new TerrainGen();
-	generator->setTileSize(tile_width, tile_height);
+	//Initialize Terrain terraingenerator
+	terraingenerator = new TerrainGen();
+	terraingenerator->setTileSize(tile_width, tile_height);
 	srand((unsigned int)time(NULL));
-	generator->setSeed(rand());
+	terraingenerator->setSeed(rand());
+
+	//citygenerator = new CityGen();
 
 	//Create & Run Handler Thread
-	handlerThread = new std::thread(handlerLoop);
+	handlerThread = new thread([this](){handlerLoop();});
 	handlerThread->detach();
 }
 
@@ -78,13 +80,13 @@ void TileHandler::handlerLoop() {
 
 void TileHandler::genRoutine(GameTile * newTile) {
 	//Generate Terrain Data
-	unsigned char* rawTile = generator->generateTile(newTile->tile_x, newTile->tile_y);
+	unsigned char* rawTile = terraingenerator->generateTile(newTile->tile_x, newTile->tile_y);
 
 	//Assign Data to Container
 	vector<unsigned char> tile;
 	tile.assign(rawTile, rawTile + (newTile->Width * newTile->Height *  4));
 
-	//Free Generatored Terrain Data
+	//Free terraingeneratored Terrain Data
 	delete rawTile;
 
 	//Load Tile Data into GameTile
@@ -143,11 +145,11 @@ void TileHandler::forceTile(vec2 pos) {
 }
 
 void TileHandler::setSeed(int seed) {
-	generator->setSeed(seed);
+	terraingenerator->setSeed(seed);
 }
 
 int TileHandler::getSeed() {
-	return generator->getSeed();
+	return terraingenerator->getSeed();
 }
 
 GameTile * TileHandler::getTile(vec2 pos) {
@@ -156,7 +158,6 @@ GameTile * TileHandler::getTile(vec2 pos) {
 
 	//Tile Pointer
 	GameTile* tile = NULL;
-
 	//Search World Set for Tile
 	int s = worldSet.size();
 	for(int i = 0; i < s; i++) {
@@ -211,25 +212,12 @@ GameTile * TileHandler::getTile(vec2 pos) {
 
 	//Release World Set Lock
 	worldLck.unlock();
-
 	//Guarantee a Tile is Returned
 	_ASSERTE(tile != NULL);
 	//Guarantee Tile Returned is Generated
 	_ASSERTE(tile->Cells != NULL);
-
 	return tile;
+	
 }
 
-TerrainGen* TileHandler::generator = NULL;
 
-std::mutex TileHandler::genMtx;
-std::condition_variable TileHandler::genCv;
-std::unique_lock<std::mutex> TileHandler::genLck(genMtx, std::defer_lock);
-std::list<vec2> TileHandler::genQueue = std::list<vec2>();
-
-std::mutex TileHandler::worldMtx;
-std::condition_variable TileHandler::worldCv;
-std::unique_lock<std::mutex> TileHandler::worldLck(worldMtx, std::defer_lock);
-std::vector<GameTile*> TileHandler::worldSet = std::vector<GameTile*>();
-
-std::thread* TileHandler::handlerThread = NULL;

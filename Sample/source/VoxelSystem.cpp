@@ -16,7 +16,14 @@
 
 VoxelSystem::VoxelSystem() {
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
-
+	tiles = new TileHandler();
+	tiles->init();
+	for (float x = -1; x <= 1; x++) {
+		for (float y = -1; y <= 1; y++) {
+			cout << "Loading tile: " << x << "," << y << "\n";
+			tiles->getTile(vec2(x, y));
+		}
+	}
 	//Load the tile textures
 	unsigned int textureWidth, textureHeight;
 	vector<unsigned char> image;
@@ -44,7 +51,7 @@ VoxelSystem::~VoxelSystem() {
 
 GameTile * VoxelSystem::GetTile(vec2 pos) {
 	//TileHandler Guaranteed to Return Tile
-	return TileHandler::getTile(pos);
+	return tiles->getTile(pos);
 }
 
 TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
@@ -228,7 +235,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 
 void VoxelSystem::Update(vec3 player_pos){
 	//Pass to TileHandler
-	TileHandler::getTile(vec2(floor(player_pos.x / 256), floor(player_pos.y / 256)));
+	tiles->getTile(vec2(floor(player_pos.x / 256), floor(player_pos.y / 256)));
 }
 
 int VoxelSystem::GetLastVoxelCount() {

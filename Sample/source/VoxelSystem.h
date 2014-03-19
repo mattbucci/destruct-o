@@ -18,6 +18,9 @@ class VoxelSystem {
 	//The voxel texture
 	GLuint textureId;
 
+	//The Tile Handle
+	TileHandler* tiles;
+
 	VoxelDrawSystem * renderer;
 
 	//Calls foreachFunction for each tile contained in the Rect "region"

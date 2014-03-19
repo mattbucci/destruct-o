@@ -107,8 +107,6 @@ void BaseFrame::OnFrameFocus() {
 }
 
 void BaseFrame::Build() {
-	//Initialize Tile Handler
-	TileHandler::init();
 
 	//load the audio
 	cout << "Loading audio\n";
@@ -116,13 +114,7 @@ void BaseFrame::Build() {
 	audio->Subscribe(player);
 	cout << "Loading basic tiles around player\n";
 	//Force generation of tiles during load cycle
-	for (float x = -1; x <= 1; x++) {
-		for (float y= -1; y <= 1; y++) {
-			cout << "Loading tile: " << x << "," << y << "\n";
-			TileHandler::getTile(vec2(x,y));
-		}
-	}
-
+	
 	//BEGIN BUILDING DEMO
 	//Load building floors (note lack of extension)
 	Structure * bottomFloor = Structure::LoadStructure("teststructures/testfloor30x10");
@@ -157,11 +149,11 @@ void BaseFrame::Build() {
 	newBuilding.ConstructStructure();
 
 	//Get the tile you want to place the building on
-	GameTile * tileForBuilding = TileHandler::getTile(vec2(0,0));
+	//GameTile * tileForBuilding = TileHandler::getTile(vec2(0,0));
 	//Then call PlaceStructure one or more times to place the structure
 	//in whatever 2d positions you want
 	//automatically compensates for terrain (no building voxels underneath the ground)
-	newBuilding.PlaceStructure(tileForBuilding,vec2(0,0));
+	//newBuilding.PlaceStructure(tileForBuilding,vec2(0,0));
 	
 }
 
