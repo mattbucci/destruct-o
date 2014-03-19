@@ -45,9 +45,15 @@ public:
 	//A list of each voxel in the structure
 	vector<StructureCell> Cells; 
 
+	//The original count of voxels in the structure
+	//used to calculate structure integrity
+	int OriginalVoxelCount;
+
+	//The position of the lower left corner of the structure relative to the tile the structure is located on
+	vec3 Position;
+
 	//Attempt to ray trace to this structure
 	bool Trace(const vec3 & from, const vec3 & direction, vec3 & rayCollision, vec3 & surfaceNormal);
-
 
 	//Remove voxel at position
 	void EditorRemoveVoxel(vec3 position);
@@ -55,6 +61,6 @@ public:
 	//Add voxel at position. If a voxel already exists in that position do nothing
 	void EditorAddVoxel(vec3 position, int materialId);
 
-	//Render all voxels in this structure in a single pass
+	//Draws the entire structure in one draw cycle
 	void RenderStructure(GL3DProgram * shader, VoxelDrawSystem * drawSystem);
 };

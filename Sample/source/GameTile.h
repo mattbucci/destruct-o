@@ -45,5 +45,5 @@ public:
 	int tile_x;
 	int tile_y;
 	//Each tile can have structures on it
-	vector<Structure*> Structures;
+	vector<Structure> Structures;
 };

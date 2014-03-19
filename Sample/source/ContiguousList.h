@@ -33,7 +33,7 @@ class ContiguousList{
 		//Allocate the new storage
 		T * newData = new T[newCapacity];
 		//Copy over the data
-		memcpy(newData,data,sizeof(T)*listSize);
+		memcpy(newData,data,sizeof(T)*((listSize > (unsigned int)newCapacity) ? newCapacity : listSize));
 		//Clean up the old storage
 		delete [] data;
 		//Remember only the new storage
