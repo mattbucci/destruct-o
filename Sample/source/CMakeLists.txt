@@ -331,6 +331,8 @@ source_group(Core FILES ${CoreFiles})
 FILE(GLOB GenFiles
 	TerrainGen.h
 	TerrainGen.cpp
+	CityGen.h
+	CityGen.cpp
 )
 source_group(Procedural FILES ${GenFiles})
 

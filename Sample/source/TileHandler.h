@@ -7,7 +7,7 @@
 #include <vector>
 #include "GameTile.h"
 #include "TerrainGen.h"
-
+#include "CityGen.h"
 
 #pragma once
 
@@ -16,7 +16,7 @@ using namespace std;
 class TileHandler
 {
 	TerrainGen* terraingenerator;
-	//CityGen* citygenerator;
+	CityGen* citygenerator;
 
 	mutex genMtx;
 	condition_variable genCv;
@@ -38,7 +38,10 @@ class TileHandler
 	void predictTile(vec2 pos);
 
 public:
-	TileHandler();
+	TileHandler() : genLck(genMtx, std::defer_lock), worldLck(worldMtx, std::defer_lock){
+		terraingenerator = NULL;
+		handlerThread = NULL;
+	};
 	~TileHandler();
 	void init();
 

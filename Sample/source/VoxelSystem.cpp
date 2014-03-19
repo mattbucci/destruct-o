@@ -286,3 +286,5 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 	//Return all removed voxels
 	return removedVoxels;
 }
+
+
