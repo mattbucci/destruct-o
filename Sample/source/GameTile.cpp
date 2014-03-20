@@ -153,7 +153,7 @@ void GameTile::Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vecto
 				break;
 			//Keep track of all removed voxels
 			while (heightDiff >= 0) {
-				removedVoxels.push_back(vec4(x+(tile_x*256),y+(tile_y*256),height,cell.materialId));
+				removedVoxels.push_back(vec4(x+(tile_x*Width),y+(tile_y*Height),height,cell.materialId));
 				heightDiff--;
 				height--;
 			}
