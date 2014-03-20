@@ -65,7 +65,7 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 	for (int y = -citysize / 2; y < citysize / 2; y++) {
 		for (int x = -citysize / 2; x < citysize / 2; x++) {
 			cells[int((pos.y + y)*tile->Width + pos.x + x)].materialId = 3;
-			if ((x + citysize / 2) % 50 == 0 && (y + citysize / 2) % 50 == 0) {
+			if ((x-10 + citysize / 2) % 50 == 0 && (y-10 + citysize / 2) % 50 == 0) {
 				construct_building(tile, vec3(pos.x + x, pos.y + y, pos.z));
 			}
 		}
@@ -152,10 +152,10 @@ void CityGen::generatecitylocations(GameTile* tile){
 	vec3 citylocation;
 
 	float noisetolerance = 1;
-	float heighttolerance = 20;
+	float heighttolerance = 5;
 	//figure out where to put the city but make sure it doesn't go off the edge
-	for (int y = citysize/2; y < tile->Height - citysize/2; y++) {
-		for (int x = citysize/2; x < tile->Width - citysize/2; x++) {
+	for (int y = citysize/2+1; y < tile->Height - (citysize/2+1); y++) {
+		for (int x = citysize/2+1; x < tile->Width - (citysize/2+1); x++) {
 			if (analysis[y*tile->Height + x] < noisetolerance) {
 
 				//check if we're too close to another city
@@ -166,8 +166,10 @@ void CityGen::generatecitylocations(GameTile* tile){
 				}
 
 				if (!tooclose) {
-					if (abs(cells[y*tile->Height + x - citysize / 2].height - cells[y*tile->Height + x + citysize / 2].height) < heighttolerance &&
-						abs(cells[(y - citysize / 2)*tile->Height + x].height - cells[(y + citysize / 2)*tile->Height + x].height) < heighttolerance
+					if (abs(cells[(y - citysize / 2)*tile->Height + x - citysize / 2].height - cells[(y + citysize / 2)*tile->Height + x - citysize / 2].height) < heighttolerance &&
+						abs(cells[(y - citysize / 2)*tile->Height + x + citysize / 2].height - cells[(y + citysize / 2)*tile->Height + x + citysize / 2].height) < heighttolerance &&
+						abs(cells[(y + citysize / 2)*tile->Height + x + citysize / 2].height - cells[(y + citysize / 2)*tile->Height + x - citysize / 2].height) < heighttolerance &&
+						abs(cells[(y - citysize / 2)*tile->Height + x + citysize / 2].height - cells[(y - citysize / 2)*tile->Height + x - citysize / 2].height) < heighttolerance
 						) {
 						//make some cities
 						tile->Cities.push_back(vec3(x, y, 0));
@@ -178,6 +180,17 @@ void CityGen::generatecitylocations(GameTile* tile){
 		}
 	}
 
+	//Flatten Terrain
+	for (int i = 0; i < tile->Cities.size(); i++) {
+		vec3 pos = tile->Cities[i];
+		for (int y = -citysize / 2; y < citysize / 2; y++) {
+			for (int x = -citysize / 2; x < citysize / 2; x++) {
+				cells[int((pos.y + y)*tile->Width + pos.x + x)].height = cells[int((pos.y)*tile->Width + pos.x)].height;
+			}
+		}
+	}
+	tile->CalculateStackSizes(1, 1, tile->Width-1, tile->Height-1);
+	delete(analysis);
 }
 void CityGen::GenerateCities(GameTile * tile) {
 	generatecitylocations(tile);
