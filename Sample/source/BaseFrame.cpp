@@ -112,7 +112,6 @@ void BaseFrame::Build() {
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
 	audio->Subscribe(player);
-	cout << "Loading basic tiles around player\n";
 	
 }
 
@@ -173,7 +172,7 @@ void BaseFrame::Draw(double width, double height) {
 
 	//Compute view distance and handle fog
 	ViewDistance.CalculateAndApply(shaders3d,fpsCount.GetFps());
-	shaders3d->Fog.SetFogColor(vec4(.5,.5,.5,1.0));
+	shaders3d->Fog.SetFogColor(vec4(0,0,0,1.0));
 
 	//We add 1.5 to ground level. This assumes the person is 5ft between the ground
 	//and his eye line

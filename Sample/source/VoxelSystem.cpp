@@ -20,12 +20,10 @@ VoxelSystem::VoxelSystem() {
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
 	tiles = new TileHandler();
 	tiles->init();
-	for (float x = -1; x <= 1; x++) {
-		for (float y = -1; y <= 1; y++) {
-			cout << "Loading tile: " << x << "," << y << "\n";
-			tiles->getTile(vec2(x, y));
-		}
-	}
+
+	//Just get the starting tile
+	tiles->getTile(vec2(0, 0));
+
 	//Load the tile textures
 	unsigned int textureWidth, textureHeight;
 	vector<unsigned char> image;
