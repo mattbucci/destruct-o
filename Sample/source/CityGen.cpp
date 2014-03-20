@@ -64,13 +64,12 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 	TileCell * cells = tile->Cells;
 	for (int y = -citysize / 2; y < citysize / 2; y++) {
 		for (int x = -citysize / 2; x < citysize / 2; x++) {
-			cells[int((pos.y + y)*tile->Width + pos.x+x)].materialId = 3;
+			cells[int((pos.y + y)*tile->Width + pos.x + x)].materialId = 3;
 			if ((x + citysize / 2) % 50 == 0 && (y + citysize / 2) % 50 == 0) {
 				construct_building(tile, vec3(pos.x + x, pos.y + y, pos.z));
 			}
 		}
 	}
-	
 }
 
 void CityGen::generatecitylocations(GameTile* tile){
@@ -153,6 +152,7 @@ void CityGen::generatecitylocations(GameTile* tile){
 	vec3 citylocation;
 
 	float noisetolerance = 1;
+	float heighttolerance = 20;
 	//figure out where to put the city but make sure it doesn't go off the edge
 	for (int y = citysize/2; y < tile->Height - citysize/2; y++) {
 		for (int x = citysize/2; x < tile->Width - citysize/2; x++) {
@@ -166,9 +166,13 @@ void CityGen::generatecitylocations(GameTile* tile){
 				}
 
 				if (!tooclose) {
-					//make some cities
-					tile->Cities.push_back(vec3(x,y,0));
-					cout << "CITY PLACED AT:" << x <<" , " << y << endl;
+					if (abs(cells[y*tile->Height + x - citysize / 2].height - cells[y*tile->Height + x + citysize / 2].height) < heighttolerance &&
+						abs(cells[(y - citysize / 2)*tile->Height + x].height - cells[(y + citysize / 2)*tile->Height + x].height) < heighttolerance
+						) {
+						//make some cities
+						tile->Cities.push_back(vec3(x, y, 0));
+						cout << "CITY PLACED AT:" << x << " , " << y << endl;
+					}
 				}
 			}
 		}
