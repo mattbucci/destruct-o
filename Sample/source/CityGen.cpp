@@ -2,6 +2,12 @@
 #include "CityGen.h"
 #include "structure.h"
 
+//the size of each city
+const int citysize = 100;
+
+//the space between each city
+const int cityspacing = 40;
+
 int CityGen::BufferIndex(GameTile* tile,int x, int y) {
 	return 4 * (y*tile->Width + x);
 }
@@ -55,19 +61,23 @@ void CityGen::construct_building(GameTile* tile, vec3 pos){
 void CityGen::construct_city(GameTile * tile, vec3 pos) {
 	//flatten terrain
 	//generate roads
-	construct_building(tile, pos);
+	TileCell * cells = tile->Cells;
+	for (int y = -citysize / 2; y < citysize / 2; y++) {
+		for (int x = -citysize / 2; x < citysize / 2; x++) {
+			cells[int((pos.y + y)*tile->Width + pos.x+x)].materialId = 3;
+			if ((x + citysize / 2) % 50 == 0 && (y + citysize / 2) % 50 == 0) {
+				construct_building(tile, vec3(pos.x + x, pos.y + y, pos.z));
+				cout << "building placed at: " << pos.x+x << ","<< pos.y+y << endl;
+			}
+		}
+	}
+	
 }
 
 void CityGen::generatecitylocations(GameTile* tile){
 
-	//the size of each city
-	const int citysize = 30;
-
-	//the space between each city
-	const int cityspacing = 40;
-
 	//the amount to blur
-	const int blur = 4;
+	const int blur = 10;
 
 	//analyze the terrain
 	//We Differentiate the terrain and then blur it 4x to achieve the effect of inteligent city placement
@@ -91,7 +101,7 @@ void CityGen::generatecitylocations(GameTile* tile){
 		//top
 		analysis[0 * tile->Height + x] = 500;
 		//bottom
-		analysis[(tile->Height - 1)*tile->Height + x] = 5000;
+		analysis[(tile->Height - 1)*tile->Height + x] = 500;
 	}
 
 	//Get the slope using the Sobel Operator
@@ -156,16 +166,16 @@ void CityGen::generatecitylocations(GameTile* tile){
 	
 	//offset the city to account for edges
 	if (citylocation.x < citysize + 1 || citylocation.x > tile->Width - (citysize + 1)) {
-		if (citylocation.x > 128)
-			citylocation.x -= 30;
+		if (citylocation.x > tile->Width/2)
+			citylocation.x -= citysize;
 		else
-			citylocation.x += 30;
+			citylocation.x += citysize;
 	}
 	if (citylocation.y < citysize + 1 || citylocation.y > tile->Width - (citysize + 1)) {
-		if (citylocation.y > 128)
-			citylocation.y -= 30;
+		if (citylocation.y > tile->Height/2)
+			citylocation.y -= citysize;
 		else
-			citylocation.y += 30;
+			citylocation.y += citysize;
 	}
 	
 
