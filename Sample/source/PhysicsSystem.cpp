@@ -8,6 +8,7 @@
 #include "PhysicsTriangle.h"
 #include "VoxEngine.h"
 #include "Tracer.h"
+#include "PhysicsProxy.h"
 
 PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	//Build a voxel renderer
@@ -74,7 +75,15 @@ PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate,double lifeTime) {
 	allVoxels.push_back(voxel);
 	return voxel;
 }
-float removeInDirection(vec3 & force, vec3 direction) {
+
+PhysicsProxy * PhysicsSystem::BuildPhysicsProxy(Actor * actor, vec3 * actorPosition) {
+	PhysicsProxy * proxy = new PhysicsProxy(actor, actorPosition);
+	proxies.push_back(proxy);
+	return proxy;
+}
+
+//Remove the force in a given direction and return the quantity
+static float removeInDirection(vec3 & force, vec3 direction) {
 	float d = glm::dot(force,direction);
 	if (d > 0) {
 		force -= direction*d;
@@ -159,7 +168,7 @@ void PhysicsSystem::Update(double delta, double now) {
 		}
 	}
 
-	//Update all the voxels
+	//Update all the physics voxels
 	for (unsigned int a = 0; a < allVoxels.size(); a++) {
 		if (allVoxels[a] != NULL) {
 
@@ -240,6 +249,8 @@ void PhysicsSystem::Update(double delta, double now) {
 			allVoxels[a]->Position += allVoxels[a]->Velocity*(float)delta;
 		}
 	}
+
+	//Apply ground-to-effector collisions to all physics proxies
 }
 
 

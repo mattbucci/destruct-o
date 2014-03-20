@@ -9,8 +9,8 @@ class ShaderGroup;
 class PhysicsVoxel;
 //The voxel system is needed to lookup the height of the terrain
 class VoxelSystem;
-
-#include "stdafx.h"
+class PhysicsProxy;
+class Actor;
 
 //The true physics system
 class PhysicsSystem : public Savable {
@@ -21,6 +21,9 @@ class PhysicsSystem : public Savable {
 	
 	//this contiguous list is a sub buffer used to severely decrease the AABB checks needed for physics voxels
 	ContiguousList<PhysicsVoxel*> section;
+
+	//A list of all actor proxies the physics system owns
+	ContiguousList<PhysicsProxy*> proxies;
 
 
 	//The voxel draw renderer
@@ -51,6 +54,10 @@ public:
 	//Constructs a voxel at the given coordinate
 	//returns the voxel
 	PhysicsVoxel * BuildVoxel(vec3 voxelCoordinate, double lifeTime=-1.0);
+
+	//Construct a physics proxy for the given actor
+	//once attached, detach() must be called on actor destruction
+	PhysicsProxy * BuildPhysicsProxy(Actor * actor, vec3 * actorPosition);
 
 	//Update the physics voxels, called by base frame
 	void Update(double delta, double now);

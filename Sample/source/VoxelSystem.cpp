@@ -255,7 +255,6 @@ void VoxelSystem::Paint(vec2 pos, int newMaterial) {
 //Deforms a region of voxels, punching a crater into the given position
 //all voxels removed are returned as positions
 vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
-	GameTile * current_tile;
 	//render each viewable rectangle
 	vector<vec4> removedVoxels;
 	forTilesInRect(Rect(pos.x - size / 2,pos.y - size / 2,size,size),[this,&removedVoxels,pos,size](GameTile * current_tile) {
