@@ -194,7 +194,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 			
 		}
 		renderer->finishDraw(shader);
-
+		
 
 		//Next check for any structures on this tile which intersect the view rectangle
 		for (auto structure : current_tile.Structures) {
@@ -203,10 +203,10 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 			int structex = structx + (int)structure.Extents.x;
 			int structey = structx + (int)structure.Extents.x;
 			//Now see if the struct rectangle intersects the draw rectangle
-			if (!(rectStartX > structex) ||
-				(rectEndX < structx) ||
-				(rectStartY > structey) ||
-				(rectEndY < structy)) {
+			if ((rectStartX < structex) ||
+				(rectEndX > structx) ||
+				(rectStartY < structey) ||
+				(rectEndY > structy)) {
 				//Time to draw the structure
 				//Push the structure's position
 				if (structure.Cells.size() > 0){
@@ -228,9 +228,9 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 				}
 			}
 		}
-		
-
 		shader->Model.PopMatrix();
+
+		
 	});
 
 }
