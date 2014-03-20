@@ -3,10 +3,10 @@
 #include "structure.h"
 
 //the size of each city
-const int citysize = 100;
+const int citysize = 200;
 
 //the space between each city
-const int cityspacing = 40;
+const int cityspacing = 400;
 
 int CityGen::BufferIndex(GameTile* tile,int x, int y) {
 	return 4 * (y*tile->Width + x);
@@ -67,7 +67,6 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 			cells[int((pos.y + y)*tile->Width + pos.x+x)].materialId = 3;
 			if ((x + citysize / 2) % 50 == 0 && (y + citysize / 2) % 50 == 0) {
 				construct_building(tile, vec3(pos.x + x, pos.y + y, pos.z));
-				cout << "building placed at: " << pos.x+x << ","<< pos.y+y << endl;
 			}
 		}
 	}
@@ -153,37 +152,32 @@ void CityGen::generatecitylocations(GameTile* tile){
 	float minheight = 5000;
 	vec3 citylocation;
 
-	//figure out where to put the city
-	for (int y = 0; y < tile->Height; y++) {
-		for (int x = 0; x < tile->Width; x++) {
-			if (minheight > analysis[y*tile->Height + x]) {
-				minheight = analysis[y*tile->Height + x];
-				citylocation = vec3(x, y, cells[y*tile->Height + x].height);
+	float noisetolerance = 1;
+	//figure out where to put the city but make sure it doesn't go off the edge
+	for (int y = citysize/2; y < tile->Height - citysize/2; y++) {
+		for (int x = citysize/2; x < tile->Width - citysize/2; x++) {
+			if (analysis[y*tile->Height + x] < noisetolerance) {
+
+				//check if we're too close to another city
+				bool tooclose = false;
+				for (int i = 0; i < tile->Cities.size(); i++) {
+					if (glm::length(vec2(tile->Cities[i].x - x, tile->Cities[i].y - y)) < cityspacing)
+						tooclose = true;
+				}
+
+				if (!tooclose) {
+					//make some cities
+					tile->Cities.push_back(vec3(x,y,0));
+					cout << "CITY PLACED AT:" << x <<" , " << y << endl;
+				}
 			}
 		}
 	}
 
-	
-	//offset the city to account for edges
-	if (citylocation.x < citysize + 1 || citylocation.x > tile->Width - (citysize + 1)) {
-		if (citylocation.x > tile->Width/2)
-			citylocation.x -= citysize;
-		else
-			citylocation.x += citysize;
-	}
-	if (citylocation.y < citysize + 1 || citylocation.y > tile->Width - (citysize + 1)) {
-		if (citylocation.y > tile->Height/2)
-			citylocation.y -= citysize;
-		else
-			citylocation.y += citysize;
-	}
-	
-
-	//make some cities
-	tile->Cities.push_back(citylocation);
-
 }
 void CityGen::GenerateCities(GameTile * tile) {
 	generatecitylocations(tile);
-	construct_city(tile, tile->Cities[0]);
+	for (int i = 0; i < tile->Cities.size(); i++) {
+		construct_city(tile, tile->Cities[i]);
+	}
 }

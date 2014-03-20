@@ -209,21 +209,23 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 				(rectEndY < structy)) {
 				//Time to draw the structure
 				//Push the structure's position
-				shader->Model.PushMatrix();
-				shader->Model.Translate(structure.Position);
-				shader->Model.Apply();
-				//Track voxels drawn for debug
-				voxelCount += structure.Cells.size();
-				//Start the draw cycle
-				renderer->startDraw(shader);
-				StructureCell * celliterator = &structure.Cells.front();
-				unsigned int endCount = structure.Cells.size();
-				//Push all the cells
-				for (unsigned int i = 0; i < endCount; i++,celliterator++)
-					renderer->pushVoxel(shader,celliterator->pos,celliterator->material);
-				//Finish drawing and remove the structure matrix
-				renderer->finishDraw(shader);
-				shader->Model.PopMatrix();
+				if (structure.Cells.size() > 0){
+					shader->Model.PushMatrix();
+					shader->Model.Translate(structure.Position);
+					shader->Model.Apply();
+					//Track voxels drawn for debug
+					voxelCount += structure.Cells.size();
+					//Start the draw cycle
+					renderer->startDraw(shader);
+					StructureCell * celliterator = &structure.Cells.front();
+					unsigned int endCount = structure.Cells.size();
+					//Push all the cells
+					for (unsigned int i = 0; i < endCount; i++, celliterator++)
+						renderer->pushVoxel(shader, celliterator->pos, celliterator->material);
+					//Finish drawing and remove the structure matrix
+					renderer->finishDraw(shader);
+					shader->Model.PopMatrix();
+				}
 			}
 		}
 		
