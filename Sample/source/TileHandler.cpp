@@ -16,6 +16,9 @@ void TileHandler::init() {
 	srand((unsigned int)time(NULL));
 	terraingenerator->setSeed(rand());
 
+	//Initalize City Generator
+	citygenerator = new CityGen();
+
 	//Create & Run Handler Thread
 	handlerThread = new std::thread([this](){handlerLoop(); });
 	handlerThread->detach();
@@ -69,17 +72,7 @@ void TileHandler::handlerLoop() {
 
 void TileHandler::genRoutine(GameTile * newTile) {
 	//Generate Terrain Data
-	unsigned char* rawTile = terraingenerator->generateTile(newTile->tile_x, newTile->tile_y);
-
-	//Assign Data to Container
-	vector<unsigned char> tile;
-	tile.assign(rawTile, rawTile + (newTile->Width * newTile->Height *  4));
-
-	//Free Generatored Terrain Data
-	delete rawTile;
-
-	//Load Tile Data into GameTile
-	GameTile::LoadTileFromMemoryIntoExisting(tile, newTile);
+	terraingenerator->generateTerrain(newTile);
 }
 
 void TileHandler::predictTile(vec2 pos) {

@@ -95,16 +95,16 @@ void TerrainGen::setTileSize(int x, int y) {
 	tiley = y;
 }
 
-unsigned char* TerrainGen::generateTile(int x, int y) {
+void TerrainGen::generateTerrain(GameTile * tile) {
 	//Ensure Tile Size Selected
 	_ASSERTE(tilex != 0 && tiley != 0);
 	//Ensure Seed Changed
 	_ASSERTE(getSeed() != -1);
 
 	//Calculate Tile Bounds
-	double bx0 = x * tilesx;
+	double bx0 = tile->tile_x * tilesx;
 	double bx1 = bx0 + tilesx;
-	double by0 = y * tilesx;
+	double by0 = tile->tile_y * tilesx;
 	double by1 = by0 + tilesy;
 
 	//Create Local HeightMap and HeightMapBuilder
@@ -124,14 +124,23 @@ unsigned char* TerrainGen::generateTile(int x, int y) {
 
 	//Allocate Space for Compiled Tile
 	int s = tilex * tiley;
-	unsigned char* tile = new unsigned char[s * 4];
+	unsigned char* rawtile = new unsigned char[s * 4];
 
 	//Compile Tile Data
 	for(int i = 0; i < s; i++) {
-		tile[(i*4)] = (unsigned char)(rawTerrain[i] * 86 + 128);
-		tile[(i*4) + 1] = 2; // TODO: Intelligent Material Selection
-		tile[(i*4) + 2] = 0;
-		tile[(i*4) + 3] = 0;
+		rawtile[(i*4)] = (unsigned char)(rawTerrain[i] * 86 + 128);
+		rawtile[(i*4) + 1] = 2; // TODO: Intelligent Material Selection
+		rawtile[(i*4) + 2] = 0;
+		rawtile[(i*4) + 3] = 0;
 	}
-	return tile;
+
+	//Assign Data to Container
+	vector<unsigned char> tilecontainer;
+	tilecontainer.assign(rawtile, rawtile + (tilex * tiley * 4));
+
+	//Free Generatored Terrain Data
+	delete rawtile;
+
+	//Load Tile Data into GameTile
+	GameTile::LoadTileFromMemoryIntoExisting(tilecontainer, tile);
 }
