@@ -168,10 +168,7 @@ void CityGen::generatecitylocations(GameTile* tile){
 			citylocation.y += 30;
 	}
 	
-	//citylocation.z = CalculateCityEdgeMinimum(tile, citylocation);
-	//return citylocation;
 
-	cout << "CityPlaced at:" << citylocation.x<< "," << citylocation.y << endl;
 	//make some cities
 	tile->Cities.push_back(citylocation);
 
