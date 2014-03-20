@@ -73,6 +73,8 @@ void TileHandler::handlerLoop() {
 void TileHandler::genRoutine(GameTile * newTile) {
 	//Generate Terrain Data
 	terraingenerator->generateTerrain(newTile);
+	//Generate Cities
+	citygenerator->GenerateCities(newTile);
 }
 
 void TileHandler::predictTile(vec2 pos) {

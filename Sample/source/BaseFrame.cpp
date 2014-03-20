@@ -113,47 +113,6 @@ void BaseFrame::Build() {
 	audio = new AudioPlayer(100);
 	audio->Subscribe(player);
 	cout << "Loading basic tiles around player\n";
-	//Force generation of tiles during load cycle
-	
-	//BEGIN BUILDING DEMO
-	//Load building floors (note lack of extension)
-	Structure * bottomFloor = Structure::LoadStructure("teststructures/testfloor30x10");
-	Structure * transitionFloor = Structure::LoadStructure("teststructures/testfloor30x10to20x10");
-	Structure * topFloor = Structure::LoadStructure("teststructures/testfloor20x10");
-
-	//Randomize the number of floors a bit
-	//Obviously more varied randomization would have to be done
-	//for more variation in buildings
-	int numberOfBaseFloors = rand() % 3;
-	int numberOfTopFloors = rand() % 3;
-
-	//A Building is used to construct a structure by stacking other structures (floors) together
-	Building newBuilding;
-	//Stack bottom floors
-	for (int i = 0; i < numberOfTopFloors; i++)
-		newBuilding.Stack(bottomFloor);
-
-	//Add an adapter floor
-	newBuilding.Stack(transitionFloor);
-
-	//Add the rest
-	for (int i = 0; i < numberOfTopFloors; i++)
-		newBuilding.Stack(topFloor);
-
-	//At this point some sort of roof should have been added
-	//but I didn't make one
-
-	//When you're all done stacking floors
-	//call construct once to internally prepare the structure
-	//for use
-	newBuilding.ConstructStructure();
-
-	//Get the tile you want to place the building on
-	//GameTile * tileForBuilding = TileHandler::getTile(vec2(0,0));
-	//Then call PlaceStructure one or more times to place the structure
-	//in whatever 2d positions you want
-	//automatically compensates for terrain (no building voxels underneath the ground)
-	//newBuilding.PlaceStructure(tileForBuilding,vec2(0,0));
 	
 }
 

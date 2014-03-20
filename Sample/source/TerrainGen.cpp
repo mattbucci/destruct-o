@@ -95,6 +95,10 @@ void TerrainGen::setTileSize(int x, int y) {
 	tiley = y;
 }
 
+int TerrainGen::BufferIndex(int x, int y) {
+	return 4 * (y*tiley + x);
+}
+
 void TerrainGen::generateTerrain(GameTile * tile) {
 	//Ensure Tile Size Selected
 	_ASSERTE(tilex != 0 && tiley != 0);
@@ -137,7 +141,7 @@ void TerrainGen::generateTerrain(GameTile * tile) {
 	//Assign Data to Container
 	vector<unsigned char> tilecontainer;
 	tilecontainer.assign(rawtile, rawtile + (tilex * tiley * 4));
-
+	//TODO Determine tile type based on terrain properties
 	//Free Generatored Terrain Data
 	delete rawtile;
 
