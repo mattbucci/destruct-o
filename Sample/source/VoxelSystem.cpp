@@ -201,12 +201,14 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 			int structx = (int)structure.Position.x;
 			int structy = (int)structure.Position.y;
 			int structex = structx + (int)structure.Extents.x;
-			int structey = structx + (int)structure.Extents.x;
+			int structey = structx + (int)structure.Extents.y;
 			//Now see if the struct rectangle intersects the draw rectangle
-			if ((rectStartX < structex) ||
-				(rectEndX > structx) ||
-				(rectStartY < structey) ||
-				(rectEndY > structy)) {
+			
+			if (((rectStartX < structx) &&
+				(rectEndX > structex))	 &&
+				((rectStartY < structy) &&
+				(rectEndY > structey))) {
+				cout << rectStartX << ", " << structx << ": " << rectEndX << ", " << structex << "        " << rectStartY << ", " << structy << ": " << rectEndY << ", " << structey << endl;
 				//Time to draw the structure
 				//Push the structure's position
 				if (structure.Cells.size() > 0){
@@ -227,7 +229,8 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 					shader->Model.PopMatrix();
 				}
 			}
-		}
+		} 
+
 		shader->Model.PopMatrix();
 
 		

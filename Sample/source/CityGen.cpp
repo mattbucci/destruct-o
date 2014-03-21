@@ -3,7 +3,7 @@
 #include "structure.h"
 
 //the size of each city
-const int citysize = 100;
+const int citysize = 200;
 
 //the space between each city
 const int cityspacing = 200;
@@ -187,6 +187,25 @@ void CityGen::generatecitylocations(GameTile* tile){
 			for (int x = -citysize / 2; x < citysize / 2; x++) {
 				cells[int((pos.y + y)*tile->Width + pos.x + x)].height = cells[int((pos.y)*tile->Width + pos.x)].height;
 			}
+		}
+	}
+
+	//Blur city edges
+	for (int i = 0; i < tile->Cities.size(); i++) {
+		vec3 pos = tile->Cities[i];
+		//walk along the edge, for each edge walk outward and normalize
+		for (int y = pos.y - citysize/2; y < pos.y + citysize/2; y++) {
+			//left
+			analysis[y*tile->Height + tile->Width - 1] = 500;
+
+			//right
+			analysis[y*tile->Height + tile->Width - 1] = 500;
+		}
+		for (int x = pos.x - citysize / 2; x < pos.x + citysize / 2; x++) {
+			//top
+			analysis[0 * tile->Height + x] = 500;
+			//bottom
+			analysis[(tile->Height - 1)*tile->Height + x] = 500;
 		}
 	}
 	tile->CalculateStackSizes(1, 1, tile->Width-1, tile->Height-1);
