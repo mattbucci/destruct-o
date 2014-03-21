@@ -172,7 +172,7 @@ void BaseFrame::Draw(double width, double height) {
 
 	//Compute view distance and handle fog
 	ViewDistance.CalculateAndApply(shaders3d,fpsCount.GetFps());
-	shaders3d->Fog.SetFogColor(vec4(1,1,1,1));
+	shaders3d->Fog.SetFogColor(vec4(0,0,0,1));
 
 	//We add 1.5 to ground level. This assumes the person is 5ft between the ground
 	//and his eye line
