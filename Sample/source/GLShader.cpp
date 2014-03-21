@@ -49,7 +49,7 @@ GLShader::GLShader(GLCommonShaderFile * commonShader, string filename,GLenum sha
 	//For debug purposes
 	{
 		//Find only the file part of the filename
-		int firstChar = filename.size()-1;
+		size_t firstChar = filename.size()-1;
 		for (;firstChar > 0; firstChar--)
 			if (filename[firstChar-1] == '/')
 				break;
