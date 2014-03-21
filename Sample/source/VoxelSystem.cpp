@@ -194,21 +194,24 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 			
 		}
 		renderer->finishDraw(shader);
-		
+		//structures are large but we only measure using their corner, offset by the max building size to correct
+		rectStartX -= 20;
+		rectStartY -= 20;
+		rectEndX += 20;
+		rectEndY += 20;
 
 		//Next check for any structures on this tile which intersect the view rectangle
 		for (auto structure : current_tile.Structures) {
 			int structx = (int)structure.Position.x;
 			int structy = (int)structure.Position.y;
 			int structex = structx + (int)structure.Extents.x;
-			int structey = structx + (int)structure.Extents.y;
+			int structey = structy + (int)structure.Extents.y;
 			//Now see if the struct rectangle intersects the draw rectangle
 			
 			if (((rectStartX < structx) &&
 				(rectEndX > structex))	 &&
 				((rectStartY < structy) &&
 				(rectEndY > structey))) {
-				cout << rectStartX << ", " << structx << ": " << rectEndX << ", " << structex << "        " << rectStartY << ", " << structy << ": " << rectEndY << ", " << structey << endl;
 				//Time to draw the structure
 				//Push the structure's position
 				if (structure.Cells.size() > 0){

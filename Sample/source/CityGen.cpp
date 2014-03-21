@@ -3,10 +3,10 @@
 #include "structure.h"
 
 //the size of each city
-const int citysize = 200;
+const int citysize = 150;
 
 //the space between each city
-const int cityspacing = 200;
+const int cityspacing = 250;
 
 int CityGen::BufferIndex(GameTile* tile,int x, int y) {
 	return 4 * (y*tile->Width + x);
