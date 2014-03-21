@@ -14,7 +14,7 @@
 #include <sstream>
 #include <thread>
 
-const int tilesize = 1024;
+const int tilesize = 512;
 
 VoxelSystem::VoxelSystem() {
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();

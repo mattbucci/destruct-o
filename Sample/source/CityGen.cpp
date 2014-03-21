@@ -3,10 +3,10 @@
 #include "structure.h"
 
 //the size of each city
-const int citysize = 200;
+const int citysize = 100;
 
 //the space between each city
-const int cityspacing = 400;
+const int cityspacing = 200;
 
 int CityGen::BufferIndex(GameTile* tile,int x, int y) {
 	return 4 * (y*tile->Width + x);
@@ -151,11 +151,11 @@ void CityGen::generatecitylocations(GameTile* tile){
 	float minheight = 5000;
 	vec3 citylocation;
 
-	float noisetolerance = 1;
+	float noisetolerance = 3;
 	float heighttolerance = 5;
 	//figure out where to put the city but make sure it doesn't go off the edge
-	for (int y = citysize/2+1; y < tile->Height - (citysize/2+1); y++) {
-		for (int x = citysize/2+1; x < tile->Width - (citysize/2+1); x++) {
+	for (int y = citysize/2+10; y < tile->Height - (citysize/2+10); y++) {
+		for (int x = citysize/2+10; x < tile->Width - (citysize/2+10); x++) {
 			if (analysis[y*tile->Height + x] < noisetolerance) {
 
 				//check if we're too close to another city

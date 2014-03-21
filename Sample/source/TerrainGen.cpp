@@ -57,8 +57,8 @@ TerrainGen::TerrainGen() {
 	blend3Blender.SetSourceModule(1, detailNoise);
 
 	//Default Scale to 1
-	tilesx = 4;
-	tilesy = 4;
+	tilesx = 2;
+	tilesy = 2;
 
 	//Default Tile Size to 0 (Invalid Tile Size)
 	tilex = 0;
@@ -132,10 +132,10 @@ void TerrainGen::generateTerrain(GameTile * tile) {
 
 	//Compile Tile Data
 	for(int i = 0; i < s; i++) {
-		if ((unsigned char)(rawTerrain[i] * 86 + 128)>1)
+		if ((unsigned char)(rawTerrain[i] * 86 + 128)>5)
 			rawtile[(i * 4)] = (unsigned char)(rawTerrain[i] * 86 + 128);
 		else
-			rawtile[(i * 4)] = 1;
+			rawtile[(i * 4)] = 5;
 		rawtile[(i*4) + 1] = 0; // TODO: Intelligent Material Selection
 		rawtile[(i*4) + 2] = 0;
 		rawtile[(i*4) + 3] = 0;

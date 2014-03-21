@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "TileHandler.h"
 
-const int tile_width = 1024;
-const int tile_height = 1024;
+const int tile_width = 512;
+const int tile_height = 512;
 
 
 TileHandler::~TileHandler(void)
