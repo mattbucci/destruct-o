@@ -190,7 +190,9 @@ void CityGen::generatecitylocations(GameTile* tile){
 		}
 	}
 
-	//Blur city edges
+	// TODO : Blur city edges
+
+	/*
 	for (int i = 0; i < tile->Cities.size(); i++) {
 		vec3 pos = tile->Cities[i];
 		//walk along the edge, for each edge walk outward and normalize
@@ -208,6 +210,7 @@ void CityGen::generatecitylocations(GameTile* tile){
 			analysis[(tile->Height - 1)*tile->Height + x] = 500;
 		}
 	}
+	*/
 	tile->CalculateStackSizes(1, 1, tile->Width-1, tile->Height-1);
 	delete(analysis);
 }
