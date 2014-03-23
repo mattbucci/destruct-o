@@ -13,7 +13,8 @@ void TileHandler::init() {
 	//Initialize Terrain Generator
 	terraingenerator = new TerrainGen();
 	terraingenerator->setTileSize(tile_width, tile_height);
-	srand((unsigned int)time(NULL));
+	//srand((unsigned int)time(NULL));
+    srand(69);
 	terraingenerator->setSeed(rand());
 
 	//Initalize City Generator

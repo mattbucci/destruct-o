@@ -97,7 +97,7 @@ void Savable::SaveValue(ReflectionData::savable valueData,Json::Value & value) {
 		if (sizeof(void*) == 4)
 			//32 bit
 			//Everything stored as 64 bit integers
-			handle = (uint32_t)valueData.member;
+			handle = (uint64_t) valueData.member;
 		else
 			//Assume 64 bit
 			handle = (uint64_t)valueData.member;

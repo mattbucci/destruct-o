@@ -135,7 +135,7 @@ class Savable {
 			ReflectionData::savable saveData;
 			saveData.dataType = valueData.internalType;
 			saveData.internalType = ReflectionData::SAVE_NOTHING;
-			saveData.member = &member;
+			//asaveData.member = &member;
 			saveData.memberName = ""; //No name since its part of an array
 			SaveValue(saveData, value[i]);
 			i++;
