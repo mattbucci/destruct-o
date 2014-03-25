@@ -132,10 +132,12 @@ class Savable {
 		//Now iterate over the class
 		int i = 0;
 		for (auto member : container) {
+			InternalType tempMember = member;
 			ReflectionData::savable saveData;
 			saveData.dataType = valueData.internalType;
 			saveData.internalType = ReflectionData::SAVE_NOTHING;
-			//asaveData.member = &member;
+			
+			saveData.member = &tempMember;
 			saveData.memberName = ""; //No name since its part of an array
 			SaveValue(saveData, value[i]);
 			i++;

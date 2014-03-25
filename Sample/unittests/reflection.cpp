@@ -108,6 +108,10 @@ public:
 	basicSavable c;
 	basicSavable * d;
 
+	savableOwner() {
+		d = NULL;
+	}
+
 	void FillWithData() {
 		a = -19203193;
 		b = " aw9t slgjksj 923908234902 popo #@*%(FIOSDJ IOGSJEOIGJEOS 90I*()^%*()6 346934ugsd";
