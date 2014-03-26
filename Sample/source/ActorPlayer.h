@@ -1,10 +1,14 @@
 #pragma once
 
-#include "Actor.h"
-#include "InputEvent.h"
+#include "PhysicsActor.h"
 #include "GameEvent.h"
 
-class ActorPlayer : public Actor {
+class ActorPlayer : public PhysicsActor {
+
+	//trigger for landing sound
+	bool onGround;
+	//delta since last walk fired
+	double deltaPosition;
 public:
 	ActorPlayer();
 	~ActorPlayer();
@@ -21,6 +25,8 @@ public:
     GameEvent<void(ActorPlayer*)> PlayerWalked;
 
 	CLASS_DECLARATION(ActorPlayer)
-		INHERITS_FROM(Actor)
+		INHERITS_FROM(PhysicsActor)
+		CLASS_MEMBER(onGround,ReflectionData::SAVE_BOOL)
+		CLASS_MEMBER(deltaPosition,ReflectionData::SAVE_DOUBLE)
 	END_DECLARATION
 };

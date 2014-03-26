@@ -11,14 +11,16 @@ class Actor;
 class ActorSystem : public Savable {
 	//All actors are updated and drawn
 	ContiguousList<Actor*> allActors;
-public:
-	ActorSystem();
-	~ActorSystem();
 
 	//Should be called by Actor.cpp only
 	//no one else call these
 	void Register(Actor * toRegister);
 	void Unregister(Actor * toUnregister);
+
+	friend class Actor;
+public:
+	ActorSystem();
+	~ActorSystem();
 	
 	//Update the actors, called by base frame
 	void Update(double delta, double now);

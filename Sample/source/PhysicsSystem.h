@@ -9,7 +9,7 @@ class ShaderGroup;
 class PhysicsVoxel;
 //The voxel system is needed to lookup the height of the terrain
 class VoxelSystem;
-class PhysicsProxy;
+class PhysicsActor;
 class Actor;
 
 //The true physics system
@@ -55,9 +55,9 @@ public:
 	//returns the voxel
 	PhysicsVoxel * BuildVoxel(vec3 voxelCoordinate, double lifeTime=-1.0);
 
-	//Construct a physics proxy for the given actor
-	//once attached, detach() must be called on actor destruction
-	PhysicsProxy * BuildPhysicsProxy(Actor * actor, vec3 * actorPosition);
+	//Used by PhysicsActor to register/unregister itself. Not needed elsewhere
+	void RegisterPhysicsActor(PhysicsActor * toRegister);
+	void UnregisterPhysicsActor(PhysicsActor * toUnregister);
 
 	//Update the physics voxels, called by base frame
 	void Update(double delta, double now);
@@ -65,7 +65,7 @@ public:
 	//Draw all the actors
 	void Draw(ShaderGroup * shaders);
 
-
+	//Save system information
 	CLASS_DECLARATION(PhysicsSystem)
 		CLASS_CONTAINER_MEMBER(allVoxels,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
 	END_DECLARATION

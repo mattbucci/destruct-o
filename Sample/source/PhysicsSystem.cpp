@@ -354,3 +354,10 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 
 	shader->Model.PopMatrix();
 }
+
+void PhysicsSystem::RegisterPhysicsActor(PhysicsActor * toRegister) {
+
+}
+void PhysicsSystem::UnregisterPhysicsActor(PhysicsActor * toUnregister) {
+
+}
