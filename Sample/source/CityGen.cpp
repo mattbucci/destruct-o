@@ -9,7 +9,7 @@ const int citysize = 150;
 const int cityspacing = 250;
 
 int CityGen::BufferIndex(GameTile* tile,int x, int y) {
-	return 4 * (y*tile->Width + x);
+	return 4 * (y*TILE_SIZE + x);
 }
 
 void CityGen::construct_road(GameTile* tile, vec3 start, vec3 end){
@@ -64,7 +64,7 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 	TileCell * cells = tile->Cells;
 	for (int y = -citysize / 2; y < citysize / 2; y++) {
 		for (int x = -citysize / 2; x < citysize / 2; x++) {
-			cells[int((pos.y + y)*tile->Width + pos.x + x)].materialId = 3;
+			cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 3;
 			if ((x-10 + citysize / 2) % 50 == 0 && (y-10 + citysize / 2) % 50 == 0) {
 				construct_building(tile, vec3(pos.x + x, pos.y + y, pos.z));
 			}
@@ -81,70 +81,70 @@ void CityGen::generatecitylocations(GameTile* tile){
 	//We Differentiate the terrain and then blur it 4x to achieve the effect of inteligent city placement
 
 	//this will store the differential blur of the terrain
-	float * analysis = new float[tile->Width*tile->Height];
+	float * analysis = new float[TILE_SIZE*TILE_SIZE];
 
 	//This allows us to access the terrain values
 	TileCell * cells = tile->Cells;
 
 	//our operator ignores edges, so set them to be really high
 	//This also helps keep cities off the edge of tiles because that breaks things
-	for (int y = 0; y < tile->Height; y++) {
+	for (int y = 0; y < TILE_SIZE; y++) {
 		//left
-		analysis[y*tile->Height + 0] = 500;
+		analysis[y*TILE_SIZE + 0] = 500;
 		//right
-		analysis[y*tile->Height + tile->Width - 1] = 500;
+		analysis[y*TILE_SIZE + TILE_SIZE - 1] = 500;
 	}
 	//check the x edge and normalize the height so it matches
-	for (int x = 0; x < tile->Height; x++) {
+	for (int x = 0; x < TILE_SIZE; x++) {
 		//top
-		analysis[0 * tile->Height + x] = 500;
+		analysis[0 * TILE_SIZE + x] = 500;
 		//bottom
-		analysis[(tile->Height - 1)*tile->Height + x] = 500;
+		analysis[(TILE_SIZE - 1)*TILE_SIZE + x] = 500;
 	}
 
 	//Get the slope using the Sobel Operator
-	for (int y = 1; y < tile->Height - 1; y++) {
-		for (int x = 1; x < tile->Width - 1; x++) {
+	for (int y = 1; y < TILE_SIZE - 1; y++) {
+		for (int x = 1; x < TILE_SIZE - 1; x++) {
 			//directions don't actually matter, we just care about magnitude of change
-			float bottomLeftIntensity = cells[tile->Width*(y - 1) + x - 1].height;
-			float topRightIntensity = cells[tile->Width*(y + 1) + x + 1].height;
-			float topLeftIntensity = cells[tile->Width*(y + 1) + x - 1].height;
-			float bottomRightIntensity = cells[tile->Width*(y - 1) + x + 1].height;
-			float leftIntensity = cells[tile->Width*(y)+x - 1].height;
-			float rightIntensity = cells[tile->Width*(y)+x + 1].height;
-			float bottomIntensity = cells[tile->Width*(y - 1) + x].height;
-			float topIntensity = cells[tile->Width*(y + 1) + x].height;
+			float bottomLeftIntensity = cells[TILE_SIZE*(y - 1) + x - 1].height;
+			float topRightIntensity = cells[TILE_SIZE*(y + 1) + x + 1].height;
+			float topLeftIntensity = cells[TILE_SIZE*(y + 1) + x - 1].height;
+			float bottomRightIntensity = cells[TILE_SIZE*(y - 1) + x + 1].height;
+			float leftIntensity = cells[TILE_SIZE*(y)+x - 1].height;
+			float rightIntensity = cells[TILE_SIZE*(y)+x + 1].height;
+			float bottomIntensity = cells[TILE_SIZE*(y - 1) + x].height;
+			float topIntensity = cells[TILE_SIZE*(y + 1) + x].height;
 
 			float h = -topLeftIntensity - 2.0 * topIntensity - topRightIntensity + bottomLeftIntensity + 2.0 * bottomIntensity + bottomRightIntensity;
 			float v = -bottomLeftIntensity - 2.0 * leftIntensity - topLeftIntensity + bottomRightIntensity + 2.0 * rightIntensity + topRightIntensity;
 
 			float mag = glm::length(vec2(h, v));
-			analysis[y*tile->Height + x] = mag;
+			analysis[y*TILE_SIZE + x] = mag;
 		}
 	}
 
 	//Apply Blur 4x
 	for (int i = 0; i < blur; i++) {
-		for (int y = 1; y < tile->Height - 1; y++) {
-			for (int x = 1; x < tile->Width - 1; x++) {
+		for (int y = 1; y < TILE_SIZE - 1; y++) {
+			for (int x = 1; x < TILE_SIZE - 1; x++) {
 				//directions don't actually matter, we just care about magnitude of change
 
-				float bottomLeftIntensity = analysis[tile->Width*(y - 1) + x - 1];
-				float topRightIntensity = analysis[tile->Width*(y + 1) + x + 1];
-				float topLeftIntensity = analysis[tile->Width*(y + 1) + x - 1];
-				float bottomRightIntensity = analysis[tile->Width*(y - 1) + x + 1];
-				float leftIntensity = analysis[tile->Width*(y)+x - 1];
-				float rightIntensity = analysis[tile->Width*(y)+x + 1];
-				float bottomIntensity = analysis[tile->Width*(y - 1) + x];
-				float topIntensity = analysis[tile->Width*(y + 1) + x];
+				float bottomLeftIntensity = analysis[TILE_SIZE*(y - 1) + x - 1];
+				float topRightIntensity = analysis[TILE_SIZE*(y + 1) + x + 1];
+				float topLeftIntensity = analysis[TILE_SIZE*(y + 1) + x - 1];
+				float bottomRightIntensity = analysis[TILE_SIZE*(y - 1) + x + 1];
+				float leftIntensity = analysis[TILE_SIZE*(y)+x - 1];
+				float rightIntensity = analysis[TILE_SIZE*(y)+x + 1];
+				float bottomIntensity = analysis[TILE_SIZE*(y - 1) + x];
+				float topIntensity = analysis[TILE_SIZE*(y + 1) + x];
 
 				double top = topIntensity + topLeftIntensity + topRightIntensity;
-				double middle = analysis[y*tile->Height + x] + leftIntensity + rightIntensity;
+				double middle = analysis[y*TILE_SIZE + x] + leftIntensity + rightIntensity;
 				double bottom = bottomIntensity + bottomLeftIntensity + bottomRightIntensity;
 
 				float average = (top + middle + bottom) / 9;
 
-				analysis[y*tile->Height + x] = average;
+				analysis[y*TILE_SIZE + x] = average;
 			}
 		}
 	}
@@ -154,9 +154,9 @@ void CityGen::generatecitylocations(GameTile* tile){
 	float noisetolerance = 3;
 	float heighttolerance = 5;
 	//figure out where to put the city but make sure it doesn't go off the edge
-	for (int y = citysize/2+10; y < tile->Height - (citysize/2+10); y++) {
-		for (int x = citysize/2+10; x < tile->Width - (citysize/2+10); x++) {
-			if (analysis[y*tile->Height + x] < noisetolerance) {
+	for (int y = citysize/2+10; y < TILE_SIZE - (citysize/2+10); y++) {
+		for (int x = citysize/2+10; x < TILE_SIZE - (citysize/2+10); x++) {
+			if (analysis[y*TILE_SIZE + x] < noisetolerance) {
 
 				//check if we're too close to another city
 				bool tooclose = false;
@@ -166,10 +166,10 @@ void CityGen::generatecitylocations(GameTile* tile){
 				}
 
 				if (!tooclose) {
-					if (abs(cells[(y - citysize / 2)*tile->Height + x - citysize / 2].height - cells[(y + citysize / 2)*tile->Height + x - citysize / 2].height) < heighttolerance &&
-						abs(cells[(y - citysize / 2)*tile->Height + x + citysize / 2].height - cells[(y + citysize / 2)*tile->Height + x + citysize / 2].height) < heighttolerance &&
-						abs(cells[(y + citysize / 2)*tile->Height + x + citysize / 2].height - cells[(y + citysize / 2)*tile->Height + x - citysize / 2].height) < heighttolerance &&
-						abs(cells[(y - citysize / 2)*tile->Height + x + citysize / 2].height - cells[(y - citysize / 2)*tile->Height + x - citysize / 2].height) < heighttolerance
+					if (abs(cells[(y - citysize / 2)*TILE_SIZE + x - citysize / 2].height - cells[(y + citysize / 2)*TILE_SIZE + x - citysize / 2].height) < heighttolerance &&
+						abs(cells[(y - citysize / 2)*TILE_SIZE + x + citysize / 2].height - cells[(y + citysize / 2)*TILE_SIZE + x + citysize / 2].height) < heighttolerance &&
+						abs(cells[(y + citysize / 2)*TILE_SIZE + x + citysize / 2].height - cells[(y + citysize / 2)*TILE_SIZE + x - citysize / 2].height) < heighttolerance &&
+						abs(cells[(y - citysize / 2)*TILE_SIZE + x + citysize / 2].height - cells[(y - citysize / 2)*TILE_SIZE + x - citysize / 2].height) < heighttolerance
 						) {
 						//make some cities
 						tile->Cities.push_back(vec3(x, y, 0));
@@ -185,7 +185,7 @@ void CityGen::generatecitylocations(GameTile* tile){
 		vec3 pos = tile->Cities[i];
 		for (int y = -citysize / 2; y < citysize / 2; y++) {
 			for (int x = -citysize / 2; x < citysize / 2; x++) {
-				cells[int((pos.y + y)*tile->Width + pos.x + x)].height = cells[int((pos.y)*tile->Width + pos.x)].height;
+				cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].height = cells[int((pos.y)*TILE_SIZE + pos.x)].height;
 			}
 		}
 	}
@@ -198,21 +198,21 @@ void CityGen::generatecitylocations(GameTile* tile){
 		//walk along the edge, for each edge walk outward and normalize
 		for (int y = pos.y - citysize/2; y < pos.y + citysize/2; y++) {
 			//left
-			analysis[y*tile->Height + tile->Width - 1] = 500;
+			analysis[y*TILE_SIZE + TILE_SIZE - 1] = 500;
 
 			//right
-			analysis[y*tile->Height + tile->Width - 1] = 500;
+			analysis[y*TILE_SIZE + TILE_SIZE - 1] = 500;
 		}
 		for (int x = pos.x - citysize / 2; x < pos.x + citysize / 2; x++) {
 			//top
-			analysis[0 * tile->Height + x] = 500;
+			analysis[0 * TILE_SIZE + x] = 500;
 			//bottom
-			analysis[(tile->Height - 1)*tile->Height + x] = 500;
+			analysis[(TILE_SIZE - 1)*TILE_SIZE + x] = 500;
 		}
 	}
 	*/
-	tile->CalculateStackSizes(1, 1, tile->Width-1, tile->Height-1);
-	delete(analysis);
+	tile->UpdateTileSection(1, 1, TILE_SIZE-1, TILE_SIZE-1);
+	delete [] analysis;
 }
 void CityGen::GenerateCities(GameTile * tile) {
 	generatecitylocations(tile);

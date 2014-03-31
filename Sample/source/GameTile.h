@@ -6,25 +6,31 @@
 #include "TileCell.h"
 #include "Structure.h"
 
+#define TILE_SIZE 256
+
 class GameTile {
 	GameTile();
-	GameTile(int width, int height);
+	//Recalculate stack heights for the given region of tile cells
+	static void CalculateStackSizes(TileCell * cells, unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy);
+	//Populates a large cell array
+	//from a small cell array given the region in the small cell array that is given
+	static void DownsizeTile(TileCell * smallCells, TileCell * largeCells, unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy);
 public:
 	~GameTile();
 
 	//Create Empty Tile (Allocated but Uninitialized Terrain Data)
-	static GameTile * CreateGameTile(int width, int height, int x, int y);
+	static GameTile * CreateGameTile(int x, int y);
 	//Create Placeholder Tile (Tile_X & Tile_Y Initialized ONLY)
 	static GameTile * CreatePlaceholderTile(int x, int y);
 	//Load a game tile from disk
 	static GameTile * LoadTileFromDisk(string tileImagePath);
 	//Load a game tile from memory
-	static GameTile * LoadTileFromMemory(const vector<unsigned char> & tileData, unsigned int tileWidth, unsigned int tileHeight);
+	static GameTile * LoadTileFromMemory(const vector<unsigned char> & tileData);
 	//Load a game tile from Memory (into existing GameTile)
 	static void LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tileData, GameTile * newTile);
 
 	//Recalculate stack heights for the given region of tile cells
-	void CalculateStackSizes(unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy);
+	void UpdateTileSection(unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy);
 
 	//Save the tile to disk
 	void SaveTile(string saveName);
@@ -39,9 +45,12 @@ public:
 	void Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vector<vec4> & removedVoxels);
 
 	//Loaded tile information is public for fastest access
+	//An array of cells size 1 of size width*height
 	TileCell * Cells;
-	int Width;
-	int Height;
+	//An array of cells size 4 of size (width/4)*(height/4)
+	TileCell * MediumCells;
+	//An array of cells size 16 of size (width/16)*(height/16)
+	TileCell * LargeCells;
 	int tile_x;
 	int tile_y;
 
