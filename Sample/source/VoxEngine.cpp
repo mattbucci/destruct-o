@@ -113,7 +113,7 @@ void VoxEngine::Start() {
 	//Setup sensible basics for opengl
 	glEnable ( GL_DEPTH_TEST );
 	glDepthFunc(GL_LEQUAL);
-	glClearColor(0,0,0,1.0);
+	glClearColor(1,1,1,1.0);
 
 	//Enable basic alpha blending
 	glEnable(GL_BLEND);

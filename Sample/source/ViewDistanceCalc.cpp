@@ -49,7 +49,7 @@ void ViewDistanceCalc::CalculateAndApply(GL3DProgram * shader,float currentFPS) 
 }
 
 //Retrieve a pair of coordinates representing the appropriate draw section
-pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 userPosition, float userAngle) {
+pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 userPosition, float userAngle, float viewDistance) {
 	//New strategy for determining draw box
 	//Create a rectangle with the user on the bottom center, with the top of the rectangle
 	//far away from the user in his view direction
@@ -57,7 +57,7 @@ pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 use
 	//to choose a min/max point of the voxel draw rectangle
 
 	//Width code is highly experimental and will certainly have to be played with
-	float rectHeight = GetViewDistance(); //the full length of the rectangle
+	float rectHeight = viewDistance; //the full length of the rectangle
 	float rectHalfWidth = pow(rectHeight/40.0f,3.0f)+rectHeight/5.0f+7.0f; //Half the width of the rectangle
 	float rectHalfDiagonal =(float)( M_PI/2.0f-atan2(rectHeight,rectHalfWidth)); //The angle of the diagonal (to the center of the width side)
 	float rectDiagonalLength = sqrt(rectHalfWidth*rectHalfWidth+rectHeight*rectHeight);
@@ -85,6 +85,22 @@ pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 use
 	//minPoint = glm::max(vec2(),minPoint);
 	//maxPoint = glm::min(mapExtents-vec2(1,1),maxPoint);
 	return pair<vec2,vec2>(minPoint,maxPoint);
+}
+
+ViewDistanceCalc::drawRegions ViewDistanceCalc::GetDrawRegions(vec2 playerPosition, float playerFacing) {
+	drawRegions drawSquares;
+	//Find the height of each square
+	float lowDetail = GetViewDistance();
+	float mediumDetail = lowDetail*.8 - 10;
+	float highDetail = 10;
+
+	//Calculate all three boxes
+	drawSquares.HighDetail = VoxDrawCoordinates(playerPosition,playerFacing,highDetail);
+	drawSquares.MediumDetail = VoxDrawCoordinates(playerPosition,playerFacing,mediumDetail);
+	drawSquares.LowDetail = VoxDrawCoordinates(playerPosition,playerFacing,lowDetail);
+
+	return drawSquares;
+
 }
 
 float ViewDistanceCalc::GetViewDistance() {

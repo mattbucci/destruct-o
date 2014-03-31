@@ -180,9 +180,7 @@ void BaseFrame::Draw(double width, double height) {
 	//The player is 3 height right now
 	pos.z += 2.5;
 	//Calculate voxel draw rectangle
-	pair<vec2,vec2> drawRectangle = ViewDistance.VoxDrawCoordinates(viewPortSize,vec2(pos),FirstPerson->GetAngleVector().x/180.0f*(float)M_PI);
-	vec2 minPoint = drawRectangle.first;
-	vec2 maxPoint = drawRectangle.second;
+	ViewDistanceCalc::drawRegions detailRegions = ViewDistance.GetDrawRegions(vec2(pos),FirstPerson->GetAngleVector().x/180.0f*(float)M_PI);
 
 	//Draw the frame
 	//camera draw also sets up world light
@@ -190,7 +188,7 @@ void BaseFrame::Draw(double width, double height) {
 	Camera.Draw(shaders3d);
 	
 	// Draw voxels
-	Voxels.Draw(shaders3d,pos,(int)minPoint.x,(int)minPoint.y,(int)maxPoint.x,(int)maxPoint.y);
+	Voxels.Draw(shaders3d,pos,detailRegions.HighDetail,detailRegions.MediumDetail,detailRegions.LowDetail);
 	//The physics system uses the same texture that the voxels above binds every time it draws
 	//so it must always immediately follow Voxels.draw()
 	Physics.Draw(shaders);
