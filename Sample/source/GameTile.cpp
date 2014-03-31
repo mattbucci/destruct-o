@@ -57,6 +57,20 @@ GameTile * GameTile::LoadTileFromDisk(string tileImagePath) {
 	cout << "\tLoaded image file, now converting to game tile data.\n";
 	return LoadTileFromMemory(tileData);
 }
+
+//Patch edge heights to be realistic values
+void GameTile::PatchStackEdges(TileCell * cellList, int cellWidth) {
+	//Patch edge stack heights to be 2 (3 height) to cover most holes
+	for (unsigned int i = 0; i < cellWidth; i++) {
+		cellList[i].stackHeight = 2;
+		cellList[i+(cellWidth-1)*cellWidth].stackHeight = 2;
+	}
+	for (unsigned int i = 0; i < cellWidth; i++) {
+		cellList[i*cellWidth + 0].stackHeight = 2;
+		cellList[i*cellWidth + cellWidth - 1].stackHeight = 2;
+	}
+}
+
 //Load a game tile from memory
 //pending
 GameTile * GameTile::LoadTileFromMemory(const vector<unsigned char> & tileData) {
@@ -72,17 +86,7 @@ GameTile * GameTile::LoadTileFromMemory(const vector<unsigned char> & tileData) 
 	}
 
 	cout << "\tLoaded game tile data. Now building stacks.\n";
-	tile->UpdateTileSection(1,1,TILE_SIZE-1,TILE_SIZE-1);
-
-	//Patch edge stack heights to be 2 (3 height) to cover most holes
-	for (unsigned int i = 0; i < TILE_SIZE; i++) {
-		tile->Cells[i].stackHeight = 2;
-		tile->Cells[i+(TILE_SIZE-1)*TILE_SIZE].stackHeight = 2;
-	}
-	for (unsigned int i = 0; i < TILE_SIZE; i++) {
-		tile->Cells[i*TILE_SIZE + 0].stackHeight = 2;
-		tile->Cells[i*TILE_SIZE + TILE_SIZE - 1].stackHeight = 2;
-	}
+	tile->UpdateTileSection(0,0,TILE_SIZE,TILE_SIZE);
 
 	cout << "\tTile Load Complete.\n";
 	return tile;
@@ -97,7 +101,7 @@ void GameTile::LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tile
 		newTile->Cells[i/4].stackHeight = 0;
 	}
 
-	newTile->UpdateTileSection(1,1,TILE_SIZE-1,TILE_SIZE-1);
+	newTile->UpdateTileSection(0,0,TILE_SIZE,TILE_SIZE);
 	for (int i = 0; i < TILE_SIZE; i++) {
 		newTile->Cells[i].stackHeight = 2;
 		newTile->Cells[i+(TILE_SIZE-1)*TILE_SIZE].stackHeight = 2;
@@ -137,7 +141,7 @@ void GameTile::CalculateStackSizes(TileCell * cells, unsigned int width, unsigne
 //Populates a large cell array
 //from a small cell array given the region in the small cell array that is given
 //there will always be one large cell for every 4 small cells
-void GameTile:: (TileCell * smallCells, TileCell * largeCells, unsigned int smallWidth, unsigned int & rx, unsigned int & ry, unsigned int & tox, unsigned int & toy) {
+void GameTile::DownsizeTile(TileCell * smallCells, TileCell * largeCells, unsigned int smallWidth, unsigned int & rx, unsigned int & ry, unsigned int & tox, unsigned int & toy) {
 	int largeWidth = smallWidth/4;
 
 	//Round the region to the closest 4 by 4 region
@@ -177,9 +181,9 @@ void GameTile:: (TileCell * smallCells, TileCell * largeCells, unsigned int smal
 		}
 	}
 
-	for (unsigned int y = largeY; y < largeToY; y++)
+	/*for (unsigned int y = largeY; y < largeToY; y++)
 		for (unsigned int x = largeX; x < largeToX; x++)
-			_ASSERTE(largeCells[x+largeWidth*y].height != 0);
+			_ASSERTE(largeCells[x+largeWidth*y].height != 0);*/
 
 	//Resize coordinates
 	rx = largeX;
@@ -191,8 +195,16 @@ void GameTile:: (TileCell * smallCells, TileCell * largeCells, unsigned int smal
 
 //Recalculate stack heights for the given region of tile cells
 void GameTile::UpdateTileSection(unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy) {
+	//If the full tile is being updated apply stack edge patching
+	if ((rx == 0) && (ry == 0) && (tox == TILE_SIZE) && (toy == TILE_SIZE)) {
+		PatchStackEdges(Cells,TILE_SIZE);
+		PatchStackEdges(MediumCells,TILE_SIZE/4);
+		PatchStackEdges(LargeCells,TILE_SIZE/16);
+	}
+
+
 	//Calculate the finest grain stack sizes
-	CalculateStackSizes(Cells,TILE_SIZE,rx,ry,tox,toy);
+	CalculateStackSizes(Cells,TILE_SIZE,rx+1,ry+1,tox-1,toy-1);
 
 	//Decrease size to second level
 	DownsizeTile(Cells,MediumCells,TILE_SIZE,rx,ry,tox,toy);
@@ -201,7 +213,7 @@ void GameTile::UpdateTileSection(unsigned int rx, unsigned int ry, unsigned int 
 	CalculateStackSizes(MediumCells,TILE_SIZE/4,rx+1,ry+1,tox-1,toy-1);
 
 	//Decrease size to third level
-	DownsizeTile(Cells,LargeCells,TILE_SIZE/4,rx,ry,tox,toy);
+	DownsizeTile(MediumCells,LargeCells,TILE_SIZE/4,rx,ry,tox,toy);
 	//Resize limits to be the limits of the large tile
 	//Calculate the large grain stack sizes
 	CalculateStackSizes(LargeCells,TILE_SIZE/16,rx+1,ry+1,tox-1,toy-1);
@@ -307,12 +319,15 @@ void GameTile::Render(GL3DProgram * shader, VoxelDrawSystem * renderer, IntRect 
 	rect /= scale;
 	tileSize = TILE_SIZE/scale;
 
+	_ASSERTE(tileSize >= rect.EndX);
+	_ASSERTE(tileSize >= rect.EndY);
+
 	//offset rendering for tile location
 	shader->Model.PushMatrix();
 	shader->Model.Translate(vec3(tile_x * TILE_SIZE, tile_y * TILE_SIZE, 0));
 	//Scale for level of detail requested
 	shader->Model.PushMatrix();
-	shader->Model.Translate(scale,scale,scale);
+	shader->Model.Scale(scale,scale,scale);
 	shader->Model.Apply();
 
 	//First draw the voxels
@@ -327,7 +342,6 @@ void GameTile::Render(GL3DProgram * shader, VoxelDrawSystem * renderer, IntRect 
 
 			//Get position
 			vec3 pos = vec3(x, y, cell.height);
-			int oHeight = Cells[TILE_SIZE*y*4+x*4].height;
 			int8_t stack = (int8_t)cell.stackHeight;
 
 			//Todo: fix broken voxel count

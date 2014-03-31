@@ -126,6 +126,14 @@ struct rectGroup {
 	int usedParts;
 };
 static rectGroup subtract(IntRect outer, IntRect inner) {
+	//If the inner region is empty, the outer region is the intersection
+	if ((inner.StartX == inner.EndX) || (inner.StartY == inner.EndY)) {
+		rectGroup grp;
+		grp.usedParts = 1;
+		grp.parts[0] = outer;
+		return grp;
+	}
+	//If the inner region is not empty there are four regions that could describe the intersection
 	rectGroup grp;
 	grp.usedParts = 0;
 	if (outer.StartY < inner.StartY)
@@ -165,7 +173,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, IntRect highDetail, I
 		IntRect tileRegion(current_tile.tile_x * TILE_SIZE,current_tile.tile_y * TILE_SIZE,
 			current_tile.tile_x * TILE_SIZE + TILE_SIZE,current_tile.tile_y * TILE_SIZE + TILE_SIZE);
 		
-
+	
 		//Intersect it with the regions you're supposed to be drawing
 		IntRect high = highDetail;
 		IntRect medium = mediumDetail;
@@ -184,18 +192,24 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, IntRect highDetail, I
 		TileCell * cells = current_tile.MediumCells;
 
 		//Skip zero length segments
-		if ((high.StartX == high.EndX) || (high.StartY == high.EndY))
-			return;
-
-
-		//Render the given region of the tile in high detail
-		current_tile.Render(shader,renderer,medium,GameTile::DETAIL_LOW);
+		if ((high.StartX != high.EndX) && (high.StartY != high.EndY)) {
+			//Render the given region of the tile in high detail
+			current_tile.Render(shader,renderer,high,GameTile::DETAIL_HIGH);
+		}
 		
-		if ((medium.StartX == medium.EndX) || (medium.StartY == medium.EndY))
-			return;
+		//Check if the medium region is valid
+		if ((medium.StartX != medium.EndX) && (medium.StartY != medium.EndY)) {
+			//Render the medium region of the tile
+			Draw(shader,&current_tile,GameTile::DETAIL_MEDIUM,medium,high);
+		}
 
-		//Render the medium region of the tile
-		//Draw(shader,&current_tile,GameTile::DETAIL_MEDIUM,medium,high);
+		//Check if the low region is valid
+		if ((low.StartX != low.EndX) && (low.StartY != low.EndY)) {
+			//Render the low region of the tile
+			Draw(shader,&current_tile,GameTile::DETAIL_LOW,low,medium);
+		}
+
+
 	});
 
 }

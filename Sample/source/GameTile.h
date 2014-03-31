@@ -20,6 +20,9 @@ class GameTile {
 	//from a small cell array given the region in the small cell array that is given
 	//there will always be one large cell for every 4 small cells
 	static void DownsizeTile(TileCell * smallCells, TileCell * largeCells, unsigned int smallWidth, unsigned int & rx, unsigned int & ry, unsigned int & tox, unsigned int & toy);
+
+	//Patch edge heights to be realistic values
+	static void PatchStackEdges(TileCell * cellList, int cellWidth);
 public:
 	~GameTile();
 

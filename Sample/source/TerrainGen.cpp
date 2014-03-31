@@ -146,7 +146,7 @@ void TerrainGen::generateTerrain(GameTile * tile) {
 	tilecontainer.assign(rawtile, rawtile + (tilex * tiley * 4));
 	//TODO Determine tile type based on terrain properties
 	//Free Generatored Terrain Data
-	delete rawtile;
+	delete [] rawtile;
 
 	//Load Tile Data into GameTile
 	GameTile::LoadTileFromMemoryIntoExisting(tilecontainer, tile);

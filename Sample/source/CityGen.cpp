@@ -211,7 +211,7 @@ void CityGen::generatecitylocations(GameTile* tile){
 		}
 	}
 	*/
-	tile->UpdateTileSection(1, 1, TILE_SIZE-1, TILE_SIZE-1);
+	tile->UpdateTileSection(0, 0, TILE_SIZE, TILE_SIZE);
 	delete [] analysis;
 }
 void CityGen::GenerateCities(GameTile * tile) {
