@@ -7,24 +7,19 @@ PauseWindow::PauseWindow(void)
 	position = Rect(0, 0, 800, 600);
 	color = vec4(0.33f, 0.33f, 0.33f, 0.75f);
 
-	//Set up Children
+	//Set up Main Menu
 	menuRect.position = Rect(0, 0, 320, 420);
 	menuRect.vPin = menuRect.hPin = Control::CENTER;
 	menuRect.SetTitle("Menu");
 	menuRect.color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	//Set up Children
+	//Set up Main Menu Children
 	save.vPin = load.vPin = options.vPin = saveandquit.vPin = Control::CENTER;
 	save.hPin = load.hPin = options.hPin = saveandquit.hPin = Control::CENTER;
 	save.position =			Rect(0, -40 + 50 * -2, 300, 40);
 	load.position =			Rect(0, -40 + 50 * -1, 300, 40);
-	options.position =		Rect(0, -40 + 50 * -0, 300, 40);
-	saveandquit.position =	Rect(0, -40 + 50 * 1, 300, 40);
-	save.color
-	save.normalColor =				vec4(0.33f, 0.33f, 0.33f, 1.0f);
-	load.normalColor =				vec4(0.33f, 0.33f, 0.33f, 1.0f);
-	options.normalCcolor =			vec4(0.33f, 0.33f, 0.33f, 1.0f);
-	saveandquit.normalCcolor =		vec4(0.33f, 0.33f, 0.33f, 1.0f);
+	options.position =		Rect(0, -40 + 50 * 0, 300, 40);
+	saveandquit.position =	Rect(0, 180, 300, 40);
 	save.SetText("Save");
 	load.SetText("Load");
 	options.SetText("Options");
@@ -36,9 +31,66 @@ PauseWindow::PauseWindow(void)
 	menuRect.AddControl(&load);
 	menuRect.AddControl(&options);
 	menuRect.AddControl(&saveandquit);
+
+	//Subscribe Main Menu Buttons to Actions
+	Subscribe<void(Button*)>(&save.EventClicked, [this](Button * b) {
+		cout << "\'Save\' Button Clicked" << endl;
+	});
+	Subscribe<void(Button*)>(&load.EventClicked, [this](Button * b) {
+		cout << "\'Load\' Button Clicked" << endl;
+	});
+	Subscribe<void(Button*)>(&options.EventClicked, [this](Button * b) {
+		this->showOptsMenu();
+	});
+	Subscribe<void(Button*)>(&saveandquit.EventClicked, [this](Button * b) {
+		cout << "\'Save & Quit\' Button Clicked" << endl;
+	});
+
+	//Set up Options Menu
+	optsRect.position = Rect(0, 0, 320, 420);
+	optsRect.vPin = optsRect.hPin = Control::CENTER;
+	optsRect.SetTitle("Options");
+	optsRect.color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	optsRect.SetVisible(false);
+
+	//Set up Options Menu Children
+	optsViewdistanceUp.vPin = optsViewdistanceDown.vPin = optsClose.vPin = Control::CENTER;
+	optsViewdistanceUp.hPin = optsViewdistanceDown.hPin = optsClose.hPin = Control::CENTER;
+	optsViewdistanceUp.position =	Rect(130, -40 + 50 * -2, 40, 40);
+	optsViewdistanceDown.position =	Rect(-130, -40 + 50 * -2, 40, 40);
+	optsClose.position =			Rect(0, 180, 300, 40);
+	optsViewdistanceUp.SetText("+");
+	optsViewdistanceDown.SetText("-");
+	optsClose.SetText("Back");
+
+	//Add Controls
+	AddChild(&optsRect);
+	optsRect.AddControl(&optsViewdistanceUp);
+	optsRect.AddControl(&optsViewdistanceDown);
+	optsRect.AddControl(&optsClose);
+
+	//Subscribe Options Menu Buttons to Actions
+	Subscribe<void(Button*)>(&optsViewdistanceUp.EventClicked, [this](Button * b) {
+		cout << "\'Increase Viewdistance\' Button Clicked" << endl;
+	});
+	Subscribe<void(Button*)>(&optsViewdistanceDown.EventClicked, [this](Button * b) {
+		cout << "\'Decrease Viewdistance\' Button Clicked" << endl;
+	});
+	Subscribe<void(Button*)>(&optsClose.EventClicked, [this](Button * b) {
+		this->hideOptsMenu();
+	});
 }
 
 
 PauseWindow::~PauseWindow(void)
 {
+}
+
+
+void PauseWindow::showOptsMenu() {
+	optsRect.SetVisible(true);
+}
+
+void PauseWindow::hideOptsMenu() {
+	optsRect.SetVisible(false);
 }
