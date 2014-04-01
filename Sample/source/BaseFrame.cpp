@@ -9,6 +9,7 @@
 #include "Window.h"
 #include "Button.h"
 #include "Listbox.h"
+#include "PauseWindow.h"
 
 #include "OS.h"
 
@@ -104,6 +105,8 @@ void BaseFrame::OnFrameFocus() {
 #endif
 	notification = Notification::init();
 	Controls.AddWindow(notification);
+	Window* pauseWindow = new PauseWindow();
+	Controls.AddWindow(pauseWindow);
 }
 
 void BaseFrame::Build() {
