@@ -7,13 +7,10 @@ class Notification : public Window
 {
 	Label* text;
 
+public:
 	Notification(void);
 	~Notification(void);
 
-public:
-	static Notification* Singleton;
-
-	static Notification* init();
 	void notify(string msg);
 	void Draw(GL2DProgram * shader) override;
 };

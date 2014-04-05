@@ -22,6 +22,8 @@ public:
 	PauseWindow(void);
 	~PauseWindow(void);
 
+	bool toggle();
+
 private:
 	void showOptsMenu();
 	void hideOptsMenu();

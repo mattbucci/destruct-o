@@ -9,7 +9,6 @@
 #include "Window.h"
 #include "Button.h"
 #include "Listbox.h"
-#include "PauseWindow.h"
 
 #include "OS.h"
 
@@ -39,6 +38,14 @@ BaseFrame::~BaseFrame() {
 
 }
 
+
+void BaseFrame::ToggleMenu() {
+	if(pauseWindow->toggle()) {
+		FirstPerson->Enable(false);
+	} else {
+		FirstPerson->Enable(true);
+	}
+}
 
 //synchronously saves the game
 bool BaseFrame::Save(string saveFile) {
@@ -103,9 +110,9 @@ void BaseFrame::OnFrameFocus() {
 	demoWindow = new DemoWindow(demo);
 	Controls.AddWindow(demoWindow);
 #endif
-	notification = Notification::init();
+	notification = new Notification();
 	Controls.AddWindow(notification);
-	Window* pauseWindow = new PauseWindow();
+	pauseWindow = new PauseWindow();
 	Controls.AddWindow(pauseWindow);
 }
 

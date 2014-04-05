@@ -6,6 +6,7 @@ PauseWindow::PauseWindow(void)
 	//Set up Self
 	position = Rect(0, 0, 800, 600);
 	color = vec4(0.33f, 0.33f, 0.33f, 0.75f);
+	SetVisible(false);
 
 	//Set up Main Menu
 	menuRect.position = Rect(0, 0, 320, 420);
@@ -31,6 +32,7 @@ PauseWindow::PauseWindow(void)
 	menuRect.AddControl(&load);
 	menuRect.AddControl(&options);
 	menuRect.AddControl(&saveandquit);
+	menuRect.SetVisible(false);
 
 	//Subscribe Main Menu Buttons to Actions
 	Subscribe<void(Button*)>(&save.EventClicked, [this](Button * b) {
@@ -86,6 +88,17 @@ PauseWindow::~PauseWindow(void)
 {
 }
 
+bool PauseWindow::toggle() {
+	if(menuRect.GetVisible()) {
+		SetVisible(false);
+		menuRect.SetVisible(false);
+		return false;
+	} else {
+		SetVisible(true);
+		menuRect.SetVisible(true);
+		return true;
+	}
+}
 
 void PauseWindow::showOptsMenu() {
 	optsRect.SetVisible(true);
