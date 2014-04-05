@@ -1,8 +1,14 @@
 #include "PauseWindow.h"
+#include "BaseFrame.h";
 
+PauseWindow::PauseWindow(void) {
 
-PauseWindow::PauseWindow(void)
+}
+
+PauseWindow::PauseWindow(BaseFrame* parent)
 {
+	this->parent = parent;
+
 	//Set up Self
 	position = Rect(0, 0, 800, 600);
 	color = vec4(0.33f, 0.33f, 0.33f, 0.75f);
@@ -37,15 +43,27 @@ PauseWindow::PauseWindow(void)
 	//Subscribe Main Menu Buttons to Actions
 	Subscribe<void(Button*)>(&save.EventClicked, [this](Button * b) {
 		cout << "\'Save\' Button Clicked" << endl;
+		if(this->parent->Save("default")) {
+			cout << "Save Successful!" << endl;
+		} else {
+			cout << "Save Unsuccessful." << endl;
+		}
 	});
 	Subscribe<void(Button*)>(&load.EventClicked, [this](Button * b) {
 		cout << "\'Load\' Button Clicked" << endl;
+		if(this->parent->Load("default")) {
+			cout << "Load Successful!" << endl;
+		} else {
+			cout << "Load Unsuccessful." << endl;
+		}
 	});
 	Subscribe<void(Button*)>(&options.EventClicked, [this](Button * b) {
 		this->showOptsMenu();
 	});
 	Subscribe<void(Button*)>(&saveandquit.EventClicked, [this](Button * b) {
 		cout << "\'Save & Quit\' Button Clicked" << endl;
+		this->parent->Save("default");
+		exit(0);
 	});
 
 	//Set up Options Menu

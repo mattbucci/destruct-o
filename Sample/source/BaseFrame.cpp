@@ -86,7 +86,7 @@ bool BaseFrame::Load(string saveFile) {
 	//Deserialize the data
 	Savable::Deserialize(fileData,this);
 
-	return 0;
+	return true;
 }
 
 void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
@@ -112,7 +112,7 @@ void BaseFrame::OnFrameFocus() {
 #endif
 	notification = new Notification();
 	Controls.AddWindow(notification);
-	pauseWindow = new PauseWindow();
+	pauseWindow = new PauseWindow(this);
 	Controls.AddWindow(pauseWindow);
 }
 

@@ -3,8 +3,12 @@
 #include "Window.h"
 #include "Button.h"
 
+class BaseFrame;
+
 class PauseWindow : public Window
 {
+	BaseFrame* parent;
+
 	//Main Menu Elements
 	Window menuRect;
 	Button save;
@@ -18,8 +22,9 @@ class PauseWindow : public Window
 	Button optsViewdistanceDown;
 	Button optsClose;
 
-public:
 	PauseWindow(void);
+public:
+	PauseWindow(BaseFrame* parent);
 	~PauseWindow(void);
 
 	bool toggle();

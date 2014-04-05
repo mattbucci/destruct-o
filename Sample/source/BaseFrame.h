@@ -28,7 +28,7 @@ class BaseFrame : public GameSystem, public Savable {
 	Demo * demo;
 	DemoWindow * demoWindow;
 	Notification * notification;
-	PauseWindow* pauseWindow;
+	PauseWindow * pauseWindow;
 protected:
 	//Overload to tell the save system about handles created in the system
 	virtual void Load(Json::Value & parentValue, LoadData & loadData);
