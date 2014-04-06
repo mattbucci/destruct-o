@@ -295,7 +295,7 @@ void GameTile::SaveTile(string saveName) {
 
 //Render the given region using the specified detail level
 //the rect should be tile-relative coordinates
-void GameTile::Render(GL3DProgram * shader, VoxelDrawSystem * renderer, IntRect rect, DetailLevel detail) {
+void GameTile::Render(GL3DProgram * shader, VoxelDrawSystem * renderer, IntRect rect, DetailLevel detail, int & voxelCount) {
 	unsigned int tileSize;
 	TileCell * cells;
 	unsigned int scale;
@@ -345,7 +345,7 @@ void GameTile::Render(GL3DProgram * shader, VoxelDrawSystem * renderer, IntRect 
 			int8_t stack = (int8_t)cell.stackHeight;
 
 			//Todo: fix broken voxel count
-			//voxelCount += stack + 1;
+			voxelCount += stack + 1;
 
 			//For now use raw tile % 16 to map all tiles to be within the 16 valid materials
 			//Note: This is a really bad place for a virtual function call
@@ -361,7 +361,7 @@ void GameTile::Render(GL3DProgram * shader, VoxelDrawSystem * renderer, IntRect 
 	//Undo scaling
 	shader->Model.PopMatrix();
 	shader->Model.Apply();
-
+	/*
 	//For now only render structures in DETAIL_HIGH
 	//should render boxes in other detail levels
 	if (detail == DETAIL_HIGH) {
@@ -405,7 +405,7 @@ void GameTile::Render(GL3DProgram * shader, VoxelDrawSystem * renderer, IntRect 
 				}
 			}
 		}	
-	}
+	}*/
 	//Undo tile translation
 	shader->Model.PopMatrix();
 }

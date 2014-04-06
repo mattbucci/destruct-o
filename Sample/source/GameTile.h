@@ -61,7 +61,7 @@ public:
 
 	//Render the given region using the specified detail level
 	//the rect should be tile-relative coordinates
-	void Render(GL3DProgram * shader, VoxelDrawSystem * drawSystem, IntRect rect, DetailLevel detail);
+	void Render(GL3DProgram * shader, VoxelDrawSystem * drawSystem, IntRect rect, DetailLevel detail, int & voxelCount);
 
 	//Loaded tile information is public for fastest access
 	//An array of cells size 1 of size width*height

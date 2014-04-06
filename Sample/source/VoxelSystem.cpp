@@ -151,7 +151,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, GameTile * tile, GameTile::DetailLe
 	//Find the group of regions representing the outer region
 	rectGroup group = subtract(outerRegion,innerRegion);
 	for (int i = 0; i < group.usedParts; i++) 
-		tile->Render(shader,renderer,group.parts[i],detailLevel);
+		tile->Render(shader,renderer,group.parts[i],detailLevel,voxelCount);
 }
 
 //Draw the voxels in a region
@@ -176,27 +176,25 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, IntRect highDetail, I
 	
 		//Intersect it with the regions you're supposed to be drawing
 		IntRect high = highDetail;
-		IntRect medium = mediumDetail;
-		IntRect low = lowDetail;
+		//IntRect medium = mediumDetail;
+		//IntRect low = lowDetail;
 		high.Intersect(tileRegion);
-		medium.Intersect(tileRegion);
-		low.Intersect(tileRegion);
+		//medium.Intersect(tileRegion);
+		//low.Intersect(tileRegion);
 
 
 		//Now offset the regions by the tile position so that it is relative to the tile
 		vec2 tileOffset = vec2(current_tile.tile_x * TILE_SIZE,current_tile.tile_y * TILE_SIZE);
 		high -= tileOffset;
-		medium -= tileOffset;
-		low -= tileOffset;
-
-		TileCell * cells = current_tile.MediumCells;
-
+		//medium -= tileOffset;
+		//low -= tileOffset;
+		
 		//Skip zero length segments
 		if ((high.StartX != high.EndX) && (high.StartY != high.EndY)) {
 			//Render the given region of the tile in high detail
-			current_tile.Render(shader,renderer,high,GameTile::DETAIL_HIGH);
+			current_tile.Render(shader,renderer,high,GameTile::DETAIL_HIGH,voxelCount);
 		}
-		
+		/*
 		//Check if the medium region is valid
 		if ((medium.StartX != medium.EndX) && (medium.StartY != medium.EndY)) {
 			//Render the medium region of the tile
@@ -208,7 +206,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, IntRect highDetail, I
 			//Render the low region of the tile
 			Draw(shader,&current_tile,GameTile::DETAIL_LOW,low,medium);
 		}
-
+		*/
 
 	});
 
