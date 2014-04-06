@@ -172,8 +172,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, IntRect highDetail, I
 		//Get the region this tile is in
 		IntRect tileRegion(current_tile.tile_x * TILE_SIZE,current_tile.tile_y * TILE_SIZE,
 			current_tile.tile_x * TILE_SIZE + TILE_SIZE,current_tile.tile_y * TILE_SIZE + TILE_SIZE);
-		
-	
+
 		//Intersect it with the regions you're supposed to be drawing
 		IntRect high = highDetail;
 		//IntRect medium = mediumDetail;

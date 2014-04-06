@@ -197,10 +197,10 @@ void BaseFrame::Draw(double width, double height) {
 	Particles.Draw(shaders);
 	
 	//Update the voxel debug counter
-	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
+	//Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
 	
 	//Call the parent draw to draw interface
-	GameSystem::Draw(width,height);
+	//GameSystem::Draw(width,height);
 	
 	// Draw the UI for joysticks
 	//Assume that gameSystem::Draw has set up the 2d shader

@@ -330,8 +330,12 @@ void GameTile::Render(GL3DProgram * shader, VoxelDrawSystem * renderer, IntRect 
 	shader->Model.Scale(scale,scale,scale);
 	shader->Model.Apply();
 
+	static bool ranOnce = false;
+
+
 	//First draw the voxels
 	renderer->startDraw(shader);
+	
 	for (int y = rect.StartY; y < rect.EndY; y++) {
 		//It is important for x to be the inner loop
 		//so consecutive operations access contiguous memory

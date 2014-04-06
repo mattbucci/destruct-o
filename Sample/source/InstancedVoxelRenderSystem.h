@@ -33,10 +33,13 @@ class InstancedVoxelRenderSystem : public VoxelDrawSystem {
 	//allocated during the first draw cycle
 	bool allocated;
 
+	//The number of vertices per voxel
+	int vertexCount;
+
 	//Flushes the CPU side buffer to the gpu using instanced rendering
 	void draw(GL3DProgram * shader);
 public:
-	InstancedVoxelRenderSystem();
+	InstancedVoxelRenderSystem(bool drawBottoms = false);
 	~InstancedVoxelRenderSystem();
 
 	//Called at the start of the draw cycle

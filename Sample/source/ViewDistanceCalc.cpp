@@ -95,7 +95,7 @@ ViewDistanceCalc::drawRegions ViewDistanceCalc::GetDrawRegions(vec2 playerPositi
 	float highDetail = mediumDetail*.7+10;
 
 	//Calculate all three boxes
-	drawSquares.HighDetail = VoxDrawCoordinates(playerPosition,playerFacing,highDetail);
+	drawSquares.HighDetail = VoxDrawCoordinates(playerPosition,playerFacing,50);
 	drawSquares.MediumDetail = VoxDrawCoordinates(playerPosition,playerFacing,mediumDetail);
 	drawSquares.LowDetail = VoxDrawCoordinates(playerPosition,playerFacing,lowDetail);
 
