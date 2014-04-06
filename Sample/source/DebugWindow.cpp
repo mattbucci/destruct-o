@@ -4,7 +4,7 @@
 #include "Utilities.h"
 
 DebugWindow::DebugWindow() {
-	this->position = Rect(0,0,120,50);
+	this->position = Rect(0,30,120,50);
 
 	fps = new Label(0,5,"");
 	fps->hPin = Control::CENTER;

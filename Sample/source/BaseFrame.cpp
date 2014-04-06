@@ -27,6 +27,15 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 #else
 	FirstPerson = new FirstPersonMode();
 #endif
+
+#ifdef __MOBILE__
+	pauseWindow = new PauseWindowMobile(this);
+#else
+	pauseWindow = new PauseWindow(this);
+#endif
+	Controls.AddWindow(pauseWindow);
+	notification = new Notification();
+	Controls.AddWindow(notification);
 	
 	// Enable the first person controller
 	FirstPerson->Enable(true);
@@ -110,10 +119,6 @@ void BaseFrame::OnFrameFocus() {
 	demoWindow = new DemoWindow(demo);
 	Controls.AddWindow(demoWindow);
 #endif
-	notification = new Notification();
-	Controls.AddWindow(notification);
-	pauseWindow = new PauseWindow(this);
-	Controls.AddWindow(pauseWindow);
 }
 
 void BaseFrame::Build() {

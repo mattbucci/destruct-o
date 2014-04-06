@@ -7,6 +7,7 @@ class BaseFrame;
 
 class PauseWindow : public Window
 {
+protected:
 	BaseFrame* parent;
 
 	//Main Menu Elements

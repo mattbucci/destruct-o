@@ -2,9 +2,10 @@
 #include "Notification.h"
 
 Notification::Notification(void) {
-	position = Rect(0, 0, 200, 30);
+	position = Rect(0, 0, 800, 30);
+	this->color = vec4(this->color.r, this->color.g, this->color.b, 0.7f);
 	hPin = Control::CENTER;
-	SetVisible(false);
+	SetVisible(true);
 	text = new Label(0,5,"");
 	text->hPin = Control::CENTER;
 	text->SetText("");

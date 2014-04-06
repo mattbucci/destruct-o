@@ -16,6 +16,7 @@
 #include "DemoWindow.h"
 #include "Notification.h"
 #include "PauseWindow.h"
+#include "PauseWindowMobile.h"
 
 class ActorPlayer;
 class ParticleSystem;

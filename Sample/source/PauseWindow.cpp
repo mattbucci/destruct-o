@@ -42,7 +42,6 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 
 	//Subscribe Main Menu Buttons to Actions
 	Subscribe<void(Button*)>(&save.EventClicked, [this](Button * b) {
-		cout << "\'Save\' Button Clicked" << endl;
 		if(this->parent->Save("default")) {
 			cout << "Save Successful!" << endl;
 		} else {
@@ -50,7 +49,6 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 		}
 	});
 	Subscribe<void(Button*)>(&load.EventClicked, [this](Button * b) {
-		cout << "\'Load\' Button Clicked" << endl;
 		if(this->parent->Load("default")) {
 			cout << "Load Successful!" << endl;
 		} else {
