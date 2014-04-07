@@ -27,7 +27,7 @@ void TerrainChunkRenderer::HotChunk::Render(GL3DProgram * shader) {
 	glBindVertexArray ( vertexArrayBuffer );
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexData );
 	glVertexAttribPointer ( shader->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,Vertex) );
-	glVertexAttribPointer ( shader->AttributeTexture(), 1, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,TextureCoordinate) );
+	glVertexAttribPointer ( shader->AttributeTexture(), 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,TextureCoordinateX) );
 	glDrawArrays( GL_TRIANGLES, 0, vertexCount);
 }
 void TerrainChunkRenderer::HotChunk::Set(TerrainChunk * chunk, GL3DProgram * shader) {
@@ -36,11 +36,11 @@ void TerrainChunkRenderer::HotChunk::Set(TerrainChunk * chunk, GL3DProgram * sha
 	glBindVertexArray ( vertexArrayBuffer );
 	//vertex positions
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexData );
-	glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(TerrainChunk::ChunkVertexData), chunk->VertexData, GL_DYNAMIC_DRAW );
+	glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(TerrainChunk::ChunkVertexData), chunk->VertexData, GL_STATIC_DRAW );
 	glEnableVertexAttribArray ( shader->AttributeVertex() );
 	glVertexAttribPointer ( shader->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,Vertex) );
 	glEnableVertexAttribArray ( shader->AttributeTexture() );
-	glVertexAttribPointer ( shader->AttributeTexture(), 1, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,TextureCoordinate) );
+	glVertexAttribPointer ( shader->AttributeTexture(), 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,TextureCoordinateX) );
 
 	//glVertexAttribPointer ( shader->AttributeTexture(), 1, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,TextureCoordinate) );
 	

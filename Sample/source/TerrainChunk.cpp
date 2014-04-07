@@ -25,7 +25,14 @@ struct quad {
 		this->b1 = INV(b2);
 		this->a2 = INV(b1);
 		this->b2 = INV(a2);
+
+		ASize = abs(glm::dot(vec3(1,1,1),this->a2-this->a1));
+		BSize = abs(glm::dot(vec3(1,1,1),this->b1-this->a1));
 	}
+	//distance between a1 and a2
+	float ASize;
+	//distance between a1 and b1
+	float BSize;
 	vec3 a1;
 	vec3 b1;
 	vec3 a2;
@@ -168,19 +175,45 @@ void TerrainChunk::Reconstruct() {
 		//Generate interleaved data for each vertex
 		//of each found quad
 		//First triangle
-		//VertexData[vcount].TextureCoordinate = 0;
-		VertexData[vcount++].Vertex = quads[i].a1;
-		//VertexData[vcount].TextureCoordinate = 2;
-		VertexData[vcount++].Vertex = quads[i].b1;
-		//VertexData[vcount].TextureCoordinate = 1;
-		VertexData[vcount++].Vertex = quads[i].a2;
+		VertexData[vcount].TextureCoordinateX = 0;
+		VertexData[vcount].TextureCoordinateY = 0;
+		VertexData[vcount].TextureCoordinateSX = 0;
+		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount++].Vertex = toPOD(quads[i].a1);
+		VertexData[vcount].TextureCoordinateX = 0;
+		VertexData[vcount].TextureCoordinateY = quads[i].BSize;
+		VertexData[vcount].TextureCoordinateSX = 0;
+		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount++].Vertex = toPOD(quads[i].b1);
+		VertexData[vcount].TextureCoordinateX = quads[i].ASize;
+		VertexData[vcount].TextureCoordinateY = 0;
+		VertexData[vcount].TextureCoordinateSX = 0;
+		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount++].Vertex = toPOD(quads[i].a2);
 
 		//Second triangle
-		//VertexData[vcount].TextureCoordinate = 2;
-		VertexData[vcount++].Vertex = quads[i].b1;
-		//VertexData[vcount].TextureCoordinate = 1;
-		VertexData[vcount++].Vertex = quads[i].a2;
-		//VertexData[vcount].TextureCoordinate = 3;
-		VertexData[vcount++].Vertex = quads[i].b2;
+		VertexData[vcount].TextureCoordinateX = 0;
+		VertexData[vcount].TextureCoordinateY = quads[i].BSize;
+		VertexData[vcount].TextureCoordinateSX = 0;
+		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount++].Vertex = toPOD(quads[i].b1);
+		VertexData[vcount].TextureCoordinateX = quads[i].ASize;
+		VertexData[vcount].TextureCoordinateY = 0;
+		VertexData[vcount].TextureCoordinateSX = 0;
+		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount++].Vertex = toPOD(quads[i].a2);
+		VertexData[vcount].TextureCoordinateX = quads[i].ASize;
+		VertexData[vcount].TextureCoordinateY = quads[i].BSize;
+		VertexData[vcount].TextureCoordinateSX = 0;
+		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount++].Vertex = toPOD(quads[i].b2);
 	}
+}
+
+TerrainChunk::PODVec3 TerrainChunk::toPOD(vec3 vector) {
+	PODVec3 pd;
+	pd.x = vector.x;
+	pd.y = vector.y;
+	pd.z = vector.z;
+	return pd;
 }
