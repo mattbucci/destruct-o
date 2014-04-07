@@ -14,6 +14,7 @@
 
 class TerrainChunk;
 class TerrainChunkRenderer;
+class GLTerrainProgram;
 
 class GameTile {
 	GameTile();
@@ -63,7 +64,7 @@ public:
 
 	//Render the given region using the specified detail level
 	//the rect should be tile-relative coordinates
-	void Render(GL3DProgram * shader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, IntRect drawRegion, int & voxelCount);
+	void Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, IntRect drawRegion, int & voxelCount);
 
 	//Loaded tile information is public for fastest access
 	TileCell * Cells;

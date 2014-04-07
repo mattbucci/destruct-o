@@ -11,6 +11,8 @@
 #include "VoxelDrawSystem.h"
 #include "InstancedVoxelRenderSystem.h"
 #include "BasicVoxelRenderSystem.h"
+#include "ShaderGroup.h"
+
 #include <sstream>
 #include <thread>
 
@@ -148,7 +150,7 @@ static rectGroup subtract(IntRect outer, IntRect inner) {
 };
 
 //Draw the voxels in a region
-void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, IntRect drawRegion) {
+void VoxelSystem::Draw(ShaderGroup * shaders, vec3 drawPos, IntRect drawRegion) {
 	//_ASSERTE(tileData != NULL);
 
 	//Enable voxel texture
@@ -157,11 +159,14 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, IntRect drawRegion) {
 
 	voxelCount = 0;
 
+	GLTerrainProgram * terrainShader = (GLTerrainProgram*)shaders->GetShader("terrain");
+	GL3DProgram * voxelShader = (GL3DProgram*)shaders->GetShader("3d");
+
 
 	//render each viewable rectangle
-	terrainRenderer.StartRendering(shader);
+	terrainRenderer.StartRendering(terrainShader);
 
-	forTilesInRect(drawRegion,[this,shader,drawRegion](GameTile * tile) {
+	forTilesInRect(drawRegion,[this,terrainShader,voxelShader,drawRegion](GameTile * tile) {
 		GameTile & current_tile = *tile;
 		//Get the region this tile is in
 		IntRect tileRegion(current_tile.tile_x * TILE_SIZE,current_tile.tile_y * TILE_SIZE,
@@ -180,12 +185,12 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, IntRect drawRegion) {
 		
 		//Skip zero length segments
 		//Render the given region of the tile in high detail
-		current_tile.Render(shader,&terrainRenderer,cellRenderer,tileDrawRegion,voxelCount);
+		current_tile.Render(voxelShader,terrainShader,&terrainRenderer,cellRenderer,tileDrawRegion,voxelCount);
 
 
 	});
 
-	terrainRenderer.FinishRendering(shader);
+	terrainRenderer.FinishRendering(terrainShader);
 
 }
 

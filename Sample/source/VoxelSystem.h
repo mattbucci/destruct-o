@@ -6,7 +6,7 @@
 #include "IntRect.h"
 #include "TerrainChunkRenderer.h"
 
-class GL3DProgram;
+class ShaderGroup;
 class GameTile;
 class VoxelDrawSystem;
 struct TileCell;
@@ -58,6 +58,6 @@ public:
 	//Draw the voxels in a region
 	//atx,aty and tox, toy define two corners of the rectangle
 	//of voxels which will be rendered
-	void Draw(GL3DProgram * shader, vec3 drawPos, IntRect drawRegion);
+	void Draw(ShaderGroup * shaders, vec3 drawPos, IntRect drawRegion);
 	void Update(vec3 player_pos);
 };

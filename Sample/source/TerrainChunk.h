@@ -49,6 +49,7 @@ public:
 		uint8_t TextureCoordinateY;
 		uint8_t TextureCoordinateSX;
 		uint8_t TextureCoordinateSY;
+		//uint8_t TextureCoordinateShading;
 	});
 
 	//Array of interleaved vertex data

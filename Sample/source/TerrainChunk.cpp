@@ -39,6 +39,7 @@ struct quad {
 	vec3 b2;
 };
 
+//Check if the given ijk contains a voxel
 bool TerrainChunk::f(int i, int j, int k) {
 	_ASSERTE((i < CHUNK_SIZE) && (k < CHUNK_SIZE));
 
@@ -51,7 +52,7 @@ bool TerrainChunk::f(int i, int j, int k) {
 
 	return ((j <= cell.height) && (j >= cell.height-cell.stackHeight));
 }
-
+//check if the given position is beneath the surface
 bool TerrainChunk::fu(int i, int j, int k) {
 	_ASSERTE((i < CHUNK_SIZE) && (k < CHUNK_SIZE));
 

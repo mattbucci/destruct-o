@@ -25,8 +25,8 @@ public:
 
 	//Should be called every draw cycle
 	//calculates the view distance
-	//applies to fog distance automatically
-	void CalculateAndApply(GL3DProgram * shader,float currentFPS);
+	//returns fog distance in fog
+	void CalculateAndApply(float & fogDistance,float currentFPS);
 
 	//Get's the view distance in units
 	//note the last voxel the user can actually see is about 80% of this

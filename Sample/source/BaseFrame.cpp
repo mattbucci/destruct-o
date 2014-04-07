@@ -2,9 +2,13 @@
 #include "BaseFrame.h"
 #include "GL2DProgram.h"
 #include "GL3DProgram.h"
+#include "GLTerrainProgram.h"
+#include "GLParticleProgram.h"
 #include "ShaderGroup.h"
 #include "ActorPlayer.h"
 #include "VoxEngine.h"
+
+#include "GLLighting.h"
 
 #include "Window.h"
 #include "Button.h"
@@ -154,25 +158,10 @@ void BaseFrame::Draw(double width, double height) {
 	//Update the texture caching system
 	Textures.Refresh();
 
-	//Startup 3d rendering
-	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
-	shaders3d->UseProgram();
-	//Setup basics of shader program per-frame
-	shaders3d->Model.Reset();
-	shaders3d->Model.Apply();
-	shaders3d->Acid.SetCurrentTime(VoxEngine::GetGameSimTime());
-	//Acid factor currently managed by the demo system
-	//this will be moved to a more powerful game logic system in the future
-	shaders3d->Acid.SetAcidFactor(demo->CurrentAcidStrength);
-	//Enable sensible defaults
-	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	float fogDistance = 0;
+	//Apply view distance
+	ViewDistance.CalculateAndApply(fogDistance,fpsCount.GetFps());
 
-	//Compute view distance and handle fog
-	ViewDistance.CalculateAndApply(shaders3d,fpsCount.GetFps());
-	shaders3d->Fog.SetFogColor(vec4(.5,.5,.5,1));
 
 	//We add 1.5 to ground level. This assumes the person is 5ft between the ground
 	//and his eye line
@@ -180,13 +169,38 @@ void BaseFrame::Draw(double width, double height) {
 	//The player is 3 height right now
 	pos.z += 2.5;
 
+
 	//Draw the frame
 	//camera draw also sets up world light
 	Camera.SetCameraView(pos,FirstPerson->GetLookVector());
-	Camera.Draw(shaders3d);
+
+	//Apply properties to each shader
+	SetupShader<GLTerrainProgram>("terrain",fogDistance);
+	Camera.Apply((GLTerrainProgram*)shaders->GetShader("terrain"));
+	SetupShader<GLParticleProgram>("particles",fogDistance);
+	SetupShader<GL3DProgram>("3d",fogDistance);
+	Camera.Apply((GL3DProgram*)shaders->GetShader("3d"));
+
+	//Startup 3d rendering
+	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
+	shaders3d->UseProgram();
+	//Setup sun here for now
+	//translate it to follow world coordinates
+	shaders3d->Lights.Enable(1);
+	shaders3d->Lights[0].SetColor(vec3(1,1,1));
+	shaders3d->Lights[0].SetIntensity(0,0,0); //The sun shines infinitely long
+	shaders3d->Lights[0].SetComponents(.4f,1,1,20);
+	shaders3d->Lights[0].SetLocation(shaders3d->Model.TransformVector(vec3(-200000,-200000,400000)));
+	shaders3d->Lights.Apply();
+	//Enable sensible defaults
+	glEnable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	
 	// Draw voxels
-	Voxels.Draw(shaders3d,pos,ViewDistance.GetDrawRegion(vec2(pos),FirstPerson->GetAngleVector().x/180.0f*(float)M_PI));
+	Voxels.Draw(shaders,pos,ViewDistance.GetDrawRegion(vec2(pos),FirstPerson->GetAngleVector().x/180.0f*(float)M_PI));
 	//The physics system uses the same texture that the voxels above binds every time it draws
 	//so it must always immediately follow Voxels.draw()
 	Physics.Draw(shaders);

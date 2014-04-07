@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "TerrainChunkRenderer.h"
-#include "GL3DProgram.h"
+#include "GLTerrainProgram.h"
 #include "TerrainChunk.h"
 
 TerrainChunkRenderer::TerrainChunkRenderer() {
@@ -23,14 +23,14 @@ TerrainChunkRenderer::HotChunk::~HotChunk() {
 	glDeleteVertexArrays(1,&vertexArrayBuffer);
 }
 //Render the set chunk
-void TerrainChunkRenderer::HotChunk::Render(GL3DProgram * shader) {
+void TerrainChunkRenderer::HotChunk::Render(GLTerrainProgram * shader) {
 	glBindVertexArray ( vertexArrayBuffer );
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexData );
 	glVertexAttribPointer ( shader->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,Vertex) );
 	glVertexAttribPointer ( shader->AttributeTexture(), 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,TextureCoordinateX) );
 	glDrawArrays( GL_TRIANGLES, 0, vertexCount);
 }
-void TerrainChunkRenderer::HotChunk::Set(TerrainChunk * chunk, GL3DProgram * shader) {
+void TerrainChunkRenderer::HotChunk::Set(TerrainChunk * chunk, GLTerrainProgram * shader) {
 	vertexCount = chunk->VertexDataSize;
 
 	//Cache vertex data
@@ -46,11 +46,11 @@ void TerrainChunkRenderer::HotChunk::Set(TerrainChunk * chunk, GL3DProgram * sha
 	
 }
 
-void TerrainChunkRenderer::StartRendering(GL3DProgram * shader) {
+void TerrainChunkRenderer::StartRendering(GLTerrainProgram * shader) {
 
 }
 
-void TerrainChunkRenderer::RenderTerrainChunk(vec2 tilePos, TerrainChunk * chunk, GL3DProgram * shader) {
+void TerrainChunkRenderer::RenderTerrainChunk(vec2 tilePos, TerrainChunk * chunk, GLTerrainProgram * shader) {
 	//Draw the chunk relative to itself
 	shader->Model.PushMatrix();
 	shader->Model.Translate(chunk->X,chunk->Y,0);
@@ -90,7 +90,7 @@ void TerrainChunkRenderer::RenderTerrainChunk(vec2 tilePos, TerrainChunk * chunk
 }
 
 
-void TerrainChunkRenderer::FinishRendering(GL3DProgram * shader) {
+void TerrainChunkRenderer::FinishRendering(GLTerrainProgram * shader) {
 	//Find renderers which were not used and mark them as free
 	for (auto it = renderSlots.begin(); it != renderSlots.end();) {
 		if (it->second->Rendered) {

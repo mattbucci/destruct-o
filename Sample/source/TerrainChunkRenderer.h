@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 class TerrainChunk;
-class GL3DProgram;
+class GLTerrainProgram;
 
 class TerrainChunkRenderer {
 	
@@ -20,9 +20,9 @@ class TerrainChunkRenderer {
 		~HotChunk();
 
 		//Set the chunk this hotchunk is supposed to render
-		void Set(TerrainChunk * chunk, GL3DProgram * shader);
+		void Set(TerrainChunk * chunk, GLTerrainProgram * shader);
 		//Render the set chunk
-		void Render(GL3DProgram * shader);
+		void Render(GLTerrainProgram * shader);
 
 		//Whether or not this chunk was rendered
 		bool Rendered;
@@ -62,10 +62,10 @@ public:
 	TerrainChunkRenderer();
 	~TerrainChunkRenderer();
 	
-	void StartRendering(GL3DProgram * shader);
+	void StartRendering(GLTerrainProgram * shader);
 
 	//Must pass tile position, but the model matrix should already have set 0,0,0 to the tile's 0,0,0
-	void RenderTerrainChunk(vec2 tilePos, TerrainChunk * chunk, GL3DProgram * shader);
+	void RenderTerrainChunk(vec2 tilePos, TerrainChunk * chunk, GLTerrainProgram * shader);
 
-	void FinishRendering(GL3DProgram * shader);
+	void FinishRendering(GLTerrainProgram * shader);
 };

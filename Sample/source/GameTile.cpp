@@ -3,6 +3,7 @@
 #include "lodepng.h"
 #include "VoxelDrawSystem.h"
 #include "GL3DProgram.h"
+#include "GLTerrainProgram.h"
 #include "TerrainChunk.h"
 #include "TerrainChunkRenderer.h"
 
@@ -256,17 +257,19 @@ void GameTile::SaveTile(string saveName) {
 
 //Render the given region using the specified detail level
 //the rect should be tile-relative coordinates
-void GameTile::Render(GL3DProgram * shader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, IntRect drawRegion, int & voxelCount) {
+void GameTile::Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, IntRect drawRegion, int & voxelCount) {
 	TileCell * cells;
 
 	_ASSERTE(TILE_SIZE >= drawRegion.EndX);
 	_ASSERTE(TILE_SIZE >= drawRegion.EndY);
 
+	terrainShader->UseProgram();
+
 	//offset rendering for tile location
-	shader->Model.PushMatrix();
-	shader->Model.Translate(vec3(tile_x * TILE_SIZE, tile_y * TILE_SIZE, 0));
+	terrainShader->Model.PushMatrix();
+	terrainShader->Model.Translate(vec3(tile_x * TILE_SIZE, tile_y * TILE_SIZE, 0));
 	//Scale for level of detail requested
-	shader->Model.Apply();
+	terrainShader->Model.Apply();
 
 	//Draw the tiles in the region specified
 	for (int ry = drawRegion.StartY; ry < drawRegion.EndY; ry+= CHUNK_SIZE) {
@@ -277,7 +280,7 @@ void GameTile::Render(GL3DProgram * shader, TerrainChunkRenderer * terrainRender
 
 			//Draw that chunk
 			TerrainChunk * chunk = chunks[chunky*(TILE_SIZE/CHUNK_SIZE)+chunkx];
-			terrainRenderer->RenderTerrainChunk(vec2(tile_x,tile_y)*(float)TILE_SIZE,chunk,shader);
+			terrainRenderer->RenderTerrainChunk(vec2(tile_x,tile_y)*(float)TILE_SIZE,chunk,terrainShader);
 			voxelCount += chunk->VoxelCount;
 		}
 	}
@@ -328,5 +331,5 @@ void GameTile::Render(GL3DProgram * shader, TerrainChunkRenderer * terrainRender
 	}	
 	}*/
 	//Undo tile translation
-	shader->Model.PopMatrix();
+	terrainShader->Model.PopMatrix();
 }

@@ -11,7 +11,7 @@ ViewDistanceCalc::ViewDistanceCalc() {
 //Should be called every draw cycle
 //calculates the view distance
 //applies to fog distance automatically
-void ViewDistanceCalc::CalculateAndApply(GL3DProgram * shader,float currentFPS) {
+void ViewDistanceCalc::CalculateAndApply(float & fogDistance,float currentFPS) {
 	//Constants used for adjustment
 	//How long the visual learning rate is
 	const static int maxFrameLearn = 400;
@@ -45,7 +45,7 @@ void ViewDistanceCalc::CalculateAndApply(GL3DProgram * shader,float currentFPS) 
 
 	//Fog has to end before view distance
 	//because view distance is not perfect
-	shader->Fog.SetFogDistance(GetViewDistance()*.80f);
+	fogDistance = GetViewDistance()*.80f;
 }
 
 //Retrieve a pair of coordinates representing the appropriate draw section
