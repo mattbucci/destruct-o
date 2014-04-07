@@ -4,7 +4,7 @@
 #include "TerrainChunk.h"
 
 TerrainChunkRenderer::TerrainChunkRenderer() {
-	
+	cout << "Chunk vertex data size: " << sizeof(TerrainChunk::ChunkVertexData) << "\n";
 }
 TerrainChunkRenderer::~TerrainChunkRenderer() {
 	//Destroy all the render slots
