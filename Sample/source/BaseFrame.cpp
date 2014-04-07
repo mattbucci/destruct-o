@@ -172,15 +172,13 @@ void BaseFrame::Draw(double width, double height) {
 
 	//Compute view distance and handle fog
 	ViewDistance.CalculateAndApply(shaders3d,fpsCount.GetFps());
-	shaders3d->Fog.SetFogColor(vec4(0,0,0,1));
+	shaders3d->Fog.SetFogColor(vec4(.5,.5,.5,1));
 
 	//We add 1.5 to ground level. This assumes the person is 5ft between the ground
 	//and his eye line
 	vec3 pos = player->GetPosition();
 	//The player is 3 height right now
 	pos.z += 2.5;
-	//Calculate voxel draw rectangle
-	ViewDistanceCalc::drawRegions detailRegions = ViewDistance.GetDrawRegions(vec2(pos),FirstPerson->GetAngleVector().x/180.0f*(float)M_PI);
 
 	//Draw the frame
 	//camera draw also sets up world light
@@ -188,7 +186,7 @@ void BaseFrame::Draw(double width, double height) {
 	Camera.Draw(shaders3d);
 	
 	// Draw voxels
-	Voxels.Draw(shaders3d,pos,detailRegions.HighDetail,detailRegions.MediumDetail,detailRegions.LowDetail);
+	Voxels.Draw(shaders3d,pos,ViewDistance.GetDrawRegion(vec2(pos),FirstPerson->GetAngleVector().x/180.0f*(float)M_PI));
 	//The physics system uses the same texture that the voxels above binds every time it draws
 	//so it must always immediately follow Voxels.draw()
 	Physics.Draw(shaders);
@@ -197,10 +195,10 @@ void BaseFrame::Draw(double width, double height) {
 	Particles.Draw(shaders);
 	
 	//Update the voxel debug counter
-	//Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
+	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
 	
 	//Call the parent draw to draw interface
-	//GameSystem::Draw(width,height);
+	GameSystem::Draw(width,height);
 	
 	// Draw the UI for joysticks
 	//Assume that gameSystem::Draw has set up the 2d shader

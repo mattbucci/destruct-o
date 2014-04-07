@@ -7,22 +7,24 @@
 #include "Structure.h"
 #include "IntRect.h"
 
+
 //The width/height of all tiles
 //Must be divisible by 16
 #define TILE_SIZE 256
 
+class TerrainChunk;
+class TerrainChunkRenderer;
 
 class GameTile {
 	GameTile();
 	//Recalculate stack heights for the given region of tile cells
 	static void CalculateStackSizes(TileCell * cells, unsigned int width, unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy);
-	//Populates a large cell array
-	//from a small cell array given the region in the small cell array that is given
-	//there will always be one large cell for every 4 small cells
-	static void DownsizeTile(TileCell * smallCells, TileCell * largeCells, unsigned int smallWidth, unsigned int & rx, unsigned int & ry, unsigned int & tox, unsigned int & toy);
 
 	//Patch edge heights to be realistic values
 	static void PatchStackEdges(TileCell * cellList, int cellWidth);
+
+	//Terrain is chunked. Each chunk draws independently
+	TerrainChunk ** chunks;
 public:
 	~GameTile();
 
@@ -61,15 +63,10 @@ public:
 
 	//Render the given region using the specified detail level
 	//the rect should be tile-relative coordinates
-	void Render(GL3DProgram * shader, VoxelDrawSystem * drawSystem, IntRect rect, DetailLevel detail, int & voxelCount);
+	void Render(GL3DProgram * shader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, IntRect drawRegion, int & voxelCount);
 
 	//Loaded tile information is public for fastest access
-	//An array of cells size 1 of size width*height
 	TileCell * Cells;
-	//An array of cells size 4 of size (width/4)*(height/4)
-	TileCell * MediumCells;
-	//An array of cells size 16 of size (width/16)*(height/16)
-	TileCell * LargeCells;
 	int tile_x;
 	int tile_y;
 

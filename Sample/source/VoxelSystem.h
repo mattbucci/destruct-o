@@ -4,6 +4,7 @@
 #include "ContiguousList.h"
 #include "TileHandler.h"
 #include "IntRect.h"
+#include "TerrainChunkRenderer.h"
 
 class GL3DProgram;
 class GameTile;
@@ -21,13 +22,11 @@ class VoxelSystem {
 	//The Tile Handle
 	TileHandler* tiles;
 
-	VoxelDrawSystem * renderer;
+	VoxelDrawSystem * cellRenderer;
+	TerrainChunkRenderer terrainRenderer;
 
 	//Calls foreachFunction for each tile contained in the Rect "region"
 	void forTilesInRect(IntRect region, function<void(GameTile * tile)> foreachFunction);
-
-	//Draw a region of a tile with a hole in it
-	void Draw(GL3DProgram * shader, GameTile * tile, GameTile::DetailLevel detailLevel, IntRect outerRegion, IntRect innerRegion);
 public:
 	VoxelSystem();
 	~VoxelSystem();
@@ -59,6 +58,6 @@ public:
 	//Draw the voxels in a region
 	//atx,aty and tox, toy define two corners of the rectangle
 	//of voxels which will be rendered
-	void Draw(GL3DProgram * shader, vec3 drawPos, IntRect highDetail, IntRect mediumDetail, IntRect lowDetail);
+	void Draw(GL3DProgram * shader, vec3 drawPos, IntRect drawRegion);
 	void Update(vec3 player_pos);
 };

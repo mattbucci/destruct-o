@@ -57,8 +57,8 @@ TerrainGen::TerrainGen() {
 	blend3Blender.SetSourceModule(1, detailNoise);
 
 	//Default Scale to 1
-	tilesx = 2;
-	tilesy = 2;
+	tilesx = .6;
+	tilesy = .6;
 
 	//Default Tile Size to 0 (Invalid Tile Size)
 	tilex = 0;

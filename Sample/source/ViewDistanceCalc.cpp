@@ -87,19 +87,8 @@ pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 userPosition, float us
 	return pair<vec2,vec2>(minPoint,maxPoint);
 }
 
-ViewDistanceCalc::drawRegions ViewDistanceCalc::GetDrawRegions(vec2 playerPosition, float playerFacing) {
-	drawRegions drawSquares;
-	//Find the height of each square
-	float lowDetail = GetViewDistance();
-	float mediumDetail = lowDetail*.7+10;
-	float highDetail = mediumDetail*.7+10;
-
-	//Calculate all three boxes
-	drawSquares.HighDetail = VoxDrawCoordinates(playerPosition,playerFacing,50);
-	drawSquares.MediumDetail = VoxDrawCoordinates(playerPosition,playerFacing,mediumDetail);
-	drawSquares.LowDetail = VoxDrawCoordinates(playerPosition,playerFacing,lowDetail);
-
-	return drawSquares;
+IntRect ViewDistanceCalc::GetDrawRegion(vec2 playerPosition, float playerFacing) {
+	return VoxDrawCoordinates(playerPosition,playerFacing,GetViewDistance());
 
 }
 

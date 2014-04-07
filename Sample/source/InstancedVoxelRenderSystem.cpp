@@ -25,7 +25,7 @@ InstancedVoxelRenderSystem::InstancedVoxelRenderSystem(bool drawBottoms) {
 
 	//Top
 	pushSide(vec3(0,0,1),vec3(0,0,1),vec3(0,1,1),vec3(1,0,1),vec3(1,1,1),vertNumber);
-	/*//Bottom
+	//Bottom
 	if (drawBottoms)
 		pushSide(vec3(0,0,-1),vec3(0,0,0),vec3(0,1,0),vec3(1,0,0),vec3(1,1,0),vertNumber);
 	//Left
@@ -35,7 +35,7 @@ InstancedVoxelRenderSystem::InstancedVoxelRenderSystem(bool drawBottoms) {
 	//Back
 	pushSide(vec3(0,1,0),vec3(0,1,0),vec3(0,1,1),vec3(1,1,0),vec3(1,1,1),vertNumber);
 	//Front
-	pushSide(vec3(0,-1,0),vec3(0,0,0),vec3(1,0,0),vec3(0,0,1),vec3(1,0,1),vertNumber);*/
+	pushSide(vec3(0,-1,0),vec3(0,0,0),vec3(1,0,0),vec3(0,0,1),vec3(1,0,1),vertNumber);
 
 	vertexCount = vertNumber;
 

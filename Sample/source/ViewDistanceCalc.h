@@ -32,13 +32,6 @@ public:
 	//note the last voxel the user can actually see is about 80% of this
 	float GetViewDistance();
 
-	//Retrieve a list of draw regions
-	struct drawRegions {
-		IntRect HighDetail;
-		IntRect MediumDetail;
-		IntRect LowDetail;
-	};
-
 	//Retrieve a list of the draw regions for the different levels of precision
-	drawRegions GetDrawRegions(vec2 playerPosition, float playerFacing);
+	IntRect GetDrawRegion(vec2 playerPosition, float playerFacing);
 };

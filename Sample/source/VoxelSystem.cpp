@@ -15,7 +15,7 @@
 #include <thread>
 
 VoxelSystem::VoxelSystem() {
-	renderer = VoxelDrawSystem::BuildAppropriateSystem();
+	cellRenderer = VoxelDrawSystem::BuildAppropriateSystem();
 	tiles = new TileHandler();
 	tiles->init();
 
@@ -44,7 +44,7 @@ VoxelSystem::VoxelSystem() {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
 }
 VoxelSystem::~VoxelSystem() {
-	delete renderer;
+	delete cellRenderer;
 }
 
 GameTile * VoxelSystem::GetTile(vec2 pos) {
@@ -147,15 +147,8 @@ static rectGroup subtract(IntRect outer, IntRect inner) {
 	return grp;
 };
 
-void VoxelSystem::Draw(GL3DProgram * shader, GameTile * tile, GameTile::DetailLevel detailLevel, IntRect outerRegion, IntRect innerRegion) {
-	//Find the group of regions representing the outer region
-	rectGroup group = subtract(outerRegion,innerRegion);
-	for (int i = 0; i < group.usedParts; i++) 
-		tile->Render(shader,renderer,group.parts[i],detailLevel,voxelCount);
-}
-
 //Draw the voxels in a region
-void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, IntRect highDetail, IntRect mediumDetail, IntRect lowDetail) {
+void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, IntRect drawRegion) {
 	//_ASSERTE(tileData != NULL);
 
 	//Enable voxel texture
@@ -166,48 +159,33 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, IntRect highDetail, I
 
 
 	//render each viewable rectangle
+	terrainRenderer.StartRendering(shader);
 
-	forTilesInRect(lowDetail,[this,shader,lowDetail,mediumDetail,highDetail](GameTile * tile) {
+	forTilesInRect(drawRegion,[this,shader,drawRegion](GameTile * tile) {
 		GameTile & current_tile = *tile;
 		//Get the region this tile is in
 		IntRect tileRegion(current_tile.tile_x * TILE_SIZE,current_tile.tile_y * TILE_SIZE,
 			current_tile.tile_x * TILE_SIZE + TILE_SIZE,current_tile.tile_y * TILE_SIZE + TILE_SIZE);
 
 		//Intersect it with the regions you're supposed to be drawing
-		IntRect high = highDetail;
-		//IntRect medium = mediumDetail;
-		//IntRect low = lowDetail;
-		high.Intersect(tileRegion);
+		IntRect tileDrawRegion = drawRegion;
+		tileDrawRegion.Intersect(tileRegion);
 		//medium.Intersect(tileRegion);
 		//low.Intersect(tileRegion);
 
 
 		//Now offset the regions by the tile position so that it is relative to the tile
 		vec2 tileOffset = vec2(current_tile.tile_x * TILE_SIZE,current_tile.tile_y * TILE_SIZE);
-		high -= tileOffset;
-		//medium -= tileOffset;
-		//low -= tileOffset;
+		tileDrawRegion -= tileOffset;
 		
 		//Skip zero length segments
-		if ((high.StartX != high.EndX) && (high.StartY != high.EndY)) {
-			//Render the given region of the tile in high detail
-			current_tile.Render(shader,renderer,high,GameTile::DETAIL_HIGH,voxelCount);
-		}
-		/*
-		//Check if the medium region is valid
-		if ((medium.StartX != medium.EndX) && (medium.StartY != medium.EndY)) {
-			//Render the medium region of the tile
-			Draw(shader,&current_tile,GameTile::DETAIL_MEDIUM,medium,high);
-		}
+		//Render the given region of the tile in high detail
+		current_tile.Render(shader,&terrainRenderer,cellRenderer,tileDrawRegion,voxelCount);
 
-		//Check if the low region is valid
-		if ((low.StartX != low.EndX) && (low.StartY != low.EndY)) {
-			//Render the low region of the tile
-			Draw(shader,&current_tile,GameTile::DETAIL_LOW,low,medium);
-		}
-		*/
 
 	});
+
+	terrainRenderer.FinishRendering(shader);
 
 }
 
