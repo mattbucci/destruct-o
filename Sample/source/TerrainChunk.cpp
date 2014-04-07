@@ -52,6 +52,19 @@ bool TerrainChunk::f(int i, int j, int k) {
 	return ((j <= cell.height) && (j >= cell.height-cell.stackHeight));
 }
 
+bool TerrainChunk::fu(int i, int j, int k) {
+	_ASSERTE((i < CHUNK_SIZE) && (k < CHUNK_SIZE));
+
+	i += (int)Y;
+	k += (int)X;
+
+
+	//ijk is yzx
+	TileCell & cell = owner->Cells[i*TILE_SIZE+k];
+
+	return (j < cell.height-cell.stackHeight);
+}
+
 
 //Reconstruct the vertex array using the owned game tile
 void TerrainChunk::Reconstruct() {
@@ -91,6 +104,9 @@ void TerrainChunk::Reconstruct() {
 	//ORIGINAL IMPLEMENTATION IN JAVASCRIPT: https://github.com/mikolalysenko/mikolalysenko.github.com/blob/gh-pages/MinecraftMeshes/js/greedy.js
 	//MODIFIED FOR DESTRUCTO (no interior edges)
 
+	//Mask now uses stack
+	int mask[CHUNK_SIZE*256];
+
 	//Sweep over 3-axes
 	vector<quad> quads;
 	for(int d=0; d<3; ++d) {
@@ -99,7 +115,6 @@ void TerrainChunk::Reconstruct() {
 			, v = (d+2)%3;
 		float x[3] = {0,0,0};
 		float q[3] = {0,0,0};
-		int *mask = new int[dims[u] * dims[v]];
 		q[d] = 1;
 		for(x[d]=mdims[d]; x[d]<dims[d]; ) {
 			//Compute mask
@@ -110,11 +125,14 @@ void TerrainChunk::Reconstruct() {
 						(0    <= x[d]      ? f(x[0],      x[1],      x[2])      : false) !=
 						(x[d] <  dims[d]-1 ? f(x[0]+q[0], x[1]+q[1], x[2]+q[2]) : false);
 					//Inject code here to remove interior edges
-					/*if (d == 1) {
+					if (d == 1) {
 						mask[n-1] =
-							(!(0    <= x[d]      ? f(x[0],      x[1],      x[2])      : false)) &&
-							(x[d] <  dims[d]-1 ? f(x[0]+q[0], x[1]+q[1], x[2]+q[2]) : false);
-					}*/
+							((0    <= x[d]      ? f(x[0],      x[1],      x[2])      : false)) &&
+							(!(x[d] <  dims[d]-1 ? f(x[0]+q[0], x[1]+q[1], x[2]+q[2]) : false));
+					}
+					else {
+						mask[n-1] = mask[n-1] && !( fu(x[0]+q[0], x[1]+q[1], x[2]+q[2]) ||  fu(x[0]+q[0], x[1]+q[1], x[2]+q[2]) );
+					}
 				}
 				//Increment x[d]
 				++x[d];
@@ -161,8 +179,6 @@ void TerrainChunk::Reconstruct() {
 						}
 					}
 		}
-		//Cleanup mask
-		delete [] mask;
 	}
 
 	//cout << "[" << (unsigned int)this << "] simplified into: " << quads.size() << " quads or " << quads.size()*6 << " vertices.\n";

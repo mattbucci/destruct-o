@@ -10,7 +10,10 @@ class GameTile;
 class TerrainChunk {
 	GameTile * owner;
 
+	//Check if the given ijk contains a voxel
 	bool f(int i, int j, int k);
+	//check if the given position is beneath the surface
+	bool fu(int i, int j, int k);
 public:
 	TerrainChunk(GameTile * owningTile, int chunkx, int chunky);
 	~TerrainChunk();
