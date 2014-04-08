@@ -6,15 +6,18 @@
 #include "NinePatchBinary.h"
 
 Window::Window() {
+	takeInput = false;
 	color = VisualInterface.ColorWindowBackground;
 	useNinePatch(VisualInterface.NPWindow);
 }
 Window::Window(string title)  {
+	takeInput = false;
 	this->title = RasterizedText(title,VisualInterface.FontWindowTitle,VisualInterface.ColorControlText);
 	color = VisualInterface.ColorWindowBackground;
 	useNinePatch(VisualInterface.NPWindow);
 }
 Window::Window(Rect position, string title) : Control(position)  {
+	takeInput = false;
 	this->title = RasterizedText(title,VisualInterface.FontWindowTitle,VisualInterface.ColorControlText);
 	color = VisualInterface.ColorWindowBackground;
 	useNinePatch(VisualInterface.NPWindow);

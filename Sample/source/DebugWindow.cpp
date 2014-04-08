@@ -11,6 +11,7 @@ DebugWindow::DebugWindow() {
 	this->AddChild(fps);
 	voxels = new Label(0,20,"");
 	voxels->hPin = Control::CENTER;
+	takeInput = false;
 	this->AddChild(voxels);
 }
 	

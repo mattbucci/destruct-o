@@ -10,6 +10,7 @@ Notification::Notification(void) {
 	text->hPin = Control::CENTER;
 	text->SetText("");
 	text->SetVisible(false);
+	this->takeInput = false;
 	this->AddChild(text);
 }
 
