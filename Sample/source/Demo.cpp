@@ -158,6 +158,24 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				vec3 hit, norm;
 				if (game->Physics.Raytrace(playerPos + vec3(0, 0, 2.5), playerFacing, hit, norm)) {
 
+					ParticleData * rules;
+					rules = ParticleData::LoadParticleData("particles/explosion.vpart");
+					if (rules == NULL)
+						return;
+					ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,.1);
+					testSystem->Position = hit;
+					rules = ParticleData::LoadParticleData("particles/debris.vpart");	
+					if (rules == NULL)
+						return;
+					testSystem = game->Particles.BuildParticleSystem(*rules, .1);
+					testSystem->Position = hit;
+					rules = ParticleData::LoadParticleData("particles/smoke.vpart");	
+					if (rules == NULL)
+						return;
+					testSystem = game->Particles.BuildParticleSystem(*rules, .1);
+					testSystem->Position = hit - vec3(0, 0, 1);
+
+
 					vector<vec4> displacedVoxels = game->Voxels.Crater(hit, 5);
 					for (vec4 & voxRemoved : displacedVoxels) {
 						vec3 vox = vec3(voxRemoved);
@@ -170,9 +188,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 						//and some energy (velocity)
 						ph->Velocity = vec3(Utilities::random(-initialEnergy, initialEnergy), Utilities::random(-initialEnergy, initialEnergy), Utilities::random(-initialEnergy, initialEnergy));
 					}
-
 				}
-
 			}
 			else if (eve.Key == 't') {
 				//takeover an area
@@ -185,57 +201,6 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 						}
 					}
 				}
-			}
-			else if (eve.Key == 'r') {
-				//Spawn a particle system
-				vec3 cubePos = playerPos+playerFacing*5.0f;
-				//Yes you leak a particle data every time you do this
-				//should be fixed
-				ParticleData * rules;/* = new ParticleData();
-				//First system relative properties
-				rules->GenerationRate.AddValue(0,1000);
-				rules->Velocity.AddValue(0,vec3(0,0,1.5));
-				rules->Latitude.AddValue(0,vec2(0,20));
-				rules->Longitude.AddValue(0,vec2(0,360));
-				rules->Life.AddValue(0,vec2(.5,.5));
-				rules->EmitterSize.AddValue(0,vec2(.6,.6));
-				rules->Rows = 4;
-				rules->Columns = 4;
-				rules->FrameOffset.AddValue(0,vec2(0,15.9));
-				rules->VelocityVariation.AddValue(0,.6);
-				rules->ScaleVariation.AddValue(0,.4);
-				//Now particle relative properties
-				rules->Color.AddValue(0,vec4(1,115.0f/255.0f,60.0f/255.0f,1));
-				rules->Color.AddValue(.8,.5f*vec4(1,115.0f/255.0f,60.0f/255.0f,1));
-				rules->Color.AddValue(1,vec4(0,0,0,1));
-				rules->Scale.AddValue(0,.3);
-				rules->Acceleration.AddValue(0,vec3());
-				rules->AnimationSpeed.AddValue(0,0);
-				rules->MaterialStyle = ParticleData::SCREEN;
-				rules->MaterialTexture = "particles/textures/fire.png"; */
-
-				rules = ParticleData::LoadParticleData("particles/explosion.vpart");
-				if (rules == NULL)
-					return;
-
-				//rules->Velocity
-				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,.1);
-				testSystem->Position = cubePos; 
-
-				rules = ParticleData::LoadParticleData("particles/smoke.vpart");	
-				if (rules == NULL)
-					return;
-
-				testSystem = game->Particles.BuildParticleSystem(*rules, .1);
-				testSystem->Position = cubePos;
-
-				/*rules = ParticleData::LoadParticleData("particles/blood.vpart");
-				if (rules == NULL)
-					return;
-
-				//rules->Velocity
-				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,.1);
-				testSystem->Position = cubePos; */
 			}
 			else if (eve.Key == 'c') {
 				SwitchDemo(0,playerPos,playerFacing);
@@ -255,6 +220,62 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 			}
 			else if (eve.Key == 'm') {
 				((BaseFrame*)CurrentSystem)->Load("testsavefile.json.compressed");
+			}
+			else if (eve.Key == '5') {
+				vec3 cubePos = playerPos+playerFacing*5.0f;
+
+				//Yes you leak a particle data every time you do this
+				//should be fixed
+				ParticleData * rules;
+
+				rules = ParticleData::LoadParticleData("particles/fire.vpart");
+				if (rules == NULL)
+					return;
+
+				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,2);
+				testSystem->Position = cubePos;
+			}
+			else if (eve.Key == '6') {
+				vec3 cubePos = playerPos+playerFacing*20.0f;
+
+				//Yes you leak a particle data every time you do this
+				//should be fixed
+				ParticleData * rules;
+
+				rules = ParticleData::LoadParticleData("particles/explosion.vpart");
+				if (rules == NULL)
+					return;
+
+				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,.1);
+				testSystem->Position = cubePos;
+
+				rules = ParticleData::LoadParticleData("particles/debris.vpart");
+				if (rules == NULL)
+					return;
+
+				testSystem = game->Particles.BuildParticleSystem(*rules,.1);
+				testSystem->Position = cubePos;
+
+				rules = ParticleData::LoadParticleData("particles/smoke.vpart");	
+				if (rules == NULL)
+					return;
+
+				testSystem = game->Particles.BuildParticleSystem(*rules, .1);
+				testSystem->Position = cubePos - vec3(0, 0, 1);
+			}
+			else if (eve.Key == '7') {
+				vec3 cubePos = playerPos+playerFacing*5.0f;
+
+				//Yes you leak a particle data every time you do this
+				//should be fixed
+				ParticleData * rules;
+
+				rules = ParticleData::LoadParticleData("particles/blood.vpart");
+				if (rules == NULL)
+					return;
+
+				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,.1);
+				testSystem->Position = cubePos;
 			}
 		}
 	}
