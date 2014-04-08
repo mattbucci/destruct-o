@@ -1,10 +1,11 @@
 #include "stdafx.h"
+
 #include "Notification.h"
 #include "VoxEngine.h"
 
 Notification::Notification(void) {
 	position = Rect(0, 0, 800, 30);
-	this->color = vec4(this->color.r, this->color.g, this->color.b, 0.85f);
+	this->color = vec4(1.0f, 1.0f, 1.0f, 0.65f);
 	hPin = Control::CENTER;
 	SetVisible(true);
 	text = new Label(0,5,"");
@@ -15,7 +16,6 @@ Notification::Notification(void) {
 	this->AddChild(text);
 	updateTime = 0;
 }
-
 
 Notification::~Notification(void)
 {

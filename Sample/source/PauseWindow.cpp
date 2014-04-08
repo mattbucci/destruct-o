@@ -12,7 +12,7 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 	this->parent = parent;
 
 	//Set up Self
-	position = Rect(0, 0, 800, 600);
+	position = Rect(0, 30, 800, 570);
 	color = vec4(0.33f, 0.33f, 0.33f, 0.75f);
 	SetVisible(false);
 

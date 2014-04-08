@@ -10,7 +10,7 @@ PauseWindowMobile::PauseWindowMobile(void) {
 PauseWindowMobile::PauseWindowMobile(BaseFrame* parent) : PauseWindow(parent)
 {
 	//Set up Self
-	position = Rect(0, 0, 800, 600);
+	position = Rect(0, 30, 800, 570);
 	color = vec4(0.33f, 0.33f, 0.33f, 0.75f);
 
 	//Set up Main Menu
