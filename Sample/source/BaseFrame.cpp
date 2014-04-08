@@ -224,3 +224,7 @@ void BaseFrame::Draw(double width, double height) {
 	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
 	FirstPerson->Draw(width, height, shaders2d);
 } 
+
+void BaseFrame::PushNotification(string txt) {
+	notification->notify(txt);
+}

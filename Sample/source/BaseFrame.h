@@ -58,6 +58,8 @@ public:
 
 	//Toggle Escape Menu
 	void ToggleMenu();
+	//Push Notification
+	void PushNotification(string txt);
 
 	//Override update to remove FPS control
 	//provided by the game system

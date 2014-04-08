@@ -2,10 +2,16 @@
 
 #include "Window.h"
 #include "Label.h"
+#include <string.h>
+#include <queue>
+
+#define NOTIFICATION_TIME 1
 
 class Notification : public Window
 {
+	queue<string> q;
 	Label* text;
+	double updateTime;
 
 public:
 	Notification(void);
