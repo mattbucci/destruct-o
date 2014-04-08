@@ -7,6 +7,7 @@
 
 #include "GLTexture.h"
 #include "TextureCache.h"
+#include "GLParticleProgram.h"
 
 ParticleSystem::ParticleSystem(ParticleData particleSystemDescription,double now, double lifetime) {
 	this->particleSystemDescription = particleSystemDescription;
@@ -66,7 +67,7 @@ bool ParticleSystem::UpdateEmitter(double now, double delta) {
 }
 
 //Handle particle system material and draw style now
-void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shader) {
+void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shader, vec3 cameraZAxis) {
 	//Enforce the selected material
 	switch(particleSystemDescription.MaterialStyle) {
 	case ParticleData::NONE:
@@ -81,9 +82,9 @@ void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shade
 	case ParticleData::BLEND:
 		//For now this is false, but when sorting is correctly
 		//implemented, this will become true
-		glDepthMask(GL_FALSE);
+		glDepthMask(GL_TRUE);
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		break;
 	case ParticleData::SCREEN:
 		glDepthMask(GL_FALSE);
@@ -91,6 +92,12 @@ void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shade
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
 		break;
 	}
+    //Sort if necessary
+    if (particleSystemDescription.MaterialStyle == ParticleData::BLEND) {
+        particleList.sort([cameraZAxis](Particle * a, Particle * b) {
+            return glm::dot(a->Position, cameraZAxis) < glm::dot(b->Position, cameraZAxis);
+        });
+    }
     
 	//Enable the texture used for this particle system
 	GLTexture * texture = CurrentSystem->Textures.GetTexture(particleSystemDescription.MaterialTexture);

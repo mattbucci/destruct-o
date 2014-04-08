@@ -227,14 +227,34 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				//Yes you leak a particle data every time you do this
 				//should be fixed
 				ParticleData * rules;
+                vec3 hit, norm;
+                if (game->Physics.Raytrace(playerPos + vec3(0, 0, 2.5), playerFacing, hit, norm)) {
+                    rules = ParticleData::LoadParticleData("particles/fire.vpart");
+                    if (rules == NULL)
+                        return;
 
-				rules = ParticleData::LoadParticleData("particles/fire.vpart");
-				if (rules == NULL)
-					return;
+                    ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules, 5);
+                    testSystem->Position = hit;
+                }
 
-				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,2);
-				testSystem->Position = cubePos;
 			}
+            else if (eve.Key == '`') {
+                vec3 cubePos = playerPos + playerFacing*5.0f;
+
+                //Yes you leak a particle data every time you do this
+                //should be fixed
+                ParticleData * rules;
+                vec3 hit, norm;
+                if (game->Physics.Raytrace(playerPos + vec3(0, 0, 2.5), playerFacing, hit, norm)) {
+                    rules = ParticleData::LoadParticleData("particles/exampleAnimated.vpart");
+                    if (rules == NULL)
+                        return;
+
+                    ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules, 5);
+                    testSystem->Position = hit;
+                }
+
+            }
 			else if (eve.Key == '6') {
 				vec3 cubePos = playerPos+playerFacing*20.0f;
 

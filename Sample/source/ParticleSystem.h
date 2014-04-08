@@ -32,6 +32,6 @@ public:
 	//returns true if this particle system should be cleaned up
 	bool UpdateEmitter(double now, double delta);
 	//Draw particles for this particle system
-	void Draw(ParticleRenderer * renderer, GLParticleProgram * shader);
+	void Draw(ParticleRenderer * renderer, GLParticleProgram * shader, vec3 cameraZAxis);
 };
  

@@ -303,7 +303,7 @@ bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec
 
 	for (; n > 0; --n) {
 		//Paint it to mark it as visited
-		voxelSystem->Paint(vec2(x,y),5);
+		//voxelSystem->Paint(vec2(x,y),5);
 		//Check the voxel for a ray collision in 3d space
 		//Check every voxel that's in this 2d region
 		float height = voxelSystem->GetPositionHeight(vec2(x,y));
