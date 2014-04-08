@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "PauseWindowMobile.h"
 #include "BaseFrame.h"
 

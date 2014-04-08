@@ -1,5 +1,7 @@
+#include "stdafx.h"
+
 #include "PauseWindow.h"
-#include "BaseFrame.h";
+#include "BaseFrame.h"
 
 PauseWindow::PauseWindow(void) {
 
