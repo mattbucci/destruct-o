@@ -103,19 +103,6 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
         throw std::exception();
     }
     
-    // Find the node with the parts array (some way with a reference, i'm not aware if pointer work properly (casting reference to pointer eh?)
-    Json::Value partMaterials;
-    for(Json::Value::iterator nIt = nodes.begin(); nIt != nodes.end(); nIt++)
-    {
-        // Check if we have a part member
-        if((*nIt)["parts"] != Json::Value::null)
-        {
-            partMaterials = (*nIt)["parts"];
-            std::cout << "Found it" << std::endl;
-            break;
-        }
-    }
-    
     // Get the json blob as a float array (annoying, and slow, but because json value is an array of Json::Value, it is necessary
     std::vector<GLfloat> vertexData;
     for(Json::Value::iterator vIt = vertices.begin(); vIt != vertices.end(); vIt++)
@@ -129,7 +116,7 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertexData.data(), GL_STATIC_DRAW);
     
     // Iterate through the mesh parts
-    for(Json::Value::iterator pIt = meshParts.begin(), nIt = partMaterials.begin(); pIt != meshParts.end(); pIt++, nIt++)
+    for(Json::Value::iterator pIt = meshParts.begin(); pIt != meshParts.end(); pIt++)
     {
         // Create a new mesh part
         GLMesh::Part *part = new GLMesh::Part;
@@ -149,11 +136,8 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
         glBindBuffer(GL_ARRAY_BUFFER, part->indexBuffer);
         glBufferData(GL_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indexData.data(), GL_STATIC_DRAW);
         
-        // store the material name
-        part->material = (*nIt)["materialid"].asString();
-        
         // Store the mesh part
-        parts.push_back(part);
+        parts[(*pIt)["id"].asString()] = part;
     }
     
     // Iterate through the shader properties
@@ -231,10 +215,29 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
         for(Json::Value::iterator tIt = bitmaps.begin(); tIt != bitmaps.end(); tIt++)
         {
             textures.push_back(directory + "/" + (*tIt)["filename"].asString());
+            textureCache.GetTexture(textures.back());
         }
         
         // Store this material
         materials[(*mIt)["id"].asString()] = textures;
+    }
+    
+    // Find the nodes with render steps
+    for(Json::Value::iterator nIt = nodes.begin(); nIt != nodes.end(); nIt++)
+    {
+        // Check if we have a part member
+        if((*nIt)["parts"] != Json::Value::null)
+        {
+            // Get the steps for this node
+            Json::Value& steps = (*nIt)["parts"];
+            
+            // Iterate through the steps
+            for(Json::Value::iterator sIt = steps.begin(); sIt != steps.end(); sIt++)
+            {
+                // Push back the render step (this will become more complex, we add bones in this function
+                rendersteps.push_back(std::make_pair((*sIt)["meshpartid"].asString(), (*sIt)["materialid"].asString()));
+            }
+        }
     }
     
     // Success
@@ -245,9 +248,9 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
 GLMesh::~GLMesh()
 {
     // Iterate through all the submeshes
-    for(std::vector<Part *>::iterator it = parts.begin(); it != parts.end(); ++it)
+    for(std::map<std::string, Part *>::iterator it = parts.begin(); it != parts.end(); ++it)
     {
-        delete *it;
+        delete it->second;
     }
 }
 
@@ -255,11 +258,14 @@ GLMesh::~GLMesh()
 void GLMesh::Draw(GL3DProgram *shader)
 {
     // Iterate through all the submeshes
-    for(std::vector<Part *>::iterator it = parts.begin(); it != parts.end(); ++it)
+    for(std::vector<std::pair<std::string, std::string> >::iterator it = rendersteps.begin(); it != rendersteps.end(); ++it)
     {
+        // Get the part referenced here
+        GLMesh::Part *part = parts[it->first];
+        
 #if !(defined __ANDROID__)
         // Bind the vertex array object
-        glBindVertexArray((*it)->attributes);
+        glBindVertexArray(part->attributes);
 
         // If the shader has changed, reload the vertex array object pointers
         if(shader != priorShader)
@@ -282,7 +288,7 @@ void GLMesh::Draw(GL3DProgram *shader)
             glVertexAttribPointer(shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, vertexFrameSize * sizeof(GLfloat), (GLvoid *)(texCoordOffset * sizeof(GLfloat)));
             
             // Set the index buffer
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->indexBuffer);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, part->indexBuffer);
             
 #if !(defined __ANDROID__)
         }
@@ -295,7 +301,7 @@ void GLMesh::Draw(GL3DProgram *shader)
         shader->Model.PopMatrix();
         
         // Get the material
-        std::vector<std::string>& textures = materials[(*it)->material];
+        std::vector<std::string>& textures = materials[it->second];
         
         // Load and active the related textures
         GLuint textureUnit = GL_TEXTURE0;
@@ -313,7 +319,7 @@ void GLMesh::Draw(GL3DProgram *shader)
         glUniform2fv(glGetUniformLocation(shader->GetId(), "material_reflectivity"), 2, (const GLfloat *) &specular);
         
         // Draw this mesh
-        glDrawElements(GL_TRIANGLES, (*it)->indexCount, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, part->indexCount, GL_UNSIGNED_INT, 0);
     }
     
     // Store the new shader pointer

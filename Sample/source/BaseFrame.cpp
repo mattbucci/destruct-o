@@ -32,9 +32,9 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	FirstPerson->Enable(true);
     
     // Test load a mesh
-    mesh[0] = new GLMesh("meshes/robot02", "robot02.mesh.json", Textures, vec3(1.5, 1.5, 1.5));
-    mesh[1] = new GLMesh("meshes/scifi_soldier02", "scifi_soldier02.mesh.json", Textures, vec3(0.015, 0.015, 0.015));
-    mesh[2] = new GLMesh("meshes/scifi_soldier02", "scifi_soldier02_dark.mesh.json", Textures, vec3(0.015, 0.015, 0.015));
+    mesh[0] = new GLMesh("meshes/robot02",         "robot02.mesh.json",         Textures, vec3(1.500, 1.500, 1.500));
+    mesh[1] = new GLMesh("meshes/scifi_soldier01", "scifi_soldier01.mesh.json", Textures, vec3(0.300, 0.300, 0.300));
+    mesh[2] = new GLMesh("meshes/scifi_soldier02", "scifi_soldier02.mesh.json", Textures, vec3(0.015, 0.015, 0.015));
 	
 	cout << "\t Finished base frame\n";
 	//testSystem = NULL;
@@ -114,13 +114,17 @@ void BaseFrame::OnFrameFocus() {
 	Controls.AddWindow(notification);
 }
 
-void BaseFrame::Build() {
-
+void BaseFrame::Build()
+{
+    // Test load a mesh
+    /*mesh[0] = new GLMesh("meshes/robot02",         "robot02.mesh.json",              Textures, vec3(1.5,   1.5,   1.5));
+    mesh[1] = new GLMesh("meshes/scifi_soldier02", "scifi_soldier02.mesh.json",      Textures, vec3(0.015, 0.015, 0.015));
+    mesh[2] = new GLMesh("meshes/scifi_soldier02", "scifi_soldier02_dark.mesh.json", Textures, vec3(0.015, 0.015, 0.015));*/
+    
 	//load the audio
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
 	audio->Subscribe(player);
-	
 }
 
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {

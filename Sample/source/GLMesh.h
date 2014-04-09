@@ -37,9 +37,6 @@ protected:
         // Index count
         unsigned int indexCount;
         
-        // Material id for this mesh
-        std::string  material;
-        
         // Constructor to setup everything about this mesh
         Part();
         ~Part();
@@ -55,20 +52,24 @@ protected:
     GLint  texCoordOffset;
     GLint  blendWeightOffset[4];
     
-    // Submeshes supported by this
-    std::vector<Part *>       parts;
+    // Constituant parts of this mesh
+    std::map<std::string, Part *> parts;
     
-    // Textures used by our mesh
+    // Materials that are supported by the mesh
     std::map<std::string, std::vector<std::string> > materials;
     
-    // Last program used to render (used to figure out if we've cached the vertex locations)
-    GL3DProgram              *priorShader;
+    // The render steps of the mesh (list of part name + material name)
+    std::vector<std::pair<std::string, std::string> > rendersteps;
     
     // Active texture cache
     TextureCache&             textureCache;
     
     // Default scale of mesh
     vec3                      scale;
+    
+    // Last program used to render (used to figure out if we've cached the vertex locations)
+    GL3DProgram              *priorShader;
+    
 public:
     // Load a model from a file
     GLMesh(const std::string& directory, const std::string& name, TextureCache& _textureCache, vec3 _scale = vec3(1,1,1));
