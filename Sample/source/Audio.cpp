@@ -28,7 +28,7 @@ void AudioPlayer::ReceiveEvent(event action) {
     //if in battle
     //set the intensity
 }
-void AudioPlayer::Subscribe(ActorPlayer* user) {
+void AudioPlayer::PlayerInit(ActorPlayer* user) {
     GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&user->PlayerJumped,[this](ActorPlayer* Object) {
         event test;
         test.type="player-jump";

@@ -94,7 +94,8 @@ bool BaseFrame::Load(string saveFile) {
 	
 	//Deserialize the data
 	Savable::Deserialize(fileData,this);
-
+    
+    audio->PlayerInit(player);
 	return true;
 }
 
@@ -132,7 +133,7 @@ void BaseFrame::Build() {
 	//load the audio
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
-	audio->Subscribe(player);
+	audio->PlayerInit(player);
     achievements = new Achievements(notification);
     achievements->InitPlayerAchievements(player);
     achievements->InitPhysicsAchievements(&Physics);
