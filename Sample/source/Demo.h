@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "InputEvent.h"
+#include "GameEvent.h"
 
 class GL3DProgram;
 class ParticleSystem;
@@ -37,4 +38,9 @@ public:
 	float CurrentAcidStrength;
 
 	void Draw(GL3DProgram * shader);
+    
+    
+    //duct tape fix
+	GameEvent<void(vec3)> CraterCalled;
+    GameEvent<void(vec3)> FireCalled;
 };

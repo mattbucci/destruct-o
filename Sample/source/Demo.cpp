@@ -155,6 +155,10 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 						ph->MaterialId = (int)voxRemoved.w;
 						//and some energy (velocity)
 						ph->Velocity = vec3(Utilities::random(-initialEnergy,initialEnergy),Utilities::random(-initialEnergy,initialEnergy),Utilities::random(-initialEnergy,initialEnergy));
+                        vec3 position = hit - vec3(0, 0, 1);
+                        CraterCalled.Fire([position](function<void(vec3)> subscriber) {
+                            subscriber(position);
+                        });
 					}
 
 				}
@@ -182,6 +186,10 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 						return;
 					testSystem = game->Particles.BuildParticleSystem(*rules, .1);
 					testSystem->Position = hit - vec3(0, 0, 1);
+                    
+                    CraterCalled.Fire([testSystem](function<void(vec3)> subscriber) {
+                        subscriber(testSystem->Position);
+                    });
 
 
 					vector<vec4> displacedVoxels = game->Voxels.Crater(hit, 5);
@@ -196,6 +204,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 						//and some energy (velocity)
 						ph->Velocity = vec3(Utilities::random(-initialEnergy, initialEnergy), Utilities::random(-initialEnergy, initialEnergy), Utilities::random(-initialEnergy, initialEnergy));
 					}
+                    
 				}
 			}
 			else if (eve.Key == 't') {
@@ -290,6 +299,9 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 
 				testSystem = game->Particles.BuildParticleSystem(*rules, .1);
 				testSystem->Position = cubePos - vec3(0, 0, 1);
+                CraterCalled.Fire([testSystem](function<void(vec3)> subscriber) {
+                    subscriber(testSystem->Position);
+                });
 			}
 			else if (eve.Key == '7') {
 				vec3 cubePos = playerPos+playerFacing*5.0f;

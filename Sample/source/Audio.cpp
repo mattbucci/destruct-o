@@ -51,3 +51,12 @@ void AudioPlayer::PlayerInit(ActorPlayer* user) {
     });
 
 }
+
+void AudioPlayer::DemoInit(Demo* demo) {
+    GameEventSubscriber::Subscribe<void(vec3)>(&demo->CraterCalled,[this](vec3 Position) {
+        event test;
+        test.type="explosions-grenade";
+        test.id=5;
+        EffectPlayer.PlayEffect(test);
+    });
+}

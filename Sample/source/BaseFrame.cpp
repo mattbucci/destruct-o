@@ -134,6 +134,7 @@ void BaseFrame::Build() {
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
 	audio->PlayerInit(player);
+    audio->DemoInit(demo);
     achievements = new Achievements(notification);
     achievements->InitPlayerAchievements(player);
     achievements->InitPhysicsAchievements(&Physics);

@@ -13,6 +13,7 @@
 #include "Music.h"
 #include "Effect.h"
 #include "ActorPlayer.h"
+#include "Demo.h"
 
 class AudioPlayer : protected GameEventSubscriber {
 private:
@@ -27,5 +28,6 @@ public:
     void SetIntensity(uint8_t value);
     void ReceiveEvent(event action);
     void PlayerInit(ActorPlayer*);
+    void DemoInit(Demo* demo);
 };
 #endif /* defined(__Audio_Test__Audio__) */
