@@ -12,7 +12,6 @@
 #include "AudioHeader.h"
 #include "Music.h"
 #include "Effect.h"
-#include "GameEventSubscriber.h"
 #include "ActorPlayer.h"
 
 class AudioPlayer : protected GameEventSubscriber {

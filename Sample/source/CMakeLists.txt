@@ -195,6 +195,10 @@ FILE(GLOB InterfaceFiles
 	DebugWindow.cpp
 	ErrorWindow.h
 	ErrorWindow.cpp
+	PauseWindow.h
+	PauseWindow.cpp
+	PauseWindowMobile.h
+	PauseWindowMobile.cpp
 	Font.h
 	Font.cpp
 	InputEvent.h
@@ -255,6 +259,15 @@ FILE(GLOB LibraryFiles
 	noiseutils.h
 	noiseutils.cpp	
 )
+source_group(Achievements FILES ${AchievementFiles})
+
+FILE(GLOB AchievementFiles
+	Achievements.h
+	Achievements.cpp
+	Achievement.h
+	Achievement.cpp
+)
+
 source_group(Libraries FILES ${LibraryFiles})
 
 FILE(GLOB SaveFiles
