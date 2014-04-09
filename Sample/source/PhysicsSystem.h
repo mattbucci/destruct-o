@@ -11,6 +11,7 @@ class PhysicsVoxel;
 class VoxelSystem;
 class PhysicsProxy;
 class Actor;
+class ParticleData;
 
 //The true physics system
 class PhysicsSystem : public Savable {
@@ -44,6 +45,9 @@ class PhysicsSystem : public Savable {
 
 	//C style function for performance reasons
 	friend Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxelBPosition);
+
+	//Temporary particle data
+	ParticleData * physicsVoxelErase;
 public:
 	PhysicsSystem(VoxelSystem * system);
 	~PhysicsSystem();

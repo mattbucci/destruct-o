@@ -10,11 +10,21 @@
 #include "Tracer.h"
 #include "PhysicsProxy.h"
 
+#include "ParticleData.h"
+#include "ParticleSystem.h"
+
+#include "Frames.h"
+#include "GameSystem.h"
+#include "BaseFrame.h"
+
 PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	//Build a voxel renderer
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
 	voxelSystem = system;
 	section.autoredeuce(false);
+
+	//For now stick this particle stuff here
+    physicsVoxelErase = ParticleData::LoadParticleData("particles/physicsDisintegrate.vpart");
 }
 PhysicsSystem::~PhysicsSystem() {
 	//cleanup all the voxels
@@ -103,7 +113,11 @@ void PhysicsSystem::Update(double delta, double now) {
 		voxel->Acceleration = vec3();
 		if ((voxel->DeathAt > 0) && (voxel->DeathAt < now)) {
 			//disintegrate voxel
+			//this is temporary. will be replaced by an event soon
+			ParticleSystem * testSystem = ((BaseFrame*)CurrentSystem)->Particles.BuildParticleSystem(*physicsVoxelErase, .3);
+			testSystem->Position = voxel->Position;
 			//remove voxel
+			delete voxel;
 			it = allVoxels.erase(it);
 		}
 		else

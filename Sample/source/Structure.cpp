@@ -65,8 +65,11 @@ Structure * Structure::LoadStructure(string structureName) {
 		fileData = ReadFile(structureName + ".le.struct");
 
 	//Check that the file data loaded
-	if (fileData.size() < 8)
+	if (fileData.size() < 8) {
+		cout << "structure file was too small and couldn't be read.\n";
 		return NULL;
+	}
+		
 
 	string magic = string((char*)&fileData[0],4);
 	if (magic != "STRT") {

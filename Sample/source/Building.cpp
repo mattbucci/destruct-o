@@ -13,6 +13,11 @@ Building::Building() {
 //note: the structure pointer *must* stay valid
 //until the last call to ConstructStructure()
 void Building::Stack(Structure * floor) {
+	_ASSERTE(floor != NULL);
+
+	//For now ignore NULL floors, but this shouldn't happen
+	if (floor == NULL)
+		return;
 	floors.push_back(floor);
 }
 
