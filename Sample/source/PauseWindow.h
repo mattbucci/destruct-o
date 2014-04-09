@@ -12,10 +12,11 @@ protected:
 
 	//Main Menu Elements
 	Window menuRect;
-	Button save;
-	Button load;
-	Button options;
-	Button saveandquit;
+	Button menuSave;
+	Button menuLoad;
+	Button menuOptions;
+	Button menuSaveAndQuit;
+	Button menuExit;
 
 	//Options Menu Elements
 	Window optsRect;
