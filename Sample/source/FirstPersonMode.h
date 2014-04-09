@@ -57,6 +57,8 @@ public:
 	CLASS_DECLARATION(FirstPersonMode)
 		CLASS_MEMBER(lookVector,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(moveVector,ReflectionData::SAVE_VEC2)
+		CLASS_MEMBER(debug,ReflectionData::SAVE_BOOL);
+		CLASS_MEMBER(debug_target_height,ReflectionData::SAVE_FLOAT);
 		CLASS_MEMBER(aggregateMouseVector,ReflectionData::SAVE_VEC2)
 	END_DECLARATION
 };
