@@ -31,7 +31,7 @@ class BaseFrame : public GameSystem, public Savable {
 	DemoWindow * demoWindow;
 	Notification * notification;
 	PauseWindow * pauseWindow;
-    Achievements * achivement;
+    Achievements * achievements;
 protected:
 	//Overload to tell the save system about handles created in the system
 	virtual void Load(Json::Value & parentValue, LoadData & loadData);

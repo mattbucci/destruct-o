@@ -10,14 +10,25 @@
 
 #include "Achievements.h"
 
-void InitPlayerAchievements(ActorPlayer * player){
+void Achievements::InitPlayerAchievements(ActorPlayer * player){
+    GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&player->PlayerJumped,[this](ActorPlayer* Object) {
+
+    });
+    
+    GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&player->PlayerLanded,[this](ActorPlayer* Object) {
+
+    });
+    
+    GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&player->PlayerWalked,[this](ActorPlayer* Object) {
+
+    });
+
+}
+
+void Achievements::InitPhysicsAchievements(PhysicsSystem * physics){
     
 }
 
-void InitPhysicsAchievements(PhysicsSystem * physics){
-    
-}
-
-void InitActorAchievements(ActorSystem * actors){
+void Achievements::InitActorAchievements(ActorSystem * actors){
     
 }

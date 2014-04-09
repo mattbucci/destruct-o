@@ -17,10 +17,11 @@
 #include "ActorSystem.h"
 #include "Notification.h"
 
-class Achievements : protected GameEventSubscriber, public Savable {
+class Achievements : protected GameEventSubscriber{
     vector<Achievement*> achievementlist;
     Notification * notify;
 public:
+    Achievements(){};
     Achievements(Notification* notification){
         this->notify = notification;
     };
@@ -31,9 +32,7 @@ public:
     
     void InitActorAchievements(ActorSystem * actors);
     
-    CLASS_DECLARATION(Achievements)
-    
-	END_DECLARATION
+    GameEvent<void(Achievement*)> AchivementEarned;
 };
 
 #endif /* defined(__VoxEngine__Achievements__) */
