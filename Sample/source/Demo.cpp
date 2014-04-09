@@ -297,6 +297,10 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,.1);
 				testSystem->Position = cubePos;
 			}
+            else if (eve.Key == '0') {
+                vec3 cubePos = playerPos+playerFacing*5.0f;
+                game->Meshes.push_back(cubePos);
+            }
 		}
 	}
 }
