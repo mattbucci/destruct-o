@@ -29,24 +29,28 @@ void AudioPlayer::ReceiveEvent(event action) {
     //set the intensity
 }
 void AudioPlayer::PlayerInit(ActorPlayer* user) {
+    this->user = user;
     GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&user->PlayerJumped,[this](ActorPlayer* Object) {
         event test;
         test.type="player-jump";
-        test.id=5;
+        test.id=1;
+        test.pos = vec3(0,0,0);
         EffectPlayer.PlayEffect(test);
     });
     
     GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&user->PlayerLanded,[this](ActorPlayer* Object) {
         event test;
         test.type="player-land";
-        test.id=5;
+        test.id=2;
+        test.pos = vec3(0,0,0);
         EffectPlayer.PlayEffect(test);
     });
     
     GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&user->PlayerWalked,[this](ActorPlayer* Object) {
         event test;
         test.type="player-walk";
-        test.id=5;
+        test.id=3;
+        test.pos = vec3(0,0,0);
         EffectPlayer.PlayEffect(test);
     });
 
@@ -56,7 +60,8 @@ void AudioPlayer::DemoInit(Demo* demo) {
     GameEventSubscriber::Subscribe<void(vec3)>(&demo->CraterCalled,[this](vec3 Position) {
         event test;
         test.type="explosions-grenade";
-        test.id=5;
+        test.id=4 + round(rand() % 50);
+        test.pos = Position - user->GetPosition();
         EffectPlayer.PlayEffect(test);
     });
 }

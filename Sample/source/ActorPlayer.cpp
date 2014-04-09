@@ -132,3 +132,6 @@ void ActorPlayer::Update(float delta, float now) {
         }
     }
 }
+vec3 ActorPlayer::GetPosition(){
+    return position;
+}

@@ -18,7 +18,7 @@ Achievements::Achievements(Notification* notification){
     
     achievementlist.push_back(new Achievement(0,1,"Learning to fly, Jumped for the first time","player-jumped",0,notify));
     
-    achievementlist.push_back(new Achievement(0,1,"Destroyer of worlds, 100 voxels destroyed","voxel-destroyed",0,notify));
+    achievementlist.push_back(new Achievement(0,100,"Destroyer of worlds, 100 voxels destroyed","voxel-destroyed",0,notify));
     
 };
 

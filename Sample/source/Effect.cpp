@@ -11,6 +11,7 @@
 
 Effect::Effect() {
     Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
+    Mix_AllocateChannels(255);
     cout << "Loading effects" << endl;
     load_files();
     event test;
@@ -22,12 +23,22 @@ Effect::Effect() {
 void Effect::PlayEffect(event action) {
     if(action.type=="player-walk"){
         if(foot)
-            Mix_PlayChannel(-1,effects["player-left-foot"],0);
+            Mix_PlayChannel(action.id,effects["player-left-foot"],0);
         else
-            Mix_PlayChannel(-1,effects["player-right-foot"],0);
+            Mix_PlayChannel(action.id,effects["player-right-foot"],0);
     }
     else {
-        Mix_PlayChannel(-1,effects[action.type],0);
+        if (action.pos != vec3(0,0,0)) {
+            int distance = pow(glm::length(action.pos-vec3(0,0,0)),1.3);
+            if(distance >= 250) distance = 250;
+            cout << distance;
+            int angle = acos(action.pos.x)+(action.pos.y < 0 ? 180 : 0);
+            
+            Mix_SetPosition(action.id, angle, distance);
+            printf("Mix_SetPosition: %s\n", Mix_GetError());
+            
+        }
+        Mix_PlayChannel(action.id,effects[action.type],0);
     }
 }
 
@@ -36,6 +47,7 @@ void ReadFiles(string data, map<string,Mix_Chunk*>& effects) {
 
     
 }
+
 bool Effect::load_files() {
     //Load the effects
     string filename = "sounds/Effects.txt";

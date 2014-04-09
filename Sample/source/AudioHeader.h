@@ -29,6 +29,7 @@ struct event
 {
     uint32_t id;
     string type;
+    vec3 pos;
 };
 
 #endif

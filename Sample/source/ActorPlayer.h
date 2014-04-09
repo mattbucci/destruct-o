@@ -16,6 +16,7 @@ public:
 	//Update the position based off the most recent movement and direction vectors
 	void Update(float delta, float now) override;
     //player events
+    vec3 GetPosition();
     GameEvent<void(ActorPlayer*)> PlayerJumped;
     GameEvent<void(ActorPlayer*)> PlayerLanded;
     GameEvent<void(ActorPlayer*)> PlayerWalked;

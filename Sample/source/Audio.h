@@ -17,6 +17,7 @@
 
 class AudioPlayer : protected GameEventSubscriber {
 private:
+    ActorPlayer * user;
     Music MusicPlayer;
     Effect EffectPlayer;
     void clean_up();
