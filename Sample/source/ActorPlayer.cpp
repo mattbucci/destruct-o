@@ -15,7 +15,7 @@ static const float jumpVelocity = 10.0f;
 
 ActorPlayer::ActorPlayer() {
 	//Start the player off in abouts the center
-	position = vec3(128,128,0);
+	position = vec3(218,189,0);
     deltaPosition = 0.0;
     onGround = true;
 	debug = true;

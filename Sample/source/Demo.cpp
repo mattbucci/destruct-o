@@ -305,7 +305,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,.1);
 				testSystem->Position = cubePos;
 			}
-			else if (eve.Key == 'p') {
+			else if (eve.Key == 'r') {
 				game->Load("reset_save.json.compressed");
 			}
 		}
