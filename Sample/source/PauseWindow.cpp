@@ -23,47 +23,53 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 	menuRect.color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//Set up Main Menu Children
-	save.vPin = load.vPin = options.vPin = saveandquit.vPin = Control::MIN;
-	save.hPin = load.hPin = options.hPin = saveandquit.hPin = Control::CENTER;
-	save.position =			Rect(0, 50 + 50 * 0, 300, 40);
-	load.position =			Rect(0, 50 + 50 * 1, 300, 40);
-	options.position =		Rect(0, 50 + 50 * 2, 300, 40);
-	saveandquit.position =	Rect(0, 370, 300, 40);
-	save.SetText("Save");
-	load.SetText("Load");
-	options.SetText("Options");
-	saveandquit.SetText("Save & Quit");
+	menuSave.vPin = menuLoad.vPin = menuOptions.vPin = menuSaveAndQuit.vPin = menuExit.vPin = Control::MIN;
+	menuSave.hPin = menuLoad.hPin = menuOptions.hPin = menuSaveAndQuit.hPin = menuExit.hPin = Control::CENTER;
+	menuSave.position =			Rect(0, 50 + 50 * 0, 300, 40);
+	menuLoad.position =			Rect(0, 50 + 50 * 1, 300, 40);
+	menuOptions.position =		Rect(0, 50 + 50 * 2, 300, 40);
+	menuSaveAndQuit.position =	Rect(0, 50 + 50 * 3, 300, 40);
+	menuExit.position =			Rect(0, 370, 300, 40);
+	menuSave.SetText("Save");
+	menuLoad.SetText("Load");
+	menuOptions.SetText("Options");
+	menuSaveAndQuit.SetText("Save & Quit");
+	menuExit.SetText("Back to Game");
 
 	//Add Controls
 	AddChild(&menuRect);
-	menuRect.AddControl(&save);
-	menuRect.AddControl(&load);
-	menuRect.AddControl(&options);
-	menuRect.AddControl(&saveandquit);
+	menuRect.AddControl(&menuSave);
+	menuRect.AddControl(&menuLoad);
+	menuRect.AddControl(&menuOptions);
+	menuRect.AddControl(&menuSaveAndQuit);
+	menuRect.AddControl(&menuExit);
 	menuRect.SetVisible(false);
 
 	//Subscribe Main Menu Buttons to Actions
-	Subscribe<void(Button*)>(&save.EventClicked, [this](Button * b) {
+	Subscribe<void(Button*)>(&menuSave.EventClicked, [this](Button * b) {
 		if(this->parent->Save("testsavefile.json.compressed")) {
 			cout << "Save Successful!" << endl;
 		} else {
 			cout << "Save Unsuccessful." << endl;
 		}
 	});
-	Subscribe<void(Button*)>(&load.EventClicked, [this](Button * b) {
+	Subscribe<void(Button*)>(&menuLoad.EventClicked, [this](Button * b) {
 		if(this->parent->Load("testsavefile.json.compressed")) {
 			cout << "Load Successful!" << endl;
 		} else {
 			cout << "Load Unsuccessful." << endl;
 		}
 	});
-	Subscribe<void(Button*)>(&options.EventClicked, [this](Button * b) {
+	Subscribe<void(Button*)>(&menuOptions.EventClicked, [this](Button * b) {
 		this->showOptsMenu();
 	});
-	Subscribe<void(Button*)>(&saveandquit.EventClicked, [this](Button * b) {
+	Subscribe<void(Button*)>(&menuSaveAndQuit.EventClicked, [this](Button * b) {
 		cout << "\'Save & Quit\' Button Clicked" << endl;
 		this->parent->Save("testsavefile.json.compressed");
 		exit(0);
+	});
+	Subscribe<void(Button*)>(&menuExit.EventClicked, [this](Button * b) {
+		this->toggle();
 	});
 
 	//Set up Options Menu
