@@ -20,7 +20,7 @@ struct quad {
 	quad() {
 		
 	}
-	quad(vec3 a1, vec3 b1, vec3 a2, vec3 b2) {
+	quad(vec3 a1, vec3 b1, vec3 a2, vec3 b2, int direction) {
 		this->a1 = INV(a1);
 		this->b1 = INV(b2);
 		this->a2 = INV(b1);
@@ -28,11 +28,16 @@ struct quad {
 
 		ASize = abs(glm::dot(vec3(1,1,1),this->a2-this->a1));
 		BSize = abs(glm::dot(vec3(1,1,1),this->b1-this->a1));
+		this->direction = direction;
 	}
 	//distance between a1 and a2
 	float ASize;
 	//distance between a1 and b1
 	float BSize;
+
+	//The major axis the normal of this quad exists in
+	int direction;
+
 	vec3 a1;
 	vec3 b1;
 	vec3 a2;
@@ -54,7 +59,8 @@ bool TerrainChunk::f(int i, int j, int k) {
 }
 //check if the given position is beneath the surface
 bool TerrainChunk::fu(int i, int j, int k) {
-	_ASSERTE((i < CHUNK_SIZE) && (k < CHUNK_SIZE));
+	if ((i >= CHUNK_SIZE) || (i < 0) || (k >= CHUNK_SIZE) || (k < 0) || (j >= 256) || (j < 0))
+		return false;
 
 	i += (int)Y;
 	k += (int)X;
@@ -132,7 +138,7 @@ void TerrainChunk::Reconstruct() {
 							(!(x[d] <  dims[d]-1 ? f(x[0]+q[0], x[1]+q[1], x[2]+q[2]) : false));
 					}
 					else {
-						mask[n-1] = mask[n-1] && !( fu(x[0]+q[0], x[1]+q[1], x[2]+q[2]) ||  fu(x[0]+q[0], x[1]+q[1], x[2]+q[2]) );
+						mask[n-1] = mask[n-1] && !( fu(x[0]+q[0], x[1]+q[1], x[2]+q[2]) ||  fu(x[0], x[1], x[2]) );
 					}
 				}
 				//Increment x[d]
@@ -167,7 +173,7 @@ void TerrainChunk::Reconstruct() {
 								, vec3(x[0]+du[0],       x[1]+du[1],       x[2]+du[2]      )
 								, vec3(x[0]+du[0]+dv[0], x[1]+du[1]+dv[1], x[2]+du[2]+dv[2])
 								, vec3(x[0]      +dv[0], x[1]      +dv[1], x[2]      +dv[2])
-							));
+							,d));
 							//Zero-out mask
 							for(l=0; l<h; ++l)
 								for(k=0; k<w; ++k) {
@@ -182,13 +188,48 @@ void TerrainChunk::Reconstruct() {
 		}
 	}
 
-	//cout << "[" << (unsigned int)this << "] simplified into: " << quads.size() << " quads or " << quads.size()*6 << " vertices.\n";
+	//Calculate the lightness % of each side
+	static const vec3 sunpos = vec3(-200000,-200000,400000);
+	static const vec3 compare = glm::normalize(sunpos);
+	static const vec3 observer = vec3();
+	static const unsigned char lightSides[6] = {
+		(unsigned char)(256.0*max(0.0f,glm::dot(compare,vec3(1,0,0)))),
+		(unsigned char)(256.0*max(0.0f,glm::dot(compare,vec3(-1,0,0)))),
+		(unsigned char)(256.0*max(0.0f,glm::dot(compare,vec3(0,1,0)))),
+		(unsigned char)(256.0*max(0.0f,glm::dot(compare,vec3(0,-1,0)))),
+		(unsigned char)(256.0*max(0.0f,glm::dot(compare,vec3(0,0,1)))),
+		(unsigned char)(256.0*max(0.0f,glm::dot(compare,vec3(0,0,-1)))),
+	};
 
 	VertexDataSize = quads.size()*6; 
 	delete [] VertexData;
 	VertexData = new ChunkVertexData[VertexDataSize];
 	int vcount = 0;
 	for (int i = 0; i < quads.size(); i++) {
+		//Determine the normal of the quad
+		unsigned char shading;
+		//Only top faces, so if the direction is up, the face is up
+		if (quads[i].direction == 1)
+			shading = lightSides[4];
+		else {
+			//Moves along y
+			//check if its 1, or -1 in the y
+			int x = (int)quads[i].a1.x;
+			int y = (int)quads[i].a1.y;
+			int h = (int)quads[i].a1.z;
+			TileCell & cell = owner->Cells[y*TILE_SIZE+x];
+			if ((h <= cell.height) && (h >= cell.height-cell.stackHeight)) {
+				if (quads[i].direction == 2)
+					shading = lightSides[2];
+				else
+					shading = lightSides[0];
+			}
+			else if (quads[i].direction == 2)
+				shading = lightSides[3];
+			else
+				shading = lightSides[1];
+		} 
+
 		//Generate interleaved data for each vertex
 		//of each found quad
 		//First triangle
@@ -196,16 +237,19 @@ void TerrainChunk::Reconstruct() {
 		VertexData[vcount].TextureCoordinateY = 0;
 		VertexData[vcount].TextureCoordinateSX = 0;
 		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].a1);
 		VertexData[vcount].TextureCoordinateX = 0;
 		VertexData[vcount].TextureCoordinateY = quads[i].BSize;
 		VertexData[vcount].TextureCoordinateSX = 0;
 		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].b1);
 		VertexData[vcount].TextureCoordinateX = quads[i].ASize;
 		VertexData[vcount].TextureCoordinateY = 0;
 		VertexData[vcount].TextureCoordinateSX = 0;
 		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].a2);
 
 		//Second triangle
@@ -213,16 +257,19 @@ void TerrainChunk::Reconstruct() {
 		VertexData[vcount].TextureCoordinateY = quads[i].BSize;
 		VertexData[vcount].TextureCoordinateSX = 0;
 		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].b1);
 		VertexData[vcount].TextureCoordinateX = quads[i].ASize;
 		VertexData[vcount].TextureCoordinateY = 0;
 		VertexData[vcount].TextureCoordinateSX = 0;
 		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].a2);
 		VertexData[vcount].TextureCoordinateX = quads[i].ASize;
 		VertexData[vcount].TextureCoordinateY = quads[i].BSize;
 		VertexData[vcount].TextureCoordinateSX = 0;
 		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].b2);
 	}
 }

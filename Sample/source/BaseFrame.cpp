@@ -184,6 +184,8 @@ void BaseFrame::Draw(double width, double height) {
 	//Startup 3d rendering
 	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
 	shaders3d->UseProgram();
+	shaders3d->Model.Reset();
+	shaders3d->Model.Apply();
 	//Setup sun here for now
 	//translate it to follow world coordinates
 	shaders3d->Lights.Enable(1);

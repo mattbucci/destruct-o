@@ -21,8 +21,10 @@ void ViewDistanceCalc::CalculateAndApply(float & fogDistance,float currentFPS) {
 	const float acceptableFrameRate = 35;
 	framesDrawn++;
 	//only calibrate for the first 2000 frames
-	if (framesDrawn > maxFrameLearn)
+	if (framesDrawn > maxFrameLearn) {
+		fogDistance = GetViewDistance()*.80f;
 		return;
+	}
 
 	//A value between 0 and 1 which indicates how fast
 	//the view distance can be adjusted
