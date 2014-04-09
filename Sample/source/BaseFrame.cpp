@@ -27,6 +27,15 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 #else
 	FirstPerson = new FirstPersonMode();
 #endif
+
+#ifdef __MOBILE__
+	pauseWindow = new PauseWindowMobile(this);
+#else
+	pauseWindow = new PauseWindow(this);
+#endif
+	Controls.AddWindow(pauseWindow);
+	notification = new Notification();
+	Controls.AddWindow(notification);
 	
 	// Enable the first person controller
 	FirstPerson->Enable(true);
@@ -38,6 +47,14 @@ BaseFrame::~BaseFrame() {
 
 }
 
+
+void BaseFrame::ToggleMenu() {
+	if(pauseWindow->toggle()) {
+		FirstPerson->Enable(false);
+	} else {
+		FirstPerson->Enable(true);
+	}
+}
 
 //synchronously saves the game
 bool BaseFrame::Save(string saveFile) {
@@ -78,7 +95,7 @@ bool BaseFrame::Load(string saveFile) {
 	//Deserialize the data
 	Savable::Deserialize(fileData,this);
 
-	return 0;
+	return true;
 }
 
 void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
@@ -106,8 +123,6 @@ void BaseFrame::OnFrameFocus() {
 	demoWindow = new DemoWindow(demo);
 	Controls.AddWindow(demoWindow);
 #endif
-	notification = Notification::init();
-	Controls.AddWindow(notification);
 }
 
 void BaseFrame::Build() {
@@ -213,3 +228,7 @@ void BaseFrame::Draw(double width, double height) {
 	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
 	FirstPerson->Draw(width, height, shaders2d);
 } 
+
+void BaseFrame::PushNotification(string txt) {
+	notification->notify(txt);
+}
