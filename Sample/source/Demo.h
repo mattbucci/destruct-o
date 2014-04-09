@@ -16,7 +16,11 @@ class Demo {
 	//or >1 if we want to fake a key press on next Update()
 	int queuedKeyPress;
 
+	vector<unsigned char> resetSave;
 public:
+
+	//saves the save the reset button loads
+	void DoInitialSave();
 
 	void QueueTouchEvent(int keyPress);
 
