@@ -185,7 +185,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 						//add a bit of random noise
 						vox += vec3(Utilities::random(-initialDisplacement, initialDisplacement), Utilities::random(-initialDisplacement, initialDisplacement), Utilities::random(-initialDisplacement, initialDisplacement));
 						//Build the voxel
-						PhysicsVoxel * ph = game->Physics.BuildVoxel(vox,Utilities::random(4.0,6.0))
+						PhysicsVoxel * ph = game->Physics.BuildVoxel(vox,Utilities::random(4.0,6.0));
 						//Set the material
 						ph->MaterialId = (int)voxRemoved.w;
 						//and some energy (velocity)
