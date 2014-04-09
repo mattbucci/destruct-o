@@ -22,5 +22,7 @@ public:
 
 	CLASS_DECLARATION(ActorPlayer)
 		INHERITS_FROM(Actor)
+		CLASS_MEMBER(debug,ReflectionData::SAVE_BOOL);
+		CLASS_MEMBER(debug_target_height,ReflectionData::SAVE_FLOAT);
 	END_DECLARATION
 };
