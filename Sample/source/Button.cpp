@@ -37,9 +37,9 @@ Button::Button() : innerLabel(0,0,"") {
 	innerLabel.hPin = Control::CENTER;
 	innerLabel.vPin = Control::CENTER;
 
-	normalColor = vec4(.2,.2,.2,1);
-	hoverColor = vec4(.4,.4,.4,1);
-	clickColor = vec4(.6,.6,.6,1);
+	normalColor = VisualInterface.ColorControlBackground;
+	hoverColor = VisualInterface.ColorControlHighlight;
+	clickColor = VisualInterface.ColorControlSelection;
 
 	AddChild(&innerLabel);
 
@@ -52,9 +52,9 @@ Button::Button(Rect position) : innerLabel(0,0,"") {
 	innerLabel.hPin = Control::CENTER;
 	innerLabel.vPin = Control::CENTER;
 
-	normalColor = vec4(.2,.2,.2,1);
-	hoverColor = vec4(.4,.4,.4,1);
-	clickColor = vec4(.6,.6,.6,1);
+	normalColor = VisualInterface.ColorControlBackground;
+	hoverColor = VisualInterface.ColorControlHighlight;
+	clickColor = VisualInterface.ColorControlSelection;
 
 	AddChild(&innerLabel);
 
@@ -66,9 +66,9 @@ Button::Button(Rect position, string text) : innerLabel(0,0,"") {
 	innerLabel.hPin = Control::CENTER;
 	innerLabel.vPin = Control::CENTER;
 
-	normalColor = vec4(.2,.2,.2,1);
-	hoverColor = vec4(.4,.4,.4,1);
-	clickColor = vec4(.6,.6,.6,1);
+	normalColor = VisualInterface.ColorControlBackground;
+	hoverColor = VisualInterface.ColorControlHighlight;
+	clickColor = VisualInterface.ColorControlSelection;
 
 	AddChild(&innerLabel);
 
