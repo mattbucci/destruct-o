@@ -11,16 +11,20 @@
 
 #include <iostream>
 #include <string>
+#include "Notification.h"
 
 using namespace std;
 
 class Achievement{
     float currentvalue;
     float targetvalue;
+    bool notified;
     string displaytext;
-    string type;
+    Notification * interface;
     
 public:
+
+    string type;
     
     Achievement(){
         currentvalue = 0;
@@ -29,11 +33,13 @@ public:
         type="Other";
     }
     
-    Achievement(float currentvalue, float targetvalue, string displaytext, string type){
+    Achievement(float currentvalue, float targetvalue, string displaytext, string type,bool notified,Notification * interface){
         this->currentvalue = currentvalue;
         this->targetvalue =  targetvalue;
         this->displaytext = displaytext;
         this->type = type;
+        this->notified = notified;
+        this->interface = interface;
     }
     
     void SetValue(float value);

@@ -10,17 +10,37 @@
 
 #include "Achievements.h"
 
-void Achievements::InitPlayerAchievements(ActorPlayer * player){
-    GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&player->PlayerJumped,[this](ActorPlayer* Object) {
+Achievements::Achievements(Notification* notification){
+    this->notify = notification;
+    achievementlist.push_back(new Achievement(0,5,"Baby Steps, 5 steps taken","player-walked",0,notify));
+    achievementlist.push_back(new Achievement(0,25,"One Small Step for man, 25 steps taken","player-walked",0,notify));
+    achievementlist.push_back(new Achievement(0,100,"Where's the Fire?, 100 steps taken","player-walked",0,notify));
+    
+    achievementlist.push_back(new Achievement(0,1,"Learning to fly, Jumped for the first time","player-jumped",0,notify));
+    
+};
 
+void Achievements::InitPlayerAchievements(ActorPlayer * player){
+    
+    GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&player->PlayerJumped,[this](ActorPlayer* Object) {
+        for(int i = 0; i < this->achievementlist.size(); i++) {
+            if(achievementlist[i]->type=="player-jumped")
+                achievementlist[i]->IncrementValue(1);
+        }
     });
     
     GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&player->PlayerLanded,[this](ActorPlayer* Object) {
-
+        for(int i = 0; i < this->achievementlist.size(); i++) {
+            if(achievementlist[i]->type=="player-landed")
+                achievementlist[i]->IncrementValue(1);
+        }
     });
     
     GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&player->PlayerWalked,[this](ActorPlayer* Object) {
-
+        for(int i = 0; i < this->achievementlist.size(); i++) {
+            if(achievementlist[i]->type=="player-walked")
+                achievementlist[i]->IncrementValue(1);
+        }
     });
 
 }

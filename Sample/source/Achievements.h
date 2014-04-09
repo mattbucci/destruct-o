@@ -22,15 +22,14 @@ class Achievements : protected GameEventSubscriber{
     Notification * notify;
 public:
     Achievements(){};
-    Achievements(Notification* notification){
-        this->notify = notification;
-    };
-    
+    Achievements(Notification* notification);
     void InitPlayerAchievements(ActorPlayer * player);
     
     void InitPhysicsAchievements(PhysicsSystem * physics);
     
     void InitActorAchievements(ActorSystem * actors);
+    
+    void Update();
     
     GameEvent<void(Achievement*)> AchivementEarned;
 };
