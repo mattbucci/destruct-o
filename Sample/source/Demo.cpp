@@ -38,7 +38,7 @@ void Demo::BuildCube(vec3 pos, float sepStrength) {
 	for (int x = 0; x < 2; x++) {
 		for (int y = 0; y < 2; y++) {
 			for (int z = 0; z < 2; z++) {
-				cubeParts[x+y*2+z*4] = game->Physics.BuildVoxel(cubePos + vec3(x*sepDist,y*sepDist,z*sepDist));
+				cubeParts[x+y*2+z*4] = game->Physics.BuildVoxel(cubePos + vec3(x*sepDist,y*sepDist,z*sepDist),Utilities::random(8.0,10.0));
 			}
 		}
 	}
@@ -65,6 +65,11 @@ void Demo::BuildCube(vec3 pos, float sepStrength) {
 	}
 }
 
+void Demo::DoInitialSave() {
+	BaseFrame * game = (BaseFrame*)CurrentSystem;
+	game->Save("reset_save.json.compressed");
+}
+
 void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing) {
 	playerPos += vec3(0,0,2);
 	BaseFrame * game = (BaseFrame*)CurrentSystem;
@@ -75,11 +80,11 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 			}
 			//Fire blocks
 			if (eve.Key == 'f') {
-				PhysicsVoxel * vox = game->Physics.BuildVoxel(playerPos+playerFacing*2.0f);
+				PhysicsVoxel * vox = game->Physics.BuildVoxel(playerPos+playerFacing*2.0f,Utilities::random(8.0,10.0));
 				vox->Velocity = game->FirstPerson->GetLookVector()*50.0f;
 			}
 			else if (eve.Key == 'e') {
-				PhysicsVoxel * vox = game->Physics.BuildVoxel(playerPos+vec3(0,0,2));
+				PhysicsVoxel * vox = game->Physics.BuildVoxel(playerPos+vec3(0,0,2),Utilities::random(8.0,10.0));
 				vox->Velocity = glm::normalize(playerFacing*2.0f+vec3(0,0,1))*20.0f;
 			}
 			else if (eve.Key == 'q') {
@@ -99,7 +104,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 					for (int y = 0; y < 8; y+= (rand() % 4)) {
 						vec3 randomness = vec3((rand() % 10)/100.0,(rand() % 10)/100.0,(rand() % 10)/100.0);
 						if ((rand() % 2) == 1)
-							game->Physics.BuildVoxel(cubePos+vec3(x*.5,y*.5,rand() % 5+1) + randomness);
+							game->Physics.BuildVoxel(cubePos+vec3(x*.5,y*.5,rand() % 5+1) + randomness,Utilities::random(8.0,10.0));
 					}
 				}
 			}
@@ -113,7 +118,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 					for (int a =p; a < 6-p; a++) {
 						for (int b = p; b < 6-p; b++) {
 							//vec3 randomness = vec3((rand() % 10)/100.0,(rand() % 10)/100.0,(rand() % 10)/100.0);
-							game->Physics.BuildVoxel(cubePos+vec3(a,b,2+3*p));
+							game->Physics.BuildVoxel(cubePos+vec3(a,b,2+3*p),Utilities::random(8.0,10.0));
 						}
 					}
 				}
@@ -128,7 +133,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 					for (int a =p; a < 6-p; a++) {
 						for (int b = p; b < 6-p; b++) {
 							vec3 randomness = vec3((rand() % 10)/100.0,(rand() % 10)/100.0,(rand() % 10)/100.0);
-							game->Physics.BuildVoxel(cubePos+vec3(a,b,2+3*p)+randomness );
+							game->Physics.BuildVoxel(cubePos+vec3(a,b,2+3*p)+randomness,Utilities::random(8.0,10.0) );
 						}
 					}
 				}
@@ -299,6 +304,9 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 
 				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,.1);
 				testSystem->Position = cubePos;
+			}
+			else if (eve.Key == 'p') {
+				game->Load("reset_save.json.compressed");
 			}
 		}
 	}

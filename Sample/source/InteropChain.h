@@ -79,6 +79,10 @@ public:
 			
 		}
 	}
+	void ClearValues() {
+		foundFirstValue = false;
+		steps.clear();
+	}
 	void AddValue(float input, chainType output) override {
 		AddValue(input,output,findZero<chainType>(),findZero<chainType>());
 	}

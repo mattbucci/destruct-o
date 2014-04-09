@@ -41,27 +41,24 @@ PauseWindowMobile::PauseWindowMobile(BaseFrame* parent) : PauseWindow(parent)
 	menuRect.color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//Set up Menu Exit Button
-	menuExitButton.vPin = Control::MIN;
-	menuExitButton.hPin = Control::CENTER;
-	menuExitButton.position = Rect(0, 50 + 155 * 2, 300, 50);
-	menuExitButton.SetText("Back to Game");
-	menuRect.AddControl(&menuExitButton);
-
-	Subscribe<void(Button*)>(&menuExitButton.EventClicked, [this](Button * b) {
-		this->toggle();
-	});
+	menuExit.vPin = Control::MIN;
+	menuExit.hPin = Control::CENTER;
+	menuExit.position = Rect(0, 50 + 155 * 2, 300, 50);
+	menuExit.SetText("Back to Game");
 
 	//Set up Main Menu Children
-	save.vPin = load.vPin = options.vPin = saveandquit.vPin = Control::MIN;
-	save.hPin = load.hPin = options.hPin = saveandquit.hPin = Control::CENTER;
-	save.position =			Rect(-77.5, 50 + 155 * 0, 145, 145);
-	load.position =			Rect(77.5, 50 + 155 * 0, 145, 145);
-	options.position =		Rect(-77.5, 50 + 155 * 1, 145, 145);
-	saveandquit.position =	Rect(77.5, 50 + 155 * 1, 145, 145);
-	save.SetText("Save");
-	load.SetText("Load");
-	options.SetText("Options");
-	saveandquit.SetText("Save & Quit");
+	menuSave.vPin = menuLoad.vPin = menuOptions.vPin = menuSaveAndQuit.vPin = menuExit.vPin = Control::MIN;
+	menuSave.hPin = menuLoad.hPin = menuOptions.hPin = menuSaveAndQuit.hPin = menuExit.hPin = Control::CENTER;
+	menuSave.position =			Rect(-77.5, 50 + 155 * 0, 145, 145);
+	menuLoad.position =			Rect(77.5, 50 + 155 * 0, 145, 145);
+	menuOptions.position =		Rect(-77.5, 50 + 155 * 1, 145, 145);
+	menuSaveAndQuit.position =	Rect(77.5, 50 + 155 * 1, 145, 145);
+	menuExit.position =			Rect(0, 50 + 155 * 2, 300, 50);
+	menuSave.SetText("Save");
+	menuLoad.SetText("Load");
+	menuOptions.SetText("Options");
+	menuSaveAndQuit.SetText("Save & Quit");
+	menuExit.SetText("Back to Game");
 
 	//Set up Options Menu
 	optsRect.position = Rect(0, 0, 320, 420);

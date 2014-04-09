@@ -84,9 +84,7 @@ void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shade
 		glBlendFunc(GL_SRC_COLOR, GL_ONE);
 		break;
 	case ParticleData::BLEND:
-		//For now this is false, but when sorting is correctly
-		//implemented, this will become true
-		glDepthMask(GL_TRUE);
+		glDepthMask(GL_FALSE);
 		glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		break;
