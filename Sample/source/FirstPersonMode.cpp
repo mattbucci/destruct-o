@@ -89,7 +89,7 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 
 	
 
-	
+	static bool firedOnce = false;
 
 	// Did the user request jump?
 	if (pressedKeys.find(' ') != pressedKeys.end() && !debug)
@@ -104,14 +104,20 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 		cout << "target_height:" << debug_target_height << endl;
 	}
 	else if (pressedKeys.find('p') != pressedKeys.end()) {
-		if (debug) {
-			debug = false;
-			cout << "DEBUG OFF" << endl;
+		if(!firedOnce) {
+			firedOnce = true;
+			if (debug) {
+				debug = false;
+				cout << "DEBUG OFF" << endl;
+			}
+			else {
+				debug = true;
+				cout << "DEBUG ON" << endl;
+			}
 		}
-		else {
-			debug = true;
-			cout << "DEBUG ON" << endl;
-		}
+	}
+	if(pressedKeys.find('p') == pressedKeys.end()) {
+		firedOnce = false;
 	}
 
 	else if (pressedKeys.find(SDLK_LCTRL) != pressedKeys.end()) {
