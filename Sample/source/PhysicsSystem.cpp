@@ -7,6 +7,8 @@
 #include "VoxelSystem.h"
 #include "PhysicsTriangle.h"
 #include "VoxEngine.h"
+#include "Tracer.h"
+#include "PhysicsProxy.h"
 
 PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	//Build a voxel renderer
@@ -70,10 +72,18 @@ PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate,double lifeTime) {
 		voxel->DeathAt = -1;
 	else
 		voxel->DeathAt = lifeTime + VoxEngine::GetGameSimTime();
-	allVoxels.insert(voxel);
+	allVoxels.push_back(voxel);
 	return voxel;
 }
-float removeInDirection(vec3 & force, vec3 direction) {
+
+PhysicsProxy * PhysicsSystem::BuildPhysicsProxy(Actor * actor, vec3 * actorPosition) {
+	PhysicsProxy * proxy = new PhysicsProxy(actor, actorPosition);
+	proxies.push_back(proxy);
+	return proxy;
+}
+
+//Remove the force in a given direction and return the quantity
+static float removeInDirection(vec3 & force, vec3 direction) {
 	float d = glm::dot(force,direction);
 	if (d > 0) {
 		force -= direction*d;
@@ -91,12 +101,12 @@ void PhysicsSystem::Update(double delta, double now) {
 	for (auto it = allVoxels.begin(); it != allVoxels.end();){
 		PhysicsVoxel * voxel = *it;
 		voxel->Acceleration = vec3();
-		/*if ((voxel->DeathAt > 0) && (voxel->DeathAt < now)) {
+		if ((voxel->DeathAt > 0) && (voxel->DeathAt < now)) {
 			//disintegrate voxel
 			//remove voxel
 			it = allVoxels.erase(it);
 		}
-		else*/
+		else
 			it++;
 	}
 	allVoxels.sort([](PhysicsVoxel * a, PhysicsVoxel * b) -> bool {
@@ -115,7 +125,7 @@ void PhysicsSystem::Update(double delta, double now) {
 			else
 				it++;
 		}
-		section.insert(allVoxels[s]);
+		section.push_back(allVoxels[s]);
 		if (section.size() > 50)
 			cout << "";
 
@@ -157,11 +167,8 @@ void PhysicsSystem::Update(double delta, double now) {
 			}
 		}
 	}
-	//set the current voxel to 0
 
-
-
-	//Update all the voxels
+	//Update all the physics voxels
 	for (unsigned int a = 0; a < allVoxels.size(); a++) {
 		if (allVoxels[a] != NULL) {
 
@@ -229,7 +236,7 @@ void PhysicsSystem::Update(double delta, double now) {
 
 			if (depthTilesViolated == 4) {
 				//The tile is fully underground, force it to the surface
-				allVoxels[a]->Position.z = lowestHeight+.5; 
+				allVoxels[a]->Position.z = lowestHeight+.5f; 
 				allVoxels[a]->Velocity.z = 2;
 			}
 
@@ -242,67 +249,8 @@ void PhysicsSystem::Update(double delta, double now) {
 			allVoxels[a]->Position += allVoxels[a]->Velocity*(float)delta;
 		}
 	}
-}
 
-bool PhysicsSystem::checkForCollision(const vec3 & from, const vec3 & direction, vec3 at, vec3 & rayCollision, vec3 & surfaceNormal) {
-	static PhysicsTriangle voxelTriangles[12] = {
-		//Top
-		PhysicsTriangle(vec3( 0.0f,0.0f,1.0f),
-		vec3( 1.0f,0.0f,1.0f),
-		vec3( 0.0f,1.0f,1.0f)),
-		PhysicsTriangle(vec3(1.0f,1.0f,1.0f),
-		vec3(-1.0f,1.0f,1.0f),
-		vec3(1.0f,0.0f,1.0f)),
-		//Bottom
-		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
-		vec3( 1.0f,0.0f,0.0f),
-		vec3( 0.0f,1.0f,0.0f)),
-		PhysicsTriangle(vec3(1.0f,1.0f,0.0f),
-		vec3(-1.0f,1.0f,0.0f),
-		vec3(1.0f,0.0f,0.0f)),
-		//left
-		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
-		vec3( 0.0f,1.0f,0.0f),
-		vec3( 0.0f,1.0f,1.0f)),
-		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
-		vec3( 0.0f,0.0f,1.0f),
-		vec3( 0.0f,1.0f,1.0f)),
-		//right
-		PhysicsTriangle(vec3( 1.0f,0.0f,0.0f),
-		vec3( 1.0f,1.0f,0.0f),
-		vec3( 1.0f,1.0f,1.0f)),
-		PhysicsTriangle(vec3( 1.0f,0.0f,0.0f),
-		vec3( 1.0f,0.0f,1.0f),
-		vec3( 1.0f,1.0f,1.0f)),
-		//front
-		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
-		vec3( 1.0f,0.0f,0.0f),
-		vec3( 1.0f,0.0f,1.0f)),
-		PhysicsTriangle(vec3( 0.0f,0.0f,0.0f),
-		vec3( 0.0f,0.0f,1.0f),
-		vec3( 1.0f,0.0f,1.0f)),
-		//back
-		PhysicsTriangle(vec3( 0.0f,1.0f,0.0f),
-		vec3( 1.0f,1.0f,0.0f),
-		vec3( 1.0f,1.0f,1.0f)),
-		PhysicsTriangle(vec3( 0.0f,1.0f,0.0f),
-		vec3( 0.0f,1.0f,1.0f),
-		vec3( 1.0f,1.0f,1.0f)),
-	};
-	//Check every triangle in this voxel for a collision
-	for (int i = 0 ; i < 12; i++) {
-		double surf;
-		vec3 norm;
-		if (PhysicsTriangle::RayIntersects(voxelTriangles[i],at,from,direction,&surf,&norm)) {
-			rayCollision = ((float)surf)*direction+from;
-			surfaceNormal = norm;
-			//Paint colliding voxels
-			voxelSystem->Paint(vec2(at.x,at.y),1);
-			//Stop checking voxels
-			return true;
-		}
-	}
-    return false;
+	//Apply ground-to-effector collisions to all physics proxies
 }
 
 
@@ -355,13 +303,13 @@ bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec
 
 	for (; n > 0; --n) {
 		//Paint it to mark it as visited
-		voxelSystem->Paint(vec2(x,y),5);
+		//voxelSystem->Paint(vec2(x,y),5);
 		//Check the voxel for a ray collision in 3d space
 		//Check every voxel that's in this 2d region
 		float height = voxelSystem->GetPositionHeight(vec2(x,y));
 		int stackSize = voxelSystem->GetPositionStackSize(vec2(x,y));
 		for (int stack = 0; stack <= stackSize; stack++) {
-			if (checkForCollision(from,direction,vec3(x,y,height-(float)stack),rayCollision,surfaceNormal))
+			if (Tracer::TraceToVoxel(from,direction,vec3(x,y,height-(float)stack),rayCollision,surfaceNormal))
 				//Collided with terrain
 				return true;
 		}

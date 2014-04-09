@@ -14,7 +14,7 @@ class ShaderGroup;
 
 class ParticleCloud {
 	//All the particle systems in the game
-	ContiguousList<ParticleSystem> particles;
+	ContiguousList<ParticleSystem*> particles;
 
 	//This is the renderer for particles
 	//similar to the voxel system, it will probably be replaced

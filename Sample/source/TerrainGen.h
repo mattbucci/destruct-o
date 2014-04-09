@@ -3,6 +3,7 @@
 
 #include <noise/noise.h>
 #include "noiseutils.h"
+#include "GameTile.h"
 
 class TerrainGen {
 	int seed;
@@ -44,7 +45,10 @@ public:
 	void setSeed(int seed);
 	void setTileScale(double x, double y);
 	void setTileSize(int x, int y);
-	unsigned char* generateTile(int x, int y);
+	void generateTerrain(GameTile * tile);
+
+	//Utility function for calculating index into buffer
+	int BufferIndex(int x, int y);
 };
 
 #endif

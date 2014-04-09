@@ -49,14 +49,14 @@ class ParticleData {
 			//Add a space at the end so when searching for values, you can always assume when you've finished the string
 			//you've enumerated all values (there isn't one sitting in the buffer)
 			toRead += ' ';
-			for (int i = 0; i < toRead.size(); i++) {
+			for (unsigned int i = 0; i < toRead.size(); i++) {
 				char c = toRead[i];
 				if (foundTime) {
 					//At this point all whitespace has been converted to spaces
 					if (c == ' ') {
 						if (buffer.size() > 0) {
 							//must have found a value
-							readValues.push_back(atof(buffer.c_str()));
+							readValues.push_back((float)atof(buffer.c_str()));
 							buffer = "";
 						}
 					}
@@ -68,7 +68,7 @@ class ParticleData {
 					if (c == ':') {
 						buffer = trimWhitespace(buffer);
 						foundTime = true;
-						time = atof(buffer.c_str());
+						time = (float)atof(buffer.c_str());
 						buffer = "";
 					}
 					else

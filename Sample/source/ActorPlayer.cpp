@@ -4,6 +4,8 @@
 #include "PhysicsSystem.h"
 #include "PhysicsVoxel.h"
 
+CLASS_SAVE_CONSTRUCTOR(ActorPlayer);
+
 //Right now there's no physics system and this actor is a pseudo physics object
 //so here are the constants involved
 static const float groundThreshold = .05f;
@@ -13,7 +15,7 @@ static const float jumpVelocity = 10.0f;
 
 ActorPlayer::ActorPlayer() {
 	//Start the player off in abouts the center
-	position = vec3(170,112,0);
+	position = vec3(40,40,0);
     deltaPosition = 0.0;
     onGround = true;
 	debug = true;
@@ -67,18 +69,18 @@ void ActorPlayer::Update(float delta, float now) {
     //this code lets you fly
 
 	//update our debug values
-	if (!debug) Game()->FirstPerson->SetDebugHeight(position.z);
+	if (!debug) Game()->FirstPerson->SetDebugHeight((int)position.z);
 	debug = Game()->FirstPerson->GetDebug();
 	debug_target_height = Game()->FirstPerson->GetDebugHeight();
 
 	if (debug && debug_target_height > position.z+.5) {
-		velocity.z += .1;
+		velocity.z += .1f;
 	}
 	else if (debug && debug_target_height < position.z-.5) {
-		velocity.z -= .1;
+		velocity.z -= .1f;
 	}
 	else if(debug) {
-		velocity.z = 0;
+		velocity.z = 0.0f;
 	}
 
 

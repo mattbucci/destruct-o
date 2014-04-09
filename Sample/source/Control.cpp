@@ -227,7 +227,7 @@ bool Control::IsKeyboardFocused(Control * childControl) {
 }
 
 //draw this control before all others
-void Control::sendToFront() {
+void Control::SendToFront() {
 	if (parent != NULL) {
 		/*if (this == parent->children[0])
 			//Already in front
@@ -249,7 +249,7 @@ void Control::sendToFront() {
 	}
 }
 //draw this control last
-void Control::sendToBack() {
+void Control::SendToBack() {
 	if (parent != NULL) {
 		//locate the index this control is at in the parent
 		int originalIndex = -1;
@@ -368,7 +368,7 @@ void Control::SetVisible(bool visible) {
 	}
 	else if (parent != nullptr) {
 		//Bring yourself to the top
-		sendToFront();
+		SendToFront();
 	}
 		
 	this->visible = visible;

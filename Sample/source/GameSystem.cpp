@@ -76,7 +76,7 @@ void GameSystem::Draw(double width, double height) {
 	Controls.Debug.Fps = fpsCount.GetFps();
 
 	//Draw the window
-	Controls.Draw(shaders2d,vec2((float)width,(float)height));
+	Controls.Draw(shaders2d,Rect(0,0,(float)width,(float)height));
 
 	//Keep track of fps
 	fpsCount.MarkFrameRendered();//*/

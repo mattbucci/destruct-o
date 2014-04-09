@@ -19,4 +19,8 @@ public:
     GameEvent<void(ActorPlayer*)> PlayerJumped;
     GameEvent<void(ActorPlayer*)> PlayerLanded;
     GameEvent<void(ActorPlayer*)> PlayerWalked;
+
+	CLASS_DECLARATION(ActorPlayer)
+		INHERITS_FROM(Actor)
+	END_DECLARATION
 };

@@ -14,6 +14,7 @@ protected:
 	//Wrap
 	RasterizedText text;
 public:
+	Label();
 	Label(float x, float y, string text);
 	virtual ~Label();
 

@@ -3,6 +3,15 @@
 #include "Font.h"
 
 
+Label::Label() {
+	//Default to white
+	color = vec4(1,1,1,0);
+
+	this->text = RasterizedText("",VisualInterface.FontControlText,VisualInterface.ColorControlText);
+	//textSize = 20;
+	maxWidth = 0;
+}
+
 Label::Label(float x, float y, string text) {
 	position.X = x;
 	position.Y = y;

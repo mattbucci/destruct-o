@@ -2,6 +2,9 @@
 #include "Actor.h"
 #include "BaseFrame.h"
 #include "Frames.h"
+
+CLASS_SAVE_CONSTRUCTOR(Actor);
+
 Actor::Actor() {
 	//Assume if an actor is created the frame is the game frame
 	Game()->Actors.Register(this);

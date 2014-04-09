@@ -40,7 +40,7 @@ Particle::Particle(double gameTime, float systemLifeFactor, ParticleSystem * own
 
 	//Save the scale variation that applies to you
 	float possibleVariation = systemData->ScaleVariation.ValueAtSequence(systemLifeFactor);
-	scaleVariation = Utilities::random(1-possibleVariation,possibleVariation);;
+	scaleVariation = 1+Utilities::random(-possibleVariation,possibleVariation);;
 
 	//Set your spawn time to right now
 	spawnedAt = gameTime;
@@ -58,7 +58,7 @@ bool Particle::Update(double time, double delta) {
 	//Simulate particle
 	float life = (float)(time-spawnedAt);
 	//How long this particle has lived normalized to be from 0.0 to 1.0
-	float lifeFactor = 1.0f - (life/lifeSpan);
+	float lifeFactor = (life/lifeSpan);
 	Color = SystemData->Color.ValueAtSequence(lifeFactor);
 	Scale = SystemData->Scale.ValueAtSequence(lifeFactor) * scaleVariation;
 	//Now get/apply forces

@@ -8,9 +8,9 @@
 class ShaderGroup;
 class Actor;
 
-class ActorSystem {
+class ActorSystem : public Savable {
 	//All actors are updated and drawn
-	ContiguousList<Actor> allActors;
+	ContiguousList<Actor*> allActors;
 public:
 	ActorSystem();
 	~ActorSystem();
@@ -25,4 +25,9 @@ public:
 
 	//Draw all the actors
 	void Draw(ShaderGroup * shaders);
+
+	//Actor system is essentially a list of actors
+	CLASS_DECLARATION(ActorSystem)
+		CLASS_CONTAINER_MEMBER(allActors,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLEAR)
+	END_DECLARATION
 };

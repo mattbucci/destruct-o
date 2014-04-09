@@ -14,8 +14,15 @@
 #include <sstream>
 #include <thread>
 
+const int tilesize = 512;
+
 VoxelSystem::VoxelSystem() {
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
+	tiles = new TileHandler();
+	tiles->init();
+
+	//Just get the starting tile
+	tiles->getTile(vec2(0, 0));
 
 	//Load the tile textures
 	unsigned int textureWidth, textureHeight;
@@ -44,15 +51,15 @@ VoxelSystem::~VoxelSystem() {
 
 GameTile * VoxelSystem::GetTile(vec2 pos) {
 	//TileHandler Guaranteed to Return Tile
-	return TileHandler::getTile(pos);
+	return tiles->getTile(pos);
 }
 
 TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
-	GameTile * tileData = GetTile(vec2(floor(pos.x / 256), floor(pos.y / 256)));
+	GameTile * tileData = GetTile(vec2(floor(pos.x / tilesize), floor(pos.y / tilesize)));
 
 	//Convert to relative position
-	pos.x -= tileData->tile_x*256;
-	pos.y -= tileData->tile_y*256;
+	pos.x -= tileData->tile_x*tilesize;
+	pos.y -= tileData->tile_y*tilesize;
 
 	if ((pos.x < 0) || (pos.y < 0))
 		return NULL;
@@ -89,11 +96,11 @@ int VoxelSystem::GetPositionStackSize(vec2 pos) {
 void VoxelSystem::forTilesInRect(Rect region, function<void(GameTile * tile)> foreachFunction) {
 	float xend = region.X + region.Width;
 	float yend = region.Y + region.Height;
-	for (float x = region.X;; x+=256) {
-		for (float y = region.Y;; y+=256) {
+	for (float x = region.X;; x+=tilesize) {
+		for (float y = region.Y;; y+=tilesize) {
 			//Retrieve a valid tile for this position
 			//and call the foreachFunction
-			foreachFunction(GetTile(glm::floor(vec2(x/256,y/256))));
+			foreachFunction(GetTile(glm::floor(vec2(x/tilesize,y/tilesize))));
 
 			//Exit only after an iteration past the end
 			if (y >= yend)
@@ -108,14 +115,14 @@ void VoxelSystem::forTilesInRect(Rect region, function<void(GameTile * tile)> fo
 //intersects two ranges
 //places the output into rangeA
 static void intersect1D(int & rangeAStart, int & rangeAEnd, int rangeBStart, int rangeBEnd) {
-    //No intersection
-    if ((rangeAStart > rangeBEnd) || (rangeAEnd < rangeBStart)) {
-        rangeAEnd = rangeAStart;
-        return;
-    }
-    //Find the range intersection
-    rangeAStart = max(rangeAStart, rangeBStart);
-    rangeAEnd = min(rangeAEnd, rangeBEnd);
+	//No intersection
+	if ((rangeAStart > rangeBEnd) || (rangeAEnd < rangeBStart)) {
+		rangeAEnd = rangeAStart;
+		return;
+	}
+	//Find the range intersection
+	rangeAStart = max(rangeAStart, rangeBStart);
+	rangeAEnd = min(rangeAEnd, rangeBEnd);
 }
 
 //Draw the voxels in a region
@@ -131,36 +138,36 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 
 	//render each viewable rectangle
 
-	forTilesInRect(Rect(atx,aty,tox-atx,toy-aty),[this,shader,atx,aty,tox,toy](GameTile * tile) {
-        GameTile & current_tile = *tile;
+	forTilesInRect(Rect((float)atx,(float)aty,(float)(tox-atx),(float)(toy-aty)),[this,shader,atx,aty,tox,toy](GameTile * tile) {
+		GameTile & current_tile = *tile;
 		int rectStartX, rectStartY, rectEndX, rectEndY;
 		//Get the region this tile is in
-        rectStartX = current_tile.tile_x * 256;
-        rectStartY = current_tile.tile_y * 256;
-        rectEndX = rectStartX + 255;
-        rectEndY = rectStartY + 255;
-        //Intersect it with the region you're supposed to be drawing
-        intersect1D(rectStartX, rectEndX, atx, tox);
-        intersect1D(rectStartY, rectEndY, aty, toy);
+		rectStartX = current_tile.tile_x * tilesize;
+		rectStartY = current_tile.tile_y * tilesize;
+		rectEndX = rectStartX + tilesize-1;
+		rectEndY = rectStartY + tilesize-1;
+		//Intersect it with the region you're supposed to be drawing
+		intersect1D(rectStartX, rectEndX, atx, tox);
+		intersect1D(rectStartY, rectEndY, aty, toy);
 
 
-        //Now offset the region by the tile position so that it is relative to the tile
-        rectStartX -= current_tile.tile_x * 256;
-        rectStartY -= current_tile.tile_y * 256;
-        rectEndX -= current_tile.tile_x * 256;
-        rectEndY -= current_tile.tile_y * 256;
+		//Now offset the region by the tile position so that it is relative to the tile
+		rectStartX -= current_tile.tile_x * tilesize;
+		rectStartY -= current_tile.tile_y * tilesize;
+		rectEndX -= current_tile.tile_x * tilesize;
+		rectEndY -= current_tile.tile_y * tilesize;
 
-		
-
-        TileCell * cells = current_tile.Cells;
+		TileCell * cells = current_tile.Cells;
 
 		//Skip zero length segments
 		if ((rectStartY == rectEndY) || (rectStartX == rectEndX))
 			return;
 		//offset rendering for tile location
 		shader->Model.PushMatrix();
-		shader->Model.Translate(vec3(current_tile.tile_x * 256, current_tile.tile_y * 256, 0));
+		shader->Model.Translate(vec3(current_tile.tile_x * tilesize, current_tile.tile_y * tilesize, 0));
 		shader->Model.Apply();
+
+		//First draw the voxels
 		renderer->startDraw(shader);
 		for (int y = rectStartY; y <= rectEndY; y++) {
 			//It is important for x to be the inner loop
@@ -168,7 +175,7 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 			//(though performance will probably be poor anyways)
 			for (int x = rectStartX; x <= rectEndX; x++) {
 				//Lookup cell to render
-                TileCell & cell = cells[current_tile.Width*y + x];
+				TileCell & cell = cells[current_tile.Width*y + x];
 
 				//Get position
 				vec3 pos = vec3(x, y, cell.height);
@@ -187,14 +194,56 @@ void VoxelSystem::Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int
 			
 		}
 		renderer->finishDraw(shader);
+		//structures are large but we only measure using their corner, offset by the max building size to correct
+		rectStartX -= 20;
+		rectStartY -= 20;
+		rectEndX += 20;
+		rectEndY += 20;
+
+		//Next check for any structures on this tile which intersect the view rectangle
+		for (auto structure : current_tile.Structures) {
+			int structx = (int)structure.Position.x;
+			int structy = (int)structure.Position.y;
+			int structex = structx + (int)structure.Extents.x;
+			int structey = structy + (int)structure.Extents.y;
+			//Now see if the struct rectangle intersects the draw rectangle
+			
+			if (((rectStartX < structx) &&
+				(rectEndX > structex))	 &&
+				((rectStartY < structy) &&
+				(rectEndY > structey))) {
+				//Time to draw the structure
+				//Push the structure's position
+				if (structure.Cells.size() > 0){
+					shader->Model.PushMatrix();
+					shader->Model.Translate(structure.Position);
+					shader->Model.Apply();
+					//Track voxels drawn for debug
+					voxelCount += structure.Cells.size();
+					//Start the draw cycle
+					renderer->startDraw(shader);
+					StructureCell * celliterator = &structure.Cells.front();
+					unsigned int endCount = structure.Cells.size();
+					//Push all the cells
+					for (unsigned int i = 0; i < endCount; i++, celliterator++)
+						renderer->pushVoxel(shader, celliterator->pos, celliterator->material);
+					//Finish drawing and remove the structure matrix
+					renderer->finishDraw(shader);
+					shader->Model.PopMatrix();
+				}
+			}
+		} 
+
 		shader->Model.PopMatrix();
+
+		
 	});
 
 }
 
 void VoxelSystem::Update(vec3 player_pos){
 	//Pass to TileHandler
-	TileHandler::getTile(vec2(floor(player_pos.x / 256), floor(player_pos.y / 256)));
+	tiles->getTile(vec2(floor(player_pos.x / tilesize), floor(player_pos.y / tilesize)));
 }
 
 int VoxelSystem::GetLastVoxelCount() {
@@ -214,26 +263,25 @@ void VoxelSystem::Paint(vec2 pos, int newMaterial) {
 //Deforms a region of voxels, punching a crater into the given position
 //all voxels removed are returned as positions
 vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
-	GameTile * current_tile;
 	//render each viewable rectangle
 	vector<vec4> removedVoxels;
-	forTilesInRect(Rect(pos.x - size / 2,pos.x - size / 2,size,size),[this,&removedVoxels,pos,size](GameTile * current_tile) {
+	forTilesInRect(Rect(pos.x - size / 2,pos.y - size / 2,size,size),[this,&removedVoxels,pos,size](GameTile * current_tile) {
 		int rectStartX, rectStartY, rectEndX, rectEndY;
 		//Get the region this tile is in
-		rectStartX = current_tile->tile_x * 256;
-		rectStartY = current_tile->tile_y * 256;
-		rectEndX = rectStartX + 255;
-		rectEndY = rectStartY + 255;
+		rectStartX = current_tile->tile_x * tilesize;
+		rectStartY = current_tile->tile_y * tilesize;
+		rectEndX = rectStartX + tilesize-1;
+		rectEndY = rectStartY + tilesize-1;
 		//Intersect it with the region you're supposed to be drawing
 		intersect1D(rectStartX, rectEndX, pos.x - size / 2, pos.x + size / 2);
 		intersect1D(rectStartY, rectEndY, pos.y - size / 2, pos.y + size / 2);
 
 
 		//Now offset the region by the tile position so that it is relative to the tile
-		rectStartX -= current_tile->tile_x * 256;
-		rectStartY -= current_tile->tile_y * 256;
-		rectEndX -= current_tile->tile_x * 256;
-		rectEndY -= current_tile->tile_y * 256;
+		rectStartX -= current_tile->tile_x * tilesize;
+		rectStartY -= current_tile->tile_y * tilesize;
+		rectEndX -= current_tile->tile_x * tilesize;
+		rectEndY -= current_tile->tile_y * tilesize;
 
 		//Skip zero length segments
 		if ((rectStartY == rectEndY) || (rectStartX == rectEndX))
@@ -245,3 +293,5 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 	//Return all removed voxels
 	return removedVoxels;
 }
+
+

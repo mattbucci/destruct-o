@@ -14,6 +14,7 @@
  *  limitations under the License.
  */
 
+#include "stdafx.h"
 #include "FirstPersonModeMobile.h"
 
 // Provide constructor inheriting from base mode

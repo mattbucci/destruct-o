@@ -8,7 +8,7 @@
 class GL3DProgram;
 class GameTile;
 class VoxelDrawSystem;
-class TileCell;
+struct TileCell;
 class TerrainGen;
 
 class VoxelSystem {
@@ -17,6 +17,9 @@ class VoxelSystem {
 
 	//The voxel texture
 	GLuint textureId;
+
+	//The Tile Handle
+	TileHandler* tiles;
 
 	VoxelDrawSystem * renderer;
 

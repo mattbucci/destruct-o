@@ -47,4 +47,6 @@ public:
 	//doesn't take into account the varying nature of the terrain yet
 	vec2 UnprojectToGround(vec2 pos, float groundHeight = 0.0);
 
+	//A helper function. Given a ray, calculate it's distance from the given plane
+	static double CalculateIntersectionDistance(vec3 rayStart, vec3 rayDirection, vec3 planePoint, vec3 planeNormal);
 };
