@@ -87,6 +87,10 @@ void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
 	REPAIR_HANDLE(FirstPerson);
 	//Continue loading
 	Savable::Load(parentValue,loadData);
+
+	//Make any after-load changes
+	//Currently no particle systems after load
+	Particles.Clear();
 }
 
 void BaseFrame::OnFrameFocus() {

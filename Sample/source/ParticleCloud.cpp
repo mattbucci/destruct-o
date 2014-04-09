@@ -31,6 +31,12 @@ ParticleSystem * ParticleCloud::BuildParticleSystem(const ParticleData & particl
 	return ps;
 }
 
+void ParticleCloud::Clear() {
+	for (auto particleSystem : particles)
+		delete particleSystem;
+	particles.clear();
+}
+
 
 //Draw the particle cloud using a special shader in the future
 void ParticleCloud::Draw(ShaderGroup * shaders) {

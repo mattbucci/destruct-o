@@ -29,6 +29,9 @@ public:
 	//to last the specified amount of time
 	ParticleSystem * BuildParticleSystem(const ParticleData & particleType, float lifeTime);
 
+	//Destroy all particle systems that currently exist
+	void Clear();
+
 	//Draw the particle cloud using the special particle shader
 	void Draw(ShaderGroup * shaders);
 

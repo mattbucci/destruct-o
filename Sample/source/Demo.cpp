@@ -250,7 +250,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
                     if (rules == NULL)
                         return;
 
-                    ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules, 5);
+                    ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules, 10);
                     testSystem->Position = hit;
                 }
 

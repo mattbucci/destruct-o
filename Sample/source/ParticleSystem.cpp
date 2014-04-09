@@ -19,6 +19,10 @@ ParticleSystem::ParticleSystem(ParticleData particleSystemDescription,double now
 	nextParticle = 0;
 }
 ParticleSystem::~ParticleSystem() {
+	//Destroy all particles you still exist
+	for (auto particle : particleList)
+		delete particle;
+	particleList.clear();
 }
 
 //Update the particle emitter spawning particles
