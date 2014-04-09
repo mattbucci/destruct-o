@@ -23,12 +23,12 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 	menuRect.color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//Set up Main Menu Children
-	save.vPin = load.vPin = options.vPin = saveandquit.vPin = Control::CENTER;
+	save.vPin = load.vPin = options.vPin = saveandquit.vPin = Control::MIN;
 	save.hPin = load.hPin = options.hPin = saveandquit.hPin = Control::CENTER;
-	save.position =			Rect(0, -40 + 50 * -2, 300, 40);
-	load.position =			Rect(0, -40 + 50 * -1, 300, 40);
-	options.position =		Rect(0, -40 + 50 * 0, 300, 40);
-	saveandquit.position =	Rect(0, 180, 300, 40);
+	save.position =			Rect(0, 50 + 50 * 0, 300, 40);
+	load.position =			Rect(0, 50 + 50 * 1, 300, 40);
+	options.position =		Rect(0, 50 + 50 * 2, 300, 40);
+	saveandquit.position =	Rect(0, 370, 300, 40);
 	save.SetText("Save");
 	load.SetText("Load");
 	options.SetText("Options");
@@ -44,14 +44,14 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 
 	//Subscribe Main Menu Buttons to Actions
 	Subscribe<void(Button*)>(&save.EventClicked, [this](Button * b) {
-		if(this->parent->Save("default")) {
+		if(this->parent->Save("testsavefile.json.compressed")) {
 			cout << "Save Successful!" << endl;
 		} else {
 			cout << "Save Unsuccessful." << endl;
 		}
 	});
 	Subscribe<void(Button*)>(&load.EventClicked, [this](Button * b) {
-		if(this->parent->Load("default")) {
+		if(this->parent->Load("testsavefile.json.compressed")) {
 			cout << "Load Successful!" << endl;
 		} else {
 			cout << "Load Unsuccessful." << endl;
@@ -62,7 +62,7 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 	});
 	Subscribe<void(Button*)>(&saveandquit.EventClicked, [this](Button * b) {
 		cout << "\'Save & Quit\' Button Clicked" << endl;
-		this->parent->Save("default");
+		this->parent->Save("testsavefile.json.compressed");
 		exit(0);
 	});
 
@@ -74,11 +74,11 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 	optsRect.SetVisible(false);
 
 	//Set up Options Menu Children
-	optsViewdistanceUp.vPin = optsViewdistanceDown.vPin = optsClose.vPin = Control::CENTER;
+	optsViewdistanceUp.vPin = optsViewdistanceDown.vPin = optsClose.vPin = Control::MIN;
 	optsViewdistanceUp.hPin = optsViewdistanceDown.hPin = optsClose.hPin = Control::CENTER;
-	optsViewdistanceUp.position =	Rect(130, -40 + 50 * -2, 40, 40);
-	optsViewdistanceDown.position =	Rect(-130, -40 + 50 * -2, 40, 40);
-	optsClose.position =			Rect(0, 180, 300, 40);
+	optsViewdistanceUp.position =	Rect(130, 50 + 50 * 0, 40, 40);
+	optsViewdistanceDown.position =	Rect(-130, 50 + 50 * 0, 40, 40);
+	optsClose.position =			Rect(0, 370, 300, 40);
 	optsViewdistanceUp.SetText("+");
 	optsViewdistanceDown.SetText("-");
 	optsClose.SetText("Back");
