@@ -112,7 +112,7 @@ void BaseFrame::Build() {
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
 	audio->Subscribe(player);
-	
+    achivement = new Achievements(notification);
 }
 
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {
