@@ -5,7 +5,7 @@
 #include <string.h>
 #include <queue>
 
-#define NOTIFICATION_TIME 2
+#define NOTIFICATION_TIME 4
 
 class Notification : public Window
 {
