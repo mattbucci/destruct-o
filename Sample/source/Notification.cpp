@@ -1,38 +1,41 @@
 #include "stdafx.h"
+
 #include "Notification.h"
+#include "VoxEngine.h"
 
 Notification::Notification(void) {
-	position = Rect(0, 0, 200, 30);
+	position = Rect(0, 0, 800, 30);
+	this->color = vec4(1.0f, 1.0f, 1.0f, 0.65f);
 	hPin = Control::CENTER;
-	SetVisible(false);
+	SetVisible(true);
 	text = new Label(0,5,"");
 	text->hPin = Control::CENTER;
 	text->SetText("");
 	text->SetVisible(false);
+	this->takeInput = false;
 	this->AddChild(text);
+	updateTime = 0;
 }
-
 
 Notification::~Notification(void)
 {
-		delete text;
-}
-
-Notification* Notification::init() {
-	if(Singleton == NULL) {
-		Singleton = new Notification();
-	}
-	return Singleton;
+	delete text;
 }
 
 void Notification::notify(string msg) {
-	text->SetText(msg);
-	SetVisible(true);
-	text->SetVisible(true);
+	q.push(msg);
 }
 
 void Notification::Draw(GL2DProgram * shader) {
+	if(VoxEngine::GetGameSimTime() > updateTime) {
+		if(q.size() > 0) {
+			updateTime = VoxEngine::GetGameSimTime() + NOTIFICATION_TIME;
+			text->SetText(q.front());
+			text->SetVisible(true);
+			q.pop();
+		} else {
+			text->SetVisible(false);
+		}
+	}
 	Window::Draw(shader);
 }
-
-Notification* Notification::Singleton = NULL;

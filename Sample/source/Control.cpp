@@ -41,7 +41,7 @@ void Control::OnMousePress(vec2 mousePos, int button, bool down) {
 }
 
 bool Control::hasFocusedChild() {
-	return focusedChild != NULL;
+	return focusedChild != NULL && ((Window*)focusedChild)->takeInput;
 }
 
 void Control::OnMouseScroll(bool scrolledUp) {

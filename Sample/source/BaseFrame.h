@@ -15,6 +15,8 @@
 #include "Audio.h"
 #include "DemoWindow.h"
 #include "Notification.h"
+#include "PauseWindow.h"
+#include "PauseWindowMobile.h"
 #include "Achievements.h"
 
 class ActorPlayer;
@@ -28,6 +30,7 @@ class BaseFrame : public GameSystem, public Savable {
 	Demo * demo;
 	DemoWindow * demoWindow;
 	Notification * notification;
+	PauseWindow * pauseWindow;
     Achievements * achivement;
 protected:
 	//Overload to tell the save system about handles created in the system
@@ -55,6 +58,11 @@ public:
 	//Build basic entities (such as the player)
 	void OnFrameFocus() override;
 
+	//Toggle Escape Menu
+	void ToggleMenu();
+	//Push Notification
+	void PushNotification(string txt);
+
 	//Override update to remove FPS control
 	//provided by the game system
 	virtual bool Update(double delta,double now, vector<InputEvent> inputEvents);
@@ -66,10 +74,8 @@ public:
 	//returns true if successful
 	bool Load(string saveFile);
 
-
 	//Draw happens whenever possible
 	void Draw(double width, double height) override;
-
 
 	//Define how the base frame saves
 	CLASS_DECLARATION(BaseFrame)

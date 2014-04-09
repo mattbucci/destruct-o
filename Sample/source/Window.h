@@ -23,6 +23,8 @@ public:
 	void SetTitle(string text);
 	string GetTitle();
 
+	//Take Input
+	bool takeInput;
 
 	virtual void Draw(GL2DProgram * shaders) override;
 };

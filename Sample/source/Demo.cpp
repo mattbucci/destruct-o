@@ -70,6 +70,9 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 	BaseFrame * game = (BaseFrame*)CurrentSystem;
 	for (auto eve : events) {
 		if (eve.Event == InputEvent::KeyboardDown) {
+			if (eve.Key == SDLK_ESCAPE) {
+				game->ToggleMenu();
+			}
 			//Fire blocks
 			if (eve.Key == 'f') {
 				PhysicsVoxel * vox = game->Physics.BuildVoxel(playerPos+playerFacing*2.0f);
