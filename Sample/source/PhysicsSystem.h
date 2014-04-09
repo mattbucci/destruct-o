@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "VoxelDrawSystem.h"
 #include "ContiguousList.h"
+#include "GameEvent.h"
 
 class ShaderGroup;
 class PhysicsVoxel;
@@ -69,6 +70,8 @@ public:
 	//Draw all the actors
 	void Draw(ShaderGroup * shaders);
 
+	//Called right before a physics voxel is destroyed
+	GameEvent<void(PhysicsVoxel*)> VoxelDisintegrating;
 
 	CLASS_DECLARATION(PhysicsSystem)
 		CLASS_CONTAINER_MEMBER(allVoxels,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)

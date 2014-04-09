@@ -6,9 +6,10 @@
 //
 //
 
-#include "Achievements.h"
 // Include the potentially precompiled header
 #include "stdafx.h"
+#include "Achievements.h"
+
 
 void InitPlayerAchievements(ActorPlayer * player){
     

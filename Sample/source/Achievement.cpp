@@ -6,8 +6,9 @@
 //
 //
 
-#include "Achievement.h"
 #include "stdafx.h"
+#include "Achievement.h"
+
 
 void Achievement::SetValue(float value) {
     currentvalue=value;
