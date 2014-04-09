@@ -32,13 +32,18 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	FirstPerson->Enable(true);
     
     // Test load a mesh
-    mesh = new GLMesh("meshes", "robot02.dae", Textures);
+    mesh[0] = new GLMesh("meshes/robot02", "robot02.mesh.json", Textures, vec3(1.5, 1.5, 1.5));
+    mesh[1] = new GLMesh("meshes/scifi_soldier02", "scifi_soldier02.mesh.json", Textures, vec3(0.015, 0.015, 0.015));
+    mesh[2] = new GLMesh("meshes/scifi_soldier02", "scifi_soldier02_dark.mesh.json", Textures, vec3(0.015, 0.015, 0.015));
 	
 	cout << "\t Finished base frame\n";
 	//testSystem = NULL;
 }
-BaseFrame::~BaseFrame() {
-    delete mesh;
+BaseFrame::~BaseFrame()
+{
+    delete mesh[0];
+    delete mesh[1];
+    delete mesh[2];
 }
 
 
@@ -210,22 +215,19 @@ void BaseFrame::Draw(double width, double height) {
     Camera.Draw(shadersMesh);
     
     // Draw the meshes
-    for(std::vector<glm::vec3>::iterator it = Meshes.begin(); it != Meshes.end(); ++it)
+    for(std::vector<std::pair<glm::vec3, int> >::iterator it = Meshes.begin(); it != Meshes.end(); ++it)
     {
         // Set the proper translation
         shadersMesh->Model.PushMatrix();
-		shadersMesh->Model.Translate(*it);
-        shadersMesh->Model.PushMatrix();
-        shadersMesh->Model.Scale(0.1, 0.1, 0.1);
+		shadersMesh->Model.Translate((*it).first);
         shadersMesh->Model.PushMatrix();
         shadersMesh->Model.Rotate(90.0, 1, 0, 0);
 		shadersMesh->Model.Apply();
         
         // Draw the mesh
-        mesh->Draw(shadersMesh);
+        mesh[(*it).second]->Draw(shadersMesh);
         
         // Remove this translation
-        shadersMesh->Model.PopMatrix();
         shadersMesh->Model.PopMatrix();
         shadersMesh->Model.PopMatrix();
     }

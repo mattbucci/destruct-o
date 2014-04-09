@@ -299,7 +299,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 			}
             else if (eve.Key == '0') {
                 vec3 cubePos = playerPos+playerFacing*5.0f;
-                game->Meshes.push_back(cubePos);
+                game->Meshes.push_back(std::make_pair(cubePos, rand() % 3));
             }
 		}
 	}

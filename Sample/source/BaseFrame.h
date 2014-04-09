@@ -27,7 +27,7 @@ class BaseFrame : public GameSystem, public Savable {
 
 	Demo * demo;
 	DemoWindow * demoWindow;
-    GLMesh     * mesh;
+    GLMesh     * mesh[4];
 	Notification * notification;
 protected:
 	//Overload to tell the save system about handles created in the system
@@ -48,7 +48,7 @@ public:
 	FirstPersonMode *FirstPerson;
 	PhysicsSystem Physics;
 	ParticleCloud Particles;
-    std::vector<glm::vec3> Meshes;
+    std::vector<std::pair<glm::vec3, int> > Meshes;
 
 	//for notes on Build() see GameSystem::Build()
 	void Build() override;

@@ -26,52 +26,52 @@ class GLMesh
 {
 protected:
     // Contains information about an individual mesh slice
-    struct Submesh
+    struct Part
     {
         // Vertex array object for this submesh
-        GLuint attributes;
+        GLuint       attributes;
         
-        // Vertex attribute buffers for the mesh
-        union
-        {
-            // The buffers we require for data storage
-            GLuint buffers[4];
-            
-            // The names of the buffers
-            struct
-            {
-                GLuint vertexBuffer;
-                GLuint normalBuffer;
-                GLuint textureCoordinateBuffer;
-                GLuint indexBuffer;
-            };
-        };
-        
-        // Material id for this mesh
-        GLuint material;
+        // Vertex buffer object for this part's index data
+        GLuint       indexBuffer;
         
         // Index count
         unsigned int indexCount;
         
+        // Material id for this mesh
+        std::string  material;
+        
         // Constructor to setup everything about this mesh
-        Submesh();
-        ~Submesh();
+        Part();
+        ~Part();
     };
     
+    // Vertex buffer object containing all mesh verticies
+    GLuint vertexBuffer;
+    
+    // Attribute offsets in vertex buffer (since its all interleaven)
+    GLint  vertexFrameSize;
+    GLint  positionOffset;
+    GLint  normalOffset;
+    GLint  texCoordOffset;
+    GLint  blendWeightOffset[4];
+    
     // Submeshes supported by this
-    std::vector<Submesh *> submeshes;
+    std::vector<Part *>       parts;
     
     // Textures used by our mesh
-    std::vector<std::string> textures;
+    std::map<std::string, std::vector<std::string> > materials;
     
     // Last program used to render (used to figure out if we've cached the vertex locations)
-    GL3DProgram *priorShader;
+    GL3DProgram              *priorShader;
     
     // Active texture cache
-    TextureCache&          textureCache;
+    TextureCache&             textureCache;
+    
+    // Default scale of mesh
+    vec3                      scale;
 public:
     // Load a model from a file
-    GLMesh(const std::string& directory, const std::string& name, TextureCache& _textureCache);
+    GLMesh(const std::string& directory, const std::string& name, TextureCache& _textureCache, vec3 _scale = vec3(1,1,1));
     ~GLMesh();
     
     // Draw this mesh
