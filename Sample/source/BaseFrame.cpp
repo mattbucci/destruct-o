@@ -135,6 +135,7 @@ void BaseFrame::Build() {
 	audio->Subscribe(player);
     achievements = new Achievements(notification);
     achievements->InitPlayerAchievements(player);
+    achievements->InitPhysicsAchievements(&Physics);
 }
 
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {

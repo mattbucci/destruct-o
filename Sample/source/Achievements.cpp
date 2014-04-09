@@ -18,6 +18,8 @@ Achievements::Achievements(Notification* notification){
     
     achievementlist.push_back(new Achievement(0,1,"Learning to fly, Jumped for the first time","player-jumped",0,notify));
     
+    achievementlist.push_back(new Achievement(0,1,"Destroyer of worlds, 100 voxels destroyed","voxel-destroyed",0,notify));
+    
 };
 
 void Achievements::InitPlayerAchievements(ActorPlayer * player){
@@ -46,7 +48,12 @@ void Achievements::InitPlayerAchievements(ActorPlayer * player){
 }
 
 void Achievements::InitPhysicsAchievements(PhysicsSystem * physics){
-    
+    GameEventSubscriber::Subscribe<void(PhysicsVoxel*)>(&physics->VoxelDisintegrating,[this](PhysicsVoxel* Object) {
+        for(int i = 0; i < this->achievementlist.size(); i++) {
+            if(achievementlist[i]->type=="voxel-destroyed")
+                achievementlist[i]->IncrementValue(1);
+        }
+    });
 }
 
 void Achievements::InitActorAchievements(ActorSystem * actors){
