@@ -1,31 +1,27 @@
+#include "stdafx.h"
 #include "TileHandler.h"
 
-static const int tile_width = 256;
-static const int tile_height = 256;
-
-TileHandler::TileHandler(void)
-{
-	_ASSERTE(false); //This Class should never be Instantiated
-}
+const int tile_width = 512;
+const int tile_height = 512;
 
 
 TileHandler::~TileHandler(void)
 {
-	_ASSERTE(false); //This Class should never be Instantiated
 }
 
 void TileHandler::init() {
-	//Prevent Double Init
-	_ASSERTE(handlerThread == NULL);
-
 	//Initialize Terrain Generator
-	generator = new TerrainGen();
-	generator->setTileSize(tile_width, tile_height);
-	srand(time(NULL));
-	generator->setSeed(rand());
+	terraingenerator = new TerrainGen();
+	terraingenerator->setTileSize(tile_width, tile_height);
+	//srand((unsigned int)time(NULL));
+    srand(69);
+	terraingenerator->setSeed(rand());
+
+	//Initalize City Generator
+	citygenerator = new CityGen();
 
 	//Create & Run Handler Thread
-	handlerThread = new std::thread(handlerLoop);
+	handlerThread = new std::thread([this](){handlerLoop(); });
 	handlerThread->detach();
 }
 
@@ -48,7 +44,7 @@ void TileHandler::handlerLoop() {
 		while(genQueue.size() > 0) {
 			//Grab Work from Queue
 			vec2 pos = genQueue.front();
-			GameTile * tile = GameTile::CreateGameTile(tile_width, tile_height, pos.x, pos.y);
+			GameTile * tile = GameTile::CreateGameTile(tile_width, tile_height, (int)pos.x, (int)pos.y);
 			genQueue.pop_front();
 			gLck.unlock();
 
@@ -77,17 +73,9 @@ void TileHandler::handlerLoop() {
 
 void TileHandler::genRoutine(GameTile * newTile) {
 	//Generate Terrain Data
-	unsigned char* rawTile = generator->generateTile(newTile->tile_x, newTile->tile_y);
-
-	//Assign Data to Container
-	vector<unsigned char> tile;
-	tile.assign(rawTile, rawTile + (newTile->Width * newTile->Height *  4));
-
-	//Free Generatored Terrain Data
-	delete rawTile;
-
-	//Load Tile Data into GameTile
-	GameTile::LoadTileFromMemoryIntoExisting(tile, newTile);
+	terraingenerator->generateTerrain(newTile);
+	//Generate Cities
+	citygenerator->GenerateCities(newTile);
 }
 
 void TileHandler::predictTile(vec2 pos) {
@@ -115,7 +103,7 @@ void TileHandler::predictTile(vec2 pos) {
 	//Add to Queue & Notify Handler
 	genQueue.push_back(pos);
 	//Add Placeholder Tile to WorldSet for Duplicate Prevention
-	worldSet.push_back(GameTile::CreatePlaceholderTile(pos.x, pos.y));
+	worldSet.push_back(GameTile::CreatePlaceholderTile((int)pos.x, (int)pos.y));
 	genCv.notify_one();
 
 	//Release Lock
@@ -131,9 +119,9 @@ void TileHandler::forceTile(vec2 pos) {
 	genLck.lock();
 
 	//Add to Queue & Notify Handler
-	genQueue.push_back(pos);
+	genQueue.push_front(pos);
 	//Add Placeholder Tile to WorldSet for Duplicate Prevention
-	worldSet.push_back(GameTile::CreatePlaceholderTile(pos.x, pos.y));
+	worldSet.push_back(GameTile::CreatePlaceholderTile((int)pos.x, (int)pos.y));
 	genCv.notify_one();
 
 	//Release Gen Queue Lock
@@ -142,11 +130,11 @@ void TileHandler::forceTile(vec2 pos) {
 }
 
 void TileHandler::setSeed(int seed) {
-	generator->setSeed(seed);
+	terraingenerator->setSeed(seed);
 }
 
 int TileHandler::getSeed() {
-	return generator->getSeed();
+	return terraingenerator->getSeed();
 }
 
 GameTile * TileHandler::getTile(vec2 pos) {
@@ -218,17 +206,3 @@ GameTile * TileHandler::getTile(vec2 pos) {
 
 	return tile;
 }
-
-TerrainGen* TileHandler::generator = NULL;
-
-std::mutex TileHandler::genMtx;
-std::condition_variable TileHandler::genCv;
-std::unique_lock<std::mutex> TileHandler::genLck(genMtx, std::defer_lock);
-std::list<vec2> TileHandler::genQueue = std::list<vec2>();
-
-std::mutex TileHandler::worldMtx;
-std::condition_variable TileHandler::worldCv;
-std::unique_lock<std::mutex> TileHandler::worldLck(worldMtx, std::defer_lock);
-std::vector<GameTile*> TileHandler::worldSet = std::vector<GameTile*>();
-
-std::thread* TileHandler::handlerThread = NULL;

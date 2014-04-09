@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Matthew Bucci. All rights reserved.
 //
 
+#include "stdafx.h"
 #include "Music.h"
 
 

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-class PhysicsVoxel {
+class PhysicsVoxel : public Savable{
 public:
 	//Almost all properties are public for speed
 
@@ -24,4 +24,12 @@ public:
 	//If the current time is greater than this the voxel is disintegrated
 	//if<0 voxel lives forever
 	double DeathAt;
+
+	CLASS_DECLARATION(PhysicsVoxel)
+		CLASS_MEMBER(Acceleration,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(Velocity,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(Position,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(MaterialId,ReflectionData::SAVE_INT32)
+		CLASS_MEMBER(DeathAt,ReflectionData::SAVE_DOUBLE)
+	END_DECLARATION
 };

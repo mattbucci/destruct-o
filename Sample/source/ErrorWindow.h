@@ -18,4 +18,7 @@ public:
 
 	ErrorWindow(string title, string error);
 	~ErrorWindow();
+
+	static void ShowError(string title, string error);
+
 };

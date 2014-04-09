@@ -16,68 +16,11 @@
 #include "ParticleData.h"
 
 #include "Demo.h"
+#include "Building.h"
 
 BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxels) {
 	cout << "\t Constructing base frame\n";
-
-	
-	// Get the 3D shader program
-	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
-	uniformModelView = glGetUniformLocation(shaders3d->GetId(), "MV");
-	uniformModelViewProjection = glGetUniformLocation(shaders3d->GetId(), "MVP");
-
-	//Build the sample dialog 
-	//Build a window that says "On Top"
-	Window * window = new Window(Rect(0,0,200,400),"On Bottom");
-	window->hPin = Control::CENTER;
-	window->vPin = Control::MAX;
-	window->SetVisible(false);
-	Controls.AddWindow(window);
-	//Give it a list box with a bunch of random crap
-	vector<string> randomCrap;
-	randomCrap.push_back("Monkey");
-	randomCrap.push_back("Walrus");
-	randomCrap.push_back("Cheeto");
-	randomCrap.push_back("Spaghetii");
-	randomCrap.push_back("Canada");
-	randomCrap.push_back("Banana");
-	randomCrap.push_back("One");
-	randomCrap.push_back("Seventeen");
-	randomCrap.push_back("Lamp");
-	randomCrap.push_back("Voxel");
-	randomCrap.push_back("Game");
-	randomCrap.push_back("Walrus");
-	randomCrap.push_back("Still Walrus");
-	randomCrap.push_back("Cloud");
-	Listbox * list = new Listbox();
-	list->position = Rect(0,0,180,150);
-	list->hPin = list->vPin = Control::CENTER;
-	list->SetEntries(randomCrap);
-	//When the user selects something, change the title to the 
-	//selected item
-	Subscribe<void(Listbox*,int)>(&list->EventSelectionChanged, [window](Listbox* list,int changedTo) {
-		if (changedTo >= 0)
-			window->SetTitle(list->GetEntries()[changedTo]);
-	});
-	window->AddControl(list);
-
-	//Start another window (visible by default)
-	Window * wm = new Window(Rect(0,0,300,300),"HELLO =)");
-	wm->hPin = wm->vPin = Control::CENTER;
-	//Controls.AddWindow(wm);
-	//Add a button to this window that when pressed
-	//switches which window is visible
-	Button * windowButton = new Button(Rect(0,-10,100,30),"PRESS ME");
-	windowButton->hPin = Control::CENTER;
-	windowButton->vPin = Control::MAX;
-	Subscribe<void(Button*)>(&windowButton->EventClicked,[window,wm](Button* button) {
-		//Make the current window invisible
-		wm->SetVisible(false);
-		//Make the next window visible
-		window->SetVisible(true);
-	});
-	wm->AddControl(windowButton);
-	
+		
 	// Create the first person controller depending on the current platform
 #ifdef __MOBILE__
 	FirstPerson = new FirstPersonModeMobile();
@@ -89,13 +32,64 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	FirstPerson->Enable(true);
     
     // Test load a mesh
-    mesh = new GLMesh("meshes", "mech.x", Textures);
+    mesh = new GLMesh("meshes", "robot02.dae", Textures);
 	
 	cout << "\t Finished base frame\n";
 	//testSystem = NULL;
 }
 BaseFrame::~BaseFrame() {
     delete mesh;
+}
+
+
+//synchronously saves the game
+bool BaseFrame::Save(string saveFile) {
+	//Serialize this class
+	vector<unsigned char> saveData = Savable::Serialize(this);
+
+	//Open for writing binary data
+	SDL_RWops *file = SDL_RWFromFile(saveFile.c_str(), "wb"); 
+
+	//Check the file opened
+	if(!file) 
+		return false;
+	//Write the file containing all the save data
+	SDL_RWwrite(file,(char*)&saveData.front(),1,saveData.size());
+	SDL_RWclose(file);
+
+	return true;
+}
+//synchronously loads the game over any existing data
+bool BaseFrame::Load(string saveFile) {
+	SDL_RWops *file = SDL_RWFromFile(saveFile.c_str(), "rb"); 
+	long size;
+	
+	//Check the file opened
+	if(!file) 
+		return false;
+
+	//Determine file size
+	SDL_RWseek(file , 0 , RW_SEEK_END);
+	size = (long)SDL_RWtell(file);
+	SDL_RWseek(file,0,RW_SEEK_SET);
+
+	//allocate space for file data
+	vector<unsigned char> fileData(size);
+	SDL_RWread(file,&fileData.front(), 1, (size_t)size);
+	SDL_RWclose(file);
+	
+	//Deserialize the data
+	Savable::Deserialize(fileData,this);
+
+	return 0;
+}
+
+void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
+	//This is necessary because FirstPerson is a user owned handle
+	//so we must notify the save system we have constructed it
+	REPAIR_HANDLE(FirstPerson);
+	//Continue loading
+	Savable::Load(parentValue,loadData);
 }
 
 void BaseFrame::OnFrameFocus() {
@@ -116,16 +110,12 @@ void BaseFrame::OnFrameFocus() {
 }
 
 void BaseFrame::Build() {
-	//Initialize Tile Handler
-	TileHandler::init();
 
 	//load the audio
+	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
 	audio->Subscribe(player);
-
-	//TODO: Implement TileHandler Loading
-	//Load the sample tile
-	//Voxels.LoadWorld("A Save File");
+	
 }
 
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {
@@ -139,15 +129,13 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	//The player is the only actor which reads input
 	//player->ReadInput(inputEvents);
 
-    Voxels.Update(player->GetPosition());
+	Voxels.Update(player->GetPosition());
 
 	//Update actors
 	Actors.Update(delta,now);
 
 	demo->OnInput(inputEvents,player->GetPosition(),FirstPerson->GetLookVector());
 	demo->Update(now,delta);
-
-	
 
 	//Update physics/Particles
 	Physics.Update(delta,now);
@@ -159,6 +147,7 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	demo->CheckTouchInput(player->GetPosition(),FirstPerson->GetLookVector());
 	return true;
 }
+
 
 void BaseFrame::Draw(double width, double height) {
 	vec2 viewPortSize = vec2((float)width,(float)height);
@@ -188,7 +177,7 @@ void BaseFrame::Draw(double width, double height) {
 
 	//Compute view distance and handle fog
 	ViewDistance.CalculateAndApply(shaders3d,fpsCount.GetFps());
-	shaders3d->Fog.SetFogColor(vec4(.5,.5,.5,1.0));
+	shaders3d->Fog.SetFogColor(vec4(.5,.5,.5,1));
 
 	//We add 1.5 to ground level. This assumes the person is 5ft between the ground
 	//and his eye line

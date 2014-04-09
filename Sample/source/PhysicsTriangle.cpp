@@ -1,15 +1,11 @@
 #include "stdafx.h"
 #include "PhysicsTriangle.h"
 
-PhysicsTriangle::PhysicsTriangle(vec3 a, vec3 b, vec3 c) {
+PhysicsTriangle::PhysicsTriangle(vec3 normal, vec3 a, vec3 b, vec3 c) {
 	this->a = a;
 	this->b = b;
 	this->c = c;
-
-	vec3 AtoB = b-a;
-	vec3 AtoC = c-a;
-	
-	normal = glm::cross(AtoB,AtoC);
+	this->normal = normal;
 }
 
 bool PhysicsTriangle::RayIntersects(PhysicsTriangle t, vec3 trianglePosition, const vec3 & startPoint,const vec3 & direction,double * intersectionDistance, vec3 * surfaceNormal) {

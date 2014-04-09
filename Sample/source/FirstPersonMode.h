@@ -6,8 +6,7 @@
 #include "InputEvent.h"
 #include "GL2DProgram.h"
 
-class FirstPersonMode
-{
+class FirstPersonMode : public Savable {
 protected:
 	vec3 lookVector;
 	vec2 moveVector;
@@ -19,9 +18,9 @@ protected:
 	bool debug;
 	float debug_target_height;
 
-    // Since the ActorPlayer polls this object per frame, GameEvents don't comply with the way the
-    // rest of the object is implemented
-    bool jumpRequested;
+	// Since the ActorPlayer polls this object per frame, GameEvents don't comply with the way the
+	// rest of the object is implemented
+	bool jumpRequested;
 public:
 	FirstPersonMode();
 	~FirstPersonMode();
@@ -36,9 +35,9 @@ public:
 	//useful for determining if the player is facing something
 	//angle is in degrees
 	vec2 GetAngleVector();
-    
-    // Get if the controller wants to cause the player to jump.  Checking clears the flag
-    bool GetJumpRequested(bool clearFlag = true);
+	
+	// Get if the controller wants to cause the player to jump.  Checking clears the flag
+	bool GetJumpRequested(bool clearFlag = true);
 
 	//debug getters
 	bool GetDebug();
@@ -53,4 +52,11 @@ public:
 
 	//In the future this will be used to draw the virtual joysticks on mobile
 	virtual void Draw(double width, double height, GL2DProgram * shader);
+
+
+	CLASS_DECLARATION(FirstPersonMode)
+		CLASS_MEMBER(lookVector,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(moveVector,ReflectionData::SAVE_VEC2)
+		CLASS_MEMBER(aggregateMouseVector,ReflectionData::SAVE_VEC2)
+	END_DECLARATION
 };

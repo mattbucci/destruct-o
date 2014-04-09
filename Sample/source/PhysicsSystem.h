@@ -9,18 +9,21 @@ class ShaderGroup;
 class PhysicsVoxel;
 //The voxel system is needed to lookup the height of the terrain
 class VoxelSystem;
-
-#include "stdafx.h"
+class PhysicsProxy;
+class Actor;
 
 //The true physics system
-class PhysicsSystem {
+class PhysicsSystem : public Savable {
 	//Voxel list now uses a contiguous list for speed
 	//designed for fast insert/removal
 	//stored objects are always contiguous
-	ContiguousList<PhysicsVoxel> allVoxels;
+	ContiguousList<PhysicsVoxel*> allVoxels;
 	
 	//this contiguous list is a sub buffer used to severely decrease the AABB checks needed for physics voxels
-	ContiguousList<PhysicsVoxel> section;
+	ContiguousList<PhysicsVoxel*> section;
+
+	//A list of all actor proxies the physics system owns
+	ContiguousList<PhysicsProxy*> proxies;
 
 
 	//The voxel draw renderer
@@ -39,9 +42,6 @@ class PhysicsSystem {
 	//A tie to the voxel system used to lookup the terrain height at various points
 	VoxelSystem * voxelSystem;
 
-	//3d ray trace to a single voxel placed at "at"
-	bool checkForCollision(const vec3 & from, const vec3 & direction, vec3 at, vec3 & rayCollision, vec3 & surfaceNormal) ;
-
 	//C style function for performance reasons
 	friend Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxelBPosition);
 public:
@@ -55,9 +55,18 @@ public:
 	//returns the voxel
 	PhysicsVoxel * BuildVoxel(vec3 voxelCoordinate, double lifeTime=-1.0);
 
+	//Construct a physics proxy for the given actor
+	//once attached, detach() must be called on actor destruction
+	PhysicsProxy * BuildPhysicsProxy(Actor * actor, vec3 * actorPosition);
+
 	//Update the physics voxels, called by base frame
 	void Update(double delta, double now);
 
 	//Draw all the actors
 	void Draw(ShaderGroup * shaders);
+
+
+	CLASS_DECLARATION(PhysicsSystem)
+		CLASS_CONTAINER_MEMBER(allVoxels,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
+	END_DECLARATION
 };

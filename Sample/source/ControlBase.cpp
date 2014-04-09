@@ -26,10 +26,6 @@ bool ControlBase::FireEvent(InputEvent event) {
 	bool eventConsumed = false;
 	//Pass an event received from the event system to the control (can be passed to lua)
 	if (event.Event == InputEvent::MouseDown) {
-	#ifdef __MOBILE__
-		//On mobile it's possible to "click" without moving
-		Control::OnMouseMove(vec2(event.MouseX,event.MouseY));
-	#endif
 		Control::OnMousePress(vec2(event.MouseX,event.MouseY),(int) event.Key,true);
 		eventConsumed = hasFocusedChild();
 	}
@@ -67,7 +63,7 @@ bool ControlBase::FireEvent(InputEvent event) {
 	return eventConsumed;
 }
 
-void ControlBase::Draw(GL2DProgram * prg, vec2 scaledSize) {
+void ControlBase::Draw(GL2DProgram * prg, Rect size) {
 	//During draw events update key events
 	if ((pressedKey != -1) && ((OS::Now() - lastKeyProcessedAt)) >= .1) {
 		//The first key press has a much longer gap before its repeated
@@ -81,8 +77,8 @@ void ControlBase::Draw(GL2DProgram * prg, vec2 scaledSize) {
 			keyboardFocusedChild->__OnKeyPress((int) pressedKey);
 	}
 	//Send width,height,Control::Draw()
-	this->position.Width = scaledSize.x;
-	this->position.Height = scaledSize.y;
+	this->position.Width = size.Width;
+	this->position.Height = size.Height;
 
 	Control::Draw(prg);
 }

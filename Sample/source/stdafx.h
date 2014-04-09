@@ -94,6 +94,11 @@ using glm::mat3;
 using glm::mat4;
 using glm::quat;
 
+//The save system
+//since it is used in many many places
+#include "Savable.h"
+#include "ReflectionStore.h"
+
 //Useful defines
 #define ADDSUFFIX_2(x,y) x ## y
 #define ADDSUFFIX_1(x,y) ADDSUFFIX_2(x,y)

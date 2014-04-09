@@ -19,7 +19,7 @@ class ParticleSystem {
 	double deathAt;
 
 	//The list of particles
-	ContiguousList<Particle> particleList;
+	ContiguousList<Particle*> particleList;
 public:
 	ParticleSystem(ParticleData particleSystemDescription,double now, double lifetime);
 	~ParticleSystem();
@@ -32,6 +32,6 @@ public:
 	//returns true if this particle system should be cleaned up
 	bool UpdateEmitter(double now, double delta);
 	//Draw particles for this particle system
-	void Draw(ParticleRenderer * renderer, GLParticleProgram * shader);
+	void Draw(ParticleRenderer * renderer, GLParticleProgram * shader, vec3 cameraZAxis);
 };
  

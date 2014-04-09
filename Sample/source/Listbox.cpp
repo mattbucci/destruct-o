@@ -256,8 +256,21 @@ void Listbox::OnMousePress(vec2 mousePos, int button, bool down) {
 		if ((hoveringOver < 0) || (hoveringOver >= (int)entries.size()))
 			return;
 		else {
-			selected = hoveringOver;
-			OnListSelected();
+			if (selected == hoveringOver) {
+				if ((OS::Now() - selectedAt) < .35) {
+					//Double clicked list item
+					EventSelectionDoubleClicked.Fire([this](function<void(Listbox*,int)> subscriber) {
+						subscriber(this,this->selected);
+					});
+				}
+				selectedAt = OS::Now();
+			}
+			else {
+				selectedAt = OS::Now();
+				selected = hoveringOver;
+				OnListSelected();
+			}
+
 		}
 			
 	}
@@ -327,6 +340,7 @@ Listbox::Listbox() :
 	selected = -1;
 
 	useNinePatch(VisualInterface.NPListbox);
+	selectedAt = 0;
 }
 Listbox::~Listbox() {
 
@@ -347,6 +361,7 @@ int Listbox::GetSelection() {
 //Set or get the list of entries
 //entries are rasterized during Set() so avoid redundant calls
 void Listbox::SetEntries(const vector<string> & entries) {
+	scrollPosition = 0;
 	this->entries = entries;
 	entryText.clear();
 	//Rasterize the text for drawing
@@ -355,6 +370,22 @@ void Listbox::SetEntries(const vector<string> & entries) {
 	//Invalidate the current selection
 	selected = -1;
 }
+
+void Listbox::SetEntries(const list<string> & entries) {
+	scrollPosition = 0;
+	//Convert the list to a vector
+	this->entries.clear();
+	for (string s : entries)
+		this->entries.push_back(s);
+
+	entryText.clear();
+	//Rasterize the text for drawing
+	for (const string & entry : entries) 
+		entryText.push_back(RasterizedText(entry,VisualInterface.FontControlText,VisualInterface.ColorControlText));
+	//Invalidate the current selection
+	selected = -1;
+}
+
 vector<string> Listbox::GetEntries() {
 	return entries;
 }

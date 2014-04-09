@@ -26,6 +26,7 @@ void ComboBox::Draw(GL2DProgram * shaders) {
 		if (lastMousePos.x > 0) {
 			//Check which item is highlighted
 			hoverHighlight.SetVisible(true);
+			hoverHighlight.SendToBack();
 			hoverHighlight.position.Y = position.Height*(int)(lastMousePos.y/position.Height);
 		}
 		else
@@ -36,6 +37,7 @@ void ComboBox::Draw(GL2DProgram * shaders) {
 		triangle.SetToDownTriangle();
 		if (lastMousePos.x >= 0) {
 			hoverHighlight.SetVisible(true);
+			hoverHighlight.SendToBack();
 			hoverHighlight.position.Y = 0;
 		}
 		else
@@ -45,6 +47,7 @@ void ComboBox::Draw(GL2DProgram * shaders) {
 
 	//Set properties of the label to match the properties of this object
 	selected.SetText(selectedEntry);
+	//selected.SendToFront();
 	drawChildren(shaders);
 
 	//Draw the labels on top of children
@@ -80,7 +83,7 @@ void ComboBox::OnMousePress(vec2 mousePos, int button, bool down) {
 
 	//Send to front so the drop down is on top
 	if (opened) {
-		sendToFront();
+		SendToFront();
 	}
 		
 }
@@ -91,13 +94,14 @@ void ComboBox::OnMouseLeave() {
 	//The mouse is now out of the control
 	//don't highlight anything
 	lastMousePos = vec2(-1,-1);
+	opened = false;
 }
 void ComboBox::OnMouseEnter() {
 
 }
 
-ComboBox::ComboBox(float x, float y, float width, float height) :
-	Control(Rect(x,y,width,height)),
+ComboBox::ComboBox(Rect size) :
+	Control(size),
 	selected(0,0,""),
 	hoverHighlight(4),
 	triangle(3) {
@@ -145,13 +149,16 @@ ComboBox::~ComboBox() {
 
 void ComboBox::AddComboEntry(string entry) {
 	entries.push_back(entry);
+	renderedEntries.push_back(RasterizedText(entry,VisualInterface.FontControlText));
 }
 void ComboBox::RemoveComboEntry(string entry) {
 	string e = entry;
-	for (auto it = entries.begin(); it != entries.end(); it++) {
+	auto fit = renderedEntries.begin();
+	for (auto it = entries.begin(); it != entries.end(); it++, fit++) {
 		//Delete only the first entry that matches the given description
 		if (*it == e) {
 			entries.erase(it);
+			renderedEntries.erase(fit);
 			return;
 		}
 	}

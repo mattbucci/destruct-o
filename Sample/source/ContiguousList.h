@@ -2,17 +2,24 @@
 #pragma once
 
 #include "stdafx.h"
+#include <string.h>
+
+//A dummy allocator to make contiguouslist's template signature
+//the same as vector and list
+template <class T>
+class __listdummyallocator {};
 
 //A contiguous list is an implementation which 
 //supports pushing members at the end
 //and removing members from any point
 //It will automatically do both of these things fairly quickly
 //it is designed to contain pointers, not data
-//Note, order of contents /not/ maintained!
-template <class T>
+//Note: order of contents /not/ maintained!
+//		and allocator does not actually do anything
+template <class T, class _Alloc = __listdummyallocator<T>>
 class ContiguousList{
 	//The array of stored data
-	T ** data;
+	T * data;
 	//The current listCapacity
 	unsigned int listCapacity;
 	//The current listSize
@@ -24,9 +31,9 @@ class ContiguousList{
 	//Resize data to the new listCapacity
 	void resize(int newCapacity) {
 		//Allocate the new storage
-		T ** newData = new T*[newCapacity];
+		T * newData = new T[newCapacity];
 		//Copy over the data
-		memcpy(newData,data,sizeof(T*)*listCapacity);
+		memcpy(newData,data,sizeof(T)*((listSize > (unsigned int)newCapacity) ? newCapacity : listSize));
 		//Clean up the old storage
 		delete [] data;
 		//Remember only the new storage
@@ -38,20 +45,20 @@ public:
 		autoreduceCapacity = true;
 		listCapacity = 10;
 		listSize = 0;
-		data = new T*[listCapacity];
+		data = new T[listCapacity];
 	}
 	ContiguousList(unsigned int initialCapacity) {
 		autoreduceCapacity = true;
 		listCapacity = initialCapacity;
 		listSize = 0;
-		data = new T*[listCapacity];
+		data = new T[listCapacity];
 	}
 	ContiguousList(const ContiguousList & original) {
 		autoreduceCapacity = original.autoreduceCapacity;
 		listCapacity = original.listCapacity;
 		listSize = original.listSize;
-		data = new T*[listCapacity];
-		memcpy(data,original.data,original.listSize*sizeof(T*));
+		data = new T[listCapacity];
+		memcpy(data,original.data,original.listSize*sizeof(T));
 	}
 
 	const ContiguousList & operator=(const ContiguousList & original) {
@@ -61,8 +68,8 @@ public:
 		autoreduceCapacity = original.autoreduceCapacity;
 		listCapacity = original.listCapacity;
 		listSize = original.listSize;
-		data = new T*[listCapacity];
-		memcpy(data,original.data,original.listSize*sizeof(T*));
+		data = new T[listCapacity];
+		memcpy(data,original.data,original.listSize*sizeof(T));
 	}
 
 	virtual ~ContiguousList() {
@@ -71,14 +78,14 @@ public:
 
 	class iterator : public std::iterator<random_access_iterator_tag,T*>	 {
 		//The iterators current position
-		T ** at;
+		T * at;
 		//Build a new iterator giving it only the raw start position
-		iterator(T ** at) {
+		iterator(T * at) {
 			this->at = at;
 		}
 		friend class ContiguousList<T>;
 	public:
-		T* & operator*() const {
+		T & operator*() const {
 			return *at;
 		}
 
@@ -148,11 +155,11 @@ public:
 		}
 	};
 
-	void sort(function<bool(T * a,T * b)> aLessThanB) {
+	void sort(function<bool(T a,T b)> aLessThanB) {
 		//Perform an insertion sort
 		//favored for its speed with already sorted data
-		for (int a = 1; a < listSize; a++) {
-			T * temp = data[a];
+		for (unsigned int a = 1; a < listSize; a++) {
+			T temp = data[a];
 			int b = a;
 			for (; b > 0; b--) {
 				if (aLessThanB(temp,data[b-1]))
@@ -186,23 +193,25 @@ public:
 		return iterator(data+listSize);
 	}
 
-	T *& operator[](const int index) const {
+	T & operator[](const int index) const {
 		return data[index];
 	}
 	//Now the complicated methods
-	int insert(T * toInsert) {
+	void push_back(T toInsert) {
 		if (listSize == listCapacity)
 			//Not enough room, make some more
 			resize((int)(listCapacity * 1.5 + 4));
 		//Assume the space after listSize is empty
 		data[listSize++] = toInsert;
-		return listSize-1;
+		//return listSize-1;
 	}
 	//Erase somthing based off an iterator
 	//returns a new valid iterator
 	iterator erase(iterator toErase) {
 		_ASSERTE(toErase != end());
+#ifndef __linux__
 		_ASSERTE(listSize > 0);
+#endif
 
 		//When you remove something from the list, move something to fill its place if there is anything left
 		*toErase = data[listSize-1];
@@ -226,7 +235,7 @@ public:
 
 	//Finds the first matching entry and removes it
 	//if there are no matching entries, has no effect
-	void erase(T * toRemove) {
+	void erase(T toRemove) {
 		for (unsigned int i = 0; i < listSize; i++) {
 			if (data[i] == toRemove) {
 				erase(iterator(data+i));

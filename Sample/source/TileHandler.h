@@ -7,41 +7,46 @@
 #include <vector>
 #include "GameTile.h"
 #include "TerrainGen.h"
+#include "CityGen.h"
 
 #pragma once
+
+using namespace std;
+
 class TileHandler
 {
-	static TerrainGen* generator;
+	TerrainGen* terraingenerator;
+	CityGen* citygenerator;
 
-	static std::mutex genMtx;
-	static std::condition_variable genCv;
-	static std::unique_lock<std::mutex> genLck;
-	static std::list<vec2> genQueue;
+	mutex genMtx;
+	condition_variable genCv;
+	unique_lock<mutex> genLck;
+	list<vec2> genQueue;
 
-	static std::mutex worldMtx;
-	static std::condition_variable worldCv;
-	static std::unique_lock<std::mutex> worldLck;
-	static std::vector<GameTile*> worldSet;
+	mutex worldMtx;
+	condition_variable worldCv;
+	unique_lock<mutex> worldLck;
+	vector<GameTile*> worldSet;
 
-	static void addGenQueue(vec2 pos);
-	static void addGenQueueFront(vec2 pos);
+	thread* handlerThread;
 
-	static std::thread* handlerThread;
-	static void handlerLoop();
+	void handlerLoop();
+	void genThread(GameTile * newTile);
+	void genRoutine(GameTile * newTile);
 
-	static void genThread(GameTile * newTile);
-	static void genRoutine(GameTile * newTile);
+	void forceTile(vec2 pos);
+	void predictTile(vec2 pos);
 
-	static void forceTile(vec2 pos);
-	static void predictTile(vec2 pos);
-
-	TileHandler(void);
-	~TileHandler(void);
 public:
-	static void init();
+	TileHandler() : genLck(genMtx, std::defer_lock), worldLck(worldMtx, std::defer_lock){
+		terraingenerator = NULL;
+		handlerThread = NULL;
+	};
+	~TileHandler();
+	void init();
 
-	static void setSeed(int seed);
-	static int getSeed();
+	void setSeed(int seed);
+	int getSeed();
 
-	static GameTile * getTile(vec2 pos);
+	GameTile * getTile(vec2 pos);
 };

@@ -27,7 +27,7 @@ void ParticleCloud::UpdateCloud(double time, double delta) {
 
 ParticleSystem * ParticleCloud::BuildParticleSystem(const ParticleData & particleType,float lifeTime) {
 	ParticleSystem * ps = new ParticleSystem(particleType,VoxEngine::GetGameSimTime(),lifeTime);
-	particles.insert(ps);
+	particles.push_back(ps);
 	return ps;
 }
 
@@ -41,9 +41,11 @@ void ParticleCloud::Draw(ShaderGroup * shaders) {
 	//Apply camera data from the 3d shader
 	shaderParticles->ApplyCamera(shader3d->Camera);
 
+    vec3 cameraZ = shader3d->Camera.GetZAxis();
+
 	//Draw each particle system
 	for (auto system : particles)
-		system->Draw(&renderer, shaderParticles);
+        system->Draw(&renderer, shaderParticles, cameraZ);
 
 	//Some particle systems disable depth
 	//re-enable it before continuing

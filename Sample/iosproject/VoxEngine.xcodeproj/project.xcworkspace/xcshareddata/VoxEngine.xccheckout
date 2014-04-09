@@ -5,7 +5,7 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>BE8EA7F0-F8A8-4BB7-A1EB-93DB85AC8B44</string>
+	<string>59D497EF-6BF8-48F2-9A2D-02D59164D5F0</string>
 	<key>IDESourceControlProjectName</key>
 	<string>VoxEngine</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
@@ -14,7 +14,7 @@
 		<string>https://bitbucket.org/destructo_game/main-client.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Sample/VoxEngine/VoxEngine.xcodeproj/project.xcworkspace</string>
+	<string>Sample/iosproject/VoxEngine.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>0CA0DD0F-BB92-456A-BB66-25C8B6664A01</key>

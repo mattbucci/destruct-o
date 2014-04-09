@@ -36,6 +36,9 @@ private:
 		void Draw(GL3DProgram * shader, vec3 pos);
 	};
 
+	//Trace the given ray to the floor or sides of the editor extents
+	void traceToConstructionBox(pair<vec3,vec3> ray, vec3 & rayCollision, vec3 & surfaceNormal);
+
 	//Calculate the desired cursor position based off of the given cursor position
 	//updates selectedVoxel
 	void UpdateCurrentVoxel(vec2 cursorPosition);
@@ -64,6 +67,12 @@ private:
 
 	//Whether or not the editor is currently enabled
 	bool enabled;
+
+	//The last two voxel positions in which a voxel was placed
+	//used for creating rectangles
+	bool placedVoxelOneLast;
+	vec3 lastVoxelOne;
+	vec3 lastVoxelTwo;
 
 	Region drawFloor;
 	Region drawVoxel;
@@ -94,6 +103,9 @@ public:
 
 	//The user has requested the editor place a voxel at the current position
 	void PlaceVoxel();
+
+	//Attempt to construct a cube between the last two placed voxels
+	void PlaceCuboid();
 
 	//Draw the editor guidelines  
 	void Draw(GL3DProgram * shader);
