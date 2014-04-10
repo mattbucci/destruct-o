@@ -212,7 +212,7 @@ void BaseFrame::Draw(double width, double height)
 	Physics.Draw(shaders);
     
     // Setup the mesh shader
-    GLMeshProgram * shadersMesh = (GLMeshProgram *)shaders->GetShader("mesh");
+    GLMeshProgram * shadersMesh = (GLMeshProgram *) shaders->GetShader("mesh");
     shadersMesh->UseProgram();
     shadersMesh->Acid.SetCurrentTime(VoxEngine::GetGameSimTime());
     shadersMesh->Acid.SetAcidFactor(demo->CurrentAcidStrength);

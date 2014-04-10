@@ -22,7 +22,7 @@
 
 // Default constructor (loads all submeshes from model file)
 GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCache& _textureCache, vec3 _scale)
-    : vertexFrameSize(0), positionOffset(-1), normalOffset(-1), texCoordOffset(-1), scale(_scale), textureCache(_textureCache)
+    : vertexFrameSize(0), positionOffset(-1), normalOffset(-1), texCoordOffset(-1), textureCache(_textureCache), scale(_scale)
 {
     // Make sure blend weight offsets are in a "null" state
     for(int i = 0; i < MaxBoneWeights; i++) boneWeightOffset[i] = -1;
@@ -231,8 +231,44 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
             // Iterate through the steps
             for(Json::Value::iterator sIt = steps.begin(); sIt != steps.end(); sIt++)
             {
-                // Push back the render step (this will become more complex, we add bones in this function
-                rendersteps.push_back(std::make_pair((*sIt)["meshpartid"].asString(), (*sIt)["materialid"].asString()));
+                // Allocate a renderstep object
+                RenderStep *renderStep = new RenderStep();
+                
+                // Store the mesh part id of this step
+                renderStep->meshpartid = (*sIt)["meshpartid"].asString();
+                
+                // Store the material id of this step
+                renderStep->materialid = (*sIt)["materialid"].asString();
+                
+                // Look through the bones
+                if((*sIt)["bones"] != Json::Value::null)
+                {
+                    // Get the bones for this node
+                    Json::Value& bones = (*sIt)["bones"];
+                    
+                    // Examine all the bones
+                    for(Json::Value::iterator bIt = bones.begin(); bIt != bones.end(); bIt++)
+                    {
+                        // Load the translation transform
+                        /*glm::mat4 translation = glm::translate((*bIt)["translation"][0].asFloat(), (*bIt)["translation"][1].asFloat(), (*bIt)["translation"][2].asFloat());
+                        
+                        // Load the scale transform
+                        glm::mat4 scale =  glm::scale((*bIt)["scale"][0].asFloat(), (*bIt)["scale"][1].asFloat(), (*bIt)["scale"][2].asFloat());
+                        
+                        // Load the rotation (as a quaternion) from the mesh file
+                        glm::quat rotation = glm::quat((*bIt)["rotation"][0].asFloat(), (*bIt)["rotation"][1].asFloat(), (*bIt)["rotation"][2].asFloat(), (*bIt)["rotation"][3].asFloat());
+                        
+                        // Combine the states for the initial pose
+                        glm::mat4 initial = translation * glm::mat4_cast(rotation) * scale;*/
+                        glm::mat4 initial = glm::mat4();
+                        
+                        // Store the bone
+                        renderStep->bones.push_back(std::make_pair((*bIt)["node"].asString(), initial));
+                    }
+                }
+                
+                // Store the render step
+                rendersteps.push_back(renderStep);
             }
         }
     }
@@ -249,16 +285,22 @@ GLMesh::~GLMesh()
     {
         delete it->second;
     }
+    
+    // Iterate through all rendersteps and free them
+    for(std::vector<RenderStep *>::iterator it = rendersteps.begin(); it != rendersteps.end(); ++it)
+    {
+        delete *it;
+    }
 }
 
 // Draw this mesh
 void GLMesh::Draw(GLMeshProgram *shader)
 {
     // Iterate through all the submeshes
-    for(std::vector<std::pair<std::string, std::string> >::iterator it = rendersteps.begin(); it != rendersteps.end(); ++it)
+    for(std::vector<RenderStep *>::iterator it = rendersteps.begin(); it != rendersteps.end(); ++it)
     {
         // Get the part referenced here
-        GLMesh::Part *part = parts[it->first];
+        GLMesh::Part *part = parts[(*it)->meshpartid];
         
 #if !(defined __ANDROID__)
         // Bind the vertex array object
@@ -309,7 +351,7 @@ void GLMesh::Draw(GLMeshProgram *shader)
         shader->Model.PopMatrix();
         
         // Get the material
-        std::vector<std::string>& textures = materials[it->second];
+        std::vector<std::string>& textures = materials[(*it)->materialid];
         
         // Load and active the related textures
         GLuint textureUnit = GL_TEXTURE0;
@@ -325,6 +367,12 @@ void GLMesh::Draw(GLMeshProgram *shader)
         // Set the reflectivity
         glm::vec2 specular = glm::vec2(1.0, 1.0);
         glUniform2fv(glGetUniformLocation(shader->GetId(), "material_reflectivity"), 2, (const GLfloat *) &specular);
+        
+        // terrible, terrible
+        for(int i = 0; i < (*it)->bones.size(); i++)
+        {
+            glUniformMatrix4fv(shader->UniformBones() + (i*4), 1, GL_FALSE, (const GLfloat *) &((*it)->bones[i].second));
+        }
         
         // Draw this mesh
         glDrawElements(GL_TRIANGLES, part->indexCount, GL_UNSIGNED_INT, 0);

@@ -44,6 +44,19 @@ protected:
         ~Part();
     };
     
+    // Contains information about a render step of the mesh
+    struct RenderStep
+    {
+        // Vector of bone objects
+        std::vector<std::pair<std::string, mat4> > bones;
+        
+        // The mesh component name for this render step
+        std::string meshpartid;
+        
+        // The material name for this render step
+        std::string materialid;
+    };
+    
     // Vertex buffer object containing all mesh verticies
     GLuint vertexBuffer;
     
@@ -61,7 +74,7 @@ protected:
     std::map<std::string, std::vector<std::string> > materials;
     
     // The render steps of the mesh (list of part name + material name)
-    std::vector<std::pair<std::string, std::string> > rendersteps;
+    std::vector<RenderStep *> rendersteps;
     
     // Active texture cache
     TextureCache&             textureCache;
