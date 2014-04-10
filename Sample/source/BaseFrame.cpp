@@ -2,6 +2,7 @@
 #include "BaseFrame.h"
 #include "GL2DProgram.h"
 #include "GL3DProgram.h"
+#include "GLMeshProgram.h"
 #include "ShaderGroup.h"
 #include "ActorPlayer.h"
 #include "VoxEngine.h"
@@ -158,7 +159,8 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 }
 
 
-void BaseFrame::Draw(double width, double height) {
+void BaseFrame::Draw(double width, double height)
+{
 	vec2 viewPortSize = vec2((float)width,(float)height);
 	//Save size in camera as well (for unprojection)
 	Camera.UpdateViewSize(viewPortSize);
@@ -210,7 +212,7 @@ void BaseFrame::Draw(double width, double height) {
 	Physics.Draw(shaders);
     
     // Setup the mesh shader
-    GL3DProgram * shadersMesh = (GL3DProgram *)shaders->GetShader("mesh");
+    GLMeshProgram * shadersMesh = (GLMeshProgram *)shaders->GetShader("mesh");
     shadersMesh->UseProgram();
     shadersMesh->Acid.SetCurrentTime(VoxEngine::GetGameSimTime());
     shadersMesh->Acid.SetAcidFactor(demo->CurrentAcidStrength);

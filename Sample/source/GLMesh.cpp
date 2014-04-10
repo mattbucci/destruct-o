@@ -25,7 +25,7 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
     : vertexFrameSize(0), positionOffset(-1), normalOffset(-1), texCoordOffset(-1), scale(_scale), textureCache(_textureCache)
 {
     // Make sure blend weight offsets are in a "null" state
-    for(int i = 0; i < 4; i++) blendWeightOffset[i] = -1;
+    for(int i = 0; i < MaxBoneWeights; i++) boneWeightOffset[i] = -1;
     
     // Open the Json file for reading
     std::string filename = directory + "/" + name;
@@ -184,13 +184,10 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
             // If this is the first texture coordinate
             attribute.erase(0, 11);
             GLuint idx = std::atoi(attribute.c_str());
-            if(idx < 4)
+            if(idx < MaxBoneWeights)
             {
                 // Store the offset for the blend weight
-                blendWeightOffset[idx] = vertexFrameSize;
-            } else
-            {
-                std::cout << "Skipping blend weight " << idx << std::endl;
+                boneWeightOffset[idx] = vertexFrameSize;
             }
             
             // Always increment the frame, because we are trying to analyse the offsets
@@ -255,7 +252,7 @@ GLMesh::~GLMesh()
 }
 
 // Draw this mesh
-void GLMesh::Draw(GL3DProgram *shader)
+void GLMesh::Draw(GLMeshProgram *shader)
 {
     // Iterate through all the submeshes
     for(std::vector<std::pair<std::string, std::string> >::iterator it = rendersteps.begin(); it != rendersteps.end(); ++it)
@@ -274,6 +271,7 @@ void GLMesh::Draw(GL3DProgram *shader)
             glEnableVertexAttribArray(shader->AttributeVertex());
             glEnableVertexAttribArray(shader->AttributeNormal());
             glEnableVertexAttribArray(shader->AttributeTexture());
+            
 #endif
             // Bind the vertex buffer for all our vertex attributes
             glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -286,6 +284,16 @@ void GLMesh::Draw(GL3DProgram *shader)
             
             // Set the texture coordinate attribute pointer
             glVertexAttribPointer(shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, vertexFrameSize * sizeof(GLfloat), (GLvoid *)(texCoordOffset * sizeof(GLfloat)));
+            
+            // Set the bone weights
+            for(int i = 0; i < MaxBoneWeights; i++)
+            {
+                // Enable the vertex attribute array storage for
+                glEnableVertexAttribArray(shader->AttributeBoneWeight(i));
+                
+                // Point the bone weight at the 
+                glVertexAttribPointer(shader->AttributeBoneWeight(i), 2, GL_FLOAT, GL_FALSE, vertexFrameSize * sizeof(GLfloat), (GLvoid *)(boneWeightOffset[i] * sizeof(GLfloat)));
+            }
             
             // Set the index buffer
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, part->indexBuffer);

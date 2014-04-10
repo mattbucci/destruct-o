@@ -2,6 +2,7 @@
 #include "ShaderGroup.h"
 #include "GL3DProgram.h"
 #include "GL2DProgram.h"
+#include "GLMeshProgram.h"
 #include "GLParticleProgram.h"
 #include "GLCommonShaderFile.h"
 
@@ -23,7 +24,7 @@ ShaderGroup::ShaderGroup() {
 		AddShader(shaders3d,"3d");
         
 		//Build the mesh shader
-		GL3DProgram * shadersMesh = new GL3DProgram(&commonShader,"Interface/Shaders/glsl31/vsh_mesh.glsl","Interface/Shaders/glsl31/fsh_mesh.glsl");
+		GLMeshProgram * shadersMesh = new GLMeshProgram(&commonShader,"Interface/Shaders/glsl31/vsh_mesh.glsl","Interface/Shaders/glsl31/fsh_mesh.glsl");
 		if (!shadersMesh->Valid())
 			cout << "Failed to build opengl program (mesh)\n";
 		AddShader(shadersMesh,"mesh");
@@ -42,7 +43,7 @@ ShaderGroup::ShaderGroup() {
 		AddShader(shaders3d,"3d");
         
 		//Build the mesh shader
-		GL3DProgram * shadersMesh = new GL3DProgram(&commonShader,"Interface/Shaders/glsl11/vsh_mesh.glsl","Interface/Shaders/glsl11/fsh_mesh.glsl");
+		GLMeshProgram * shadersMesh = new GLMeshProgram(&commonShader,"Interface/Shaders/glsl11/vsh_mesh.glsl","Interface/Shaders/glsl11/fsh_mesh.glsl");
 		if (!shadersMesh->Valid())
 			cout << "Failed to build opengl program (mesh)\n";
 		AddShader(shadersMesh,"mesh");

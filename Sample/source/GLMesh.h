@@ -17,8 +17,10 @@
 #ifndef __GL_MESH_H__
 #define __GL_MESH_H__
 
+#define MaxBoneWeights 4
+
 #include "stdafx.h"
-#include "GL3DProgram.h"
+#include "GLMeshProgram.h"
 #include "TextureCache.h"
 
 // Class to encapsulate draw data loaded from model files
@@ -50,7 +52,7 @@ protected:
     GLint  positionOffset;
     GLint  normalOffset;
     GLint  texCoordOffset;
-    GLint  blendWeightOffset[4];
+    GLint  boneWeightOffset[MaxBoneWeights];
     
     // Constituant parts of this mesh
     std::map<std::string, Part *> parts;
@@ -68,7 +70,7 @@ protected:
     vec3                      scale;
     
     // Last program used to render (used to figure out if we've cached the vertex locations)
-    GL3DProgram              *priorShader;
+    GLMeshProgram              *priorShader;
     
 public:
     // Load a model from a file
@@ -76,7 +78,7 @@ public:
     ~GLMesh();
     
     // Draw this mesh
-    void Draw(GL3DProgram *shader);
+    void Draw(GLMeshProgram *shader);
 };
 
 #endif
