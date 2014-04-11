@@ -27,6 +27,9 @@ public:
     // Subclass which handles subcomponents of the mesh (they are just index buffers though)
     struct Part
     {
+        // Owning mesh (for buffer data lookup)
+        Mesh *mesh;
+        
         // Mesh parts are assigned names
         std::string id;
         

@@ -71,7 +71,7 @@ Node::~Node()
     }
 }
 
-std::string Node::Id()
+std::string& Node::Id()
 {
     return id;
 }

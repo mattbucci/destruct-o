@@ -73,6 +73,7 @@ Mesh::Mesh(const Json::Value& value)
             indices.insert(indices.end(), part->indices.begin(), part->indices.end());
             
             // Push this part onto the parts list
+            part->mesh = this;
             parts.push_back(part);
         }
     }

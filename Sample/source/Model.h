@@ -23,16 +23,85 @@
 #include "Mesh.h"
 #include "Transform.h"
 #include "Node.h"
+#include "Material.h"
 
-// The mesh is an object which
+// Loads and renders models
 class Model
 {
-public:
+private:
+    // Data structure to represent a bone
+    struct Bone
+    {
+        // Name of the bone
+        std::string id;
+        
+        // Transform of the bone
+        Transform   transform;
+        
+        // Standard constructors
+        Bone();
+        Bone(const Json::Value& value);
+    };
+    
+    // Class which handles rendering mesh components
+    struct MeshPartRenderData
+    {
+        // Mesh part we are rendering
+        Mesh::Part          *meshpart;
+        
+        // Material for this mesh part
+        Material            *material;
+        
+        // Bones associated with this mesh part
+        std::vector<Bone *>  bones;
+        
+        // Vertex array object for this mesh part
+        GLuint               attributes;
+        
+        // Vertex buffer object for the index data
+        GLuint               indices;
+        
+        // Standard constructor
+        MeshPartRenderData();
+        ~MeshPartRenderData();
+    };
+    
+    // Materials of this model
+    std::map<std::string, Material *>    materials;
+    
     // Meshes belonging to this model
-    std::vector<Mesh *>       meshes;
+    std::vector<Mesh *>                  meshes;
     
     // Root node of the model
-    Node                     *node;
+    Node                                *node;
+    
+    // The mesh part renderers
+    std::vector<MeshPartRenderData *>    renderables;
+    
+    // Map of meshes to their vertex buffer objects
+    std::map<Mesh *, GLuint>             meshBuffers;
+    
+    // Map of mesh part names to mesh parts (do not free these, not the owner)
+    //std::map<std::string, Mesh::Part *>  meshParts;
+    
+    // Map of the nodes (effectively, a quick way to look into the nodes tree, of which node is the root)
+    //std::map<std::string, Node *>        nodes;
+    
+    // Helper function to load materials
+    void loadMaterials(const Json::Value& root);
+    
+    // Helper function to load meshes
+    void loadMeshes(const Json::Value& root);
+    
+    // Helper function to load nodes
+    void loadNodes(const Json::Value& root);
+    
+    // Helper function to load parts (technically, not the right way, but fuck it.  We'll just assume the mesh
+    // is in the right spot, because 99.99999% of the time it is).  The correct way is to map all the internal
+    // nodes into a global transform tree.  This just assumes all parts being rendered on on static nodes
+    // within the space of the model file
+    void loadParts(const Json::Value& root);
+    void loadPartsNodeSearch(const Json::Value& node);
     
 public:
     // Create an empty model for population manually

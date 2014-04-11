@@ -51,9 +51,9 @@ public:
     ~Node();
     
     // Get the name of the node
-    std::string       Id();
+    std::string&      Id();
     
-    // Get a read only reference to the transform
+    // Get a reference to the
     const glm::mat4&  TransformMatrix();
     
     // Get a read/write reference to the transform
