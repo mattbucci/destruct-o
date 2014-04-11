@@ -30,6 +30,8 @@ class BaseFrame : public GameSystem, public Savable {
 	Demo * demo;
 	DemoWindow * demoWindow;
 	Notification * notification;
+	PauseWindow * pauseWindow;
+    Achievements * achievements;
 
 	//Setup all the global values for shaders
 	//Sets up, acid shader and fog
