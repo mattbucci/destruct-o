@@ -57,8 +57,8 @@ TerrainGen::TerrainGen() {
 	blend3Blender.SetSourceModule(1, detailNoise);
 
 	//Default Scale to 1
-	tilesx = 2;
-	tilesy = 2;
+	tilesx = .6;
+	tilesy = .6;
 
 	//Default Tile Size to 0 (Invalid Tile Size)
 	tilex = 0;
@@ -146,7 +146,7 @@ void TerrainGen::generateTerrain(GameTile * tile) {
 	tilecontainer.assign(rawtile, rawtile + (tilex * tiley * 4));
 	//TODO Determine tile type based on terrain properties
 	//Free Generatored Terrain Data
-	delete rawtile;
+	delete [] rawtile;
 
 	//Load Tile Data into GameTile
 	GameTile::LoadTileFromMemoryIntoExisting(tilecontainer, tile);

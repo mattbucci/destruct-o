@@ -11,7 +11,7 @@ ViewDistanceCalc::ViewDistanceCalc() {
 //Should be called every draw cycle
 //calculates the view distance
 //applies to fog distance automatically
-void ViewDistanceCalc::CalculateAndApply(GL3DProgram * shader,float currentFPS) {
+void ViewDistanceCalc::CalculateAndApply(float & fogDistance,float currentFPS) {
 	//Constants used for adjustment
 	//How long the visual learning rate is
 	const static int maxFrameLearn = 400;
@@ -21,8 +21,10 @@ void ViewDistanceCalc::CalculateAndApply(GL3DProgram * shader,float currentFPS) 
 	const float acceptableFrameRate = 35;
 	framesDrawn++;
 	//only calibrate for the first 2000 frames
-	if (framesDrawn > maxFrameLearn)
+	if (framesDrawn > maxFrameLearn) {
+		fogDistance = GetViewDistance()*.80f;
 		return;
+	}
 
 	//A value between 0 and 1 which indicates how fast
 	//the view distance can be adjusted
@@ -45,11 +47,11 @@ void ViewDistanceCalc::CalculateAndApply(GL3DProgram * shader,float currentFPS) 
 
 	//Fog has to end before view distance
 	//because view distance is not perfect
-	shader->Fog.SetFogDistance(GetViewDistance()*.80f);
+	fogDistance = GetViewDistance()*.80f;
 }
 
 //Retrieve a pair of coordinates representing the appropriate draw section
-pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 userPosition, float userAngle) {
+pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 userPosition, float userAngle, float viewDistance) {
 	//New strategy for determining draw box
 	//Create a rectangle with the user on the bottom center, with the top of the rectangle
 	//far away from the user in his view direction
@@ -57,7 +59,7 @@ pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 use
 	//to choose a min/max point of the voxel draw rectangle
 
 	//Width code is highly experimental and will certainly have to be played with
-	float rectHeight = GetViewDistance(); //the full length of the rectangle
+	float rectHeight = viewDistance; //the full length of the rectangle
 	float rectHalfWidth = pow(rectHeight/40.0f,3.0f)+rectHeight/5.0f+7.0f; //Half the width of the rectangle
 	float rectHalfDiagonal =(float)( M_PI/2.0f-atan2(rectHeight,rectHalfWidth)); //The angle of the diagonal (to the center of the width side)
 	float rectDiagonalLength = sqrt(rectHalfWidth*rectHalfWidth+rectHeight*rectHeight);
@@ -85,6 +87,11 @@ pair<vec2,vec2> ViewDistanceCalc::VoxDrawCoordinates(vec2 viewPortSize, vec2 use
 	//minPoint = glm::max(vec2(),minPoint);
 	//maxPoint = glm::min(mapExtents-vec2(1,1),maxPoint);
 	return pair<vec2,vec2>(minPoint,maxPoint);
+}
+
+IntRect ViewDistanceCalc::GetDrawRegion(vec2 playerPosition, float playerFacing) {
+	return VoxDrawCoordinates(playerPosition,playerFacing,GetViewDistance());
+
 }
 
 float ViewDistanceCalc::GetViewDistance() {

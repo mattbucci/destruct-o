@@ -30,8 +30,22 @@ class BaseFrame : public GameSystem, public Savable {
 	Demo * demo;
 	DemoWindow * demoWindow;
 	Notification * notification;
-	PauseWindow * pauseWindow;
-    Achievements * achievements;
+
+	//Setup all the global values for shaders
+	//Sets up, acid shader and fog
+	template <class T>
+	void SetupShader(string shaderName, float fogDistance) {
+		T * shader = (T*)shaders->GetShader(shaderName);
+		shader->UseProgram();
+		//Setup fog
+		shader->Fog.SetFogColor(vec4(.5,.5,.5,1));
+		shader->Fog.SetFogDistance(fogDistance);
+		//Setup acid shader
+		shader->Acid.SetCurrentTime(VoxEngine::GetGameSimTime());
+		//Acid factor currently managed by the demo system
+		//this will be moved to a more powerful game logic system in the future
+		shader->Acid.SetAcidFactor(demo->CurrentAcidStrength);
+	}
 protected:
 	//Overload to tell the save system about handles created in the system
 	virtual void Load(Json::Value & parentValue, LoadData & loadData);

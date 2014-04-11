@@ -108,6 +108,15 @@ using glm::quat;
 #define __STR1__(x) __STR2__(x)
 #define __LOC__ __FILE__ "("__STR1__(__LINE__)") : Warning Msg: "
 
+//Allow packing of structures in GCC and in VisualC++ not sure about clang
+#ifdef WIN32
+//Assume visual studio
+#define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop) )
+#else
+//Assume GCC (I have no idea how to make this work with clang)
+#define PACK( __Declaration__ ) __Declaration__ __attribute__((__packed__))
+#endif
+
 //Handle the SDL entry point
 //For mobile applications the SDL entry point is actually used
 #ifndef __MOBILE__

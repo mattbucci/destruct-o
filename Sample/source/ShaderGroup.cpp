@@ -3,6 +3,7 @@
 #include "GL3DProgram.h"
 #include "GL2DProgram.h"
 #include "GLParticleProgram.h"
+#include "GLTerrainProgram.h"
 #include "GLCommonShaderFile.h"
 
 ShaderGroup::ShaderGroup() {
@@ -33,11 +34,17 @@ ShaderGroup::ShaderGroup() {
 			cout << "Failed to build opengl program\n";
 		AddShader(shaders3d,"3d");
 	}
-	//Build the dialog shader
+	//Build Universal Shaders
+	//Build Particle Shader
 	GLParticleProgram * shadersP = new GLParticleProgram(&commonShader,"Interface/Shaders/universal/vsh_particle.glsl","Interface/Shaders/universal/fsh_particle.glsl");
 	if (!shadersP->Valid()) 
 		cout << "Failed to build opengl program\n";
 	AddShader(shadersP,"particles");
+	//Build Terrain Shader
+	GLTerrainProgram * shadersT = new GLTerrainProgram(&commonShader,"Interface/Shaders/universal/vsh_terrain.glsl","Interface/Shaders/universal/fsh_terrain.glsl");
+	if (!shadersT->Valid()) 
+		cout << "Failed to build opengl program\n";
+	AddShader(shadersT,"terrain");
 }
 
 ShaderGroup::~ShaderGroup() {

@@ -3,7 +3,7 @@
 #include "GL3DProgram.h"
 
 
-InstancedVoxelRenderSystem::InstancedVoxelRenderSystem() {
+InstancedVoxelRenderSystem::InstancedVoxelRenderSystem(bool drawBottoms) {
 	glGenBuffers(1,&vertexBuffer);
 	glGenBuffers(1,&textureBuffer);
 	glGenBuffers(1,&normalBuffer);
@@ -13,9 +13,9 @@ InstancedVoxelRenderSystem::InstancedVoxelRenderSystem() {
 	glGenVertexArrays(1,&vertexArray);
 	
 	bufferedVoxels = 0;
-	vertices = new vec3[36];
-	textureCoordinates = new vec2[36];
-	normals = new vec3[36];
+	vertices = new vec3[24];
+	textureCoordinates = new vec2[24];
+	normals = new vec3[24];
 	positions = new vec4[INSTANCE_RENDER_SWEEP];
 
 	//Build the cube just this once
@@ -26,7 +26,8 @@ InstancedVoxelRenderSystem::InstancedVoxelRenderSystem() {
 	//Top
 	pushSide(vec3(0,0,1),vec3(0,0,1),vec3(0,1,1),vec3(1,0,1),vec3(1,1,1),vertNumber);
 	//Bottom
-	pushSide(vec3(0,0,-1),vec3(0,0,0),vec3(0,1,0),vec3(1,0,0),vec3(1,1,0),vertNumber);
+	if (drawBottoms)
+		pushSide(vec3(0,0,-1),vec3(0,0,0),vec3(0,1,0),vec3(1,0,0),vec3(1,1,0),vertNumber);
 	//Left
 	pushSide(vec3(1,0,0),vec3(1,0,0),vec3(1,1,0),vec3(1,0,1),vec3(1,1,1),vertNumber);
 	//Right
@@ -36,9 +37,19 @@ InstancedVoxelRenderSystem::InstancedVoxelRenderSystem() {
 	//Front
 	pushSide(vec3(0,-1,0),vec3(0,0,0),vec3(1,0,0),vec3(0,0,1),vec3(1,0,1),vertNumber);
 
+	vertexCount = vertNumber;
+
 	//Generate the sequential indices
-	for (int i = 0; i < 36; i++)
-		indices.push_back(i);
+	//0 1 2 1 3 2
+	for (int s = 0; s < vertexCount/4; s++) {
+		indices.push_back(0+s*4);
+		indices.push_back(1+s*4);
+		indices.push_back(2+s*4);
+		indices.push_back(1+s*4);
+		indices.push_back(3+s*4);
+		indices.push_back(2+s*4);
+	}
+		
 
 	allocated = false;
 }
@@ -69,14 +80,8 @@ void InstancedVoxelRenderSystem::pushSide(vec3 normal, vec3 a, vec3 b, vec3 c, v
 	textureCoordinates[vertNumber] = vec2(0.05,.95);
 	vertices[vertNumber++] = c;
 	normals[vertNumber] = normal;
-	textureCoordinates[vertNumber] = vec2(.95,0.05);
-	vertices[vertNumber++] = b;
-	normals[vertNumber] = normal;
 	textureCoordinates[vertNumber] = vec2(.95,.95);
 	vertices[vertNumber++] = d;
-	normals[vertNumber] = normal;
-	textureCoordinates[vertNumber] = vec2(.05,.95);
-	vertices[vertNumber++] = c;
 }
 
 //Called at the start of the draw cycle
@@ -88,8 +93,6 @@ void InstancedVoxelRenderSystem::startDraw(GL3DProgram * shader) {
 
 	allocated = true;
 
-	cout << "!!<>!! Successfully instanced a voxel instance system\n";
-
 	//Allocate the space for the gpu buffers now
 	//and send the static data
 	//Rebind the array to bring them into the current context
@@ -98,22 +101,10 @@ void InstancedVoxelRenderSystem::startDraw(GL3DProgram * shader) {
 
 	//Push voxel to gpu
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
-	glBufferData ( GL_ARRAY_BUFFER, 36*sizeof(vec3), vertices, GL_STATIC_DRAW );
+	glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(vec3), vertices, GL_STATIC_DRAW );
 	glEnableVertexAttribArray ( shader->AttributeVertex() );
 	glVertexAttribPointer ( shader->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, 0, 0 );
 	glVertexAttribDivisor(shader->AttributeVertex(),0);
-
-	glBindBuffer ( GL_ARRAY_BUFFER, textureBuffer );
-	glBufferData ( GL_ARRAY_BUFFER, 36*sizeof(vec2), textureCoordinates, GL_STATIC_DRAW );
-	glEnableVertexAttribArray ( shader->AttributeTexture() );
-	glVertexAttribPointer ( shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, 0, 0 );
-	glVertexAttribDivisor(shader->AttributeTexture(),0);
-	
-	glBindBuffer ( GL_ARRAY_BUFFER, normalBuffer );
-	glBufferData ( GL_ARRAY_BUFFER, 36*sizeof(vec3), normals, GL_STATIC_DRAW );
-	glEnableVertexAttribArray ( shader->AttributeNormal() );
-	glVertexAttribPointer ( shader->AttributeNormal(), 3, GL_FLOAT, GL_FALSE, 0, 0 );
-	glVertexAttribDivisor(shader->AttributeNormal(),0);
 	
 	//Allocate space for positions
 	glBindBuffer ( GL_ARRAY_BUFFER, positionBuffer );
@@ -132,9 +123,11 @@ void InstancedVoxelRenderSystem::draw(GL3DProgram * shader)
 	glBindVertexArray ( vertexArray );
 
 	glBindBuffer ( GL_ARRAY_BUFFER, positionBuffer );
+
 	glBufferSubData ( GL_ARRAY_BUFFER, 0,bufferedVoxels*sizeof(vec4), positions );
 	
-	glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0, bufferedVoxels);
+	
+	glDrawElementsInstanced(GL_TRIANGLES, vertexCount/4*6, GL_UNSIGNED_BYTE, 0, bufferedVoxels);
 
 	//All buffered voxels now drawn
 	bufferedVoxels = 0;

@@ -5,26 +5,43 @@
 
 #include "TileCell.h"
 #include "Structure.h"
+#include "IntRect.h"
+
+
+//The width/height of all tiles
+//Must be divisible by 16
+#define TILE_SIZE 256
+
+class TerrainChunk;
+class TerrainChunkRenderer;
+class GLTerrainProgram;
 
 class GameTile {
 	GameTile();
-	GameTile(int width, int height);
+	//Recalculate stack heights for the given region of tile cells
+	static void CalculateStackSizes(TileCell * cells, unsigned int width, unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy);
+
+	//Patch edge heights to be realistic values
+	static void PatchStackEdges(TileCell * cellList, int cellWidth);
+
+	//Terrain is chunked. Each chunk draws independently
+	TerrainChunk ** chunks;
 public:
 	~GameTile();
 
 	//Create Empty Tile (Allocated but Uninitialized Terrain Data)
-	static GameTile * CreateGameTile(int width, int height, int x, int y);
+	static GameTile * CreateGameTile(int x, int y);
 	//Create Placeholder Tile (Tile_X & Tile_Y Initialized ONLY)
 	static GameTile * CreatePlaceholderTile(int x, int y);
 	//Load a game tile from disk
 	static GameTile * LoadTileFromDisk(string tileImagePath);
 	//Load a game tile from memory
-	static GameTile * LoadTileFromMemory(const vector<unsigned char> & tileData, unsigned int tileWidth, unsigned int tileHeight);
+	static GameTile * LoadTileFromMemory(const vector<unsigned char> & tileData);
 	//Load a game tile from Memory (into existing GameTile)
 	static void LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tileData, GameTile * newTile);
 
 	//Recalculate stack heights for the given region of tile cells
-	void CalculateStackSizes(unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy);
+	void UpdateTileSection(unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy);
 
 	//Save the tile to disk
 	void SaveTile(string saveName);
@@ -38,10 +55,12 @@ public:
 	//is the material
 	void Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vector<vec4> & removedVoxels);
 
+	//Render the given region using the specified detail level
+	//the rect should be tile-relative coordinates
+	void Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, IntRect drawRegion, int & voxelCount);
+
 	//Loaded tile information is public for fastest access
 	TileCell * Cells;
-	int Width;
-	int Height;
 	int tile_x;
 	int tile_y;
 

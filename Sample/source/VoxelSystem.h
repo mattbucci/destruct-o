@@ -3,9 +3,10 @@
 #include "stdafx.h"
 #include "ContiguousList.h"
 #include "TileHandler.h"
-#include "Rect.h"
+#include "IntRect.h"
+#include "TerrainChunkRenderer.h"
 
-class GL3DProgram;
+class ShaderGroup;
 class GameTile;
 class VoxelDrawSystem;
 struct TileCell;
@@ -21,11 +22,11 @@ class VoxelSystem {
 	//The Tile Handle
 	TileHandler* tiles;
 
-	VoxelDrawSystem * renderer;
+	VoxelDrawSystem * cellRenderer;
+	TerrainChunkRenderer terrainRenderer;
 
 	//Calls foreachFunction for each tile contained in the Rect "region"
-	void forTilesInRect(Rect region, function<void(GameTile * tile)> foreachFunction);
-
+	void forTilesInRect(IntRect region, function<void(GameTile * tile)> foreachFunction);
 public:
 	VoxelSystem();
 	~VoxelSystem();
@@ -57,6 +58,6 @@ public:
 	//Draw the voxels in a region
 	//atx,aty and tox, toy define two corners of the rectangle
 	//of voxels which will be rendered
-	void Draw(GL3DProgram * shader, vec3 drawPos, int atx, int aty, int tox, int toy);
+	void Draw(ShaderGroup * shaders, vec3 drawPos, IntRect drawRegion);
 	void Update(vec3 player_pos);
 };

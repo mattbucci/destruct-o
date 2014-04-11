@@ -14,26 +14,6 @@ void GameCamera::UpdateViewSize(vec2 viewSize) {
 	viewPortSize = viewSize;
 }
 
-void GameCamera::Draw(GL3DProgram * shaders) {
-	shaders->Camera.SetCameraPosition(position,position+direction,vec3(0,0,1));
-	//IF YOU CHANGE NEAR/FAR CLIPPING PLANE, PLEASE CHANGE UNPROJECT (below) AS WELL
-	shaders->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25,1000); //width/height
-	shaders->Camera.Apply();
-
-
-	//Setup sun here for now
-	//translate it to follow world coordinates
-	shaders->Lights.Enable(1);
-	shaders->Lights[0].SetColor(vec3(1,1,1));
-	shaders->Lights[0].SetIntensity(0,0,0); //The sun shines infinitely long
-	shaders->Lights[0].SetComponents(.4f,1,1,20);
-	shaders->Lights[0].SetLocation(shaders->Model.TransformVector(vec3(-200000,-200000,400000)));
-	shaders->Lights.Apply();
-
-	//Copy matrices for unproject
-	shaders->Camera.CopyMatricies(&lastViewMatrix,&lastProjectionMatrix);
-	lastModelMatrix = shaders->Model.GetMatrix();
-}
 
 //Move the camera view point
 void GameCamera::SetCameraView(vec3 position, vec3 direction) {

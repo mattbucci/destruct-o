@@ -24,7 +24,17 @@ public:
 	void UpdateViewSize(vec2 viewSize);
 
 	//Apply the camera and global lighting
-	void Draw(GL3DProgram * shaders);
+	template<class T>
+	void Apply(T * shaders) {
+		shaders->Camera.SetCameraPosition(position,position+direction,vec3(0,0,1));
+		//IF YOU CHANGE NEAR/FAR CLIPPING PLANE, PLEASE CHANGE UNPROJECT (below) AS WELL
+		shaders->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25,1000); //width/height
+		shaders->Camera.Apply();
+
+		//Copy matrices for unproject
+		shaders->Camera.CopyMatricies(&lastViewMatrix,&lastProjectionMatrix);
+		lastModelMatrix = shaders->Model.GetMatrix();
+	}
 
 	//Move the camera view point
 	void SetCameraView(vec3 position, vec3 direction);

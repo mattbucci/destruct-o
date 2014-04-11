@@ -1,9 +1,6 @@
 #include "stdafx.h"
 #include "TileHandler.h"
 
-const int tile_width = 512;
-const int tile_height = 512;
-
 
 TileHandler::~TileHandler(void)
 {
@@ -12,7 +9,7 @@ TileHandler::~TileHandler(void)
 void TileHandler::init() {
 	//Initialize Terrain Generator
 	terraingenerator = new TerrainGen();
-	terraingenerator->setTileSize(tile_width, tile_height);
+	terraingenerator->setTileSize(TILE_SIZE, TILE_SIZE);
 	//srand((unsigned int)time(NULL));
     srand(69);
 	terraingenerator->setSeed(rand());
@@ -44,7 +41,7 @@ void TileHandler::handlerLoop() {
 		while(genQueue.size() > 0) {
 			//Grab Work from Queue
 			vec2 pos = genQueue.front();
-			GameTile * tile = GameTile::CreateGameTile(tile_width, tile_height, (int)pos.x, (int)pos.y);
+			GameTile * tile = GameTile::CreateGameTile((int)pos.x, (int)pos.y);
 			genQueue.pop_front();
 			gLck.unlock();
 
