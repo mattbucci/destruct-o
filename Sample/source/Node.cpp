@@ -1,0 +1,128 @@
+/*
+ *  Copyright 2014 Nathaniel Lewis, Matthew Bucci, Anthony Popelar, Brian Bamsch
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+#include "Node.h"
+
+// Construct an empty node
+Node::Node()
+    : children(0, NULL)
+{
+    // Initialize all internal transforms
+    Recalculate();
+}
+
+// Construct the node from a Json blob
+Node::Node(const Json::Value& value, Node *_parent)
+    : Node::Node()
+{
+    // We first need to validate that this a Json object
+    if(!value.isObject())
+    {
+        throw std::runtime_error("Node::Node(const Json::Value& value) - value must be a object");
+    }
+    
+    // Get the id from the node
+    id = value["id"].asString();
+    
+    // Load the serialized transform (possibly)
+    transform = Transform(value);
+    
+    // Store the parent
+    parent = _parent;
+    
+    // Recalculate the node to setup our matrices
+    Recalculate();
+    
+    // If this node comes with children, add them
+    const Json::Value& childs = value["children"];
+    if(childs != Json::Value::null)
+    {
+        for(Json::Value::iterator it = childs.begin(); it != childs.end(); it++)
+        {
+            // Create a new child node
+            Node *child = new Node(*it, this);
+            
+            // Add this child to our list
+            children.push_back(child);
+        }
+    }
+}
+
+std::string Node::Id()
+{
+    return id;
+}
+
+const glm::mat4& Node::TransformMatrix()
+{
+    return globalTransformMatrix;
+}
+
+// Get a read/write reference to the transform
+Transform& Node::LocalTransform()
+{
+    return transform;
+}
+
+// Cause this node to recalculate
+void Node::Recalculate()
+{
+    // Update our global transform before the children, else all hell breaks loose
+    if(parent)
+    {
+        // Recalculate our global transform matrix
+        globalTransformMatrix = parent->globalTransformMatrix * transform.TransformMatrix();
+    }
+    
+    // If we don't have a parent, the global transform is just our transform
+    else
+    {
+        globalTransformMatrix = transform.TransformMatrix();
+    }
+    
+    // Cause the children to recalculate
+    for(std::vector<Node *>::iterator it = children.begin(); it != children.end(); it++)
+    {
+        (*it)->Recalculate();
+    }
+}
+
+// Add a child node to this node (reparent, recalculate, add to local storage)
+void Node::AddChild(Node *child, bool recalculate)
+{
+    // Reparent this child to us
+    child->parent = this;
+    
+    // Cause the child to recalculate (if desired)
+    if(recalculate)
+    {
+        child->Recalculate();
+    }
+    
+    // Add to children list
+    children.push_back(child);
+}
+
+Node* Node::FindChild(const std::string& name)
+{
+    return NULL;
+}
+
+// Get a reference to the children of the node
+const std::vector<Node *>& Node::Children()
+{
+    return children;
+}

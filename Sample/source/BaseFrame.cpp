@@ -33,9 +33,10 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	FirstPerson->Enable(true);
     
     // Test load a mesh
-    mesh[0] = new GLMesh("meshes/robot02",         "robot02.mesh.json",         Textures, vec3(1.500, 1.500, 1.500));
+    /*mesh[0] = new GLMesh("meshes/robot02",         "robot02.mesh.json",         Textures, vec3(1.500, 1.500, 1.500));
+    mesh[0]->playAnimation("walking");
     mesh[1] = new GLMesh("meshes/scifi_soldier01", "scifi_soldier01.mesh.json", Textures, vec3(0.300, 0.300, 0.300));
-    mesh[2] = new GLMesh("meshes/scifi_soldier02", "scifi_soldier02.mesh.json", Textures, vec3(0.015, 0.015, 0.015));
+    mesh[2] = new GLMesh("meshes/scifi_soldier02", "scifi_soldier02.mesh.json", Textures, vec3(0.015, 0.015, 0.015));*/
 	
 	cout << "\t Finished base frame\n";
 	//testSystem = NULL;
@@ -117,10 +118,9 @@ void BaseFrame::OnFrameFocus() {
 
 void BaseFrame::Build()
 {
-    // Test load a mesh
-    /*mesh[0] = new GLMesh("meshes/robot02",         "robot02.mesh.json",              Textures, vec3(1.5,   1.5,   1.5));
-    mesh[1] = new GLMesh("meshes/scifi_soldier02", "scifi_soldier02.mesh.json",      Textures, vec3(0.015, 0.015, 0.015));
-    mesh[2] = new GLMesh("meshes/scifi_soldier02", "scifi_soldier02_dark.mesh.json", Textures, vec3(0.015, 0.015, 0.015));*/
+    // Load a model file
+    cout << "Loading models\n";
+    model[0] = new Model("meshes/robot02", "robot02.mesh.json");
     
 	//load the audio
 	cout << "Loading audio\n";
@@ -221,7 +221,7 @@ void BaseFrame::Draw(double width, double height)
     Camera.Draw(shadersMesh);
     
     // Draw the meshes
-    for(std::vector<std::pair<glm::vec3, int> >::iterator it = Meshes.begin(); it != Meshes.end(); ++it)
+    /*for(std::vector<std::pair<glm::vec3, int> >::iterator it = Meshes.begin(); it != Meshes.end(); ++it)
     {
         // Set the proper translation
         shadersMesh->Model.PushMatrix();
@@ -236,7 +236,7 @@ void BaseFrame::Draw(double width, double height)
         // Remove this translation
         shadersMesh->Model.PopMatrix();
         shadersMesh->Model.PopMatrix();
-    }
+    }*/
 
 	//The particle system will use a different shader entirely soon
 	Particles.Draw(shaders);

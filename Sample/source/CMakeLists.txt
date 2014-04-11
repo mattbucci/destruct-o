@@ -186,6 +186,10 @@ source_group(Actors FILES ${ActorFiles})
 FILE(GLOB AudioFiles "Audio*" "Music.h" "Music.cpp" "Effect.h" "Effect.cpp")
 source_group(Audio FILES ${AudioFiles})
 
+# Skinned Model Rendering
+FILE(GLOB ModelFiles "Model.*" "Node.*" "Transform.*" "Mesh.*" "VertexAttributes.*")
+source_group(Models FILES ${ModelFiles})
+
 #Dialog/Interface files
 FILE(GLOB InterfaceFiles
     Button.h

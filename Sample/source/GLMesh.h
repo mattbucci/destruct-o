@@ -21,6 +21,7 @@
 
 #include "stdafx.h"
 #include "GLMeshProgram.h"
+#include "GLTransform.h"
 #include "TextureCache.h"
 
 // Class to encapsulate draw data loaded from model files
@@ -48,13 +49,42 @@ protected:
     struct RenderStep
     {
         // Vector of bone objects
-        std::vector<std::pair<std::string, mat4> > bones;
+        std::vector<std::pair<std::string, GLTransform> > bones;
         
         // The mesh component name for this render step
         std::string meshpartid;
         
         // The material name for this render step
         std::string materialid;
+    };
+    
+    // Keyframe of an animation
+    struct Keyframe
+    {
+        // The time at which this keyframe is to trigger
+        float       keytime;
+        
+        // The transformation of this frame
+        GLTransform transform;
+        
+        // Create the keyframe object from json
+        Keyframe(const Json::Value& value);
+    };
+    
+    // Contains information about an animation in the mesh
+    struct Animation
+    {
+        // A map of the bone names to the animation keyframes
+        std::map<std::string, std::vector<Keyframe *> > boneKeyframes;
+        
+        // Name of the animation
+        std::string name;
+        
+        // Length of the animation
+        float       length;
+        
+        // Create the animation object from json
+        Animation(const Json::Value& value);
     };
     
     // Vertex buffer object containing all mesh verticies
@@ -76,11 +106,18 @@ protected:
     // The render steps of the mesh (list of part name + material name)
     std::vector<RenderStep *> rendersteps;
     
+    // The animations of the mesh
+    std::map<std::string, Animation *> animations;
+    
     // Active texture cache
     TextureCache&             textureCache;
     
     // Default scale of mesh
     vec3                      scale;
+    
+    // Currently playing animation
+    Animation                *currentAnimation;
+    float                     startTime;
     
     // Last program used to render (used to figure out if we've cached the vertex locations)
     GLMeshProgram              *priorShader;
@@ -89,6 +126,9 @@ public:
     // Load a model from a file
     GLMesh(const std::string& directory, const std::string& name, TextureCache& _textureCache, vec3 _scale = vec3(1,1,1));
     ~GLMesh();
+    
+    // Play an animation
+    void playAnimation(std::string name);
     
     // Draw this mesh
     void Draw(GLMeshProgram *shader);

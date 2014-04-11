@@ -7,7 +7,7 @@
 #include "ViewDistanceCalc.h"
 #include "ActorSystem.h"
 #include "GLMesh.h"
-
+#include "Model.h"
 #include "FirstPersonModeMobile.h"
 #include "FirstPersonMode.h"
 #include "FirstPersonModeMobile.h"
@@ -28,6 +28,7 @@ class BaseFrame : public GameSystem, public Savable {
 	Demo * demo;
 	DemoWindow * demoWindow;
     GLMesh     * mesh[4];
+    Model      * model[4];
 	Notification * notification;
 protected:
 	//Overload to tell the save system about handles created in the system

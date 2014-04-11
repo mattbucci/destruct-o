@@ -19,10 +19,11 @@
 // Include the JSON parser
 #include <json/json.h>
 #include <fstream>
+#include "OS.h"
 
 // Default constructor (loads all submeshes from model file)
 GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCache& _textureCache, vec3 _scale)
-    : vertexFrameSize(0), positionOffset(-1), normalOffset(-1), texCoordOffset(-1), textureCache(_textureCache), scale(_scale)
+    : vertexFrameSize(0), positionOffset(-1), normalOffset(-1), texCoordOffset(-1), textureCache(_textureCache), scale(_scale), currentAnimation(NULL)
 {
     // Make sure blend weight offsets are in a "null" state
     for(int i = 0; i < MaxBoneWeights; i++) boneWeightOffset[i] = -1;
@@ -249,21 +250,11 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
                     // Examine all the bones
                     for(Json::Value::iterator bIt = bones.begin(); bIt != bones.end(); bIt++)
                     {
-                        // Load the translation transform
-                        /*glm::mat4 translation = glm::translate((*bIt)["translation"][0].asFloat(), (*bIt)["translation"][1].asFloat(), (*bIt)["translation"][2].asFloat());
-                        
-                        // Load the scale transform
-                        glm::mat4 scale =  glm::scale((*bIt)["scale"][0].asFloat(), (*bIt)["scale"][1].asFloat(), (*bIt)["scale"][2].asFloat());
-                        
-                        // Load the rotation (as a quaternion) from the mesh file
-                        glm::quat rotation = glm::quat((*bIt)["rotation"][0].asFloat(), (*bIt)["rotation"][1].asFloat(), (*bIt)["rotation"][2].asFloat(), (*bIt)["rotation"][3].asFloat());
-                        
-                        // Combine the states for the initial pose
-                        glm::mat4 initial = translation * glm::mat4_cast(rotation) * scale;*/
-                        glm::mat4 initial = glm::mat4();
+                        // Construct a transform from the Json value
+                        GLTransform transform = GLTransform(*bIt);
                         
                         // Store the bone
-                        renderStep->bones.push_back(std::make_pair((*bIt)["node"].asString(), initial));
+                        renderStep->bones.push_back(std::make_pair((*bIt)["node"].asString(), transform));
                     }
                 }
                 
@@ -271,6 +262,19 @@ GLMesh::GLMesh(const std::string& directory, const std::string& name, TextureCac
                 rendersteps.push_back(renderStep);
             }
         }
+    }
+    
+    // Load the animations
+    Json::Value &serializedAnimations = root["animations"];
+    
+    // Process the animations
+    for(Json::Value::iterator aIt = serializedAnimations.begin(); aIt != serializedAnimations.end(); aIt++)
+    {
+        // Create a new animation object from the storage
+        Animation *animation = new Animation(*aIt);
+        
+        // Store this animation
+        animations[animation->name] = animation;
     }
     
     // Success
@@ -291,6 +295,16 @@ GLMesh::~GLMesh()
     {
         delete *it;
     }
+}
+
+// Play an animation
+void GLMesh::playAnimation(std::string name)
+{
+    // Store the animation object
+    currentAnimation = animations[name];
+    
+    // Store the current time
+    startTime = OS::Now();
 }
 
 // Draw this mesh
@@ -368,10 +382,51 @@ void GLMesh::Draw(GLMeshProgram *shader)
         glm::vec2 specular = glm::vec2(1.0, 1.0);
         glUniform2fv(glGetUniformLocation(shader->GetId(), "material_reflectivity"), 2, (const GLfloat *) &specular);
         
-        // terrible, terrible
+        // Push the bone data for this render stage
         for(int i = 0; i < (*it)->bones.size(); i++)
         {
-            glUniformMatrix4fv(shader->UniformBones() + (i*4), 1, GL_FALSE, (const GLfloat *) &((*it)->bones[i].second));
+            // Base bone state
+            glm::mat4 bone = glm::mat4();
+            
+            // If we are currently playing an animation, potentially modify the bone
+            if(currentAnimation)
+            {
+                // Lookup this bone in the animation
+                std::map<std::string, std::vector<Keyframe *> >::iterator keyframes = currentAnimation->boneKeyframes.find((*it)->bones[i].first);
+                
+                // If this bone exists in the animation, update it
+                if(keyframes != currentAnimation->boneKeyframes.end())
+                {
+                    // Get the current animation time
+                    float animationTime = std::fmod(OS::Now() - startTime, currentAnimation->length);
+                    
+                    // Find the keyframe we want
+                    for(std::vector<Keyframe *>::iterator kIt = keyframes->second.begin(); kIt != keyframes->second.end(); kIt++)
+                    {
+                        // Get the next iterator
+                        std::vector<Keyframe *>::iterator nkIt = kIt + 1;
+                        
+                        // Is the animation time within the bounds of this frame
+                        if(nkIt != keyframes->second.end())
+                        {
+                            if(animationTime < (*nkIt)->keytime)
+                            {
+                                bone = (*kIt)->transform.transformMatrix() /** glm::inverse((*it)->bones[i].second.transformMatrix())*/;
+                                break;
+                            }
+                        }
+                        
+                        else
+                        {
+                            bone = (*kIt)->transform.transformMatrix() /** glm::inverse((*it)->bones[i].second.transformMatrix())*/;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Push the bone to the GPU
+            glUniformMatrix4fv(shader->UniformBones() + (i*4), 1, GL_FALSE, (const GLfloat *) &bone);
         }
         
         // Draw this mesh
@@ -403,4 +458,53 @@ GLMesh::Part::~Part()
 #endif
     // Delete the buffers
     glDeleteBuffers(1, &indexBuffer);
+}
+
+// Create a keyframe
+GLMesh::Keyframe::Keyframe(const Json::Value& value)
+{
+    // Load the keytime
+    keytime = value["keytime"].asFloat() / 1000.0f;
+    
+    // Load the transformaiton
+    transform = GLTransform(value);
+}
+
+// Create an animation (it has been passed the animation's value)
+GLMesh::Animation::Animation(const Json::Value& value)
+{
+    // Store the name of the animation
+    name = value["id"].asString();
+    
+    // We need to iterate through the bones array
+    const Json::Value& bones = value["bones"];
+    
+    // Process the bones
+    for(Json::Value::iterator bIt = bones.begin(); bIt != bones.end(); bIt++)
+    {
+        // Get the name of the bone we are exploring
+        std::string boneName = (*bIt)["boneId"].asString();
+        
+        // Create a vector for the keyframe
+        std::vector<Keyframe *> keyframes;
+        
+        // Iterate through the keyframes
+        const Json::Value& serializedKeyframes = (*bIt)["keyframes"];
+        
+        // Process the keyframes
+        for(Json::Value::iterator kIt = serializedKeyframes.begin(); kIt != serializedKeyframes.end(); kIt++)
+        {
+            // Allocate a keyframe object from the serialized keyframe
+            Keyframe *keyframe = new Keyframe(*kIt);
+            
+            // Store this keyframe in the vector
+            keyframes.push_back(keyframe);
+        }
+        
+        // Decide the length of the animation
+        length = keyframes.size() * (keyframes[1]->keytime - keyframes[0]->keytime);
+        
+        // Store this bone
+        boneKeyframes[boneName] = keyframes;
+    }
 }
