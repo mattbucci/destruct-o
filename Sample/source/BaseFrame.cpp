@@ -122,7 +122,6 @@ void BaseFrame::Build()
     cout << "Loading models\n";
     model[0] = new Model("meshes/robot02", "robot02.mesh.json");
     
-	//load the audio
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
 	audio->Subscribe(player);

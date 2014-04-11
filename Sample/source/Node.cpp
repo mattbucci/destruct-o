@@ -18,7 +18,7 @@
 
 // Construct an empty node
 Node::Node()
-    : children(0, NULL)
+    : id(""), globalTransformMatrix(glm::mat4()), transform(Transform()), children(0, NULL), parent(NULL)
 {
     // Initialize all internal transforms
     Recalculate();
@@ -58,6 +58,16 @@ Node::Node(const Json::Value& value, Node *_parent)
             // Add this child to our list
             children.push_back(child);
         }
+    }
+}
+
+// Deallocate all heap memory
+Node::~Node()
+{
+    // Iterate through all meshes and free the data
+    for(std::vector<Node *>::iterator it = children.begin(); it != children.end(); it++)
+    {
+        delete *it;
     }
 }
 
@@ -116,9 +126,30 @@ void Node::AddChild(Node *child, bool recalculate)
     children.push_back(child);
 }
 
-Node* Node::FindChild(const std::string& name)
+Node* Node::FindNode(const std::string& name)
 {
-    return NULL;
+    // If we are the desired node, return ourself
+    if(id == name)
+    {
+        return this;
+    }
+    
+    // Otherwise search in the children
+    Node *node = NULL;
+    for(std::vector<Node *>::iterator it = children.begin(); it != children.end(); it++)
+    {
+        // Search in this child
+        node = (*it)->FindNode(name);
+        
+        // If we found the node, get out
+        if(node)
+        {
+            break;
+        }
+    }
+    
+    // Return null if we fail to find the node
+    return node;
 }
 
 // Get a reference to the children of the node

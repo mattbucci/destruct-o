@@ -81,3 +81,12 @@ Model::Model(const std::string& directory, const std::string& name)
     // Success
     std::cout << "Loaded model: \"" << filename.c_str() << "\"" << std::endl;
 }
+
+Model::~Model()
+{
+    // Iterate through all meshes and free the data
+    for(std::vector<Mesh *>::iterator it = meshes.begin(); it != meshes.end(); it++)
+    {
+        delete *it;
+    }
+}

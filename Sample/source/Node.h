@@ -47,6 +47,9 @@ public:
     // Construct the node from a Json blob
     Node(const Json::Value& value, Node *parent = NULL);
     
+    // Standard deconstructor - deallocate all heap memory
+    ~Node();
+    
     // Get the name of the node
     std::string       Id();
     
@@ -63,7 +66,7 @@ public:
     void              AddChild(Node *child, bool recalculate = true);
     
     // Find a child node by name in this heirchy
-    Node*             FindChild(const std::string& name);
+    Node*             FindNode(const std::string& name);
     
     // Get a reference to the children of the node
     const std::vector<Node *>& Children();

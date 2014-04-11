@@ -48,7 +48,7 @@ VertexAttributes::VertexAttributes ()
 
 // Deserialization constructor
 VertexAttributes::VertexAttributes(const Json::Value& value)
-    : vertexAttributesFrameSize(0)
+    : VertexAttributes::VertexAttributes()
 {
     // We first need to validate that this a Json array
     if(!value.isArray())

@@ -27,6 +27,7 @@
 // The mesh is an object which
 class Model
 {
+public:
     // Meshes belonging to this model
     std::vector<Mesh *>       meshes;
     
@@ -39,6 +40,10 @@ public:
     
     // Create a model by deserializing it from a json file
     Model(const std::string& directory, const std::string& name);
+    
+    // Standard deconstructor - free all heap allocated data
+    ~Model();
+    
 };
 
 #endif
