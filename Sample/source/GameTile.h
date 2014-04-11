@@ -29,13 +29,6 @@ class GameTile {
 public:
 	~GameTile();
 
-	//Detail levels of the tile
-	enum DetailLevel {
-		DETAIL_HIGH,
-		DETAIL_MEDIUM,
-		DETAIL_LOW,
-	};
-
 	//Create Empty Tile (Allocated but Uninitialized Terrain Data)
 	static GameTile * CreateGameTile(int x, int y);
 	//Create Placeholder Tile (Tile_X & Tile_Y Initialized ONLY)

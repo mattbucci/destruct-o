@@ -188,47 +188,15 @@ void TerrainChunk::Reconstruct() {
 		}
 	}
 
-	//Calculate the lightness % of each side
-	static const vec3 sunpos = vec3(-200000,-200000,400000);
-	static const vec3 compare = glm::normalize(sunpos);
-	static const vec3 observer = vec3();
-	static const unsigned char lightSides[6] = {
-		(unsigned char)(256.0*max(0.0f,glm::dot(compare,vec3(1,0,0)))),
-		(unsigned char)(256.0*max(0.0f,glm::dot(compare,vec3(-1,0,0)))),
-		(unsigned char)(256.0*max(0.0f,glm::dot(compare,vec3(0,1,0)))),
-		(unsigned char)(256.0*max(0.0f,glm::dot(compare,vec3(0,-1,0)))),
-		(unsigned char)(256.0*max(0.0f,glm::dot(compare,vec3(0,0,1)))),
-		(unsigned char)(256.0*max(0.0f,glm::dot(compare,vec3(0,0,-1)))),
-	};
 
 	VertexDataSize = quads.size()*6; 
 	delete [] VertexData;
 	VertexData = new ChunkVertexData[VertexDataSize];
 	int vcount = 0;
 	for (int i = 0; i < quads.size(); i++) {
-		//Determine the normal of the quad
-		unsigned char shading;
-		//Only top faces, so if the direction is up, the face is up
-		if (quads[i].direction == 1)
-			shading = lightSides[4];
-		else {
-			//Moves along y
-			//check if its 1, or -1 in the y
-			int x = (int)quads[i].a1.x;
-			int y = (int)quads[i].a1.y;
-			int h = (int)quads[i].a1.z;
-			TileCell & cell = owner->Cells[y*TILE_SIZE+x];
-			if ((h <= cell.height) && (h >= cell.height-cell.stackHeight)) {
-				if (quads[i].direction == 2)
-					shading = lightSides[2];
-				else
-					shading = lightSides[0];
-			}
-			else if (quads[i].direction == 2)
-				shading = lightSides[3];
-			else
-				shading = lightSides[1];
-		} 
+		//Lighting is currently broken
+		//set every surface to be mostly lit
+		unsigned char shading = 200; 
 
 		//Generate interleaved data for each vertex
 		//of each found quad
