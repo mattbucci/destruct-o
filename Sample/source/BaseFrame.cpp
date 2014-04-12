@@ -121,6 +121,8 @@ void BaseFrame::Build()
     // Load a model file
     cout << "Loading models\n";
     model[0] = new Model("meshes/robot02", "robot02.mesh.json", Textures);
+    model[1] = new Model("meshes/scifi_soldier01", "scifi_soldier01.mesh.json", Textures);
+    model[2] = new Model("meshes/scifi_soldier02", "scifi_soldier02.mesh.json", Textures);
     
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
@@ -129,10 +131,9 @@ void BaseFrame::Build()
 
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {
 	// Make sure the models are uploaded
-    if(model[0] != NULL)
-    {
-        model[0]->Update(delta, now);
-    }
+    model[0]->Update(delta, now);
+    model[1]->Update(delta, now);
+    model[2]->Update(delta, now);
     
     //Issue events to dialog
 	//Run the dialog system and monitor pressed keys

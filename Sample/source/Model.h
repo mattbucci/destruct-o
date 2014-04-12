@@ -45,6 +45,9 @@ private:
         // Transform of the bone
         Transform   transform;
         
+        // Inverse of the bone transform
+        glm::mat4   inverseTransformMatrix;
+        
         // Standard constructors
         Bone();
         Bone(const Json::Value& value);

@@ -56,9 +56,6 @@ Model::Model(const std::string& directory, const std::string& name, TextureCache
     
     // Load parts
     loadParts(root);
-    
-    // Success
-    std::cout << "Loaded model: \"" << filename.c_str() << "\"" << std::endl;
 }
 
 Model::~Model()
@@ -78,6 +75,34 @@ Model::~Model()
             glDeleteBuffers(1, &it->second);
         }
     }
+    
+    // Destroy all of the part render objects
+    for(std::vector<Model::MeshPartRenderData *>::iterator it = renderables.begin(); it != renderables.end(); it++)
+    {
+        // Delete the index buffer
+        if(glIsBuffer((*it)->indices) == GL_TRUE)
+        {
+            glDeleteBuffers(1, &(*it)->indices);
+        }
+#if !(defined __ANDROID__)
+        if(glIsVertexArray((*it)->attributes) == GL_TRUE)
+        {
+            glDeleteVertexArrays(1, &(*it)->attributes);
+        }
+#endif
+        
+        // Delete the object itself
+        delete *it;
+    }
+    
+    // Destroy all of the materials
+    for(std::map<std::string, Material *>::iterator it = materials.begin(); it != materials.end(); it++)
+    {
+        delete it->second;
+    }
+    
+    // Destroy the skeletal nodes
+    delete node;
 }
 
 // Helper function to load the materials from the serialized Json blob
@@ -282,7 +307,6 @@ void Model::Upload()
         for(Material::const_texture_iterator it = mIt->second->texturesBegin(); it != mIt->second->texturesEnd(); it++)
         {
             // Upload the texture
-            std::cout << "Uploading Texture: " << it->second << std::endl;
             textureCache.GetTexture(it->second);
         }
     }
@@ -396,7 +420,7 @@ void Model::Draw(GLMeshProgram *program)
             Node *skeletonNode = node->FindNode((*bone)->id);
             
             // Calculate the final bone transform
-            glm::mat4 finalTransform = skeletonNode->TransformMatrix() * glm::inverse((*bone)->transform.TransformMatrix());
+            glm::mat4 finalTransform = skeletonNode->TransformMatrix() * (*bone)->inverseTransformMatrix;
             
             // Upload the bone to the shader
             glUniformMatrix4fv(program->UniformBones() + (boneIdx*4), 1, GL_FALSE, (const GLfloat *) &finalTransform);
@@ -432,6 +456,9 @@ Model::Bone::Bone(const Json::Value& value)
     
     // Load the transform
     transform = Transform(value);
+    
+    // Create an inverse transform matrix
+    inverseTransformMatrix = glm::inverse(transform.TransformMatrix());
 }
 
 // Standard constructor

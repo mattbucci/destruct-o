@@ -51,7 +51,7 @@ Transform::Transform (const Json::Value& value)
     // If a rotation entry exists in the node
     if(value["rotation"] != Json::Value::null)
     {
-        rotation = glm::quat(value["rotation"][0].asFloat(), value["rotation"][1].asFloat(), value["rotation"][2].asFloat(), value["rotation"][3].asFloat());
+        rotation = glm::quat(value["rotation"][3].asFloat(), value["rotation"][0].asFloat(), value["rotation"][1].asFloat(), value["rotation"][2].asFloat());
     }
 }
 
