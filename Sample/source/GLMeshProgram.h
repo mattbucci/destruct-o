@@ -2,6 +2,7 @@
 #define __GL_MESH_PROGRAM_H__
 
 #include "GL3DProgram.h"
+#include "Material.h"
 
 class GLMeshProgram : public GL3DProgram
 {
@@ -14,6 +15,9 @@ class GLMeshProgram : public GL3DProgram
     // The uniform for the bones
     GLint uniformBones;
     
+    // The texture maps
+    GLint uniformTextures[4];
+    
 public:
 	GLMeshProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath);
     
@@ -25,6 +29,9 @@ public:
     
     // Get the uniform for the skeleton
     const GLint UniformBones();
+    
+    // Get the uniform for the texture samplers
+    const GLint UniformTexture(Material::TextureType idx);
 };
 
 #endif

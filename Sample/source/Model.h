@@ -25,6 +25,7 @@
 #include "Node.h"
 #include "Material.h"
 
+#include "TextureCache.h"
 #include "GLMeshProgram.h"
 
 // I chose to make this a define because the optimiser will perform

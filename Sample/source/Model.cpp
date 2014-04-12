@@ -279,7 +279,7 @@ void Model::Upload()
     for(std::map<std::string, Material *>::iterator mIt = materials.begin(); mIt != materials.end(); mIt++)
     {
         // Iterate through this material's textures and upload them
-        for(std::map<Material::TextureType, std::string>::const_iterator it = mIt->second->Textures().begin(); it != mIt->second->Textures().end(); it++)
+        for(Material::const_texture_iterator it = mIt->second->texturesBegin(); it != mIt->second->texturesEnd(); it++)
         {
             // Upload the texture
             std::cout << "Uploading Texture: " << it->second << std::endl;
@@ -337,24 +337,24 @@ void Model::Draw(GLMeshProgram *program)
                     case VertexAttributes::kAttributeVertex:
                         programAttribute = program->AttributeVertex();
                         break;
+                        
                     case VertexAttributes::kAttributeNormal:
                         programAttribute = program->AttributeNormal();
                         break;
+                        
                     case VertexAttributes::kAttributeTextureCoordinate:
                         // Return the right texture coordinate mapping
                         programAttribute = program->AttributeTexture(attribute->index);
+                        break;
+                        
                     case VertexAttributes::kAttributeBoneWeight:
                         // Return the correct bone weight mapping
                         programAttribute = program->AttributeBoneWeight(attribute->index);
+                        break;
+                        
                     default:
                         //throw new std::runtime_error("void Model::Draw(const GLMeshProgram *program) - Unrecognized shader attribute");
                         break;
-                }
-                
-                // If the program attribute is unknown, skip the attribute
-                if(programAttribute == INT_MAX)
-                {
-                    continue;
                 }
 #if !(defined __ANDROID__)
                 // Enable the vertex array object entry for this attribute
@@ -371,7 +371,34 @@ void Model::Draw(GLMeshProgram *program)
 #endif
         // Get the global inverse transform for the
         
+        // Bind the material's textures to some texturing units
+        for(Material::const_texture_iterator tIt = (*renderable)->material->texturesBegin(); tIt != (*renderable)->material->texturesEnd(); tIt++)
+        {
+            // Set the shader texture sampler to this texture unit
+            glUniform1i(program->UniformTexture(tIt->first), tIt->first);
+            
+            // Active the texture unit for this texture
+            glActiveTexture(GL_TEXTURE0 + tIt->first);
+            
+            // Bind the texture for this texture unit
+            textureCache.GetTexture(tIt->second)->Bind();
+        }
         
+        // HACKY THANGY - make sure rendering works
+        
+        // Set the reflectivity
+        glm::vec2 specular = glm::vec2(1.0, 1.0);
+        glUniform2fv(glGetUniformLocation(program->GetId(), "material_reflectivity"), 2, (const GLfloat *) &specular);
+        
+        // Force all bones to no transform
+        glm::mat4 bone = glm::mat4();
+        for(int i = 0; i < (*renderable)->bones.size(); i++)
+        {
+            glUniformMatrix4fv(program->UniformBones() + (i*4), 1, GL_FALSE, (const GLfloat *) &bone);
+        }
+        
+        // Finally, we can draw the god damn mesh
+        glDrawElements(GL_TRIANGLES, (*renderable)->meshpart->indices.size(), GL_UNSIGNED_INT, NULL);
     }
     
     // Store the previous program

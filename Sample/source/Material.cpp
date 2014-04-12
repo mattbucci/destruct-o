@@ -75,8 +75,18 @@ std::string& Material::Id()
     return id;
 }
 
-// Get the name of a texture stored in this material
-const std::map<Material::TextureType, std::string>& Material::Textures()
+// Get a const iterator to textures
+Material::const_texture_iterator Material::texturesBegin() const
 {
-    return textures;
+    return textures.begin();
+}
+
+Material::const_texture_iterator Material::texturesEnd() const
+{
+    return textures.end();
+}
+
+Material::const_texture_iterator Material::texturesFind(const TextureType& key) const
+{
+    return textures.find(key);
 }

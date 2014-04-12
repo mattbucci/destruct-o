@@ -20,13 +20,11 @@
 #include "stdafx.h"
 #include <json/json.h>
 
-#include "TextureCache.h"
-
 // The mesh is an object which
 class Material
 {
 public:
-    // Types of vertex attributes
+    // Types of material textures
     typedef enum : unsigned char
     {
         kTextureTypeDiffuse  = 0,
@@ -45,6 +43,9 @@ public:
         kColorAttributeReflection = 4,
     } ColorAttribute;
     
+    // Iterator type
+    typedef std::map<TextureType, std::string>::const_iterator const_texture_iterator;
+    
 private:
     // Name of the material
     std::string id;
@@ -62,8 +63,10 @@ public:
     // Get the name of the material
     std::string& Id();
     
-    // Get a read only reference to the textures
-    const std::map<TextureType, std::string>& Textures();
+    // Get a const iterator to textures
+    const_texture_iterator texturesBegin() const;
+    const_texture_iterator texturesEnd() const;
+    const_texture_iterator texturesFind(const TextureType& key) const;
 };
 
 #endif
