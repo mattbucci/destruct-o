@@ -384,17 +384,22 @@ void Model::Draw(GLMeshProgram *program)
             textureCache.GetTexture(tIt->second)->Bind();
         }
         
-        // HACKY THANGY - make sure rendering works
-        
-        // Set the reflectivity
+        // Set the reflectivity (should pull this from the material right??)
         glm::vec2 specular = glm::vec2(1.0, 1.0);
         glUniform2fv(glGetUniformLocation(program->GetId(), "material_reflectivity"), 2, (const GLfloat *) &specular);
         
-        // Force all bones to no transform
-        glm::mat4 bone = glm::mat4();
-        for(int i = 0; i < (*renderable)->bones.size(); i++)
+        // Set all the bones according to the skeleton
+        int boneIdx = 0;
+        for(std::vector<Model::Bone *>::iterator bone = (*renderable)->bones.begin(); bone != (*renderable)->bones.end(); bone++, boneIdx++)
         {
-            glUniformMatrix4fv(program->UniformBones() + (i*4), 1, GL_FALSE, (const GLfloat *) &bone);
+            // Get the node which cooresponds to our bone
+            Node *skeletonNode = node->FindNode((*bone)->id);
+            
+            // Calculate the final bone transform
+            glm::mat4 finalTransform = skeletonNode->TransformMatrix() * glm::inverse((*bone)->transform.TransformMatrix());
+            
+            // Upload the bone to the shader
+            glUniformMatrix4fv(program->UniformBones() + (boneIdx*4), 1, GL_FALSE, (const GLfloat *) &finalTransform);
         }
         
         // Finally, we can draw the god damn mesh
