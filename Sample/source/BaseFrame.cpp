@@ -120,7 +120,7 @@ void BaseFrame::Build()
 {
     // Load a model file
     cout << "Loading models\n";
-    model[0] = new Model("meshes/robot02", "robot02.mesh.json");
+    model[0] = new Model("meshes/robot02", "robot02.mesh.json", Textures);
     
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
@@ -128,7 +128,13 @@ void BaseFrame::Build()
 }
 
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {
-	//Issue events to dialog
+	// Make sure the models are uploaded
+    if(model[0] != NULL)
+    {
+        model[0]->Update(delta, now);
+    }
+    
+    //Issue events to dialog
 	//Run the dialog system and monitor pressed keys
 	passEventsToControl(inputEvents);
 
@@ -220,7 +226,7 @@ void BaseFrame::Draw(double width, double height)
     Camera.Draw(shadersMesh);
     
     // Draw the meshes
-    /*for(std::vector<std::pair<glm::vec3, int> >::iterator it = Meshes.begin(); it != Meshes.end(); ++it)
+    for(std::vector<std::pair<glm::vec3, int> >::iterator it = Meshes.begin(); it != Meshes.end(); ++it)
     {
         // Set the proper translation
         shadersMesh->Model.PushMatrix();
@@ -230,12 +236,12 @@ void BaseFrame::Draw(double width, double height)
 		shadersMesh->Model.Apply();
         
         // Draw the mesh
-        mesh[(*it).second]->Draw(shadersMesh);
+        model[0]->Draw(shadersMesh);
         
         // Remove this translation
         shadersMesh->Model.PopMatrix();
         shadersMesh->Model.PopMatrix();
-    }*/
+    }
 
 	//The particle system will use a different shader entirely soon
 	Particles.Draw(shaders);

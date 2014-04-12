@@ -311,7 +311,7 @@ void GLMesh::playAnimation(std::string name)
 void GLMesh::Draw(GLMeshProgram *shader)
 {
     // Iterate through all the submeshes
-    for(std::vector<RenderStep *>::iterator it = rendersteps.begin(); it != rendersteps.end(); ++it)
+    /*for(std::vector<RenderStep *>::iterator it = rendersteps.begin(); it != rendersteps.end(); ++it)
     {
         // Get the part referenced here
         GLMesh::Part *part = parts[(*it)->meshpartid];
@@ -411,14 +411,14 @@ void GLMesh::Draw(GLMeshProgram *shader)
                         {
                             if(animationTime < (*nkIt)->keytime)
                             {
-                                bone = (*kIt)->transform.transformMatrix() /** glm::inverse((*it)->bones[i].second.transformMatrix())*/;
+                                bone = (*kIt)->transform.transformMatrix();
                                 break;
                             }
                         }
                         
                         else
                         {
-                            bone = (*kIt)->transform.transformMatrix() /** glm::inverse((*it)->bones[i].second.transformMatrix())*/;
+                            bone = (*kIt)->transform.transformMatrix();
                             break;
                         }
                     }
@@ -431,7 +431,7 @@ void GLMesh::Draw(GLMeshProgram *shader)
         
         // Draw this mesh
         glDrawElements(GL_TRIANGLES, part->indexCount, GL_UNSIGNED_INT, 0);
-    }
+    }*/
     
     // Store the new shader pointer
     priorShader = shader;

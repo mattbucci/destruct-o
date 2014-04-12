@@ -131,3 +131,30 @@ const size_t& VertexAttributes::AttributeFrameSize()
 {
     return vertexAttributesFrameSize;
 }
+
+// Get the size of an attribute
+const size_t& VertexAttributes::AttributeSize(AttributeKey key)
+{
+    return VertexAttributeStorageKeySize[key];
+}
+
+// Get iterators
+VertexAttributes::iterator VertexAttributes::begin()
+{
+    return attributes.begin();
+}
+
+VertexAttributes::iterator VertexAttributes::end()
+{
+    return attributes.end();
+}
+
+VertexAttributes::const_iterator VertexAttributes::begin() const
+{
+    return attributes.begin();
+}
+
+VertexAttributes::const_iterator VertexAttributes::end() const
+{
+    return attributes.end();
+}

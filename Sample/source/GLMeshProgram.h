@@ -5,8 +5,11 @@
 
 class GLMeshProgram : public GL3DProgram
 {
-    // The locations for mesh specific properties
+    // The attribute locations for bone weights
     GLint attributeBoneWeights[4];
+    
+    // The attribute locations for texture coordinates
+    GLint attributeTextures[2];
     
     // The uniform for the bones
     GLint uniformBones;
@@ -16,6 +19,9 @@ public:
     
     // Get the attribute for a bone weight
 	const GLint AttributeBoneWeight(int idx);
+    
+    // Get the attribute for a texture coordinate
+    const GLint AttributeTexture(int idx);
     
     // Get the uniform for the skeleton
     const GLint UniformBones();

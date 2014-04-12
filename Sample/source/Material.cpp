@@ -16,6 +16,18 @@
 
 #include "Material.h"
 
+// Unique texture type count
+const static unsigned int TextureTypeCount = 4;
+
+// Since deserialization is a feature, we need to have the texture keys
+const static std::string TextureTypeKeys[] =
+{
+    "DIFFUSE",
+    "SPECULAR",
+    "BUMP",
+    "NORMAL",
+};
+
 // Standard constructor - create an empty material
 Material::Material()
     : id("")
@@ -24,7 +36,7 @@ Material::Material()
 }
 
 // Deserialization constructor - load from a Json serialized blob
-Material::Material(const Json::Value& value)
+Material::Material(const Json::Value& value, const std::string directory)
     : Material::Material()
 {
     // We first need to validate that this a Json object
@@ -36,11 +48,35 @@ Material::Material(const Json::Value& value)
     // Load the name of the material
     id = value["id"].asString();
     
+    // Get the potential textures
+    const Json::Value& bitmaps = value["textures"];
     
+    // If this mesh contains a vertices entry (there could be some empty cases, for instance, an empty mesh was created, then serialized)
+    if(bitmaps != Json::Value::null && bitmaps.isArray())
+    {
+        // Read in all the textures
+        for(Json::Value::iterator tIt = bitmaps.begin(); tIt != bitmaps.end(); tIt++)
+        {
+            // Get a pointer to the texture type
+            const std::string *it = std::find(&TextureTypeKeys[0], (&TextureTypeKeys[0]) + TextureTypeCount, (*tIt)["type"].asString());
+            
+            // Figure out the id
+            TextureType type = (TextureType) std::distance(&TextureTypeKeys[0], it);
+            
+            // Add the texture
+            textures[type] = directory + "/" + (*tIt)["filename"].asString();
+        }
+    }
 }
 
 // Get the name of the material
 std::string& Material::Id()
 {
     return id;
+}
+
+// Get the name of a texture stored in this material
+const std::map<Material::TextureType, std::string>& Material::Textures()
+{
+    return textures;
 }

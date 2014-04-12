@@ -15,18 +15,20 @@
  */
 
 #include "Model.h"
+#include "OS.h"
+
 #include <fstream>
 
 // Create an empty model for population manually
-Model::Model()
-    : meshes(0, NULL), node(new Node())
+Model::Model(TextureCache &_textureCache)
+    : meshes(0, NULL), node(new Node()), textureCache(_textureCache), previousProgram(NULL), uploaded(false)
 {
     
 }
 
 // Create a model by deserializing it from Json
-Model::Model(const std::string& directory, const std::string& name)
-    : Model::Model()
+Model::Model(const std::string& directory, const std::string& name, TextureCache &_textureCache)
+    : Model::Model(_textureCache)
 {
     // Open the Json file for reading
     std::string filename = directory + "/" + name;
@@ -44,7 +46,7 @@ Model::Model(const std::string& directory, const std::string& name)
         throw std::exception();
     }
     // Load materials
-    loadMaterials(root);
+    loadMaterials(root, directory);
     
     // Load mesh data
     loadMeshes(root);
@@ -66,10 +68,20 @@ Model::~Model()
     {
         delete *it;
     }
+    
+    // Destroy all of the vertex buffers associated with meshes
+    for(std::map<Mesh *, GLuint>::iterator it = buffers.begin(); it != buffers.end(); it++)
+    {
+        // If the contents are still a valid vertex buffer
+        if(glIsBuffer(it->second) == GL_TRUE)
+        {
+            glDeleteBuffers(1, &it->second);
+        }
+    }
 }
 
 // Helper function to load the materials from the serialized Json blob
-void Model::loadMaterials(const Json::Value &root)
+void Model::loadMaterials(const Json::Value &root, const std::string& directory)
 {
     // Get the value for the mesh entry
     const Json::Value& mats = root["materials"];
@@ -81,7 +93,7 @@ void Model::loadMaterials(const Json::Value &root)
         for(Json::Value::iterator it = mats.begin(); it != mats.end(); it++)
         {
             // Load a material from the entry
-            Material *material = new Material(*it);
+            Material *material = new Material(*it, directory);
             
             // Store this material for later usage
             materials[material->Id()] = material;
@@ -222,6 +234,148 @@ void Model::loadPartsNodeSearch(const Json::Value &node)
             loadPartsNodeSearch(*it);
         }
     }
+}
+
+// Upload the data to the GPU
+void Model::Upload()
+{
+    // If we are uploaded, get outta here
+    if(uploaded)
+    {
+        return;
+    }
+    
+    // Upload the mesh data
+    for(std::vector<Mesh *>::iterator it = meshes.begin(); it != meshes.end(); it++)
+    {
+        // Create a vertex buffer for this mesh
+        GLuint vertexBufferObject = 0;
+        glGenBuffers(1, &vertexBufferObject);
+        
+        // Upload the data to the GPU
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
+        glBufferData(GL_ARRAY_BUFFER, (*it)->Data().size() * sizeof(GLfloat), (*it)->Data().data(), GL_STATIC_DRAW);
+        
+        // Post this mesh to the buffers list
+        buffers[(*it)] = vertexBufferObject;
+    }
+    
+    // Upload the mesh part data
+    for(std::vector<MeshPartRenderData *>::iterator it = renderables.begin(); it != renderables.end(); it++)
+    {
+#if !(defined __ANDROID__)
+        // Create the vertex array object for this renderable
+        glGenVertexArrays(1, &(*it)->attributes);
+#endif
+        // Create the vertex buffer for the indices
+        glGenBuffers(1, &(*it)->indices);
+        
+        // Upload the index data to the gpu
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->indices);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (*it)->meshpart->indices.size() * sizeof(GLuint), (*it)->meshpart->indices.data(), GL_STATIC_DRAW);
+    }
+    
+    // Upload material textures
+    for(std::map<std::string, Material *>::iterator mIt = materials.begin(); mIt != materials.end(); mIt++)
+    {
+        // Iterate through this material's textures and upload them
+        for(std::map<Material::TextureType, std::string>::const_iterator it = mIt->second->Textures().begin(); it != mIt->second->Textures().end(); it++)
+        {
+            // Upload the texture
+            std::cout << "Uploading Texture: " << it->second << std::endl;
+            textureCache.GetTexture(it->second);
+        }
+    }
+    
+    // We are now uploaded
+    uploaded = true;
+}
+
+// Update function
+void Model::Update(double delta, double now)
+{
+    // If we need to upload the mesh data, do so now
+    if(!uploaded)
+    {
+        Upload();
+    }
+    
+    // Other shit
+}
+
+// Render function
+void Model::Draw(GLMeshProgram *program)
+{
+    // If we are not uploaded, throw an exception
+    if(!uploaded)
+    {
+        throw new std::runtime_error("void Model::Draw(const GLMeshProgram *program) - Attempted to draw a model not uploaded to the GPU");
+    }
+    
+    // Iterate through all the renderables
+    for(std::vector<Model::MeshPartRenderData *>::iterator renderable = renderables.begin(); renderable != renderables.end(); renderable++)
+    {
+// Android does not support vertex array objects, therefore, we always have to push shader data for draw.  sadness
+#if !(defined __ANDROID__)
+        // Bind the vertex array object
+        glBindVertexArray((*renderable)->attributes);
+        
+        // Update the program attributes if the shader has changed
+        if(previousProgram != program)
+        {
+#endif
+            // Bind the vertex buffer of the mesh
+            glBindBuffer(GL_ARRAY_BUFFER, buffers[(*renderable)->meshpart->mesh]);
+            
+            // Iterate through the vertex attributes (dynamic shader parameters, as model vertex attributes vary)
+            for(VertexAttributes::const_iterator attribute = (*renderable)->meshpart->mesh->Attributes().begin(); attribute != (*renderable)->meshpart->mesh->Attributes().end(); attribute++)
+            {
+                // Convert the attribute key into the shader attribute (in the future these should be equivalent - via layout=x)
+                GLuint programAttribute = INT_MAX;
+                switch (attribute->attribute)
+                {
+                    case VertexAttributes::kAttributeVertex:
+                        programAttribute = program->AttributeVertex();
+                        break;
+                    case VertexAttributes::kAttributeNormal:
+                        programAttribute = program->AttributeNormal();
+                        break;
+                    case VertexAttributes::kAttributeTextureCoordinate:
+                        // Return the right texture coordinate mapping
+                        programAttribute = program->AttributeTexture(attribute->index);
+                    case VertexAttributes::kAttributeBoneWeight:
+                        // Return the correct bone weight mapping
+                        programAttribute = program->AttributeBoneWeight(attribute->index);
+                    default:
+                        //throw new std::runtime_error("void Model::Draw(const GLMeshProgram *program) - Unrecognized shader attribute");
+                        break;
+                }
+                
+                // If the program attribute is unknown, skip the attribute
+                if(programAttribute == INT_MAX)
+                {
+                    continue;
+                }
+#if !(defined __ANDROID__)
+                // Enable the vertex array object entry for this attribute
+                glEnableVertexAttribArray(programAttribute);
+#endif
+                // Update the vertex attribute pointer
+                glVertexAttribPointer(programAttribute, VertexAttributes::AttributeSize(attribute->attribute), GL_FLOAT, GL_FALSE, (*renderable)->meshpart->mesh->Attributes().AttributeFrameSize() * sizeof(GLfloat), (GLvoid *)(attribute->offset * sizeof(GLfloat)));
+            }
+            
+            // Bind the index buffer of the mesh part
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*renderable)->indices);
+#if !(defined __ANDROID__)
+        }
+#endif
+        // Get the global inverse transform for the
+        
+        
+    }
+    
+    // Store the previous program
+    previousProgram = program;
 }
 
 // Standard constructor (initialize everything)

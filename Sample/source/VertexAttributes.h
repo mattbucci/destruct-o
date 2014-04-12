@@ -45,10 +45,10 @@ public:
         AttributeKey attribute;
         
         // The numeric identifier for the key (tex coord 0, bone weight 5, etc.)
-        unsigned int       index;
+        unsigned int index;
         
         // The offset into the vertex attribute data of this attribute
-        size_t             offset;
+        size_t       offset;
         
         // Empty constructor
         Attribute()
@@ -64,6 +64,10 @@ public:
             
         }
     };
+    
+    // Iterator types
+    typedef std::vector<Attribute>::iterator       iterator;
+    typedef std::vector<Attribute>::const_iterator const_iterator;
     
 private:
     // Current vertex data frame size (to keep track of offsets)
@@ -85,8 +89,17 @@ public:
     // Read only reference to the frame size of the attributes
     const size_t& AttributeFrameSize();
     
+    // Read only reference to the size of an attribute type
+    static const size_t& AttributeSize(AttributeKey key);
+    
     // Read only reference to the attributes
     const std::vector<Attribute>& Attributes();
+    
+    // Get iterators
+    iterator begin();
+    iterator end();
+    const_iterator begin() const;
+    const_iterator end() const;
 };
 
 #endif

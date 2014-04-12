@@ -25,6 +25,12 @@
 #include "Node.h"
 #include "Material.h"
 
+#include "GLMeshProgram.h"
+
+// I chose to make this a define because the optimiser will perform
+// loop unwinding on any for loops made using it.  
+#define MaxBoneWeights 4
+
 // Loads and renders models
 class Model
 {
@@ -78,8 +84,11 @@ private:
     // The mesh part renderers
     std::vector<MeshPartRenderData *>    renderables;
     
+    // The texture cache used by the parent object
+    TextureCache&                        textureCache;
+    
     // Map of meshes to their vertex buffer objects
-    std::map<Mesh *, GLuint>             meshBuffers;
+    std::map<Mesh *, GLuint>             buffers;
     
     // Map of mesh part names to mesh parts (do not free these, not the owner)
     //std::map<std::string, Mesh::Part *>  meshParts;
@@ -87,8 +96,12 @@ private:
     // Map of the nodes (effectively, a quick way to look into the nodes tree, of which node is the root)
     //std::map<std::string, Node *>        nodes;
     
+    // Previous shader used to render (do we need to update vao)
+    GLMeshProgram                       *previousProgram;
+    bool                                 uploaded;
+    
     // Helper function to load materials
-    void loadMaterials(const Json::Value& root);
+    void loadMaterials(const Json::Value& root, const std::string& directory);
     
     // Helper function to load meshes
     void loadMeshes(const Json::Value& root);
@@ -105,14 +118,22 @@ private:
     
 public:
     // Create an empty model for population manually
-    Model();
+    Model(TextureCache& _textureCache);
     
     // Create a model by deserializing it from a json file
-    Model(const std::string& directory, const std::string& name);
+    Model(const std::string& directory, const std::string& name, TextureCache& _textureCache);
     
     // Standard deconstructor - free all heap allocated data
     ~Model();
     
+    // Upload the data to the GPU
+    void Upload();
+    
+    // Update the model (animations and such)
+    void Update(double delta, double now);
+    
+    // Render the model
+    void Draw(GLMeshProgram *program);
 };
 
 #endif

@@ -20,20 +20,50 @@
 #include "stdafx.h"
 #include <json/json.h>
 
+#include "TextureCache.h"
+
 // The mesh is an object which
 class Material
 {
+public:
+    // Types of vertex attributes
+    typedef enum : unsigned char
+    {
+        kTextureTypeDiffuse  = 0,
+        kTextureTypeSpecular = 1,
+        kTextureTypeBump     = 2,
+        kTextureTypeNormal   = 3,
+    } TextureType;
+    
+    // Types of color attributes
+    typedef enum : unsigned char
+    {
+        kColorAttributeAmbient    = 0,
+        kColorAttributeDiffuse    = 1,
+        kColorAttributeSpecular   = 2,
+        kColorAttributeEmissive   = 3,
+        kColorAttributeReflection = 4,
+    } ColorAttribute;
+    
+private:
     // Name of the material
     std::string id;
+    
+    // The textures this material uses
+    std::map<TextureType, std::string> textures;
+    
 public:
     // Standard constructor - create an empty material
     Material();
     
     // Deserialization constructor - load from a Json serialized blob
-    Material(const Json::Value& value);
+    Material(const Json::Value& value, const std::string directory = ".");
     
     // Get the name of the material
     std::string& Id();
+    
+    // Get a read only reference to the textures
+    const std::map<TextureType, std::string>& Textures();
 };
 
 #endif

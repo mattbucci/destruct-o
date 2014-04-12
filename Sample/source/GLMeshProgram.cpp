@@ -9,11 +9,18 @@ GLMeshProgram::GLMeshProgram(GLCommonShaderFile * commonShader, string vertexSha
     attributeBoneWeights[1] = glGetAttribLocation(programId, "boneWeight1");
     attributeBoneWeights[2] = glGetAttribLocation(programId, "boneWeight2");
     attributeBoneWeights[3] = glGetAttribLocation(programId, "boneWeight3");
+    attributeTextures[0] = glGetAttribLocation(programId, "vTex0");
+    attributeTextures[1] = glGetAttribLocation(programId, "vTex1");
 }
 
 const GLint GLMeshProgram::AttributeBoneWeight(int idx)
 {
     return attributeBoneWeights[idx];
+}
+
+const GLint GLMeshProgram::AttributeTexture(int idx)
+{
+    return attributeTextures[idx];
 }
 
 const GLint GLMeshProgram::UniformBones()
