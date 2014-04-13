@@ -63,7 +63,7 @@ void ModelInstance::Update(double delta, double now)
                     if(animationTime < (*nextKeyframe)->keytime)
                     {
                         // Calculate position between the two keyframes
-                        float t = (animationTime - (*keyframe)->keytime) / ((*nextKeyframe)->keytime - (*keyframe)->keytime);
+                        const float t = (animationTime - (*keyframe)->keytime) / ((*nextKeyframe)->keytime - (*keyframe)->keytime);
                         
                         // Get the two translations to lerp between (they default to the initial pose)
                         glm::vec3 tA = iNode->LocalTransform().Translation();
@@ -108,8 +108,8 @@ void ModelInstance::Update(double delta, double now)
                         }
                         
                         // Set the skeleton node properly
-                        node->LocalTransform().Translation() = glm::lerp(tA, tB, t);
-                        node->LocalTransform().Scale() = glm::lerp(sA, sB, t);
+                        node->LocalTransform().Translation() = glm::mix(tA, tB, t);
+                        node->LocalTransform().Scale() = glm::mix(sA, sB, t);
                         node->LocalTransform().Rotation() = glm::slerp(rA, rB, t);
                         break;
                     }
@@ -180,3 +180,4 @@ Transform& ModelInstance::GetTransform()
 {
     return transform;
 }
+

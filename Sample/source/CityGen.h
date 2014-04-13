@@ -2,7 +2,7 @@
 #define CITYGEN_H
 
 #include "GameTile.h"
-#include "building.h"
+#include "Building.h"
 
 class CityGen {
 public:
