@@ -2,7 +2,7 @@
 #include "BaseFrame.h"
 #include "GL2DProgram.h"
 #include "GL3DProgram.h"
-#include "GLMeshProgram.h"
+#include "MaterialProgram.h"
 #include "ShaderGroup.h"
 #include "ActorPlayer.h"
 #include "VoxEngine.h"
@@ -211,7 +211,7 @@ void BaseFrame::Draw(double width, double height)
 	Physics.Draw(shaders);
     
     // Setup the mesh shader
-    GLMeshProgram * shadersMesh = (GLMeshProgram *) shaders->GetShader("mesh");
+    MaterialProgram * shadersMesh = (MaterialProgram *) shaders->GetShader("mesh");
     shadersMesh->UseProgram();
     shadersMesh->Acid.SetCurrentTime(VoxEngine::GetGameSimTime());
     shadersMesh->Acid.SetAcidFactor(demo->CurrentAcidStrength);

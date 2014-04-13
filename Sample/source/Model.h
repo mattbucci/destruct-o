@@ -27,7 +27,7 @@
 #include "Animation.h"
 
 #include "TextureCache.h"
-#include "GLMeshProgram.h"
+#include "MaterialProgram.h"
 
 // I chose to make this a define because the optimiser will perform
 // loop unwinding on any for loops made using it.  
@@ -104,7 +104,7 @@ private:
     std::map<Mesh *, GLuint>             buffers;
     
     // Previous shader used to render (do we need to update vao)
-    GLMeshProgram                       *previousProgram;
+    MaterialProgram                     *previousProgram;
     bool                                 uploaded;
     
     // Helper function to load animations
@@ -143,8 +143,8 @@ public:
     void Update(double delta, double now);
     
     // Render the model
-    void Draw(GLMeshProgram *program);
-    void Draw(GLMeshProgram *program, const Node& _skeleton);
+    void Draw(MaterialProgram *program);
+    void Draw(MaterialProgram *program, const Node& _skeleton);
     
     // Accessor method for the skeleton
     const Node* Skeleton() const;

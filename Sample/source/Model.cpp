@@ -359,13 +359,13 @@ void Model::Update(double delta, double now)
 }
 
 // Render method - forward the base skeleton to the model
-void Model::Draw(GLMeshProgram *program)
+void Model::Draw(MaterialProgram *program)
 {
     Draw(program, *skeleton);
 }
 
 // Render method - provide a skeleton to the model
-void Model::Draw(GLMeshProgram *program, const Node& _skeleton)
+void Model::Draw(MaterialProgram *program, const Node& _skeleton)
 {
     // If we are not uploaded, throw an exception
     if(!uploaded)

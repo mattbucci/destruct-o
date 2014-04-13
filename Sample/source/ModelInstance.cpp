@@ -88,7 +88,7 @@ void ModelInstance::Update(double delta, double now)
  * Draw this model instance with a particular shader
  * @param program the shader to draw this model with
  */
-void ModelInstance::Draw(GLMeshProgram *program)
+void ModelInstance::Draw(MaterialProgram *program)
 {
     // Push the model transform onto the program's matrix stack
     program->Model.PushMatrix();

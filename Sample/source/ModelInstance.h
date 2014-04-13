@@ -54,7 +54,7 @@ public:
      * Draw this model instance with a particular shader
      * @param program the shader to draw this model with
      */
-    void Draw(GLMeshProgram *program);
+    void Draw(MaterialProgram *program);
     
     /**
      * Play an animation in this model by name

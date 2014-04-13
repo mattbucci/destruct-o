@@ -1,8 +1,24 @@
+/*
+ *  Copyright 2014 Nathaniel Lewis
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 #include "stdafx.h"
-#include "GLMeshProgram.h"
+#include "MaterialProgram.h"
 
 // Get the mesh related shader properties
-GLMeshProgram::GLMeshProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath)
+MaterialProgram::MaterialProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath)
     : GL3DProgram(commonShader, vertexShaderPath, fragmentShaderPath), uniformBones(glGetUniformLocation(programId, "bones"))
 {
     attributeBoneWeights[0] = glGetAttribLocation(programId, "boneWeight0");
@@ -18,22 +34,22 @@ GLMeshProgram::GLMeshProgram(GLCommonShaderFile * commonShader, string vertexSha
     uniformTextures[Material::kTextureTypeBump]     = glGetUniformLocation(programId, "bump");
 }
 
-const GLint GLMeshProgram::AttributeBoneWeight(int idx)
+const GLint MaterialProgram::AttributeBoneWeight(int idx)
 {
     return attributeBoneWeights[idx];
 }
 
-const GLint GLMeshProgram::AttributeTexture(int idx)
+const GLint MaterialProgram::AttributeTexture(int idx)
 {
     return attributeTextures[idx];
 }
 
-const GLint GLMeshProgram::UniformBones()
+const GLint MaterialProgram::UniformBones()
 {
     return uniformBones;
 }
 
-const GLint GLMeshProgram::UniformTexture(Material::TextureType idx)
+const GLint MaterialProgram::UniformTexture(Material::TextureType idx)
 {
     return uniformTextures[idx];
 }
