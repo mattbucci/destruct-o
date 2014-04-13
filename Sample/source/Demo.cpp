@@ -308,6 +308,14 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
                 // Set the rotation of this isntance
                 instance->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, 0.0));
                 
+                // Get a random animation
+                //Model::animation_const_iterator anim = game->model[0]->Animations().begin();
+                //std::advance(anim, (rand() % game->model[0]->Animations().size()));
+                //instance->PlayAnimation(anim->first);
+                
+                // Play shooting animation
+                instance->PlayAnimation("spraying_shoot");
+                
                 // Store this instance for rendering
                 game->modelInstances.push_back(instance);
             }

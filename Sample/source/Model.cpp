@@ -370,7 +370,8 @@ void Model::Draw(GLMeshProgram *program, const Node& _skeleton)
     // If we are not uploaded, throw an exception
     if(!uploaded)
     {
-        throw new std::runtime_error("void Model::Draw(const GLMeshProgram *program) - Attempted to draw a model not uploaded to the GPU");
+        //throw new std::runtime_error("void Model::Draw(const GLMeshProgram *program) - Attempted to draw a model not uploaded to the GPU");
+        return;
     }
     
     // Iterate through all the renderables
@@ -474,6 +475,11 @@ void Model::Draw(GLMeshProgram *program, const Node& _skeleton)
 const Node* Model::Skeleton() const
 {
     return skeleton;
+}
+
+const std::map<std::string, Animation *>& Model::Animations() const
+{
+    return animations;
 }
 
 // Standard constructor (initialize everything)

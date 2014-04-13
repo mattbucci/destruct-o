@@ -122,3 +122,16 @@ const glm::mat4& Transform::TransformMatrix()
     return transformMatrix;
 }
 
+// Return the transforms combined
+const glm::mat4& Transform::TransformMatrix() const
+{
+    // If the transformation is dirty update it
+    if(dirty)
+    {
+        throw new std::runtime_error("const glm::mat4& Transform::TransformMatrix() const - attempted to read a dirty transformation matrix");
+    }
+    
+    // Return the transformation matrix
+    return transformMatrix;
+}
+

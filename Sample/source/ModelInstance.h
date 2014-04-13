@@ -30,6 +30,12 @@ class ModelInstance
     
     /** The transform to render the model at */
     Transform  transform;
+    
+    /** The currently playing animation */
+    const Animation *animation;
+    
+    /** The time at which the animation was started */
+    float animationStartTime;
 public:
     /**
      * Create a model instance for a model
@@ -49,6 +55,13 @@ public:
      * @param program the shader to draw this model with
      */
     void Draw(GLMeshProgram *program);
+    
+    /**
+     * Play an animation in this model by name
+     * @param name the name of the animation to play
+     * @return false if the animation did not exist, true if the animation is now playing
+     */
+    bool PlayAnimation(const std::string name);
     
     /**
      * Get a reference to the transform of the model

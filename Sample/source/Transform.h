@@ -58,6 +58,9 @@ public:
     
     // Get a combined transformation matrix
     const glm::mat4& TransformMatrix();
+    
+    // Get a combined transformation matrix
+    const glm::mat4& TransformMatrix() const;
 };
 
 #endif

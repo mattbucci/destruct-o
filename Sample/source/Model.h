@@ -36,6 +36,11 @@
 // Loads and renders models
 class Model
 {
+public:
+    // Iterator types
+    typedef std::map<std::string, Animation *>::iterator animation_iterator;
+    typedef std::map<std::string, Animation *>::const_iterator animation_const_iterator;
+    
 private:
     // Data structure to represent a bone
     struct Bone
@@ -143,6 +148,9 @@ public:
     
     // Accessor method for the skeleton
     const Node* Skeleton() const;
+    
+    // Accessor method for the animations
+    const std::map<std::string, Animation *>& Animations() const;
 };
 
 #endif

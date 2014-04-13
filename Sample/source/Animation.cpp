@@ -62,7 +62,7 @@ Animation::Animation(const Json::Value& value)
         }
         
         // Decide the length of the animation
-        length = keyframes.size() * (keyframes[1]->keytime - keyframes[0]->keytime);
+        length = keyframes[keyframes.size() - 1]->keytime - keyframes[0]->keytime;
         
         // Store this bone
         boneKeyframes[boneName] = keyframes;
