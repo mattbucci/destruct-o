@@ -21,6 +21,7 @@
 #include <cassert>
 #include <cstdint>
 #include <functional>
+#include <limits>
 
 using namespace std;
 
