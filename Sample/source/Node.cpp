@@ -32,7 +32,7 @@ Node::Node(const Node& node, Node *_parent)
     for(std::vector<Node *>::const_iterator it = node.Children().begin(); it != node.Children().end(); it++)
     {
         // Create a duplicate node of the child
-        Node *child = new Node(*it, this);
+        Node *child = new Node(**it, this);
         
         // This is as a child to us
         children.push_back(child);

@@ -22,9 +22,39 @@
 
 class ModelInstance
 {
+    /** Model we are providing an instance of */
+    Model     *model;
+    
+    /** A clone of the skeleton of the model */
+    Node      *skeleton;
+    
+    /** The transform to render the model at */
+    Transform  transform;
 public:
-    ModelInstance();
-    ModelInstance(Model *model);
+    /**
+     * Create a model instance for a model
+     * @param _model Model to provide an instance of
+     */
+    ModelInstance(Model *_model);
+    
+    /**
+     * Update the state of this model instance
+     * @param delta time since last frame in seconds
+     * @param now the current time
+     */
+    void Update(double delta, double now);
+    
+    /**
+     * Draw this model instance with a particular shader
+     * @param program the shader to draw this model with
+     */
+    void Draw(GLMeshProgram *program);
+    
+    /**
+     * Get a reference to the transform of the model
+     * @return reference to transform
+     */
+    Transform& GetTransform();
 };
 
 #endif

@@ -18,7 +18,7 @@
 
 // Standard constructor
 Transform::Transform ()
-    : translation(glm::vec3(0, 0, 0)), rotation(glm::quat()), scale(glm::vec3(1.0, 1.0, 1.0)), dirty(true)
+    : translation(glm::vec3(0, 0, 0)), rotation(glm::quat(1.0, 0.0, 0.0, 0.0)), scale(glm::vec3(1.0, 1.0, 1.0)), dirty(true)
 {
     
 }

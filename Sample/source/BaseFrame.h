@@ -6,8 +6,6 @@
 #include "GameCamera.h"
 #include "ViewDistanceCalc.h"
 #include "ActorSystem.h"
-#include "GLMesh.h"
-#include "Model.h"
 #include "FirstPersonModeMobile.h"
 #include "FirstPersonMode.h"
 #include "FirstPersonModeMobile.h"
@@ -16,6 +14,9 @@
 #include "Audio.h"
 #include "DemoWindow.h"
 #include "Notification.h"
+
+#include "Model.h"
+#include "ModelInstance.h"
 
 class ActorPlayer;
 class ParticleSystem;
@@ -27,8 +28,6 @@ class BaseFrame : public GameSystem, public Savable {
 
 	Demo * demo;
 	DemoWindow * demoWindow;
-    GLMesh     * mesh[4];
-    Model      * model[4];
 	Notification * notification;
 protected:
 	//Overload to tell the save system about handles created in the system
@@ -49,7 +48,9 @@ public:
 	FirstPersonMode *FirstPerson;
 	PhysicsSystem Physics;
 	ParticleCloud Particles;
-    std::vector<std::pair<glm::vec3, int> > Meshes;
+    
+    Model *model[4];
+    std::vector<ModelInstance *> modelInstances;
 
 	//for notes on Build() see GameSystem::Build()
 	void Build() override;

@@ -297,9 +297,19 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,.1);
 				testSystem->Position = cubePos;
 			}
-            else if (eve.Key == '0') {
-                vec3 cubePos = playerPos+playerFacing*5.0f;
-                game->Meshes.push_back(std::make_pair(cubePos, rand() % 3));
+            else if (eve.Key == '0')
+            {
+                // Create a model instance to represent the model
+                ModelInstance *instance = new ModelInstance(game->model[0]);
+                
+                // Set the location of this instance
+                instance->GetTransform().Translation() = playerPos + playerFacing * 5.0f;
+                
+                // Set the rotation of this isntance
+                instance->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, 0.0));
+                
+                // Store this instance for rendering
+                game->modelInstances.push_back(instance);
             }
 		}
 	}
@@ -317,10 +327,12 @@ void Demo::SwitchDemo(int newDemo, vec3 playerPos, vec3 playerFacing) {
 	//Next start the new demo
 }
 
-void Demo::Update(double now, double delta) {
+void Demo::Update(double now, double delta)
+{
 
 }
 
-void Demo::Draw(GL3DProgram * shader) {
+void Demo::Draw(GL3DProgram * shader)
+{
 
 } 

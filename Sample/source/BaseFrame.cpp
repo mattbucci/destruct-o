@@ -32,22 +32,14 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	// Enable the first person controller
 	FirstPerson->Enable(true);
     
-    // Test load a mesh
-    /*mesh[0] = new GLMesh("meshes/robot02",         "robot02.mesh.json",         Textures, vec3(1.500, 1.500, 1.500));
-    mesh[0]->playAnimation("walking");
-    mesh[1] = new GLMesh("meshes/scifi_soldier01", "scifi_soldier01.mesh.json", Textures, vec3(0.300, 0.300, 0.300));
-    mesh[2] = new GLMesh("meshes/scifi_soldier02", "scifi_soldier02.mesh.json", Textures, vec3(0.015, 0.015, 0.015));*/
-	
 	cout << "\t Finished base frame\n";
 	//testSystem = NULL;
 }
+
 BaseFrame::~BaseFrame()
 {
-    delete mesh[0];
-    delete mesh[1];
-    delete mesh[2];
-}
 
+}
 
 //synchronously saves the game
 bool BaseFrame::Save(string saveFile) {
@@ -104,7 +96,7 @@ void BaseFrame::OnFrameFocus() {
 	player = new ActorPlayer();
 	//The player autoregisters himself with the actor system
 	//we do not need to do that by hand
-
+    
 	//The physics demo
 	//we won't have this forever
 	demo = new Demo();
@@ -118,7 +110,7 @@ void BaseFrame::OnFrameFocus() {
 
 void BaseFrame::Build()
 {
-    // Load a model file
+    // Load some models
     cout << "Loading models\n";
     model[0] = new Model("meshes/robot02", "robot02.mesh.json", Textures);
     model[1] = new Model("meshes/scifi_soldier01", "scifi_soldier01.mesh.json", Textures);
@@ -130,10 +122,11 @@ void BaseFrame::Build()
 }
 
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {
-	// Make sure the models are uploaded
-    model[0]->Update(delta, now);
-    model[1]->Update(delta, now);
-    model[2]->Update(delta, now);
+    // Update the model instances
+    for(std::vector<ModelInstance *>::iterator it = modelInstances.begin(); it != modelInstances.end(); ++it)
+    {
+        (*it)->Update(delta, now);
+    }
     
     //Issue events to dialog
 	//Run the dialog system and monitor pressed keys
@@ -227,21 +220,10 @@ void BaseFrame::Draw(double width, double height)
     Camera.Draw(shadersMesh);
     
     // Draw the meshes
-    for(std::vector<std::pair<glm::vec3, int> >::iterator it = Meshes.begin(); it != Meshes.end(); ++it)
+    for(std::vector<ModelInstance *>::iterator it = modelInstances.begin(); it != modelInstances.end(); ++it)
     {
-        // Set the proper translation
-        shadersMesh->Model.PushMatrix();
-		shadersMesh->Model.Translate((*it).first);
-        shadersMesh->Model.PushMatrix();
-        shadersMesh->Model.Rotate(90.0, 1, 0, 0);
-		shadersMesh->Model.Apply();
-        
-        // Draw the mesh
-        model[0]->Draw(shadersMesh);
-        
-        // Remove this translation
-        shadersMesh->Model.PopMatrix();
-        shadersMesh->Model.PopMatrix();
+        // Draw the model instance
+        (*it)->Draw(shadersMesh);
     }
 
 	//The particle system will use a different shader entirely soon

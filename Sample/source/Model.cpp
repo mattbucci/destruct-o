@@ -383,8 +383,10 @@ void Model::Draw(GLMeshProgram *program, const Node& _skeleton)
                         break;
                         
                     default:
+                        // Skip unknown attributes
+                        continue;
                         //throw new std::runtime_error("void Model::Draw(const GLMeshProgram *program) - Unrecognized shader attribute");
-                        break;
+                        //break;
                 }
 #if !(defined __ANDROID__)
                 // Enable the vertex array object entry for this attribute
@@ -436,6 +438,11 @@ void Model::Draw(GLMeshProgram *program, const Node& _skeleton)
     
     // Store the previous program
     previousProgram = program;
+}
+
+const Node* Model::Skeleton() const
+{
+    return skeleton;
 }
 
 // Standard constructor (initialize everything)

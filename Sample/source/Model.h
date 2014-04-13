@@ -133,6 +133,9 @@ public:
     // Render the model
     void Draw(GLMeshProgram *program);
     void Draw(GLMeshProgram *program, const Node& _skeleton);
+    
+    // Accessor method for the skeleton
+    const Node* Skeleton() const;
 };
 
 #endif
