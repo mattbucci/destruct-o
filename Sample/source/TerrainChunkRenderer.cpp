@@ -75,10 +75,18 @@ void TerrainChunkRenderer::RenderTerrainChunk(vec2 tilePos, TerrainChunk * chunk
 
 		//Set the slot to hold the given chunk
 		openSlot->Set(chunk,shader);
+		//The chunk has been uploaded and is no longer dirty
+		chunk->Dirty = false;
 
 		//Save the slot as in use
 		renderSlots[chunkPosition] = openSlot;
 		renderer = openSlot;
+	}
+	else if (chunk->Dirty) {
+		//Re-set the renderer
+		renderer = slotIterator->second;
+		renderer->Set(chunk,shader);
+		chunk->Dirty = false;
 	}
 	else
 		renderer = slotIterator->second;

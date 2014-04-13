@@ -219,10 +219,10 @@ void GameTile::Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vecto
 		}
 	}
 	//Alter the values to be large enough for stack calculation
-	fx--;
-	fy--;
-	tox+=2;
-	toy+=2;
+	fx-=2;
+	fy-=2;
+	tox+=4;
+	toy+=4;
 	//Limit the values to valid ranges
 	if (fx < 1)
 		fx = 1;

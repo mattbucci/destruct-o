@@ -29,6 +29,10 @@ public:
 	//Reconstruct the vertex array using the owned game tile
 	void Reconstruct();
 
+	//If this chunk was modified, this is set to true
+	//when first rendered becomes false
+	bool Dirty;
+
 	//A POD type of vertex
 	PACK(
 	struct PODVec3 {

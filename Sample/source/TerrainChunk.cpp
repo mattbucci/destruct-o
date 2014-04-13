@@ -75,6 +75,8 @@ bool TerrainChunk::fu(int i, int j, int k) {
 
 //Reconstruct the vertex array using the owned game tile
 void TerrainChunk::Reconstruct() {
+	//Mark this tile as dirty
+	Dirty = true;
 	int minHeight = 256;
 	int maxHeight = 0;
 	//Calc chunk limits
