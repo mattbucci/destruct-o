@@ -21,7 +21,7 @@
 
 // Create an empty model for population manually
 Model::Model(TextureCache &_textureCache)
-    : meshes(0, NULL), node(new Node()), textureCache(_textureCache), previousProgram(NULL), uploaded(false)
+    : meshes(0, NULL), skeleton(new Node()), textureCache(_textureCache), previousProgram(NULL), uploaded(false)
 {
     
 }
@@ -52,7 +52,7 @@ Model::Model(const std::string& directory, const std::string& name, TextureCache
     loadMeshes(root);
     
     // Load node data
-    loadNodes(root);
+    loadSkeleton(root);
     
     // Load parts
     loadParts(root);
@@ -102,7 +102,7 @@ Model::~Model()
     }
     
     // Destroy the skeletal nodes
-    delete node;
+    delete skeleton;
 }
 
 // Helper function to load the materials from the serialized Json blob
@@ -148,7 +148,7 @@ void Model::loadMeshes(const Json::Value& root)
 }
 
 // Helper function to load the node tree from the serialized json data
-void Model::loadNodes(const Json::Value &root)
+void Model::loadSkeleton(const Json::Value &root)
 {
     // Get potential node entries
     const Json::Value& nodes = root["nodes"];
@@ -160,10 +160,10 @@ void Model::loadNodes(const Json::Value &root)
         for(Json::Value::iterator it = nodes.begin(); it != nodes.end(); it++)
         {
             // Create a new child node
-            Node *child = new Node(*it, node);
+            Node *child = new Node(*it, skeleton);
             
             // Add this child to our list
-            node->AddChild(child, false);
+            skeleton->AddChild(child, false);
         }
     }
 }
@@ -327,8 +327,14 @@ void Model::Update(double delta, double now)
     // Other shit
 }
 
-// Render function
+// Render method - forward the base skeleton to the model
 void Model::Draw(GLMeshProgram *program)
+{
+    Draw(program, *skeleton);
+}
+
+// Render method - provide a skeleton to the model
+void Model::Draw(GLMeshProgram *program, const Node& _skeleton)
 {
     // If we are not uploaded, throw an exception
     if(!uploaded)
@@ -393,8 +399,6 @@ void Model::Draw(GLMeshProgram *program)
 #if !(defined __ANDROID__)
         }
 #endif
-        // Get the global inverse transform for the
-        
         // Bind the material's textures to some texturing units
         for(Material::const_texture_iterator tIt = (*renderable)->material->texturesBegin(); tIt != (*renderable)->material->texturesEnd(); tIt++)
         {
@@ -417,10 +421,10 @@ void Model::Draw(GLMeshProgram *program)
         for(std::vector<Model::Bone *>::iterator bone = (*renderable)->bones.begin(); bone != (*renderable)->bones.end(); bone++, boneIdx++)
         {
             // Get the node which cooresponds to our bone
-            Node *skeletonNode = node->FindNode((*bone)->id);
+            const Node *node = _skeleton.FindNode((*bone)->id);
             
             // Calculate the final bone transform
-            glm::mat4 finalTransform = skeletonNode->TransformMatrix() * (*bone)->inverseTransformMatrix;
+            glm::mat4 finalTransform = node->TransformMatrix() * (*bone)->inverseTransformMatrix;
             
             // Upload the bone to the shader
             glUniformMatrix4fv(program->UniformBones() + (boneIdx*4), 1, GL_FALSE, (const GLfloat *) &finalTransform);

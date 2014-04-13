@@ -83,7 +83,7 @@ private:
     std::vector<Mesh *>                  meshes;
     
     // Root node of the model
-    Node                                *node;
+    Node                                *skeleton;
     
     // The mesh part renderers
     std::vector<MeshPartRenderData *>    renderables;
@@ -93,12 +93,6 @@ private:
     
     // Map of meshes to their vertex buffer objects
     std::map<Mesh *, GLuint>             buffers;
-    
-    // Map of mesh part names to mesh parts (do not free these, not the owner)
-    //std::map<std::string, Mesh::Part *>  meshParts;
-    
-    // Map of the nodes (effectively, a quick way to look into the nodes tree, of which node is the root)
-    //std::map<std::string, Node *>        nodes;
     
     // Previous shader used to render (do we need to update vao)
     GLMeshProgram                       *previousProgram;
@@ -111,7 +105,7 @@ private:
     void loadMeshes(const Json::Value& root);
     
     // Helper function to load nodes
-    void loadNodes(const Json::Value& root);
+    void loadSkeleton(const Json::Value& root);
     
     // Helper function to load parts (technically, not the right way, but fuck it.  We'll just assume the mesh
     // is in the right spot, because 99.99999% of the time it is).  The correct way is to map all the internal
@@ -138,6 +132,7 @@ public:
     
     // Render the model
     void Draw(GLMeshProgram *program);
+    void Draw(GLMeshProgram *program, const Node& _skeleton);
 };
 
 #endif

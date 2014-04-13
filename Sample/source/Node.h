@@ -44,6 +44,9 @@ public:
     // Construct an empty node
     Node();
     
+    // Construct a node as a copy of another node (clones whole tree, cannot parent)
+    Node(const Node& node, Node *parent = NULL);
+    
     // Construct the node from a Json blob
     Node(const Json::Value& value, Node *parent = NULL);
     
@@ -51,25 +54,28 @@ public:
     ~Node();
     
     // Get the name of the node
-    std::string&      Id();
+    std::string& Id();
     
-    // Get a reference to the
-    const glm::mat4&  TransformMatrix();
+    // Get a reference to the internal transformation matrix
+    const glm::mat4& TransformMatrix() const;
     
     // Get a read/write reference to the transform
-    Transform&        LocalTransform();
+    Transform& LocalTransform();
     
     // Cause this node to recalculate, along with all the child nodes
-    void              Recalculate();
+    void Recalculate();
     
     // Add a child node to this node
-    void              AddChild(Node *child, bool recalculate = true);
+    void AddChild(Node *child, bool recalculate = true);
     
-    // Find a child node by name in this heirchy
-    Node*             FindNode(const std::string& name);
+    // Find a child node by name in this node heirarchy
+    Node* FindNode(const std::string& name);
+    
+    // Find a child node by name in this node heirarchy (const function)
+    const Node* FindNode(const std::string& name) const;
     
     // Get a reference to the children of the node
-    const std::vector<Node *>& Children();
+    const std::vector<Node *>& Children() const;
 };
 
 #endif

@@ -20,44 +20,57 @@
 #include "stdafx.h"
 #include <json/json.h>
 
-// The G3DJ mesh format defines a multitude of vertex attributes that will
-// be fed into shaders.  The vertex attributes describe the order the
-// associated data appears in the interleaven vertex attribute data array
-// stored by a mesh.  Vertex attributes will cal
+/**
+ * The G3DJ mesh format defines a multitude of vertex attributes that will
+ * be fed into shaders.  The vertex attributes describe the order the
+ * associated data appears in the interleaven vertex attribute data array
+ * stored by a mesh.
+ */
 
 class VertexAttributes
 {
 public:
-    // Types of vertex attributes
+    /**
+     * Types of vertex shader input attributes
+     */
     typedef enum : unsigned char
     {
-        kAttributeVertex            = 0,
-        kAttributeNormal            = 1,
-        kAttributeColor             = 2,
-        kAttributeTextureCoordinate = 3,
-        kAttributeBoneWeight        = 4,
+        kAttributeVertex            = 0,    /**< Position input attribute */
+        kAttributeNormal            = 1,    /**< Normal input attribute */
+        kAttributeColor             = 2,    /**< Color input attribute */
+        kAttributeTextureCoordinate = 3,    /**< Texture coordinate input attribute */
+        kAttributeBoneWeight        = 4,    /**< Bone and blendweight input attribute */
     } AttributeKey;
     
-    // Vertex Attribute type
+    /**
+     * Vertex attribute management class
+     */
     struct Attribute
     {
-        // The key for the attribute
+        /** Input attribute type */
         AttributeKey attribute;
         
-        // The numeric identifier for the key (tex coord 0, bone weight 5, etc.)
+        /** Input attribute index (texture coordinate 1, boneweight 3, etc.)*/
         unsigned int index;
         
-        // The offset into the vertex attribute data of this attribute
+        /** Offset into the vertex attribute frame */
         size_t       offset;
         
-        // Empty constructor
+        /**
+         * Standard Constructor.  Initializes all data members to null
+         */
         Attribute()
             : attribute(kAttributeVertex), index(0), offset(0)
         {
             
         }
         
-        // Simple constructor to set all data at once
+        /**
+         * Constructor to initialize all data members to provided parameters
+         * @param _attribute attribute type
+         * @param _index attribute index
+         * @param _offset offset into the vertex attribute frame for this attribute
+         */
         Attribute(AttributeKey _attribute, unsigned int _index, size_t _offset)
             : attribute(_attribute), index(_index), offset(_offset)
         {
@@ -70,29 +83,32 @@ public:
     typedef std::vector<Attribute>::const_iterator const_iterator;
     
 private:
-    // Current vertex data frame size (to keep track of offsets)
+    /** Current vertex data frame size (to keep track of offsets) */
     size_t vertexAttributesFrameSize;
     
-    // List of the vertex attributes added to this object
+    /** List of the vertex attributes added to this object */
     std::vector<Attribute> attributes;
     
 public:
-    // Create a blank vertex attributes object
+    /** Create a blank vertex attributes object */
     VertexAttributes();
     
-    // Load vertex attributes from a Json serialized object
+    /** 
+     * Load vertex attributes from a Json serialized object
+     * @param value Json array to deserialize vertex attributes table from
+     */
     VertexAttributes(const Json::Value& value);
     
-    // Add a vertex attribute
+    /** Add a vertex attribute */
     void addVertexAttributeByStorageKey(const std::string& key);
     
-    // Read only reference to the frame size of the attributes
+    /** Read only reference to the frame size of the attributes */
     const size_t& AttributeFrameSize();
     
-    // Read only reference to the size of an attribute type
+    /** Read only reference to the size of an attribute type */
     static const size_t& AttributeSize(AttributeKey key);
     
-    // Read only reference to the attributes
+    /** Read only reference to the attributes */
     const std::vector<Attribute>& Attributes();
     
     // Get iterators

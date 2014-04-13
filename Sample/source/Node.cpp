@@ -24,6 +24,21 @@ Node::Node()
     Recalculate();
 }
 
+// Construct a node as a copy of another node (will not be in the heirarchy)
+Node::Node(const Node& node, Node *_parent)
+    : id(node.id), globalTransformMatrix(node.TransformMatrix()), transform(node.transform), children(0, NULL), parent(_parent)
+{
+    // Iterate through the children of this node and add them as new nodes
+    for(std::vector<Node *>::const_iterator it = node.Children().begin(); it != node.Children().end(); it++)
+    {
+        // Create a duplicate node of the child
+        Node *child = new Node(*it, this);
+        
+        // This is as a child to us
+        children.push_back(child);
+    }
+}
+
 // Construct the node from a Json blob
 Node::Node(const Json::Value& value, Node *_parent)
     : Node::Node()
@@ -76,7 +91,7 @@ std::string& Node::Id()
     return id;
 }
 
-const glm::mat4& Node::TransformMatrix()
+const glm::mat4& Node::TransformMatrix() const
 {
     return globalTransformMatrix;
 }
@@ -126,6 +141,7 @@ void Node::AddChild(Node *child, bool recalculate)
     children.push_back(child);
 }
 
+// Find a node by name
 Node* Node::FindNode(const std::string& name)
 {
     // If we are the desired node, return ourself
@@ -152,8 +168,35 @@ Node* Node::FindNode(const std::string& name)
     return node;
 }
 
+// Find a node by name (constant)
+const Node* Node::FindNode(const std::string &name) const
+{
+    // If we are the desired node, return ourself
+    if(id == name)
+    {
+        return this;
+    }
+    
+    // Otherwise search in the children
+    const Node *node = NULL;
+    for(std::vector<Node *>::const_iterator it = children.begin(); it != children.end(); it++)
+    {
+        // Search in this child
+        node = (*it)->FindNode(name);
+        
+        // If we found the node, get out
+        if(node)
+        {
+            break;
+        }
+    }
+    
+    // Return the found node
+    return node;
+}
+
 // Get a reference to the children of the node
-const std::vector<Node *>& Node::Children()
+const std::vector<Node *>& Node::Children() const
 {
     return children;
 }
