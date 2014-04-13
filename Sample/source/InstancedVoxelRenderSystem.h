@@ -39,7 +39,7 @@ class InstancedVoxelRenderSystem : public VoxelDrawSystem {
 	//Flushes the CPU side buffer to the gpu using instanced rendering
 	void draw(GL3DProgram * shader);
 public:
-	InstancedVoxelRenderSystem(bool drawBottoms = false);
+	InstancedVoxelRenderSystem();
 	~InstancedVoxelRenderSystem();
 
 	//Called at the start of the draw cycle

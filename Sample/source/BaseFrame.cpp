@@ -213,11 +213,7 @@ void BaseFrame::Draw(double width, double height) {
 	shaders3d->Model.Apply();
 	//Setup sun here for now
 	//translate it to follow world coordinates
-	shaders3d->Lights.Enable(1);
-	shaders3d->Lights[0].SetColor(vec3(1,1,1));
-	shaders3d->Lights[0].SetIntensity(0,0,0); //The sun shines infinitely long
-	shaders3d->Lights[0].SetComponents(.4f,1,1,20);
-	shaders3d->Lights[0].SetLocation(shaders3d->Model.TransformVector(vec3(-200000,-200000,400000)));
+	shaders3d->Lights.Off();
 	shaders3d->Lights.Apply();
 	//Enable sensible defaults
 	glEnable(GL_BLEND);

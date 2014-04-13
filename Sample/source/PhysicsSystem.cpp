@@ -367,6 +367,7 @@ bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec
 //Draw all the actors
 void PhysicsSystem::Draw(ShaderGroup * shaders) {
 	GL3DProgram * shader = (GL3DProgram *)shaders->GetShader("3d");
+	shader->UseProgram();
 
 	//Translate to the voxel position
 	shader->Model.PushMatrix();
