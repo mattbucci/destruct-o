@@ -14,6 +14,7 @@
  *  limitations under the License.
  */
 
+#include "stdafx.h"
 #include "Model.h"
 #include "OS.h"
 
@@ -28,7 +29,7 @@ Model::Model(TextureCache &_textureCache)
 
 // Create a model by deserializing it from Json
 Model::Model(const std::string& directory, const std::string& name, TextureCache &_textureCache)
-    : Model::Model(_textureCache)
+    : meshes(0, NULL), skeleton(new Node()), textureCache(_textureCache), previousProgram(NULL), uploaded(false)
 {
     // Open the Json file for reading
     std::string filename = directory + "/" + name;

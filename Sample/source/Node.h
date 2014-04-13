@@ -62,6 +62,9 @@ public:
     // Get a read/write reference to the transform
     Transform& LocalTransform();
     
+    // Get a read only reference to the transform
+    const Transform& LocalTransform() const;
+    
     // Cause this node to recalculate, along with all the child nodes
     void Recalculate();
     

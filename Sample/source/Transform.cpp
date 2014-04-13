@@ -14,6 +14,7 @@
  *  limitations under the License.
  */
 
+#include "stdafx.h"
 #include "Transform.h"
 
 // Standard constructor
@@ -32,7 +33,7 @@ Transform::Transform (const Transform& transform)
 
 // Construct the transformation from a Json blob
 Transform::Transform (const Json::Value& value)
-    : Transform::Transform()
+    : translation(glm::vec3(0, 0, 0)), rotation(glm::quat(1.0, 0.0, 0.0, 0.0)), scale(glm::vec3(1.0, 1.0, 1.0)), dirty(true)
 {
     // If a translation entry exists in the node
     if(value["translation"] != Json::Value::null)
@@ -71,17 +72,17 @@ Transform& Transform::operator=(const Transform &transform)
 }
 
 // Return read only references to our internal content (does NOT flag content as dirty)
-const glm::vec3& Transform::ConstTranslation()
+const glm::vec3& Transform::Translation() const
 {
     return translation;
 }
 
-const glm::vec3& Transform::ConstScale()
+const glm::vec3& Transform::Scale() const
 {
     return scale;
 }
 
-const glm::quat& Transform::ConstRotation()
+const glm::quat& Transform::Rotation() const
 {
     return rotation;
 }

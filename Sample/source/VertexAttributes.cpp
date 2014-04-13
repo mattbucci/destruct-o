@@ -14,6 +14,7 @@
  *  limitations under the License.
  */
 
+#include "stdafx.h"
 #include "VertexAttributes.h"
 
 // Unique vertex attribute count
@@ -48,7 +49,7 @@ VertexAttributes::VertexAttributes ()
 
 // Deserialization constructor
 VertexAttributes::VertexAttributes(const Json::Value& value)
-    : VertexAttributes::VertexAttributes()
+    : vertexAttributesFrameSize(0)
 {
     // We first need to validate that this a Json array
     if(!value.isArray())

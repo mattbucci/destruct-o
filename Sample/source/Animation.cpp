@@ -14,6 +14,7 @@
  *  limitations under the License.
  */
 
+#include "stdafx.h"
 #include "Animation.h"
 
 // Create an empty animation
@@ -25,7 +26,7 @@ Animation::Animation()
 
 // Create the animation object from json
 Animation::Animation(const Json::Value& value)
-    : Animation::Animation()
+    : length(-INFINITY)
 {
     // We first need to validate that this a Json object
     if(!value.isObject())
@@ -131,6 +132,24 @@ Animation::Keyframe::Keyframe(const Json::Value& value)
     // Load the keytime
     keytime = value["keytime"].asFloat() / 1000.0f;
     
-    // Load the transformaiton
-    transform = Transform(value);
+    // If a translation entry exists in the node
+    if(value["translation"] != Json::Value::null)
+    {
+        // Load the translation from the Json blob
+        transforms.insert(std::make_pair(Animation::Keyframe::kTransformTypeTranslation, Transform(value)));
+    }
+    
+    // If a scale entry exists in the node
+    if(value["scale"] != Json::Value::null)
+    {
+        // Load the translation from the Json blob
+        transforms.insert(std::make_pair(Animation::Keyframe::kTransformTypeScale, Transform(value)));
+    }
+    
+    // If a rotation entry exists in the node
+    if(value["rotation"] != Json::Value::null)
+    {
+        // Load the translation from the Json blob
+        transforms.insert(std::make_pair(Animation::Keyframe::kTransformTypeRotation, Transform(value)));
+    }
 }

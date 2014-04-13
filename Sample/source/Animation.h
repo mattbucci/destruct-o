@@ -29,11 +29,23 @@ public:
     // Keyframe of an animation
     struct Keyframe
     {
-        // The time at which this keyframe is to trigger
-        float     keytime;
+        // All possible transform types
+        typedef enum : unsigned char
+        {
+            kTransformTypeTranslation = 0,
+            kTransformTypeScale = 1,
+            kTransformTypeRotation = 2,
+        } TransformType;
         
-        // The transformation of this frame
-        Transform transform;
+        // Iterator types
+        typedef std::map<TransformType, const Transform>::iterator iterator;
+        typedef std::map<TransformType, const Transform>::const_iterator const_iterator;
+        
+        // The time at which this keyframe is to trigger
+        float keytime;
+        
+        // The transforms of they keyframe
+        std::map<TransformType, const Transform> transforms;
         
         // Create the keyframe object from json
         Keyframe(const Json::Value& value);

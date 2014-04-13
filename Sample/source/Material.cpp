@@ -14,6 +14,7 @@
  *  limitations under the License.
  */
 
+#include "stdafx.h"
 #include "Material.h"
 
 // Unique texture type count
@@ -37,7 +38,6 @@ Material::Material()
 
 // Deserialization constructor - load from a Json serialized blob
 Material::Material(const Json::Value& value, const std::string directory)
-    : Material::Material()
 {
     // We first need to validate that this a Json object
     if(!value.isObject())

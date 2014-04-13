@@ -47,9 +47,9 @@ public:
     Transform& operator= (const Transform& transform);
     
     // Read only references to members, does not set dirty flag (causes recalculation)
-    const glm::vec3& ConstTranslation();
-    const glm::vec3& ConstScale();
-    const glm::quat& ConstRotation();
+    const glm::vec3& Translation() const;
+    const glm::vec3& Scale() const;
+    const glm::quat& Rotation() const;
     
     // Read/write references to members, sets a dirty flag
     glm::vec3&       Translation();

@@ -14,6 +14,7 @@
  *  limitations under the License.
  */
 
+#include "stdafx.h"
 #include "Node.h"
 
 // Construct an empty node
@@ -41,7 +42,7 @@ Node::Node(const Node& node, Node *_parent)
 
 // Construct the node from a Json blob
 Node::Node(const Json::Value& value, Node *_parent)
-    : Node::Node()
+    : globalTransformMatrix(glm::mat4()), children(0, NULL), parent(_parent)
 {
     // We first need to validate that this a Json object
     if(!value.isObject())
@@ -54,9 +55,6 @@ Node::Node(const Json::Value& value, Node *_parent)
     
     // Load the serialized transform (possibly)
     transform = Transform(value);
-    
-    // Store the parent
-    parent = _parent;
     
     // Recalculate the node to setup our matrices
     Recalculate();
@@ -98,6 +96,12 @@ const glm::mat4& Node::TransformMatrix() const
 
 // Get a read/write reference to the transform
 Transform& Node::LocalTransform()
+{
+    return transform;
+}
+
+// Get a read only reference to the transform
+const Transform& Node::LocalTransform() const
 {
     return transform;
 }

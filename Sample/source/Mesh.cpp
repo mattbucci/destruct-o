@@ -14,6 +14,7 @@
  *  limitations under the License.
  */
 
+#include "stdafx.h"
 #include "Mesh.h"
 
 // Empty mesh constructor, doesn't do much of anything
@@ -25,7 +26,7 @@ Mesh::Mesh()
 
 // Deserialize a Json encoded mesh
 Mesh::Mesh(const Json::Value& value)
-    : Mesh::Mesh()
+    : data(0, 0), indices(0, 0), attributes(VertexAttributes())
 {
     // We first need to validate that this a Json object
     if(!value.isObject())
