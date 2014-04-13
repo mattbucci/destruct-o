@@ -45,6 +45,10 @@ Model::Model(const std::string& directory, const std::string& name, TextureCache
         std::cerr << "Error parsing " << filename << std::endl;
         throw std::exception();
     }
+    
+    // Load animations
+    loadAnimations(root);
+    
     // Load materials
     loadMaterials(root, directory);
     
@@ -100,9 +104,36 @@ Model::~Model()
     {
         delete it->second;
     }
+
+    // Destroy all of the animations
+    for(std::map<std::string, Animation *>::iterator it = animations.begin(); it != animations.end(); it++)
+    {
+        delete it->second;
+    }
     
     // Destroy the skeletal nodes
     delete skeleton;
+}
+
+// Helper function to load animations form the model
+void Model::loadAnimations(const Json::Value &root)
+{
+    // Load the animations
+    const Json::Value &serializedAnimations = root["animations"];
+    
+    // If the model file contains animation entries
+    if(serializedAnimations != Json::Value::null)
+    {
+        // Process the animations
+        for(Json::Value::iterator it = serializedAnimations.begin(); it != serializedAnimations.end(); it++)
+        {
+            // Create a new animation object from the storage
+            Animation *animation = new Animation(*it);
+            
+            // Store this animation
+            animations[animation->Id()] = animation;
+        }
+    }
 }
 
 // Helper function to load the materials from the serialized Json blob

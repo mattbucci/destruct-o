@@ -24,6 +24,7 @@
 #include "Transform.h"
 #include "Node.h"
 #include "Material.h"
+#include "Animation.h"
 
 #include "TextureCache.h"
 #include "GLMeshProgram.h"
@@ -76,6 +77,9 @@ private:
         ~MeshPartRenderData();
     };
     
+    // Animations of this model
+    std::map<std::string, Animation *>   animations;
+    
     // Materials of this model
     std::map<std::string, Material *>    materials;
     
@@ -97,6 +101,9 @@ private:
     // Previous shader used to render (do we need to update vao)
     GLMeshProgram                       *previousProgram;
     bool                                 uploaded;
+    
+    // Helper function to load animations
+    void loadAnimations(const Json::Value& root);
     
     // Helper function to load materials
     void loadMaterials(const Json::Value& root, const std::string& directory);
