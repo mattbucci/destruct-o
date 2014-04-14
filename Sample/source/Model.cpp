@@ -506,7 +506,6 @@ Model::Bone::Bone()
 
 // Deserialization constructor
 Model::Bone::Bone(const Json::Value& value)
-    : Model::Bone::Bone()
 {
     // We first need to validate that this a Json object
     if(!value.isObject())

@@ -99,7 +99,7 @@ Mesh::Part::Part()
 
 // Deserialization constructor
 Mesh::Part::Part(const Json::Value& value)
-    : Mesh::Part::Part()
+    : indices(0, 0)
 {
     // We first need to validate that this a Json object
     if(!value.isObject())
