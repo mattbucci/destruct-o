@@ -166,6 +166,9 @@ void GameTile::UpdateTileSection(unsigned int rx, unsigned int ry, unsigned int 
 	}
 	else {
 		//Reconstruct the chunks which are in the region specified
+		//Chunk-align the tox,toy
+		rx -= rx % CHUNK_SIZE;
+		ry -= ry % CHUNK_SIZE;
 		for (int y = ry; y < toy; y+= CHUNK_SIZE) {
 			for (int x = rx;x < tox; x+= CHUNK_SIZE) {
 				//Find the chunk the given x,y is in
