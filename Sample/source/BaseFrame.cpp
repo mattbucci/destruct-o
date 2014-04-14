@@ -249,7 +249,6 @@ void BaseFrame::Draw(double width, double height)
     
     // Setup the mesh shader
     MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model_skinned");
-    //MaterialProgram * shadersMesh = (MaterialProgram *) shaders->GetShader("model");
     modelShader->UseProgram();
     
     // Draw the meshes

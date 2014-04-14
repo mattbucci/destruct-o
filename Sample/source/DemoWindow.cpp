@@ -39,7 +39,7 @@ DemoWindow::DemoWindow(Demo * d) {
 		d->QueueTouchEvent('f');
 	});
 	Subscribe<void(Button*)>(&makeFire.EventClicked,[d](Button * b) {
-		d->QueueTouchEvent('r');
+		d->QueueTouchEvent('x');
 	});
 	Subscribe<void(Button*)>(&increaseAcid.EventClicked,[d](Button * b) {
 		d->QueueTouchEvent('y');
