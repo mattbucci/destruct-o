@@ -362,8 +362,8 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
     glm::mat4 globalInverseTransform = glm::inverse(_skeleton.LocalTransform().TransformMatrix());
     
     // Offset the render by the global inverse transform
-    program->Model.PushMatrix();
-    program->Model.SetMatrix(_skeleton.LocalTransform().TransformMatrix());
+    program->Model.Combine(_skeleton.LocalTransform().TransformMatrix());
+    program->Model.Apply();
     
     // Iterate through all the renderables
     for(std::vector<Model::MeshPartRenderData *>::iterator renderable = renderables.begin(); renderable != renderables.end(); renderable++)
@@ -458,9 +458,6 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         // Finally, we can draw the god damn mesh
         glDrawElements(GL_TRIANGLES, (*renderable)->meshpart->indices.size(), GL_UNSIGNED_INT, NULL);
     }
-    
-    // Undo the transform
-    program->Model.PopMatrix();
     
     // Store the previous program
     previousProgram = program;
