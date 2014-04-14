@@ -7,7 +7,7 @@ GLTexture::GLTexture(string texturePathName) {
 	this->texturePathName = texturePathName;
 }
 GLTexture::~GLTexture() {
-	if (textureId >= 0)
+	if (textureId > 0)
 		glDeleteTextures(1,&textureId);
 }
 

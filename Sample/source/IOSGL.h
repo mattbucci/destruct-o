@@ -5,6 +5,7 @@
 #define glDeleteVertexArrays glDeleteVertexArraysOES
 #define glBindVertexArray glBindVertexArrayOES
 #define glGenVertexArrays glGenVertexArraysOES
+#define glIsVertexArray glIsVertexArrayOES
 
 #define glVertexAttribDivisor glVertexAttribDivisorEXT
 #define glDrawElementsInstanced glDrawElementsInstancedEXT

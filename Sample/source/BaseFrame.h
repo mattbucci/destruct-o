@@ -6,7 +6,6 @@
 #include "GameCamera.h"
 #include "ViewDistanceCalc.h"
 #include "ActorSystem.h"
-
 #include "FirstPersonModeMobile.h"
 #include "FirstPersonMode.h"
 #include "FirstPersonModeMobile.h"
@@ -18,6 +17,9 @@
 #include "PauseWindow.h"
 #include "PauseWindowMobile.h"
 #include "Achievements.h"
+
+#include "Model.h"
+#include "ModelInstance.h"
 
 class ActorPlayer;
 class ParticleSystem;
@@ -67,6 +69,9 @@ public:
 	FirstPersonMode *FirstPerson;
 	PhysicsSystem Physics;
 	ParticleCloud Particles;
+    
+    Model *model[4];
+    std::vector<ModelInstance *> modelInstances;
 
 	//for notes on Build() see GameSystem::Build()
 	void Build() override;

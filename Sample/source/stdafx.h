@@ -14,12 +14,14 @@
 #include <map>
 #include <list>
 #include <string>
+#include <array>
 
 //Other utilities
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <functional>
+#include <limits>
 
 using namespace std;
 
@@ -84,7 +86,11 @@ using namespace std;
 
 //GLM
 #include <glm/glm.hpp>
-#include <glm/ext.hpp>
+//#include <glm/ext.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/transform.hpp>
+
 //Basic types used everywhere
 using glm::vec2;
 using glm::vec3;

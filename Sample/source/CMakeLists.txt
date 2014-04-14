@@ -65,6 +65,10 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # Fine the noise Framework
     find_library(NOISE_FRAMEWORK NAMES noise)
     target_link_libraries(VoxEngine ${NOISE_FRAMEWORK})
+    
+    # Find the OpenAssimp Framework
+    find_library(ASSIMP_FRAMEWORK NAMES assimp)
+    target_link_libraries(VoxEngine ${ASSIMP_FRAMEWORK})
 
     # Pull in the bundled GLEW library
     include_directories("../includes/glew")
@@ -99,10 +103,11 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     #
     # Simple Direct Media Layer (requires 2.0.0 or greater) - http://libsdl.org/download-2.0.php
     # Truetype Font Library for SDL (requires 2.0.12 or greater) - http://www.libsdl.org/projects/SDL_ttf/
-    # Audio Mixer Library for SDL (requires 2.0.0 or greater)
+    # Audio Mixer Library for SDL (requires 2.0.0 or greater) - http://www.libsdl.org/projects/SDL_mixer/
     #
     # libcurl (version 7.33.0 or greater) - http://curl.haxx.se/libcurl/
     # libnoise (version 1.0.0 or greater) - http://libnoise.sourceforge.net/
+    # Open Asset Importer (version 3.0 or greater) - http://assimp.sourceforge.net
     #
     # A graphics card and driver supporting at least OpenGL 2.0, recommended 3.3+
     #
@@ -180,6 +185,10 @@ source_group(Actors FILES ${ActorFiles})
 #audio
 FILE(GLOB AudioFiles "Audio*" "Music.h" "Music.cpp" "Effect.h" "Effect.cpp")
 source_group(Audio FILES ${AudioFiles})
+
+# Skinned Model Rendering
+FILE(GLOB ModelFiles "Model.*" "ModelInstance.*" "Animation.*" "Node.*" "Transform.*" "Mesh.*" "VertexAttributes.*" "Material.*" "MaterialProgram.*")
+source_group(Models FILES ${ModelFiles})
 
 #Dialog/Interface files
 FILE(GLOB InterfaceFiles

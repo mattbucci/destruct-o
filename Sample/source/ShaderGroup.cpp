@@ -2,6 +2,7 @@
 #include "ShaderGroup.h"
 #include "GL3DProgram.h"
 #include "GL2DProgram.h"
+#include "MaterialProgram.h"
 #include "GLParticleProgram.h"
 #include "GLTerrainProgram.h"
 #include "GLCommonShaderFile.h"
@@ -16,6 +17,7 @@ ShaderGroup::ShaderGroup() {
 		if (!shaders2d->Valid()) 
 			cout << "Failed to build opengl program\n";
 		AddShader(shaders2d,"2d");
+        
 		//Build the voxel shader
 		GL3DProgram * shaders3d = new GL3DProgram(&commonShader,"Interface/Shaders/glsl31/vsh_3d.glsl","Interface/Shaders/glsl31/fsh_3d.glsl");
 		if (!shaders3d->Valid()) 
@@ -28,12 +30,15 @@ ShaderGroup::ShaderGroup() {
 		if (!shaders2d->Valid()) 
 			cout << "Failed to build opengl program\n";
 		AddShader(shaders2d,"2d");
+        
 		//Build the voxel shader
 		GL3DProgram * shaders3d = new GL3DProgram(&commonShader,"Interface/Shaders/glsl11/vsh_3d.glsl","Interface/Shaders/glsl11/fsh_3d.glsl");
 		if (!shaders3d->Valid()) 
 			cout << "Failed to build opengl program\n";
 		AddShader(shaders3d,"3d");
 	}
+    
+	//Build the dialog shader
 	//Build Universal Shaders
 	//Build Particle Shader
 	GLParticleProgram * shadersP = new GLParticleProgram(&commonShader,"Interface/Shaders/universal/vsh_particle.glsl","Interface/Shaders/universal/fsh_particle.glsl");
@@ -45,6 +50,18 @@ ShaderGroup::ShaderGroup() {
 	if (!shadersT->Valid()) 
 		cout << "Failed to build opengl program\n";
 	AddShader(shadersT,"terrain");
+    
+    //Build the model shader
+    MaterialProgram * modelShader = new MaterialProgram(&commonShader,"Interface/Shaders/universal/vsh_model.glsl","Interface/Shaders/universal/fsh_model.glsl");
+    if (!modelShader->Valid())
+        cout << "Failed to build opengl program (model)\n";
+    AddShader(modelShader,"model");
+    
+    //Build the skinned model shader
+    MaterialProgram * skinnedModelShader = new MaterialProgram(&commonShader,"Interface/Shaders/universal/vsh_model_skinned.glsl","Interface/Shaders/universal/fsh_model_skinned.glsl");
+    if (!skinnedModelShader->Valid())
+        cout << "Failed to build opengl program (model_skinned)\n";
+    AddShader(skinnedModelShader,"model_skinned");
 }
 
 ShaderGroup::~ShaderGroup() {

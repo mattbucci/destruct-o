@@ -321,6 +321,34 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 			else if (eve.Key == 'r') {
 				game->Load("reset_save.json.compressed");
 			}
+            else if (eve.Key == '0')
+            {
+                // Create a model instance to represent the model
+                ModelInstance *instance = new ModelInstance(game->model[0]);
+                //ModelInstance *instance = new ModelInstance(game->model[1]);
+                
+                // Set the location of this instance
+                instance->GetTransform().Translation() = playerPos + playerFacing * 5.0f;
+                
+                // Set the rotation of this isntance
+                instance->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, 0.0));
+                
+                // Set the scale of this instance
+                //instance->GetTransform().Scale() = glm::vec3(0.015, 0.015, 0.015);
+                
+                // Get a random animation
+                Model::animation_const_iterator anim = game->model[0]->Animations().begin();
+                std::advance(anim, (rand() % game->model[0]->Animations().size()));
+                instance->PlayAnimation(anim->first);
+                
+                // Play shooting animation
+                //instance->PlayAnimation("spraying_shoot");
+                //instance->PlayAnimation("walking");
+                //instance->PlayAnimation("walkAndLook");
+                
+                // Store this instance for rendering
+                game->modelInstances.push_back(instance);
+            }
 		}
 	}
 }
@@ -337,10 +365,12 @@ void Demo::SwitchDemo(int newDemo, vec3 playerPos, vec3 playerFacing) {
 	//Next start the new demo
 }
 
-void Demo::Update(double now, double delta) {
+void Demo::Update(double now, double delta)
+{
 
 }
 
-void Demo::Draw(GL3DProgram * shader) {
+void Demo::Draw(GL3DProgram * shader)
+{
 
 } 

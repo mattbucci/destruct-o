@@ -4,6 +4,7 @@
 #include "GL3DProgram.h"
 #include "GLTerrainProgram.h"
 #include "GLParticleProgram.h"
+#include "MaterialProgram.h"
 #include "ShaderGroup.h"
 #include "ActorPlayer.h"
 #include "VoxEngine.h"
@@ -43,11 +44,13 @@ BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxe
 	
 	// Enable the first person controller
 	FirstPerson->Enable(true);
-	
+    
 	cout << "\t Finished base frame\n";
 	//testSystem = NULL;
 }
-BaseFrame::~BaseFrame() {
+
+BaseFrame::~BaseFrame()
+{
 
 }
 
@@ -120,7 +123,7 @@ void BaseFrame::OnFrameFocus() {
 	player = new ActorPlayer();
 	//The player autoregisters himself with the actor system
 	//we do not need to do that by hand
-
+    
 	//The physics demo
 	//we won't have this forever
 	demo = new Demo();
@@ -132,9 +135,14 @@ void BaseFrame::OnFrameFocus() {
 	demo->DoInitialSave();
 }
 
-void BaseFrame::Build() {
-
-	//load the audio
+void BaseFrame::Build()
+{
+    // Load some models
+    cout << "Loading models\n";
+    model[0] = new Model("meshes/robot02", "robot02.mesh.json", Textures);
+    model[1] = new Model("meshes/scifi_soldier01", "scifi_soldier01.mesh.json", Textures);
+    model[2] = new Model("meshes/scifi_soldier02", "scifi_soldier02.mesh.json", Textures);
+    
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
 	audio->PlayerInit(player);
@@ -145,7 +153,13 @@ void BaseFrame::Build() {
 }
 
 bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {
-	//Issue events to dialog
+    // Update the model instances
+    for(std::vector<ModelInstance *>::iterator it = modelInstances.begin(); it != modelInstances.end(); ++it)
+    {
+        (*it)->Update(delta, now);
+    }
+    
+    //Issue events to dialog
 	//Run the dialog system and monitor pressed keys
 	passEventsToControl(inputEvents);
 
@@ -175,7 +189,8 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 }
 
 
-void BaseFrame::Draw(double width, double height) {
+void BaseFrame::Draw(double width, double height)
+{
 	vec2 viewPortSize = vec2((float)width,(float)height);
 	//Save size in camera as well (for unprojection)
 	Camera.UpdateViewSize(viewPortSize);
@@ -227,6 +242,23 @@ void BaseFrame::Draw(double width, double height) {
 	//The physics system uses the same texture that the voxels above binds every time it draws
 	//so it must always immediately follow Voxels.draw()
 	Physics.Draw(shaders);
+    
+    // Setup the mesh shader
+    MaterialProgram * shadersMesh = (MaterialProgram *) shaders->GetShader("model_skinned");
+    //MaterialProgram * shadersMesh = (MaterialProgram *) shaders->GetShader("model");
+    shadersMesh->UseProgram();
+    shadersMesh->Acid.SetCurrentTime(VoxEngine::GetGameSimTime());
+    shadersMesh->Acid.SetAcidFactor(demo->CurrentAcidStrength);
+    shadersMesh->Fog.SetFogColor(vec4(.5, .5, .5, 1.0));
+    shadersMesh->Fog.SetFogDistance(shaders3d->Fog.GetFogDistance());
+    Camera.Draw(shadersMesh);
+    
+    // Draw the meshes
+    for(std::vector<ModelInstance *>::iterator it = modelInstances.begin(); it != modelInstances.end(); ++it)
+    {
+        // Draw the model instance
+        (*it)->Draw(shadersMesh);
+    }
 
 	//The particle system will use a different shader entirely soon
 	Particles.Draw(shaders);

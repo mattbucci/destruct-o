@@ -58,7 +58,7 @@ InstancedVoxelRenderSystem::~InstancedVoxelRenderSystem() {
 }
 
 void InstancedVoxelRenderSystem::pushSide(vec3 normal, vec3 a, vec3 b, vec3 c, vec3 d, int & vertNumber) {
-	const float texturePixel = 0.0f;
+	//const float texturePixel = 0.0f;
 	normals[vertNumber] = normal;
 	textureCoordinates[vertNumber] = vec2(0.05,0.05);
 	vertices[vertNumber++] = a;

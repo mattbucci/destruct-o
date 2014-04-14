@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CityGen.h"
-#include "structure.h"
+#include "Structure.h"
 
 //the size of each city
 const int citysize = 150;
