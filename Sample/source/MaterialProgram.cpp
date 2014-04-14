@@ -41,7 +41,7 @@ MaterialProgram::MaterialProgram(GLCommonShaderFile * commonShader, string verte
         uniformBones[i] = glGetUniformLocation(programId, b.str().c_str());
     }
     
-    std::cout << "---- Material Program Init Log ----" << std::endl;
+    /*std::cout << "---- Material Program Init Log ----" << std::endl;
     std::cout << "Attribute Vertex: " << AttributeVertex() << std::endl;
     std::cout << "Attribute Normal: " << AttributeNormal() << std::endl;
     std::cout << "Attribute TexCd0: " << attributeTextures[0] << std::endl;
@@ -54,7 +54,7 @@ MaterialProgram::MaterialProgram(GLCommonShaderFile * commonShader, string verte
     {
         std::cout << "Uniform Bone[" << i << "]: " << uniformBones[i] << std::endl;
     }
-    std::cout << "-----------------------------------" << std::endl;
+    std::cout << "-----------------------------------" << std::endl;*/
 }
 
 const GLint MaterialProgram::AttributeBoneWeight(int idx)

@@ -22,12 +22,6 @@ ShaderGroup::ShaderGroup() {
 		if (!shaders3d->Valid()) 
 			cout << "Failed to build opengl program\n";
 		AddShader(shaders3d,"3d");
-        
-		//Build the mesh shader
-		MaterialProgram * shadersMesh = new MaterialProgram(&commonShader,"Interface/Shaders/glsl31/vsh_mesh.glsl","Interface/Shaders/glsl31/fsh_mesh.glsl");
-		if (!shadersMesh->Valid())
-			cout << "Failed to build opengl program (mesh)\n";
-		AddShader(shadersMesh,"mesh");
 	}
 	else {
 		//Build the dialog shader
@@ -41,18 +35,25 @@ ShaderGroup::ShaderGroup() {
 		if (!shaders3d->Valid()) 
 			cout << "Failed to build opengl program\n";
 		AddShader(shaders3d,"3d");
-        
-		//Build the mesh shader
-		MaterialProgram * shadersMesh = new MaterialProgram(&commonShader,"Interface/Shaders/glsl11/vsh_mesh.glsl","Interface/Shaders/glsl11/fsh_mesh.glsl");
-		if (!shadersMesh->Valid())
-			cout << "Failed to build opengl program (mesh)\n";
-		AddShader(shadersMesh,"mesh");
 	}
+    
 	//Build the dialog shader
 	GLParticleProgram * shadersP = new GLParticleProgram(&commonShader,"Interface/Shaders/universal/vsh_particle.glsl","Interface/Shaders/universal/fsh_particle.glsl");
 	if (!shadersP->Valid()) 
 		cout << "Failed to build opengl program\n";
 	AddShader(shadersP,"particles");
+    
+    //Build the model shader
+    MaterialProgram * modelShader = new MaterialProgram(&commonShader,"Interface/Shaders/universal/vsh_model.glsl","Interface/Shaders/universal/fsh_model.glsl");
+    if (!modelShader->Valid())
+        cout << "Failed to build opengl program (model)\n";
+    AddShader(modelShader,"model");
+    
+    //Build the skinned model shader
+    MaterialProgram * skinnedModelShader = new MaterialProgram(&commonShader,"Interface/Shaders/universal/vsh_model_skinned.glsl","Interface/Shaders/universal/fsh_model_skinned.glsl");
+    if (!skinnedModelShader->Valid())
+        cout << "Failed to build opengl program (model_skinned)\n";
+    AddShader(skinnedModelShader,"model_skinned");
 }
 
 ShaderGroup::~ShaderGroup() {

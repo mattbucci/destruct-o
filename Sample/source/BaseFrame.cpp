@@ -211,7 +211,8 @@ void BaseFrame::Draw(double width, double height)
 	Physics.Draw(shaders);
     
     // Setup the mesh shader
-    MaterialProgram * shadersMesh = (MaterialProgram *) shaders->GetShader("mesh");
+    MaterialProgram * shadersMesh = (MaterialProgram *) shaders->GetShader("model_skinned");
+    //MaterialProgram * shadersMesh = (MaterialProgram *) shaders->GetShader("model");
     shadersMesh->UseProgram();
     shadersMesh->Acid.SetCurrentTime(VoxEngine::GetGameSimTime());
     shadersMesh->Acid.SetAcidFactor(demo->CurrentAcidStrength);
