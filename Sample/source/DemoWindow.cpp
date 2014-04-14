@@ -48,7 +48,7 @@ DemoWindow::DemoWindow(Demo * d) {
 		d->QueueTouchEvent('h');
 	});
 	Subscribe<void(Button*)>(&makeMesh.EventClicked,[d](Button * b) {
-		d->QueueTouchEvent('m');
+		d->QueueTouchEvent('0');
 	});
 }
 DemoWindow::~DemoWindow() {
