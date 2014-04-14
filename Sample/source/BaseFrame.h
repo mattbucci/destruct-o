@@ -1,5 +1,8 @@
 #pragma once
 
+#include "VoxEngine.h"
+#include "ShaderGroup.h"
+
 #include "GameSystem.h"
 
 #include "VoxelSystem.h"

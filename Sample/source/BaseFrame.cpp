@@ -220,7 +220,11 @@ void BaseFrame::Draw(double width, double height)
 	SetupShader<GLParticleProgram>("particles",fogDistance);
 	SetupShader<GL3DProgram>("3d",fogDistance);
 	Camera.Apply((GL3DProgram*)shaders->GetShader("3d"));
-
+    SetupShader<MaterialProgram>("model", fogDistance);
+    Camera.Apply((MaterialProgram*)shaders->GetShader("model"));
+    SetupShader<MaterialProgram>("model_skinned", fogDistance);
+    Camera.Apply((MaterialProgram*)shaders->GetShader("model_skinned"));
+    
 	//Startup 3d rendering
 	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
 	shaders3d->UseProgram();
@@ -244,20 +248,15 @@ void BaseFrame::Draw(double width, double height)
 	Physics.Draw(shaders);
     
     // Setup the mesh shader
-    MaterialProgram * shadersMesh = (MaterialProgram *) shaders->GetShader("model_skinned");
+    MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model_skinned");
     //MaterialProgram * shadersMesh = (MaterialProgram *) shaders->GetShader("model");
-    shadersMesh->UseProgram();
-    shadersMesh->Acid.SetCurrentTime(VoxEngine::GetGameSimTime());
-    shadersMesh->Acid.SetAcidFactor(demo->CurrentAcidStrength);
-    shadersMesh->Fog.SetFogColor(vec4(.5, .5, .5, 1.0));
-    shadersMesh->Fog.SetFogDistance(shaders3d->Fog.GetFogDistance());
-    Camera.Draw(shadersMesh);
+    modelShader->UseProgram();
     
     // Draw the meshes
     for(std::vector<ModelInstance *>::iterator it = modelInstances.begin(); it != modelInstances.end(); ++it)
     {
         // Draw the model instance
-        (*it)->Draw(shadersMesh);
+        (*it)->Draw(modelShader);
     }
 
 	//The particle system will use a different shader entirely soon
