@@ -139,9 +139,9 @@ void BaseFrame::Build()
 {
     // Load some models
     cout << "Loading models\n";
-    model[0] = new Model("meshes/robot02", "robot02.mesh.json", Textures);
-    model[1] = new Model("meshes/scifi_soldier01", "scifi_soldier01.mesh.json", Textures);
-    model[2] = new Model("meshes/scifi_soldier02", "scifi_soldier02.mesh.json", Textures);
+    model[0] = new Model("meshes/robot02", "robot02_low.mesh.json", Textures);
+    //model[1] = new Model("meshes/scifi_soldier01", "scifi_soldier01.mesh.json", Textures);
+    //model[2] = new Model("meshes/scifi_soldier02", "scifi_soldier02.mesh.json", Textures);
     
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
