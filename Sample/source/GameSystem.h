@@ -12,7 +12,6 @@
 class Sprite;
 class ShaderGroup;
 
-
 class GameSystem : protected GameEventSubscriber {
 protected:
 	FPSCounter fpsCount;

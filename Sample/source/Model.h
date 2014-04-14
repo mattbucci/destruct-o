@@ -131,7 +131,7 @@ public:
     Model(TextureCache& _textureCache);
     
     // Create a model by deserializing it from a json file
-    Model(const std::string& directory, const std::string& name, TextureCache& _textureCache);
+    Model(const Json::Value& root, const std::string& directory, TextureCache& _textureCache);
     
     // Standard deconstructor - free all heap allocated data
     ~Model();
@@ -151,6 +151,10 @@ public:
     
     // Accessor method for the animations
     const std::map<std::string, Animation *>& Animations() const;
+    
+    // Construct a model object from a model file
+    static Model* LoadFromJsonFile(const std::string& directory, const std::string& name, TextureCache &_textureCache);
+    static Model* LoadFromCompressedJsonFile(const std::string& directory, const std::string& name, TextureCache &_textureCache);
 };
 
 #endif

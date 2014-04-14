@@ -68,6 +68,15 @@ public:
      * @return reference to transform
      */
     Transform& GetTransform();
+    
+    /**
+     * Get a pointer to the model this instance uses
+     * @return pointer to model object
+     */
+    const Model* GetModel() const;
+    
+    Node* Skeleton();
+    const Node* Skeleton() const;
 };
 
 #endif

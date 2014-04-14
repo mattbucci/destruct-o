@@ -79,7 +79,7 @@ int main (int argc, char** argv)
         std::cerr << "Unable to write to file: " << destination << std::endl;
         return 1;
     }
-    std::cout << "--> " << source << " wrote (" << data_result.size() << " bytes)" << std::endl;
+    std::cout << "--> " << destination << " wrote (" << data_result.size() << " bytes)" << std::endl;
     
     // Return success
     return 0;

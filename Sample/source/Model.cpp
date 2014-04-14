@@ -17,20 +17,7 @@
 #include "stdafx.h"
 #include "Model.h"
 #include "OS.h"
-
-#include <fstream>
-
-
-// print out matrix by rows
-void printMat(glm::mat4  mat){
-  int i,j;
-  for (j=0; j<4; j++){
-    for (i=0; i<4; i++){
-    std::cout << mat[i][j] << " ";
-  }
-  std::cout << std::endl;
- }
-}
+#include "lodepng.h"
 
 // Create an empty model for population manually
 Model::Model(TextureCache &_textureCache)
@@ -40,25 +27,9 @@ Model::Model(TextureCache &_textureCache)
 }
 
 // Create a model by deserializing it from Json
-Model::Model(const std::string& directory, const std::string& name, TextureCache &_textureCache)
+Model::Model(const Json::Value& root, const std::string& directory, TextureCache &_textureCache)
     : meshes(0, NULL), skeleton(new Node()), textureCache(_textureCache), previousProgram(NULL), uploaded(false)
 {
-    // Open the Json file for reading
-    std::string filename = directory + "/" + name;
-    std::ifstream document;
-    document.open(filename);
-    
-    // Create a json parser for this file
-    Json::Reader reader;
-    Json::Value  root;
-    
-    // Read the model file
-    if(!reader.parse(document, root))
-    {
-        std::cerr << "Error parsing " << filename << std::endl;
-        throw std::exception();
-    }
-    
     // Load animations
     loadAnimations(root);
     
@@ -387,6 +358,13 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         return;
     }
     
+    // Calculate the global inverse transform of the mesh (for internal scaling purposes)
+    glm::mat4 globalInverseTransform = glm::inverse(_skeleton.LocalTransform().TransformMatrix());
+    
+    // Offset the render by the global inverse transform
+    program->Model.PushMatrix();
+    program->Model.SetMatrix(_skeleton.LocalTransform().TransformMatrix());
+    
     // Iterate through all the renderables
     for(std::vector<Model::MeshPartRenderData *>::iterator renderable = renderables.begin(); renderable != renderables.end(); renderable++)
     {
@@ -471,7 +449,7 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
             const Node *node = _skeleton.FindNode((*bone)->id);
             
             // Calculate the final bone transform
-            glm::mat4 finalTransform = node->TransformMatrix() * (*bone)->inverseTransformMatrix;
+            glm::mat4 finalTransform = globalInverseTransform * node->TransformMatrix() * (*bone)->inverseTransformMatrix;
             
             // Upload the bone to the shader
             glUniformMatrix4fv(program->UniformBones(boneIdx), 1, GL_FALSE, (const GLfloat *) &finalTransform);
@@ -480,6 +458,9 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         // Finally, we can draw the god damn mesh
         glDrawElements(GL_TRIANGLES, (*renderable)->meshpart->indices.size(), GL_UNSIGNED_INT, NULL);
     }
+    
+    // Undo the transform
+    program->Model.PopMatrix();
     
     // Store the previous program
     previousProgram = program;
@@ -535,4 +516,90 @@ Model::MeshPartRenderData::~MeshPartRenderData()
     {
         delete *bIt;
     }
+}
+
+
+// Load a model from a Json file
+Model* Model::LoadFromJsonFile(const std::string &directory, const std::string &name, TextureCache &_textureCache)
+{
+    // Compute filename
+    std::string filename = directory + "/" + name;
+    
+    // Load the compressed data from disk
+    std::vector<unsigned char> buffer;
+    lodepng::load_file(buffer, filename);
+    
+    // If the loading of the file failed, error out
+    if(buffer.size() == 0)
+    {
+        throw new std::runtime_error("Model* Model::LoadFromJsonFile() - Failed to load: " + filename);
+    }
+    
+    // Calculate buffer pointers for json decode
+    const char *pBegin = (const char *) buffer.data();
+    const char *pEnd = (const char *) (buffer.data() + buffer.size());
+    
+    // Create a json parser for this file
+    Json::Reader reader;
+    Json::Value  root;
+    
+    // Read the model file
+    if(!reader.parse(pBegin, pEnd, root))
+    {
+        throw new std::runtime_error("Model* Model::LoadFromJsonFile() - Parsing failed for: " + filename);
+    }
+    
+    // Return an allocated model
+    return new Model(root, directory, _textureCache);
+}
+
+// Load a model from a compressed Json file
+Model* Model::LoadFromCompressedJsonFile(const std::string &directory, const std::string &name, TextureCache &_textureCache)
+{
+    // Compute filename
+    std::string filename = directory + "/" + name;
+    
+    // Load the compressed data from disk
+    std::vector<unsigned char> compressedData;
+    lodepng::load_file(compressedData, filename);
+    
+    // If the loading of the file failed, error out
+    if(compressedData.size() == 0)
+    {
+        throw new std::runtime_error("Model* Model::LoadFromCompressedJsonFile() - Failed to load: " + filename);
+    }
+    
+    // Decompress this data (since we are dealing with large file, use the least amount of copies as possible
+    unsigned char *buffer = 0;
+    size_t buffersize = 0;
+    unsigned error = lodepng_zlib_decompress(&buffer, &buffersize, compressedData.data(), compressedData.size(), &lodepng_default_decompress_settings);
+    
+    // If the decompression was not successful, error out
+    if(!buffer || error)
+    {
+        throw new std::runtime_error("Model* Model::LoadFromCompressedJsonFile() - decompression of mesh failed");
+    }
+    
+    // Calculate buffer pointers for json decode
+    const char *pBegin = (const char *) buffer;
+    const char *pEnd = (const char *) (buffer + buffersize);
+    
+    // Create a json parser for this file
+    Json::Reader reader;
+    Json::Value  root;
+    
+    // Read the model file
+    if(!reader.parse(pBegin, pEnd, root))
+    {
+        throw new std::runtime_error("Model* Model::LoadFromCompressedJsonFile() - Parsing failed for: " + filename);
+    }
+    
+    // Create the model object
+    Model *model = new Model(root, directory, _textureCache);
+    
+    // Release the zlib decompression buffer
+    free(buffer);
+    
+    // Return an allocated model
+    return model;
 }

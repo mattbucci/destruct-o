@@ -4,8 +4,9 @@
 #include "ShaderGroup.h"
 #include "OS.h"
 
-GameSystem::GameSystem(ShaderGroup * shaders) {
-	this->shaders = shaders;
+GameSystem::GameSystem(ShaderGroup * _shaders)
+    : shaders(_shaders)
+{
 	nextFrameTime = 0;
 	fps = 40;
 }

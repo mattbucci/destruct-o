@@ -23,6 +23,7 @@
 
 #include "Model.h"
 #include "ModelInstance.h"
+#include "ModelGroup.h"
 
 class ActorPlayer;
 class ParticleSystem;
@@ -37,6 +38,7 @@ class BaseFrame : public GameSystem, public Savable {
 	Notification * notification;
 	PauseWindow * pauseWindow;
     Achievements * achievements;
+    ModelGroup * models;
 
 	//Setup all the global values for shaders
 	//Sets up, acid shader and fog
@@ -73,7 +75,7 @@ public:
 	PhysicsSystem Physics;
 	ParticleCloud Particles;
     
-    Model *model[4];
+    // Model instances to draw for the demo
     std::vector<ModelInstance *> modelInstances;
 
 	//for notes on Build() see GameSystem::Build()
@@ -100,6 +102,9 @@ public:
 
 	//Draw happens whenever possible
 	void Draw(double width, double height) override;
+    
+    // Model group accessor
+    ModelGroup* Models();
 
 	//Define how the base frame saves
 	CLASS_DECLARATION(BaseFrame)

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Frames.h"
 #include "GameSystem.h"
-#include "ShaderGroup.h"
+
 //Frames
 #include "BaseFrame.h"
 #include <thread>
@@ -20,13 +20,11 @@ void Frames::BuildSystemList() {
 	//The shader group builds the shaders now
 	//so it can only be built when the opengl context is ready
 	shaders = new ShaderGroup();
+    
 	cout << "Building systems list...";
 
 	//Build each frame
 	systems[FRAME_MAINMENU] = new BaseFrame(shaders);
-
-
-
 
 	//Set initial frame  
 	SetSystem(FRAME_MAINMENU);

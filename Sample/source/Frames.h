@@ -18,7 +18,7 @@ class Frames {
 	//Deferred loading is not completed by default
 	static bool loadingComplete;
 	static ShaderGroup * shaders;
-
+    
 	//Build the initial system list. Should be called by main()
 	//Also starts deferred loading of the systems
 	//check for when loadingComplete is true

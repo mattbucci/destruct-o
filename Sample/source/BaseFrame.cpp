@@ -23,7 +23,9 @@
 #include "Demo.h"
 #include "Building.h"
 
-BaseFrame::BaseFrame(ShaderGroup * shaders) : GameSystem(shaders), Physics(&Voxels) {
+BaseFrame::BaseFrame(ShaderGroup * shaders)
+    : GameSystem(shaders), Physics(&Voxels)
+{
 	cout << "\t Constructing base frame\n";
 		
 	// Create the first person controller depending on the current platform
@@ -137,11 +139,9 @@ void BaseFrame::OnFrameFocus() {
 
 void BaseFrame::Build()
 {
-    // Load some models
+    // Load the model group from the manifest
     cout << "Loading models\n";
-    model[0] = new Model("meshes/robot02", "robot02_low.mesh.json", Textures);
-    //model[1] = new Model("meshes/scifi_soldier01", "scifi_soldier01.mesh.json", Textures);
-    //model[2] = new Model("meshes/scifi_soldier02", "scifi_soldier02.mesh.json", Textures);
+    models = new ModelGroup("meshes/manifest.json", Textures);
     
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
@@ -275,4 +275,9 @@ void BaseFrame::Draw(double width, double height)
 
 void BaseFrame::PushNotification(string txt) {
 	notification->notify(txt);
+}
+
+ModelGroup* BaseFrame::Models() 
+{
+    return models;
 }

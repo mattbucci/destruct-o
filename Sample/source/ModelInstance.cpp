@@ -181,3 +181,18 @@ Transform& ModelInstance::GetTransform()
     return transform;
 }
 
+const Model* ModelInstance::GetModel() const
+{
+    return model;
+}
+
+Node* ModelInstance::Skeleton()
+{
+    return skeleton;
+}
+
+const Node* ModelInstance::Skeleton() const
+{
+    return skeleton;
+}
+
