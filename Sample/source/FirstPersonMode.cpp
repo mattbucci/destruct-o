@@ -116,13 +116,12 @@ void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> inpu
 			}
 		}
 	}
-	if(pressedKeys.find('p') == pressedKeys.end()) {
-		firedOnce = false;
-	}
-
 	else if (pressedKeys.find(SDLK_LCTRL) != pressedKeys.end()) {
 		debug_target_height -= .1f;
 		cout << "target_height:" << debug_target_height << endl;
+	}
+	if(pressedKeys.find('p') == pressedKeys.end()) {
+		firedOnce = false;
 	}
 	//DEBUGGING}
 
