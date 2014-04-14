@@ -55,6 +55,7 @@ public:
     
     // Get the name of the node
     std::string& Id();
+    const std::string& Id() const;
     
     // Get a reference to the internal transformation matrix
     const glm::mat4& TransformMatrix() const;

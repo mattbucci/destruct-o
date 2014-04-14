@@ -20,6 +20,18 @@
 
 #include <fstream>
 
+
+// print out matrix by rows
+void printMat(glm::mat4  mat){
+  int i,j;
+  for (j=0; j<4; j++){
+    for (i=0; i<4; i++){
+    std::cout << mat[i][j] << " ";
+  }
+  std::cout << std::endl;
+ }
+}
+
 // Create an empty model for population manually
 Model::Model(TextureCache &_textureCache)
     : meshes(0, NULL), skeleton(new Node()), textureCache(_textureCache), previousProgram(NULL), uploaded(false)
@@ -462,6 +474,8 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
             glm::mat4 finalTransform = node->TransformMatrix() * (*bone)->inverseTransformMatrix;
             
             // Upload the bone to the shader
+            std::cout << "node(" << node->Id() << ") * bone(" << (*bone)->id << ") = " << std::endl;
+            printMat(finalTransform);
             glUniformMatrix4fv(program->UniformBones() + (boneIdx*4), 1, GL_FALSE, (const GLfloat *) &finalTransform);
         }
         

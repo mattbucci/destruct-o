@@ -89,6 +89,11 @@ std::string& Node::Id()
     return id;
 }
 
+const std::string& Node::Id() const
+{
+    return id;
+}
+
 const glm::mat4& Node::TransformMatrix() const
 {
     return globalTransformMatrix;
