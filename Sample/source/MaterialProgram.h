@@ -29,7 +29,7 @@ class MaterialProgram : public GL3DProgram
     GLint attributeTextures[2];
     
     // The uniform for the bones
-    GLint uniformBones;
+    GLint uniformBones[20];
     
     // The texture maps
     GLint uniformTextures[4];
@@ -44,7 +44,7 @@ public:
     const GLint AttributeTexture(int idx);
     
     // Get the uniform for the skeleton
-    const GLint UniformBones();
+    const GLint UniformBones(int idx);
     
     // Get the uniform for the texture samplers
     const GLint UniformTexture(Material::TextureType idx);

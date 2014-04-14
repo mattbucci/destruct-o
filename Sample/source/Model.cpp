@@ -476,7 +476,7 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
             // Upload the bone to the shader
             //std::cout << "node(" << node->Id() << ") * bone(" << (*bone)->id << ") = " << std::endl;
             //printMat(finalTransform);
-            glUniformMatrix4fv(program->UniformBones() + (boneIdx*4), 1, GL_FALSE, (const GLfloat *) &finalTransform);
+            glUniformMatrix4fv(program->UniformBones(boneIdx), 1, GL_FALSE, (const GLfloat *) &finalTransform);
         }
         
         // Finally, we can draw the god damn mesh

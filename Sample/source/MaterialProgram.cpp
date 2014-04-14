@@ -16,10 +16,11 @@
 
 #include "stdafx.h"
 #include "MaterialProgram.h"
+#include <sstream>
 
 // Get the mesh related shader properties
 MaterialProgram::MaterialProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath)
-    : GL3DProgram(commonShader, vertexShaderPath, fragmentShaderPath), uniformBones(glGetUniformLocation(programId, "bones"))
+    : GL3DProgram(commonShader, vertexShaderPath, fragmentShaderPath)
 {
     attributeBoneWeights[0] = glGetAttribLocation(programId, "boneWeight0");
     attributeBoneWeights[1] = glGetAttribLocation(programId, "boneWeight1");
@@ -33,6 +34,13 @@ MaterialProgram::MaterialProgram(GLCommonShaderFile * commonShader, string verte
     uniformTextures[Material::kTextureTypeSpecular] = glGetUniformLocation(programId, "specular");
     uniformTextures[Material::kTextureTypeBump]     = glGetUniformLocation(programId, "bump");
     
+    for(int i = 0; i < 20; i++)
+    {
+        std::ostringstream b;
+        b << "bones[" << i << "]" << std::ends;
+        uniformBones[i] = glGetUniformLocation(programId, b.str().c_str());
+    }
+    
     std::cout << "---- Material Program Init Log ----" << std::endl;
     std::cout << "Attribute Vertex: " << AttributeVertex() << std::endl;
     std::cout << "Attribute Normal: " << AttributeNormal() << std::endl;
@@ -42,7 +50,10 @@ MaterialProgram::MaterialProgram(GLCommonShaderFile * commonShader, string verte
     std::cout << "Attribute BoneW1: " << attributeBoneWeights[1] << std::endl;
     std::cout << "Attribute BoneW2: " << attributeBoneWeights[2] << std::endl;
     std::cout << "Attribute BoneW3: " << attributeBoneWeights[3] << std::endl;
-    std::cout << "Uniform   Bones : " << uniformBones << std::endl;
+    for(int i = 0; i < 20; i++)
+    {
+        std::cout << "Uniform Bone[" << i << "]: " << uniformBones[i] << std::endl;
+    }
     std::cout << "-----------------------------------" << std::endl;
 }
 
@@ -56,9 +67,9 @@ const GLint MaterialProgram::AttributeTexture(int idx)
     return attributeTextures[idx];
 }
 
-const GLint MaterialProgram::UniformBones()
+const GLint MaterialProgram::UniformBones(int idx)
 {
-    return uniformBones;
+    return uniformBones[idx];
 }
 
 const GLint MaterialProgram::UniformTexture(Material::TextureType idx)
