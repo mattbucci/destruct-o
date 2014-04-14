@@ -474,8 +474,6 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
             glm::mat4 finalTransform = node->TransformMatrix() * (*bone)->inverseTransformMatrix;
             
             // Upload the bone to the shader
-            //std::cout << "node(" << node->Id() << ") * bone(" << (*bone)->id << ") = " << std::endl;
-            //printMat(finalTransform);
             glUniformMatrix4fv(program->UniformBones(boneIdx), 1, GL_FALSE, (const GLfloat *) &finalTransform);
         }
         
