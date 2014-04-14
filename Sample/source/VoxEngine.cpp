@@ -123,6 +123,10 @@ void VoxEngine::Start() {
 
 	//Attempt to enable vsync (fails on mobile)
 	SDL_GL_SetSwapInterval(1);
+	if(SDL_SetRelativeMouseMode(SDL_TRUE) < 0)
+	{
+	    std::cout << "No mouse relative mode" << std::endl;
+	}
 	
 	/* Print information about attached joysticks (actually works on iOS WOOHOO)*/
 	printf("There are %d joystick(s) attached\n", SDL_NumJoysticks());

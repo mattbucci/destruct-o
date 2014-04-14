@@ -32,6 +32,18 @@ MaterialProgram::MaterialProgram(GLCommonShaderFile * commonShader, string verte
     uniformTextures[Material::kTextureTypeNormal]   = glGetUniformLocation(programId, "normal");
     uniformTextures[Material::kTextureTypeSpecular] = glGetUniformLocation(programId, "specular");
     uniformTextures[Material::kTextureTypeBump]     = glGetUniformLocation(programId, "bump");
+    
+    std::cout << "---- Material Program Init Log ----" << std::endl;
+    std::cout << "Attribute Vertex: " << AttributeVertex() << std::endl;
+    std::cout << "Attribute Normal: " << AttributeNormal() << std::endl;
+    std::cout << "Attribute TexCd0: " << attributeTextures[0] << std::endl;
+    std::cout << "Attribute TexCd1: " << attributeTextures[1] << std::endl;
+    std::cout << "Attribute BoneW0: " << attributeBoneWeights[0] << std::endl;
+    std::cout << "Attribute BoneW1: " << attributeBoneWeights[1] << std::endl;
+    std::cout << "Attribute BoneW2: " << attributeBoneWeights[2] << std::endl;
+    std::cout << "Attribute BoneW3: " << attributeBoneWeights[3] << std::endl;
+    std::cout << "Uniform   Bones : " << uniformBones << std::endl;
+    std::cout << "-----------------------------------" << std::endl;
 }
 
 const GLint MaterialProgram::AttributeBoneWeight(int idx)

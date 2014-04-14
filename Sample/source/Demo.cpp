@@ -318,7 +318,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
                 //instance->PlayAnimation(anim->first);
                 
                 // Play shooting animation
-                //instance->PlayAnimation("spraying_shoot");
+                instance->PlayAnimation("spraying_shoot");
                 //instance->PlayAnimation("walking");
                 //instance->PlayAnimation("walkAndLook");
                 
