@@ -19,14 +19,14 @@
 
 // Create an empty animation
 Animation::Animation()
-    : id(""), length(-INFINITY)
+    : id(""), length(std::numeric_limits<float>::min())
 {
     
 }
 
 // Create the animation object from json
 Animation::Animation(const Json::Value& value)
-    : length(-INFINITY)
+    : length(std::numeric_limits<float>::min())
 {
     // We first need to validate that this a Json object
     if(!value.isObject())
