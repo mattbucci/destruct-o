@@ -73,10 +73,8 @@ Model::~Model()
             glDeleteBuffers(1, &(*it)->indices);
         }
         
-        if(glIsVertexArray((*it)->attributes) == GL_TRUE)
-        {
-            glDeleteVertexArrays(1, &(*it)->attributes);
-        }
+		//Cleanup vertex arrays
+        glDeleteVertexArrays(1, &(*it)->attributes);
         
         // Delete the object itself
         delete *it;
