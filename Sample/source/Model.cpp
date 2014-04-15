@@ -72,12 +72,11 @@ Model::~Model()
         {
             glDeleteBuffers(1, &(*it)->indices);
         }
-#if !(defined __ANDROID__)
+        
         if(glIsVertexArray((*it)->attributes) == GL_TRUE)
         {
             glDeleteVertexArrays(1, &(*it)->attributes);
         }
-#endif
         
         // Delete the object itself
         delete *it;
@@ -303,10 +302,9 @@ void Model::Upload()
     // Upload the mesh part data
     for(std::vector<MeshPartRenderData *>::iterator it = renderables.begin(); it != renderables.end(); it++)
     {
-#if !(defined __ANDROID__)
         // Create the vertex array object for this renderable
         glGenVertexArrays(1, &(*it)->attributes);
-#endif
+
         // Create the vertex buffer for the indices
         glGenBuffers(1, &(*it)->indices);
         
@@ -368,15 +366,13 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
     // Iterate through all the renderables
     for(std::vector<Model::MeshPartRenderData *>::iterator renderable = renderables.begin(); renderable != renderables.end(); renderable++)
     {
-// Android does not support vertex array objects, therefore, we always have to push shader data for draw.  sadness
-#if !(defined __ANDROID__)
         // Bind the vertex array object
         glBindVertexArray((*renderable)->attributes);
         
         // Update the program attributes if the shader has changed
         if(previousProgram != program)
         {
-#endif
+
             // Bind the vertex buffer of the mesh
             glBindBuffer(GL_ARRAY_BUFFER, buffers[(*renderable)->meshpart->mesh]);
             
@@ -411,19 +407,21 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
                         //throw new std::runtime_error("void Model::Draw(const GLMeshProgram *program) - Unrecognized shader attribute");
                         //break;
                 }
-#if !(defined __ANDROID__)
+                
+                // If something goes wrong, skip it
+                if(programAttribute == -1) continue;
+                
                 // Enable the vertex array object entry for this attribute
                 glEnableVertexAttribArray(programAttribute);
-#endif
+
                 // Update the vertex attribute pointer
                 glVertexAttribPointer(programAttribute, (GLsizei) VertexAttributes::AttributeSize(attribute->attribute), GL_FLOAT, GL_FALSE, (GLsizei) (*renderable)->meshpart->mesh->Attributes().AttributeFrameSize() * sizeof(GLfloat), (GLvoid *)(attribute->offset * sizeof(GLfloat)));
             }
             
             // Bind the index buffer of the mesh part
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*renderable)->indices);
-#if !(defined __ANDROID__)
         }
-#endif
+
         // Bind the material's textures to some texturing units
         for(Material::const_texture_iterator tIt = (*renderable)->material->texturesBegin(); tIt != (*renderable)->material->texturesEnd(); tIt++)
         {
