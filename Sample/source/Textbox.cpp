@@ -6,10 +6,10 @@
 #include "GameSystem.h"
 
 Textbox::Textbox() : textboxFont("times.ttf",20), innerShape(4), selectionShape(4) {
-	selectionShape.vset(0) = innerShape.vset(0) = vec2(0,0);
-	selectionShape.vset(1) = innerShape.vset(1) = vec2(10,0);
-	selectionShape.vset(2) = innerShape.vset(2) = vec2(0,10);
-	selectionShape.vset(3) = innerShape.vset(3) = vec2(10,10);
+	selectionShape.vset(0,vec2(0,0)); innerShape.vset(0,vec2(0,0));
+	selectionShape.vset(1,vec2(10,0)); innerShape.vset(1,vec2(10,0));
+	selectionShape.vset(2,vec2(0,10)); innerShape.vset(2,vec2(0,10));
+	selectionShape.vset(3,vec2(10,10)); innerShape.vset(3,vec2(10,10));
 
 
 	backColor = vec4(.3,.3,.3,1);

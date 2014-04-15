@@ -5,14 +5,14 @@
 
 LoadingScreen::LoadingScreen() : GL2DVertexGroup(GL_TRIANGLE_STRIP,4) {
 	//Draw the classic square
-	vat(0) = vec2(0,0);
-	xat(0) = vec2(0,0);
-	vat(1) = vec2(0,200);
-	xat(1) = vec2(0,1);
-	vat(2) = vec2(200,0);
-	xat(2) = vec2(1,0);
-	vat(3) = vec2(200,200);	
-	xat(3) = vec2(1,1);
+	svat(0,vec2(0,0));
+	sxat(0,vec2(0,0));
+	svat(1,vec2(0,200));
+	sxat(1,vec2(0,1));
+	svat(2,vec2(200,0));
+	sxat(2,vec2(1,0));
+	svat(3,vec2(200,200));	
+	sxat(3,vec2(1,1));
 
 	//Load the texture
 	unsigned int textureWidth, textureHeight;

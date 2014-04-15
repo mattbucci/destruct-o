@@ -25,5 +25,5 @@ public:
 
 	virtual void Draw(GL2DProgram * shaders) override;
 
-	vec2 & vset(int i);
+	void vset(int i, vec2 v);
 };

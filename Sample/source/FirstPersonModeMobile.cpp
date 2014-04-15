@@ -33,26 +33,26 @@ FirstPersonModeMobile::FirstPersonModeMobile() : FirstPersonMode()
     // Push verticies and texcoords for joystick outline
     const float joystick_x = 150.f;
     const float joystick_y = 150.f;
-    joystickVertices->vat(0) = glm::vec2(-joystick_x/2, -joystick_y/2);
-    joystickVertices->vat(1) = glm::vec2(-joystick_x/2, joystick_y/2);
-    joystickVertices->vat(2) = glm::vec2(joystick_x/2, -joystick_y/2);
-    joystickVertices->vat(3) = glm::vec2(joystick_x/2, joystick_y/2);
-    joystickVertices->xat(0) = glm::vec2(0, 0);
-    joystickVertices->xat(1) = glm::vec2(0, 1);
-    joystickVertices->xat(2) = glm::vec2(1, 0);
-    joystickVertices->xat(3) = glm::vec2(1, 1);
+    joystickVertices->svat(0,vec2(-joystick_x/2, -joystick_y/2));
+    joystickVertices->svat(1,vec2(-joystick_x/2, joystick_y/2));
+    joystickVertices->svat(2,vec2(joystick_x/2, -joystick_y/2));
+    joystickVertices->svat(3,vec2(joystick_x/2, joystick_y/2));
+    joystickVertices->sxat(0,vec2(0, 0));
+    joystickVertices->sxat(1,vec2(0, 1));
+    joystickVertices->sxat(2,vec2(1, 0));
+    joystickVertices->sxat(3,vec2(1, 1));
     
     // Push vertices and texcoords for joystick outline
     const float joystickOutline_x = 250.f;
     const float joystickOutline_y = 250.f;
-    joystickOutlineVertices->vat(0) = glm::vec2(-joystickOutline_x/2, -joystickOutline_y/2);
-    joystickOutlineVertices->vat(1) = glm::vec2(-joystickOutline_x/2, joystickOutline_y/2);
-    joystickOutlineVertices->vat(2) = glm::vec2(joystickOutline_x/2, -joystickOutline_y/2);
-    joystickOutlineVertices->vat(3) = glm::vec2(joystickOutline_x/2, joystickOutline_y/2);
-    joystickOutlineVertices->xat(0) = glm::vec2(0, 0);
-    joystickOutlineVertices->xat(1) = glm::vec2(0, 1);
-    joystickOutlineVertices->xat(2) = glm::vec2(1, 0);
-    joystickOutlineVertices->xat(3) = glm::vec2(1, 1);
+    joystickOutlineVertices->svat(0,vec2(-joystickOutline_x/2, -joystickOutline_y/2));
+    joystickOutlineVertices->svat(1,vec2(-joystickOutline_x/2, joystickOutline_y/2));
+    joystickOutlineVertices->svat(2,vec2(joystickOutline_x/2, -joystickOutline_y/2));
+    joystickOutlineVertices->svat(3,vec2(joystickOutline_x/2, joystickOutline_y/2));
+    joystickOutlineVertices->sxat(0,vec2(0, 0));
+    joystickOutlineVertices->sxat(1,vec2(0, 1));
+    joystickOutlineVertices->sxat(2,vec2(1, 0));
+    joystickOutlineVertices->sxat(3,vec2(1, 1));
     
     // Load textures from disk
 	unsigned int textureWidth, textureHeight;

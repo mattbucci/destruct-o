@@ -18,6 +18,7 @@ GL2DVertexGroup::GL2DVertexGroup(GLenum gltype, int vertexCount) {
 	if (vertexCount == 0)
 		return;
 
+	dirty = true;
 
 	//Generate the opengl buffers representing this vertex group
 	//will also need a buffer for textures in the future
@@ -63,14 +64,26 @@ GL2DVertexGroup::~GL2DVertexGroup() {
 }
 	
 //For modifying vertices
-vec2 & GL2DVertexGroup::vat(const int index) {
+void GL2DVertexGroup::svat(const int index, vec2 vertex) {
+	if (dirty || vertices[index] != vertex) {
+		dirty = true;
+		vertices[index] = vertex;
+	}
+}
+
+void GL2DVertexGroup::sxat(const int index, vec2 textureCoordinate) {
+	if (dirty || vertexTextureCoords[index] != textureCoordinate) {
+		dirty = true;
+		vertexTextureCoords[index] = textureCoordinate;
+	}
+}
+
+vec2 GL2DVertexGroup::svat(const int index) {
 	return vertices[index];
 }
-
-vec2 & GL2DVertexGroup::xat(const int index) {
+vec2 GL2DVertexGroup::sxat(const int index) {
 	return vertexTextureCoords[index];
 }
-
 
 void GL2DVertexGroup::Draw(GL2DProgram * shader) {
 	_ASSERTE(vertexBuffer >= 0);
@@ -84,18 +97,25 @@ void GL2DVertexGroup::Draw(GL2DProgram * shader) {
 	//Rebind the array to bring them into the current context
 	glBindVertexArray ( vertexArray );
 
-	 //positions
-	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
-	glBufferSubData ( GL_ARRAY_BUFFER, 0, vertexCount*sizeof(vec2), vertices );
-	glEnableVertexAttribArray ( shader->AttributePosition() );
-	glVertexAttribPointer ( shader->AttributePosition(), 2, GL_FLOAT, GL_FALSE, 0, 0 );
+	if (dirty) {
+		dirty = false;
+		 //positions
+		glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
+		glBufferSubData ( GL_ARRAY_BUFFER, 0, vertexCount*sizeof(vec2), vertices );
+		glEnableVertexAttribArray ( shader->AttributePosition() );
+		glVertexAttribPointer ( shader->AttributePosition(), 2, GL_FLOAT, GL_FALSE, 0, 0 );
 
 
-	// texture coordinates
-	glBindBuffer ( GL_ARRAY_BUFFER, textureBuffer ); 
-	glBufferSubData ( GL_ARRAY_BUFFER, 0, vertexCount*sizeof(vec2), vertexTextureCoords );
-	glEnableVertexAttribArray ( shader->AttributeTexture() );
-	glVertexAttribPointer ( shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, 0, 0 );
+		// texture coordinates
+		glBindBuffer ( GL_ARRAY_BUFFER, textureBuffer ); 
+		glBufferSubData ( GL_ARRAY_BUFFER, 0, vertexCount*sizeof(vec2), vertexTextureCoords );
+		glEnableVertexAttribArray ( shader->AttributeTexture() );
+		glVertexAttribPointer ( shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, 0, 0 );
+	}
+	else {
+		//Nothing necessary?
+	}
+
 
 	glDrawArrays( gltype, 0, vertexCount );
 }

@@ -271,10 +271,10 @@ void Control::drawBackground(GL2DProgram * shaders) {
 	//Adjust vertices for the background
 	if (ninePatchToDraw == NULL) {
 		//Draw the classic square
-		vat(0) = vec2(0,0);
-		vat(1) = vec2(0,calculatedPosition.Height);
-		vat(2) = vec2(calculatedPosition.Width,0);
-		vat(3) = vec2(calculatedPosition.Width,calculatedPosition.Height);	
+		svat(0,vec2(0,0));
+		svat(1,vec2(0,calculatedPosition.Height));
+		svat(2,vec2(calculatedPosition.Width,0));
+		svat(3,vec2(calculatedPosition.Width,calculatedPosition.Height));	
 		//Enable pure-color no texture
 		shaders->SetColor(color);
 		shaders->EnableTexture(false);
@@ -296,28 +296,28 @@ void Control::drawBackground(GL2DProgram * shaders) {
 		//BN DL FJ H 
 		//O  MQ KS IU
 		//P  R  T  V
-		vat(0) = vec2(0,0);
-		vat(1) = vec2(0,n->MTop());
-		vat(2) = vec2(n->MLeft(),0);
-		vat(3) = vec2(n->MLeft(),n->MTop());
-		vat(4) = vec2(n->MLeft()+scaledWidth,0);
-		vat(5) = vec2(n->MLeft()+scaledWidth,n->MTop());
-		vat(6) = vec2(position.Width,0);
-		vat(7) = vec2(position.Width,n->MTop());
-		vat(8) = vec2(position.Width,n->MTop()+scaledHeight);
-		vat(9) = vat(5);
-		vat(10) = vec2(n->MLeft()+scaledWidth,n->MTop()+scaledHeight);
-		vat(11) = vat(3);
-		vat(12) = vec2(n->MLeft(),n->MTop()+scaledHeight);
-		vat(13) = vat(1);
-		vat(14) = vec2(0,n->MTop()+scaledHeight);
-		vat(15) = vec2(0,position.Height);
-		vat(16) = vat(12);
-		vat(17) = vec2(n->MLeft(),position.Height);
-		vat(18) = vat(10);
-		vat(19) = vec2(n->MLeft()+scaledWidth,position.Height);
-		vat(20) = vat(8);
-		vat(21) = vec2(position.Width,position.Height);
+		svat(0,vec2(0,0));
+		svat(1,vec2(0,n->MTop()));
+		svat(2,vec2(n->MLeft(),0));
+		svat(3,vec2(n->MLeft(),n->MTop()));
+		svat(4,vec2(n->MLeft()+scaledWidth,0));
+		svat(5,vec2(n->MLeft()+scaledWidth,n->MTop()));
+		svat(6,vec2(position.Width,0));
+		svat(7,vec2(position.Width,n->MTop()));
+		svat(8,vec2(position.Width,n->MTop()+scaledHeight));
+		svat(9,svat(5));
+		svat(10,vec2(n->MLeft()+scaledWidth,n->MTop()+scaledHeight));
+		svat(11,svat(3));
+		svat(12,vec2(n->MLeft(),n->MTop()+scaledHeight));
+		svat(13,svat(1));
+		svat(14,vec2(0,n->MTop()+scaledHeight));
+		svat(15,vec2(0,position.Height));
+		svat(16,svat(12));
+		svat(17,vec2(n->MLeft(),position.Height));
+		svat(18,svat(10));
+		svat(19,vec2(n->MLeft()+scaledWidth,position.Height));
+		svat(20,svat(8));
+		svat(21,vec2(position.Width,position.Height));
 		//Whew that was a nightmare
 		shaders->SetColor(vec4(1,1,1,1));
 		//Set the nine patch texture
@@ -402,5 +402,5 @@ void Control::useNinePatch(NinePatchBinary * ninePatch) {
 	vector<vec2> ninePatchCoordinates = ninePatch->GetTextureCoordinates();
 	//Copy the texture coordinates now
 	for (int i = 0; i < 22; i++)
-		xat(i) = ninePatchCoordinates[i];
+		sxat(i,ninePatchCoordinates[i]);
 }

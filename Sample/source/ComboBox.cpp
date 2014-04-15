@@ -117,13 +117,13 @@ ComboBox::ComboBox(Rect size) :
 	selected.vPin = Control::CENTER;
 
 	triangle.color = vec4(0,0,0,1);
-	triangle.vset(0) = vec2(10,0);
-	triangle.vset(1) = vec2(20,20);
-	triangle.vset(2) = vec2(0,20);
-	hoverHighlight.vset(0) = vec2(0,0);
-	hoverHighlight.vset(1) = vec2(10,0);
-	hoverHighlight.vset(2) = vec2(0,10);
-	hoverHighlight.vset(3) = vec2(10,10);
+	triangle.vset(0,vec2(10,0));
+	triangle.vset(1,vec2(20,20));
+	triangle.vset(2,vec2(0,20));
+	hoverHighlight.vset(0,vec2(0,0));
+	hoverHighlight.vset(1,vec2(10,0));
+	hoverHighlight.vset(2,vec2(0,10));
+	hoverHighlight.vset(3,vec2(10,10));
 
 	triangle.hPin = Control::MAX;
 	triangle.vPin = Control::CENTER;

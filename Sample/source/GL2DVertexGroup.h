@@ -19,6 +19,9 @@ class GL2DVertexGroup {
 
 	vec2 * vertices;
 	vec2 * vertexTextureCoords;
+
+	//whether or not buffers need to be reuploaded
+	bool dirty;
 public:
 	GL2DVertexGroup(GLenum gltype, int vertexCount);
 
@@ -27,10 +30,14 @@ public:
 	//Resize the vertex group
 	void ResizeVertexGroup(int newSize);
 	
+	//For retrieving vertices
+	vec2 svat(const int index);
+	vec2 sxat(const int index);
+
 	//For modifying vertices
-	vec2 & vat(const int index);
+	void svat(const int index, vec2 vertex);
 	//For modifying textures
-	vec2 & xat(const int index);
+	void sxat(const int index, vec2 textureCoordinate);
 
 	//void Bind(mat4 transformation);
 	void Draw(GL2DProgram * shader);

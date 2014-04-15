@@ -18,23 +18,23 @@ void Shape::recalculatePosition() {
 
 void Shape::SetToSquare(void) {
 	_ASSERTE(vertexCount == 4);
-	vat(0) = vec2(0,0);
-	vat(1) = vec2(1,0);
-	vat(2) = vec2(0,1);
-	vat(3) = vec2(1,1);
+	svat(0,vec2(0,0));
+	svat(1,vec2(1,0));
+	svat(2,vec2(0,1));
+	svat(3,vec2(1,1));
 }
 
 void Shape::SetToUpTriangle(void) {
 	_ASSERTE(vertexCount == 3);
-	vset(0) = vec2(10,0);
-	vset(1) = vec2(20,20);
-	vset(2) = vec2(0,20);
+	svat(0,vec2(10,0));
+	svat(1,vec2(20,20));
+	svat(2,vec2(0,20));
 }
 void Shape::SetToDownTriangle(void) {
 	_ASSERTE(vertexCount == 3);
-	vset(0) = vec2(10,20);
-	vset(1) = vec2(20,0);
-	vset(2) = vec2(0,0);
+	svat(0,vec2(10,20));
+	svat(1,vec2(20,0));
+	svat(2,vec2(0,0));
 }
 
 void Shape::OverrideCalculatedSize(Rect newSize) {
@@ -49,10 +49,10 @@ void Shape::Draw(GL2DProgram * shaders) {
 	float yMax = -1000;
 	//calculate limits
 	for (int i = 0; i < vertexCount; i++) {
-		xMin = min(xMin,vat(i).x);
-		xMax = max(xMax,vat(i).x);
-		yMin = min(yMin,vat(i).y);
-		yMax = max(yMax,vat(i).y);
+		xMin = min(xMin,svat(i).x);
+		xMax = max(xMax,svat(i).x);
+		yMin = min(yMin,svat(i).y);
+		yMax = max(yMax,svat(i).y);
 	}
 
 	//Enable pure-color no texture
@@ -70,6 +70,6 @@ void Shape::Draw(GL2DProgram * shaders) {
 	shaders->Model.PopMatrix();
 }
 
-vec2 & Shape::vset(int i) {
-	return vat(i);
+void Shape::vset(int i, vec2 v) {
+	svat(i,v);
 }
