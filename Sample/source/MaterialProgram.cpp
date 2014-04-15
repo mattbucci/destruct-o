@@ -41,20 +41,20 @@ MaterialProgram::MaterialProgram(GLCommonShaderFile * commonShader, string verte
         uniformBones[i] = glGetUniformLocation(programId, b.str().c_str());
     }
     
-    /*std::cout << "---- Material Program Init Log ----" << std::endl;
-    std::cout << "Attribute Vertex: " << AttributeVertex() << std::endl;
-    std::cout << "Attribute Normal: " << AttributeNormal() << std::endl;
-    std::cout << "Attribute TexCd0: " << attributeTextures[0] << std::endl;
-    std::cout << "Attribute TexCd1: " << attributeTextures[1] << std::endl;
-    std::cout << "Attribute BoneW0: " << attributeBoneWeights[0] << std::endl;
-    std::cout << "Attribute BoneW1: " << attributeBoneWeights[1] << std::endl;
-    std::cout << "Attribute BoneW2: " << attributeBoneWeights[2] << std::endl;
-    std::cout << "Attribute BoneW3: " << attributeBoneWeights[3] << std::endl;
+    /*cout << "---- Material Program Init Log ----" << endl;
+    cout << "Attribute Vertex: " << AttributeVertex() << endl;
+    cout << "Attribute Normal: " << AttributeNormal() << endl;
+    cout << "Attribute TexCd0: " << attributeTextures[0] << endl;
+    cout << "Attribute TexCd1: " << attributeTextures[1] << endl;
+    cout << "Attribute BoneW0: " << attributeBoneWeights[0] << endl;
+    cout << "Attribute BoneW1: " << attributeBoneWeights[1] << endl;
+    cout << "Attribute BoneW2: " << attributeBoneWeights[2] << endl;
+    cout << "Attribute BoneW3: " << attributeBoneWeights[3] << endl;
     for(int i = 0; i < 20; i++)
     {
-        std::cout << "Uniform Bone[" << i << "]: " << uniformBones[i] << std::endl;
+        cout << "Uniform Bone[" << i << "]: " << uniformBones[i] << endl;
     }
-    std::cout << "-----------------------------------" << std::endl;*/
+    cout << "-----------------------------------" << endl;*/
 }
 
 const GLint MaterialProgram::AttributeBoneWeight(int idx)

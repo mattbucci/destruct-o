@@ -125,7 +125,7 @@ void VoxEngine::Start() {
 	SDL_GL_SetSwapInterval(1);
 	if(SDL_SetRelativeMouseMode(SDL_TRUE) < 0)
 	{
-	    std::cout << "No mouse relative mode" << std::endl;
+	    cout << "No mouse relative mode" << endl;
 	}
 	
 	/* Print information about attached joysticks (actually works on iOS WOOHOO)*/

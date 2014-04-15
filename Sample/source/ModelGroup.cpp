@@ -99,7 +99,7 @@ void ModelGroup::AddModel(std::string& directory, std::string& path, std::string
     double s = OS::Now();
     models[name] = Model::LoadFromJsonFile(directory, path, textureCache);
     double f = OS::Now() - s;
-    std::cout << "Loaded: " << path << " (in " << f << " seconds) ==> " << name << std::endl;
+    cout << "Loaded: " << path << " (in " << f << " seconds) ==> " << name << endl;
 }
 
 void ModelGroup::AddCompressedModel(std::string& directory, std::string& path, std::string& name)
@@ -108,7 +108,7 @@ void ModelGroup::AddCompressedModel(std::string& directory, std::string& path, s
     double s = OS::Now();
     models[name] = Model::LoadFromCompressedJsonFile(directory, path, textureCache);
     double f = OS::Now() - s;
-    std::cout << "Loaded: " << path << " (in " << f << " seconds) ==> " << name << std::endl;
+    cout << "Loaded: " << path << " (in " << f << " seconds) ==> " << name << endl;
 }
 
 // Create a new model instance from a model in the group

@@ -208,7 +208,7 @@ public:
         // Find the ancestor
         while (diff & (((uint64_t) 1) << ancestor->level))
         {
-            //std::cout << "Exploring level - " << ancestor->level << std::endl;
+            //cout << "Exploring level - " << ancestor->level << endl;
             if(ancestor->parent == NULL)
             {
                 break;
