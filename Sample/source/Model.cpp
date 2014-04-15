@@ -416,7 +416,7 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
                 glEnableVertexAttribArray(programAttribute);
 #endif
                 // Update the vertex attribute pointer
-                glVertexAttribPointer(programAttribute, VertexAttributes::AttributeSize(attribute->attribute), GL_FLOAT, GL_FALSE, (*renderable)->meshpart->mesh->Attributes().AttributeFrameSize() * sizeof(GLfloat), (GLvoid *)(attribute->offset * sizeof(GLfloat)));
+                glVertexAttribPointer(programAttribute, (GLsizei) VertexAttributes::AttributeSize(attribute->attribute), GL_FLOAT, GL_FALSE, (GLsizei) (*renderable)->meshpart->mesh->Attributes().AttributeFrameSize() * sizeof(GLfloat), (GLvoid *)(attribute->offset * sizeof(GLfloat)));
             }
             
             // Bind the index buffer of the mesh part
@@ -456,7 +456,7 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         }
         
         // Finally, we can draw the god damn mesh
-        glDrawElements(GL_TRIANGLES, (*renderable)->meshpart->indices.size(), GL_UNSIGNED_INT, NULL);
+        glDrawElements(GL_TRIANGLES, (GLsizei) (*renderable)->meshpart->indices.size(), GL_UNSIGNED_SHORT, NULL);
     }
     
     // Store the previous program

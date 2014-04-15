@@ -138,7 +138,7 @@ std::vector<GLfloat>& Mesh::Data()
     return data;
 }
 
-std::vector<GLuint>& Mesh::Indices()
+std::vector<GLushort>& Mesh::Indices()
 {
     return indices;
 }

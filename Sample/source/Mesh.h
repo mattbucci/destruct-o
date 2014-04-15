@@ -34,7 +34,7 @@ public:
         std::string id;
         
         // Mesh parts only consist of an index buffer
-        std::vector<GLuint> indices;
+        std::vector<GLushort> indices;
         
         // Base initialization just nullifies everything
         Part();
@@ -48,7 +48,7 @@ private:
     std::vector<GLfloat> data;
     
     // Indices into the interleaven vertex data
-    std::vector<GLuint>  indices;
+    std::vector<GLushort>  indices;
     
     // Offset calculation for interleaven data
     VertexAttributes     attributes;
@@ -68,7 +68,7 @@ public:
     
     // Get references to the mesh data
     std::vector<GLfloat>& Data();
-    std::vector<GLuint>&  Indices();
+    std::vector<GLushort>&  Indices();
     VertexAttributes&     Attributes();
     std::vector<Part *>&  Parts();
 };
