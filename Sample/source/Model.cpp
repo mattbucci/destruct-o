@@ -439,7 +439,7 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         
         // Set the reflectivity (should pull this from the material right??)
         glm::vec2 specular = glm::vec2(1.0, 1.0);
-        glUniform2fv(glGetUniformLocation(program->GetId(), "material_reflectivity"), 2, (const GLfloat *) &specular);
+        glUniform2f(glGetUniformLocation(program->GetId(), "material_reflectivity"), specular.x, specular.y);
         
         // Set all the bones according to the skeleton
         int boneIdx = 0;
