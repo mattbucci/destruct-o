@@ -20,6 +20,7 @@
 #include "PauseWindow.h"
 #include "PauseWindowMobile.h"
 #include "Achievements.h"
+#include "HUD.h"
 
 #include "Model.h"
 #include "ModelInstance.h"
@@ -39,6 +40,8 @@ class BaseFrame : public GameSystem, public Savable {
 	PauseWindow * pauseWindow;
     Achievements * achievements;
     ModelGroup * models;
+
+	HUD hud;
 
 	//Setup all the global values for shaders
 	//Sets up, acid shader and fog

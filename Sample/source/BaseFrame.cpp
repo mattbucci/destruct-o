@@ -271,6 +271,8 @@ void BaseFrame::Draw(double width, double height)
 	//Assume that gameSystem::Draw has set up the 2d shader
 	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
 	FirstPerson->Draw(width, height, shaders2d);
+	//draw the hud
+	hud.DrawAndUpdate(shaders2d,viewPortSize);
 } 
 
 void BaseFrame::PushNotification(string txt) {
