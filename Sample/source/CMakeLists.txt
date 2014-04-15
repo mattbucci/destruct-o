@@ -36,7 +36,9 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_link_libraries(VoxEngine "../libs/windows/SDL2_mixer-2.0.0/SDL2_mixer")
     target_link_libraries(VoxEngine "../libs/windows/libnoise/libnoise")
     target_link_libraries(VoxEngine "opengl32.lib")
-
+	
+	#enable Multiprocessor build
+	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /MP" )
 ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 # Are we compiling on Mac OS X?
@@ -224,7 +226,7 @@ FILE(GLOB InterfaceFiles
 	Shape.h
 	Shape.cpp
 	Notification.h
-	Notifiaction.cpp
+	Notification.cpp
 )
 source_group(Interface FILES ${InterfaceFiles})
 
@@ -253,6 +255,10 @@ FILE(GLOB PhysicsFiles
 	PhysicsTriangle.cpp
 	PhysicsSystem.h
 	PhysicsSystem.cpp
+	PhysicsProxy.h
+	PhysicsProxy.cpp
+	Tracer.h
+	Tracer.cpp
 )
 source_group(Physics FILES ${PhysicsFiles})
 
@@ -263,14 +269,14 @@ FILE(GLOB LibraryFiles
 	noiseutils.h
 	noiseutils.cpp	
 )
-source_group(Achievements FILES ${AchievementFiles})
 
-FILE(GLOB AchievementFiles
+FILE(GLOB GameplayFiles
 	Achievements.h
 	Achievements.cpp
 	Achievement.h
 	Achievement.cpp
 )
+source_group(Achievements FILES ${GameplayFiles})
 
 source_group(Libraries FILES ${LibraryFiles})
 
@@ -310,6 +316,8 @@ FILE(GLOB UtilityFiles
 	ViewDistanceCalc.cpp
 	LoadingScreen.h
 	LoadingScreen.cpp
+	IntRect.h
+	IntRect.cpp
 )
 source_group(Utilities FILES ${UtilityFiles})
 
@@ -328,6 +336,14 @@ FILE(GLOB VoxelFiles
 	TileHandler.cpp
 	GameTile.h
 	GameTile.cpp
+	TerrainChunk.h
+	TerrainChunk.cpp
+	TerrainChunkRenderer.h
+	TerrainChunkRenderer.cpp
+	Building.h
+	Building.cpp
+	Structure.h
+	Structure.cpp
 )
 source_group(Voxels FILES ${VoxelFiles})
 
