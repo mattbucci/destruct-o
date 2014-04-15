@@ -18,7 +18,7 @@ public:
 	bool debug;
 	float debug_target_height;
 	//Update the position based off the most recent movement and direction vectors
-	void Update(float delta, float now) override;
+	bool Update(float delta, float now) override;
     //player events
     GameEvent<void(ActorPlayer*)> PlayerJumped;
     GameEvent<void(ActorPlayer*)> PlayerLanded;

@@ -6,9 +6,9 @@
 #include "PhysicsVoxel.h"
 #include "VoxelSystem.h"
 #include "PhysicsTriangle.h"
+#include "PhysicsActor.h"
 #include "VoxEngine.h"
 #include "Tracer.h"
-#include "PhysicsProxy.h"
 
 PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	//Build a voxel renderer
@@ -76,12 +76,6 @@ PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate,double lifeTime) {
 	return voxel;
 }
 
-PhysicsProxy * PhysicsSystem::BuildPhysicsProxy(Actor * actor, vec3 * actorPosition) {
-	PhysicsProxy * proxy = new PhysicsProxy(actor, actorPosition);
-	proxies.push_back(proxy);
-	return proxy;
-}
-
 //Remove the force in a given direction and return the quantity
 static float removeInDirection(vec3 & force, vec3 direction) {
 	float d = glm::dot(force,direction);
@@ -94,8 +88,6 @@ static float removeInDirection(vec3 & force, vec3 direction) {
 
 //Update the actors, called by base frame
 void PhysicsSystem::Update(double delta, double now) {
-
-
 	//Set all voxels to have no forces
 	//And check if any voxels should expire
 	for (auto it = allVoxels.begin(); it != allVoxels.end();){
@@ -168,87 +160,8 @@ void PhysicsSystem::Update(double delta, double now) {
 		}
 	}
 
-	//Update all the physics voxels
-	for (unsigned int a = 0; a < allVoxels.size(); a++) {
-		if (allVoxels[a] != NULL) {
-
-			allVoxels[a]->Acceleration += vec3(0,0,-10);
-			
-			if (allVoxels[a]->Position.z < 1.5) {
-				//Current ground collision code
-				//must be repaired to use height lookup in voxel location
-				float depth = 1.5f - allVoxels[a]->Position.z;
-				if (allVoxels[a]->Velocity.z < 0)
-					allVoxels[a]->Velocity.z = 0;
-				if (allVoxels[a]->Acceleration.z < 0)
-					allVoxels[a]->Acceleration.z = 0;
-
-				//Apply additional friction
-				allVoxels[a]->Velocity *= .98;
-			}
-
-
-			//Do ground collisions now
-			//There are (usually) four different tiles you're over
-			vec2 floorTiles[4];
-			floorTiles[0] = glm::floor(vec2(allVoxels[a]->Position));
-			floorTiles[1] = vec2(floor(allVoxels[a]->Position.x),ceil(allVoxels[a]->Position.y));
-			floorTiles[2] = vec2(ceil(allVoxels[a]->Position.x),floor(allVoxels[a]->Position.y));
-			floorTiles[3] = vec2(ceil(allVoxels[a]->Position.x),ceil(allVoxels[a]->Position.y));
-			//If the voxel is fully below the surface of each floor tile checked, than it shall be teleported to the lowest surface
-			int depthTilesViolated = 0;
-			float lowestHeight = 300;
-			//Use these four blocks as a support for any blocks on top of the ground
-			for (int i = 0; i < 4; i++) {
-				//check if the square is under the ground for this ground tile
-				float height = voxelSystem->GetPositionHeight(floorTiles[i]);
-				if ((height+.5) < allVoxels[a]->Position.z)
-					continue;
-
-				//Check if the depth constraint of this tile is being violated
-				if ((height-2.5) > allVoxels[a]->Position.z) {
-					depthTilesViolated++;
-					lowestHeight = min(lowestHeight,height);
-				}
-				
-				//So the block must be penetrating this block of terrain
-				//time to reject it
-				//simulate a block next to the penetrating voxel
-				Intersection intersectionData = CalculateIntersection(allVoxels[a]->Position,vec3(floorTiles[i],min(height-.5f,allVoxels[a]->Position.z))+vec3(.5,.5,0));
-				//If the depth is < 0 then you're not penetrating quite yet...
-				if (intersectionData.Depth < 0)
-					continue;
-
-				float force = 500*intersectionData.Depth;
-
-				vec3 forceDirection = intersectionData.Normal;
-				allVoxels[a]->Acceleration += forceDirection*force;
-				//Remove Velocity in that direction
-				float vel = 0.0f;
-				vel += removeInDirection(allVoxels[a]->Velocity,-forceDirection);
-				//The removed Velocity will now be thirded (instead of average since some is lost)
-				//and added back in the opposite direction
-				vel /= 3.0f;
-				allVoxels[a]->Velocity += vel*forceDirection;
-				//Apply extra enhanced friction while they're touching
-				allVoxels[a]->Velocity *= .98;
-			}
-
-			if (depthTilesViolated == 4) {
-				//The tile is fully underground, force it to the surface
-				allVoxels[a]->Position.z = lowestHeight+.5f; 
-				allVoxels[a]->Velocity.z = 2;
-			}
-
-
-			//Now apply velocity/acceleration
-			//Always decrease the total energy in the system
-			allVoxels[a]->Velocity *= .99;
-			//Apply forces!
-			allVoxels[a]->Velocity += allVoxels[a]->Acceleration*(float)delta;
-			allVoxels[a]->Position += allVoxels[a]->Velocity*(float)delta;
-		}
-	}
+	updatePhysicsSystem(allVoxels,(float)delta);
+	updatePhysicsSystem(actors,(float)delta);
 
 	//Apply ground-to-effector collisions to all physics proxies
 }

@@ -15,7 +15,7 @@ static const float jumpVelocity = 10.0f;
 
 ActorPlayer::ActorPlayer() {
 	//Start the player off in abouts the center
-	position = vec3(40,40,0);
+	//position = vec3(40,40,0);
     deltaPosition = 0.0;
     onGround = true;
 	debug = true;
@@ -26,10 +26,10 @@ ActorPlayer::~ActorPlayer() {
 }
 
 //Update the position based off the most recent movement and direction vectors
-void ActorPlayer::Update(float delta, float now) {
+bool ActorPlayer::Update(float delta, float now) {
 	//Your movement speed is the multiplier right now
 	vec2 playerMotion = Game()->FirstPerson->GetMoveVector()*movementSpeed;
-	
+	/*
 	//The side ways velocity is not effected by momentum
 	//isn't that handy
 	velocity.x = playerMotion.x;
@@ -130,5 +130,6 @@ void ActorPlayer::Update(float delta, float now) {
             });
             onGround = true;
         }
-    }
+    }*/
+	return Actor::Update(delta,now);
 }
