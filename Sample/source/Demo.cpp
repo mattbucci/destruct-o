@@ -335,39 +335,6 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
                 std::advance(anim, (rand() % instance->GetModel()->Animations().size()));
                 instance->PlayAnimation(anim->first);
                 
-                // Pick a random model
-                //int i = rand() % 4;
-                
-                // Create a model instance to represent the model
-                //ModelInstance *instance = new ModelInstance(game->model[i]);
-                
-                // Custom setup for models
-                /*if(i == 1)
-                {
-                    // Soldier 1 model
-                    instance->GetTransform().Scale() = glm::vec3(0.25, 0.25, 0.25);
-                    instance->PlayAnimation("walkAndLook");
-                }
-                
-                else if (i == 2 || i == 3)
-                {
-                    // Soldier 2 model
-                    instance->GetTransform().Scale() = glm::vec3(0.015, 0.015, 0.015);
-                    instance->PlayAnimation("Run_Forward_Weapon");
-                }
-                
-                else if (i == 0)
-                {
-                    // Mech model
-                    instance->GetTransform().Scale() = glm::vec3(1.25, 1.25, 1.25);
-                    instance->PlayAnimation("spraying_shoot");
-                    
-                    // Get a random animation
-                    //Model::animation_const_iterator anim = game->model[0]->Animations().begin();
-                    //std::advance(anim, (rand() % game->model[0]->Animations().size()));
-                    //instance->PlayAnimation(anim->first);
-                }*/
-                
                 // Set the location of this instance
                 instance->GetTransform().Translation() = playerPos + playerFacing * 5.0f;
                 
