@@ -58,25 +58,15 @@ Model::~Model()
     for(std::map<Mesh *, GLuint>::iterator it = buffers.begin(); it != buffers.end(); it++)
     {
         // If the contents are still a valid vertex buffer
-        if(glIsBuffer(it->second) == GL_TRUE)
-        {
-            glDeleteBuffers(1, &it->second);
-        }
+        glDeleteBuffers(1, &it->second);
     }
     
     // Destroy all of the part render objects
     for(std::vector<Model::MeshPartRenderData *>::iterator it = renderables.begin(); it != renderables.end(); it++)
     {
         // Delete the index buffer
-        if(glIsBuffer((*it)->indices) == GL_TRUE)
-        {
-            glDeleteBuffers(1, &(*it)->indices);
-        }
-        
-        if(glIsVertexArray((*it)->attributes) == GL_TRUE)
-        {
-            glDeleteVertexArrays(1, &(*it)->attributes);
-        }
+        glDeleteBuffers(1, &(*it)->indices);
+        glDeleteVertexArrays(1, &(*it)->attributes);
         
         // Delete the object itself
         delete *it;
