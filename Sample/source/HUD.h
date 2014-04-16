@@ -7,6 +7,8 @@
 class GL2DProgram;
 
 class HUD {
+	ContiguousList<pair<double, vec2>> damagePoints;
+
 	TexturedRect damageIndicator;
 	TexturedRect minimapDot;
 	TexturedRect minimapBackground;

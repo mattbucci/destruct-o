@@ -7,6 +7,8 @@
 #define MINIMAP_SIZE 200
 #define MINIMAP_DOT_SIZE 20
 
+#define DAMAGE_INDICATOR_TIME 1
+
 HUD::HUD() :
 	//Use the tint to tint the white arrow mostly red
 	damageIndicator(Rect(0,0,100,100),"hud/arrow.png",vec4(7,.2,.2,.66)),
@@ -14,7 +16,6 @@ HUD::HUD() :
 	//Note you can change the tint on the fly
 	minimapDot(Rect(0,0,MINIMAP_DOT_SIZE,MINIMAP_DOT_SIZE),"hud/dot.png",vec4(1,0,0,1)),
 	minimapBackground(Rect(0,0,MINIMAP_SIZE,MINIMAP_SIZE),"hud/minimap.png", vec4(1, 1, 1, .6)) {
-
 }
 //Since the hud is purely visual
 //there is no point in updating it at 100hz
@@ -79,24 +80,47 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	//Move 0,0 to the direct center of the screen
 	shader->Model.Translate(viewPortSize.x*.5f,viewPortSize.y*.5f,0);
 
-	//Rotate some degree depending on which angle you want the arrow to show from
-	//In this case we've chosen a trick using the time
-	//to make the arrow rotate for no reason
-	shader->Model.Rotate(fmod(Game()->Now(),10)/10*360,vec3(0,0,1));
+	float dist = min(viewPortSize.x, viewPortSize.y)/2.0f * .75f;
+	double simTime = Game()->Now();
 
-	//Translate outwards
-	//Puts 0 degrees directly up
-	float dist = min(viewPortSize.x, viewPortSize.y)/2.0f;
-	shader->Model.Translate(0,-dist*.75f,0);
+	for(auto it = damagePoints.begin(); it != damagePoints.end();) {
+		if(simTime > (*it).first) {
+			//Don't Erase for Now... Just put it somewhere else
+			//it = damagePoints.erase(it);
 
-	//Offset by the size of the arrow so it draws from the center
-	shader->Model.Translate(-50,-50,0);
+			//----- Ooo Fancy -----
+			(*it) = pair<double, vec2>(Game()->Now() + DAMAGE_INDICATOR_TIME + (rand() % 100)/100.0f, vec2(rand() % 360 - 360/2.0f, rand() % 360 - 360/2.0f));
+			it++;
+			//---------------------
+		} else {
+			double ptTime = (*it).first;
+			shader->Model.PushMatrix();
 
-	//Apply all the model changes we've made
-	shader->Model.Apply();
+			//Rotate some degree depending on which angle you want the arrow to show from
+			//In this case we've chosen a trick using the time
+			//to make the arrow rotate for no reason
+			shader->Model.Rotate((*it).second.x,vec3(0,0,1));
 
-	//Draw Damage Indicator
-	damageIndicator.Draw(shader);
+			//Translate outwards
+			//Puts 0 degrees directly up
+			shader->Model.Translate(0,-dist,0);
+
+			//Offset by the size of the arrow so it draws from the center
+			shader->Model.Translate(-50,-50,0);
+
+			//Apply all the model changes we've made
+			shader->Model.Apply();
+
+			damageIndicator.SetColor(vec4(7,.2,.2,(.66f * (ptTime - simTime) / DAMAGE_INDICATOR_TIME)));
+
+			//Draw Damage Indicator
+			damageIndicator.Draw(shader);
+
+			shader->Model.PopMatrix();
+
+			it++;
+		}
+	}
 
 	//Reset to the original matrix
 	shader->Model.PopMatrix();
