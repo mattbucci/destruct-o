@@ -38,81 +38,30 @@ class PhysicsSystem : public Savable {
 		vec3 CollisionVector;
 	};
 
-	//A generalized update function
-	//which can be applied to voxels and physics actors
-	template <class T>
-	void updatePhysicsSystem(ContiguousList<T> & physicsItems, float delta) {
-		//Update all the physics voxels
-		for (auto voxel : physicsItems) {
- 			voxel->Acceleration += vec3(0,0,-10);
-	
-			//Do ground collisions now
-			//There are (usually) four different tiles you're over
-			vec2 floorTiles[4];
-			floorTiles[0] = glm::floor(vec2(voxel->Position));
-			floorTiles[1] = vec2(floor(voxel->Position.x),ceil(voxel->Position.y));
-			floorTiles[2] = vec2(ceil(voxel->Position.x),floor(voxel->Position.y));
-			floorTiles[3] = vec2(ceil(voxel->Position.x),ceil(voxel->Position.y));
-			//If the voxel is fully below the surface of each floor tile checked, than it shall be teleported to the lowest surface
-			int depthTilesViolated = 0;
-			float lowestHeight = 300;
-			//Use these four blocks as a support for any blocks on top of the ground
-			for (int i = 0; i < 4; i++) {
-				//check if the square is under the ground for this ground tile
-				float height = voxelSystem->GetPositionHeight(floorTiles[i]);
-				if ((height+.5) < voxel->Position.z)
-					continue;
 
-				//Check if the depth constraint of this tile is being violated
-				if ((height-2.5) > voxel->Position.z) {
-					depthTilesViolated++;
-					lowestHeight = min(lowestHeight,height);
-				}
-				
-				//So the block must be penetrating this block of terrain
-				//time to reject it
-				//simulate a block next to the penetrating voxel
-				Intersection intersectionData = CalculateIntersection(voxel->Position,vec3(floorTiles[i],min(height-.5f,voxel->Position.z))+vec3(.5,.5,0));
-				//If the depth is < 0 then you're not penetrating quite yet...
-				if (intersectionData.Depth < 0)
-					continue;
-
-				float force = 500*intersectionData.Depth;
-
-				vec3 forceDirection = intersectionData.Normal;
-				voxel->Acceleration += forceDirection*force;
-				//Remove Velocity in that direction
-				float vel = 0.0f;
-				vel += removeInDirection(voxel->Velocity,-forceDirection);
-				//The removed Velocity will now be thirded (instead of average since some is lost)
-				//and added back in the opposite direction
-				vel /= 3.0f;
-				voxel->Velocity += vel*forceDirection;
-				//Apply extra enhanced friction while they're touching
-				voxel->Velocity *= .98;
-			}
-
-			if (depthTilesViolated == 4) {
-				//The tile is fully underground, force it to the surface
-				voxel->Position.z = lowestHeight+.5f; 
-				voxel->Velocity.z = 2;
-			}
+	//Collide physics voxels with other physics voxels
+	void collideVoxelsToVoxels(float delta);
+	//Collide physics voxels with actors
+	void collideVoxelsToActors(float delta);
+	//Collide actors with actors
+	void collideActorsToActors(float delta);
 
 
-			//Now apply velocity/acceleration
-			//Always decrease the total energy in the system
-			voxel->Velocity *= .99;
-			//Apply forces!
-			voxel->Velocity += voxel->Acceleration*(float)delta;
-			voxel->Position += voxel->Velocity*(float)delta;
-		}
-	}
+	//Update and finalize physics voxels
+	//also handles terrain interactions
+	void updatePhysicsVoxels(float delta);
+	//Update and finalize physics actors
+	//also handles terrain interactions
+	void updatePhysicsActors(float delta);
 
 	//A tie to the voxel system used to lookup the terrain height at various points
 	VoxelSystem * voxelSystem;
 
 	//C style function for performance reasons
+	//Given two voxel positions find intersection information
 	friend Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxelBPosition);
+	friend Intersection CalculateIntersection(vec3 voxelAPosition, vec3 cuboidPosition, vec3 halfCuboidSize);
+	friend Intersection CalculateIntersection(vec3 cuboidPositionA, vec3 halfCuboidSizeA, vec3 cuboidPositionB, vec3 halfCuboidSizeB);
 public:
 	PhysicsSystem(VoxelSystem * system);
 	~PhysicsSystem();

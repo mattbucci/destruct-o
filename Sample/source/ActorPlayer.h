@@ -5,8 +5,7 @@
 
 class ActorPlayer : public PhysicsActor {
 
-	//trigger for landing sound
-	bool onGround;
+	
 	//delta since last walk fired
 	double deltaPosition;
 public:
@@ -24,9 +23,9 @@ public:
     GameEvent<void(ActorPlayer*)> PlayerLanded;
     GameEvent<void(ActorPlayer*)> PlayerWalked;
 
+
 	CLASS_DECLARATION(ActorPlayer)
 		INHERITS_FROM(PhysicsActor)
-		CLASS_MEMBER(onGround,ReflectionData::SAVE_BOOL)
 		CLASS_MEMBER(deltaPosition,ReflectionData::SAVE_DOUBLE)
 	END_DECLARATION
 };

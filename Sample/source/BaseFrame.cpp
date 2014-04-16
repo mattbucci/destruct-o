@@ -89,11 +89,18 @@ void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
 	Savable::Load(parentValue,loadData);
 }
 
+#include "ActorAI.h"
+
 void BaseFrame::OnFrameFocus() {
 	//Build actors, right now just the player
 	player = new ActorPlayer();
 	//The player autoregisters himself with the actor system
 	//we do not need to do that by hand
+
+	//example remove me
+	new ActorAI();
+	new ActorAI();
+	//Physics.BuildVoxel(vec3(40,42,80));
 
 	//The physics demo
 	//we won't have this forever
@@ -177,8 +184,6 @@ void BaseFrame::Draw(double width, double height) {
 	//We add 1.5 to ground level. This assumes the person is 5ft between the ground
 	//and his eye line
 	vec3 pos = player->GetPosition();
-	//The player is 3 height right now
-	pos.z += 2.5;
 	//Calculate voxel draw rectangle
 	pair<vec2,vec2> drawRectangle = ViewDistance.VoxDrawCoordinates(viewPortSize,vec2(pos),FirstPerson->GetAngleVector().x/180.0f*(float)M_PI);
 	vec2 minPoint = drawRectangle.first;
