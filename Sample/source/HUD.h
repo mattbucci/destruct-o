@@ -7,9 +7,9 @@
 class GL2DProgram;
 
 class HUD {
-	TexturedRect arrowExample;
-	TexturedRect minimapDotExample;
-	TexturedRect minimapBackgroundExample;
+	TexturedRect damageIndicator;
+	TexturedRect minimapDot;
+	TexturedRect minimapBackground;
 public:
 	HUD();
 	//Since the hud is purely visual
