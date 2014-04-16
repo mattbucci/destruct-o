@@ -280,7 +280,7 @@ void BaseFrame::Draw(double width, double height)
 } 
 
 void BaseFrame::PushNotification(string txt) {
-	notification.notify(txt);
+	notification.Notify(txt);
 }
 
 ModelGroup* BaseFrame::Models() 

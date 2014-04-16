@@ -6,7 +6,7 @@
 
 HUD::HUD() :
 	//Use the tint to tint the white arrow mostly red
-	arrowExample(Rect(0,0,50,50),"hud/arrow.png",vec4(7,.2,.2,1)),
+	arrowExample(Rect(0,0,100,100),"hud/arrow.png",vec4(7,.2,.2,1)),
 	//Again use tint to make the white dot bright red (or green or orange or anything)
 	//Note you can change the tint on the fly
 	minimapDotExample(Rect(0,0,20,20),"hud/dot.png",vec4(1,0,0,1)),
@@ -17,33 +17,6 @@ HUD::HUD() :
 //there is no point in updating it at 100hz
 //it might as well update as its drawn
 void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
-	//First do the arrow
-	//Preserve the current matrix
-	shader->Model.PushMatrix();
-	//Move 0,0 to the direct center of the screen
-	shader->Model.Translate(viewPortSize.x*.5f,viewPortSize.y*.5f,0);
-	//Rotate some degree depending on which angle you want the arrow to show from
-	//In this case we've chosen a trick using the time
-	//to make the arrow rotate for no reason
-	shader->Model.Rotate(fmod(Game()->Now(),10)/10*360,vec3(0,0,1));
-	//Translate outwards
-	//Puts 0 degrees directly up
-	shader->Model.Translate(0,-200,0);
-	//Offset by the size of the arrow so it draws from the center
-	shader->Model.Translate(-25,-25,0);
-
-	//Apply all the model changes we've made
-	shader->Model.Apply();
-	//draw the arrow
-	arrowExample.Draw(shader);
-
-	//Reset to the original matrix
-	shader->Model.PopMatrix();
-
-
-	
-
-
 	//Next do the dot
 	//Preserve the current matrix
 	shader->Model.PushMatrix();
@@ -69,5 +42,29 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	minimapDotExample.Draw(shader);
 
 	//Reset to the original amtrix
+	shader->Model.PopMatrix();
+
+	//First do the arrow
+	//Preserve the current matrix
+	shader->Model.PushMatrix();
+	//Move 0,0 to the direct center of the screen
+	shader->Model.Translate(viewPortSize.x*.5f,viewPortSize.y*.5f,0);
+	//Rotate some degree depending on which angle you want the arrow to show from
+	//In this case we've chosen a trick using the time
+	//to make the arrow rotate for no reason
+	shader->Model.Rotate(fmod(Game()->Now(),10)/10*360,vec3(0,0,1));
+	//Translate outwards
+	//Puts 0 degrees directly up
+	float dist = min(viewPortSize.x, viewPortSize.y)/2.0f;
+	shader->Model.Translate(0,-dist*.75f,0);
+	//Offset by the size of the arrow so it draws from the center
+	shader->Model.Translate(-50,-50,0);
+
+	//Apply all the model changes we've made
+	shader->Model.Apply();
+	//draw the arrow
+	arrowExample.Draw(shader);
+
+	//Reset to the original matrix
 	shader->Model.PopMatrix();
 }

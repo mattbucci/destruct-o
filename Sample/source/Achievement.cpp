@@ -16,7 +16,7 @@ void Achievement::SetValue(float value) {
     if(IsComplete() && !notified){
         stringstream output;
         output << "Achievement Unlocked: " << displaytext;
-        interface->notify(output.str());
+        interface->Notify(output.str());
         notified = true;
     }
 }
@@ -26,7 +26,7 @@ void Achievement::IncrementValue(float value) {
     if(IsComplete() && !notified) {
         stringstream output;
         output << "Achievement Unlocked: " << displaytext;
-        interface->notify(output.str());
+        interface->Notify(output.str());
         notified = true;
     }
 }

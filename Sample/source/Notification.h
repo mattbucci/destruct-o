@@ -9,6 +9,8 @@
 
 class Notification : public Window
 {
+	int w;
+
 	queue<string> q;
 	Label* text;
 	double updateTime;
@@ -17,6 +19,9 @@ public:
 	Notification(void);
 	~Notification(void);
 
-	void notify(string msg);
+	void Notify(string msg);
 	void Draw(GL2DProgram * shader) override;
+
+private:
+	void resizeElement();
 };
