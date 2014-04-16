@@ -337,29 +337,6 @@ void PhysicsSystem::updatePhysicsVoxels(float delta) {
 		//Apply forces!
 		voxel->Velocity += voxel->Acceleration*(float)delta;
 		voxel->Position += voxel->Velocity*(float)delta;
-			//this is temporary. will be replaced by an event soon
-			if (voxel->MaterialId == 0) {
-				//Do green color
-				physicsVoxelErase->Color.ClearValues();
-				physicsVoxelErase->Color.AddValue(0,vec4(.39,.761,.254,1));
-				physicsVoxelErase->Color.AddValue(.5,vec4(.39,.761,.254,1));
-				physicsVoxelErase->Color.AddValue(1,vec4(.39,.761,.254,1));
-			}
-			else {
-				//Do brown color
-				physicsVoxelErase->Color.ClearValues();
-				physicsVoxelErase->Color.AddValue(0,vec4(.43,.304,.214,1));
-				physicsVoxelErase->Color.AddValue(.5,vec4(.43,.304,.214,1));
-				physicsVoxelErase->Color.AddValue(1,vec4(.43,.304,.214,1));
-			}
-
-			ParticleSystem * testSystem = ((BaseFrame*)CurrentSystem)->Particles.BuildParticleSystem(*physicsVoxelErase, .3);
-			testSystem->Position = voxel->Position;
-			//Notify any other systems that the voxel is being destroyed
-			VoxelDisintegrating.Fire([voxel](function<void(PhysicsVoxel*)> subscriber) {
-				subscriber(voxel);
-			});
-			delete voxel;
 	}
 }
 void PhysicsSystem::collideVoxelsToVoxels(float delta) {
@@ -530,6 +507,29 @@ void PhysicsSystem::Update(double delta, double now) {
 		voxel->Acceleration = vec3();
 		if ((voxel->DeathAt > 0) && (voxel->DeathAt < now)) {
 			//disintegrate voxel
+			//this is temporary. will be replaced by an event soon
+			if (voxel->MaterialId == 0) {
+				//Do green color
+				physicsVoxelErase->Color.ClearValues();
+				physicsVoxelErase->Color.AddValue(0,vec4(.39,.761,.254,1));
+				physicsVoxelErase->Color.AddValue(.5,vec4(.39,.761,.254,1));
+				physicsVoxelErase->Color.AddValue(1,vec4(.39,.761,.254,1));
+			}
+			else {
+				//Do brown color
+				physicsVoxelErase->Color.ClearValues();
+				physicsVoxelErase->Color.AddValue(0,vec4(.43,.304,.214,1));
+				physicsVoxelErase->Color.AddValue(.5,vec4(.43,.304,.214,1));
+				physicsVoxelErase->Color.AddValue(1,vec4(.43,.304,.214,1));
+			}
+
+			ParticleSystem * testSystem = ((BaseFrame*)CurrentSystem)->Particles.BuildParticleSystem(*physicsVoxelErase, .3);
+			testSystem->Position = voxel->Position;
+			//Notify any other systems that the voxel is being destroyed
+			VoxelDisintegrating.Fire([voxel](function<void(PhysicsVoxel*)> subscriber) {
+				subscriber(voxel);
+			});
+			delete voxel;
 			//remove voxel
 			it = allVoxels.erase(it);
 		}

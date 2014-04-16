@@ -89,7 +89,5 @@ bool ActorPlayer::Update(float delta, float now) {
             onGround = true;
         }
 		*/
-}
-vec3 ActorPlayer::GetPosition(){
-    return position;
+	return Actor::Update(delta,now);
 }
