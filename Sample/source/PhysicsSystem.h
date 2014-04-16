@@ -10,7 +10,7 @@ class ShaderGroup;
 class PhysicsVoxel;
 //The voxel system is needed to lookup the height of the terrain
 class VoxelSystem;
-class PhysicsProxy;
+class PhysicsActor;
 class Actor;
 class ParticleData;
 
@@ -24,9 +24,8 @@ class PhysicsSystem : public Savable {
 	//this contiguous list is a sub buffer used to severely decrease the AABB checks needed for physics voxels
 	ContiguousList<PhysicsVoxel*> section;
 
-	//A list of all actor proxies the physics system owns
-	ContiguousList<PhysicsProxy*> proxies;
-
+	//A list of physics actors
+	ContiguousList<PhysicsActor*> actors;
 
 	//The voxel draw renderer
 	VoxelDrawSystem * renderer;
@@ -41,11 +40,30 @@ class PhysicsSystem : public Savable {
 		vec3 CollisionVector;
 	};
 
+
+	//Collide physics voxels with other physics voxels
+	void collideVoxelsToVoxels(float delta);
+	//Collide physics voxels with actors
+	void collideVoxelsToActors(float delta);
+	//Collide actors with actors
+	void collideActorsToActors(float delta);
+
+
+	//Update and finalize physics voxels
+	//also handles terrain interactions
+	void updatePhysicsVoxels(float delta);
+	//Update and finalize physics actors
+	//also handles terrain interactions
+	void updatePhysicsActors(float delta);
+
 	//A tie to the voxel system used to lookup the terrain height at various points
 	VoxelSystem * voxelSystem;
 
 	//C style function for performance reasons
+	//Given two voxel positions find intersection information
 	friend Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxelBPosition);
+	friend Intersection CalculateIntersection(vec3 voxelAPosition, vec3 cuboidPosition, vec3 halfCuboidSize);
+	friend Intersection CalculateIntersection(vec3 cuboidPositionA, vec3 halfCuboidSizeA, vec3 cuboidPositionB, vec3 halfCuboidSizeB);
 
 	//Temporary particle data
 	ParticleData * physicsVoxelErase;
@@ -60,9 +78,9 @@ public:
 	//returns the voxel
 	PhysicsVoxel * BuildVoxel(vec3 voxelCoordinate, double lifeTime=-1.0);
 
-	//Construct a physics proxy for the given actor
-	//once attached, detach() must be called on actor destruction
-	PhysicsProxy * BuildPhysicsProxy(Actor * actor, vec3 * actorPosition);
+	//Used by PhysicsActor to register/unregister itself. Not needed elsewhere
+	void RegisterPhysicsActor(PhysicsActor * toRegister);
+	void UnregisterPhysicsActor(PhysicsActor * toUnregister);
 
 	//Update the physics voxels, called by base frame
 	void Update(double delta, double now);
@@ -72,7 +90,6 @@ public:
 
 	//Called right before a physics voxel is destroyed
 	GameEvent<void(PhysicsVoxel*)> VoxelDisintegrating;
-
 	CLASS_DECLARATION(PhysicsSystem)
 		CLASS_CONTAINER_MEMBER(allVoxels,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
 	END_DECLARATION

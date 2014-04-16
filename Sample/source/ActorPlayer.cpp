@@ -11,13 +11,12 @@ CLASS_SAVE_CONSTRUCTOR(ActorPlayer);
 static const float groundThreshold = .05f;
 static const float movementSpeed = 6.0f;
 static const float gravity = -9.8f;
-static const float jumpVelocity = 10.0f;
+static const float jumpVelocity = 20.0f;
 
-ActorPlayer::ActorPlayer() {
+ActorPlayer::ActorPlayer() : PhysicsActor(vec3(2,2,6)) {
 	//Start the player off in abouts the center
-	position = vec3(127,127,0);
+	Position = (vec3(34,40,0));
     deltaPosition = 0.0;
-    onGround = true;
 	debug = true;
 	debug_target_height = 0;
 }
@@ -26,25 +25,25 @@ ActorPlayer::~ActorPlayer() {
 }
 
 //Update the position based off the most recent movement and direction vectors
-void ActorPlayer::Update(float delta, float now) {
+bool ActorPlayer::Update(float delta, float now) {
 	//Your movement speed is the multiplier right now
 	vec2 playerMotion = Game()->FirstPerson->GetMoveVector()*movementSpeed;
 	
 	//The side ways velocity is not effected by momentum
 	//isn't that handy
-	velocity.x = playerMotion.x;
-	velocity.y = playerMotion.y;
+	Velocity.x = playerMotion.x;
+	Velocity.y = playerMotion.y;
 	
-    if(deltaPosition>200 && onGround) {
+    if(deltaPosition>200 && OnGround()) {
         //Let everyone know we walked
         PlayerWalked.Fire([this](function<void(ActorPlayer*)> subscriber) {
             subscriber(this);
         });
-		cout << "Player Position: " << position.x << "," << position.y << "," << position.z << endl;
+		cout << "Player Position: " << Position.x << "," << Position.y << "," << Position.z << endl;
         deltaPosition -=200;
     } else {
-        if(onGround) {
-            deltaPosition+= sqrt(pow(velocity.x,2)+pow(velocity.y,2));
+        if(OnGround()) {
+            deltaPosition+= sqrt(pow(Velocity.x,2)+pow(Velocity.y,2));
         }
     }
     
@@ -52,12 +51,11 @@ void ActorPlayer::Update(float delta, float now) {
     if(Game()->FirstPerson->GetJumpRequested())
     {
         // Check that the user is on the ground
-        float posHeight = Game()->Voxels.GetPositionHeight(vec2(position.x,position.y));
-        float relativeHeight = position.z-posHeight;
-        if (relativeHeight <= groundThreshold)
+		//and does not have any velocity upwards
+        if (OnGround() && (Velocity.z < .025))
         {
             //Apply upwards velocity
-            velocity.z += jumpVelocity;
+            Velocity.z += jumpVelocity;
             
             //Let everyone know we jumped
             PlayerJumped.Fire([this](function<void(ActorPlayer*)> subscriber) {
@@ -69,68 +67,28 @@ void ActorPlayer::Update(float delta, float now) {
     //this code lets you fly
 
 	//update our debug values
-	if (!debug) Game()->FirstPerson->SetDebugHeight((int)position.z);
+	if (!debug) Game()->FirstPerson->SetDebugHeight((int)Position.z);
 	debug = Game()->FirstPerson->GetDebug();
 	debug_target_height = Game()->FirstPerson->GetDebugHeight();
 
-	if (debug && debug_target_height > position.z+.5) {
-		velocity.z += .1f;
+	if (debug && debug_target_height > Position.z+.5) {
+		Velocity.z += .1f;
 	}
-	else if (debug && debug_target_height < position.z-.5) {
-		velocity.z -= .1f;
+	else if (debug && debug_target_height < Position.z-.5) {
+		Velocity.z -= .1f;
 	}
 	else if(debug) {
-		velocity.z = 0.0f;
+		Velocity.z = 0.0f;
 	}
-
-
-	//Lets check if you're in the air or on the ground currently
-	float posHeight = Game()->Voxels.GetPositionHeight(vec2(position.x,position.y));
-	float relativeHeight = position.z-posHeight;
-	if (relativeHeight > groundThreshold && !debug) {
-		//You're off the grund, apply gravity
-		velocity.z += gravity*delta;
-        onGround = false;
-	}
-    else if (relativeHeight < -groundThreshold && !debug) {
-		//You're below the ground, correct
-		if (velocity.z < 0)
-			velocity.z = 0;
-		position.z = posHeight;
-	}
-	else {
-		//you're on the ground
-		//velocity.z = 0;
-	}
-	//Next calculate a new position and check for validity (did you run into something?)
-	vec3 newPos = position + velocity*delta;
-	//Check if you're under terrain
-	posHeight = Game()->Voxels.GetPositionHeight(vec2(newPos.x,newPos.y));
-	relativeHeight = newPos.z-posHeight;
-	if (relativeHeight > groundThreshold || debug)
-		//Position is good, allow it
-		position = newPos;
-	else if (relativeHeight < -groundThreshold) {
-		//position is bad, cancel movement that's not directly upwards
-		//cancel velocity that's not directly up
-		float v = glm::dot(velocity,vec3(0,0,1));
-		if (v < 0)
-			v = 0;
-		velocity = v*vec3(0,0,1);
-		//Apply the new only-up velocity to the player
-		position += velocity*delta;
-	}
-	else {
-		//You're on the ground
-		position = newPos;
-        if(!onGround) {
+	/*
+	    if(!onGround) {
             //Let everyone know we landed
             PlayerLanded.Fire([this](function<void(ActorPlayer*)> subscriber) {
                 subscriber(this);
             });
             onGround = true;
         }
-    }
+		*/
 }
 vec3 ActorPlayer::GetPosition(){
     return position;

@@ -6,6 +6,7 @@
 CLASS_SAVE_CONSTRUCTOR(Actor);
 
 Actor::Actor() {
+	valid = true;
 	//Assume if an actor is created the frame is the game frame
 	Game()->Actors.Register(this);
 }
@@ -20,13 +21,8 @@ BaseFrame * Actor::Game() {
 }
 
 //Update this actor with the delta and current time
-void Actor::Update(float delta, float now) {
-	velocity += acceleration*delta;
-	position += velocity*delta;
-}
-
-vec3 Actor::GetPosition() {
-	return position;
+bool Actor::Update(float delta, float now) {
+	return valid;
 }
 
 //Draw this actor
