@@ -232,6 +232,14 @@ public:
 		return toErase;
 	}
 
+	T & back() {
+		return data[listSize-1];
+	}
+
+	T & front() {
+		return data[0];
+	}
+
 
 	//Finds the first matching entry and removes it
 	//if there are no matching entries, has no effect

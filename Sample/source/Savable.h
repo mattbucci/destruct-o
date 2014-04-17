@@ -18,18 +18,19 @@ class Savable {
 		container.clear();
 		//Now load values into the class
 		for (unsigned int i = 0; i < value.size(); i++) {
-			InternalType valueToLoad;
+
+			//Push a new value into the container
+			container.push_back(InternalType());
 
 			ReflectionData::savable saveData;
 			saveData.dataType = valueData.internalType;
 			saveData.internalType = ReflectionData::SAVE_NOTHING;
-			saveData.member = &valueToLoad;
+			saveData.member = &container.back();
 			saveData.memberName = ""; //No name since its part of an array
 			//Load the value
 			LoadValue(saveData, value[i],loadData);
 
-			//Push the value into the container
-			container.push_back(valueToLoad);
+
 		}
 	}
 
