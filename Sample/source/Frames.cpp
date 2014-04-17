@@ -24,10 +24,10 @@ void Frames::BuildSystemList() {
 	cout << "Building systems list...";
 
 	//Build each frame
-	systems[FRAME_MAINMENU] = new BaseFrame(shaders);
+	systems[FRAME_GAME] = new BaseFrame(shaders);
 
 	//Set initial frame  
-	SetSystem(FRAME_MAINMENU);
+	SetSystem(FRAME_GAME);
 	//Start deferred loading on another thread
 	loadingComplete = false;
 	//Thread starts immediately
