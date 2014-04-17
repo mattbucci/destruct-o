@@ -8,12 +8,13 @@
 #include "GameTile.h"
 #include "TerrainGen.h"
 #include "CityGen.h"
+#include "Savable.h"
 
 #pragma once
 
 using namespace std;
 
-class TileHandler
+class TileHandler : public Savable
 {
 	TerrainGen* terraingenerator;
 	CityGen* citygenerator;
@@ -37,6 +38,8 @@ class TileHandler
 	void forceTile(vec2 pos);
 	void predictTile(vec2 pos);
 
+	//A list of generated tiles which may or may not be in-memory
+	vector<vec2> listOfGeneratedTiles;
 public:
 	TileHandler() : genLck(genMtx, std::defer_lock), worldLck(worldMtx, std::defer_lock){
 		terraingenerator = NULL;
@@ -49,4 +52,10 @@ public:
 	int getSeed();
 
 	GameTile * getTile(vec2 pos);
+
+	//Save relevant information
+	CLASS_DECLARATION(TileHandler)
+		//CLASS_MEMBER(allVoxels,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
+		CLASS_CONTAINER_MEMBER(listOfGeneratedTiles,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_VEC2);
+	END_DECLARATION
 };

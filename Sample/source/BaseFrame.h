@@ -30,6 +30,10 @@ class ActorPlayer;
 class ParticleSystem;
 class Demo;
 
+
+//Retrieve base frame
+BaseFrame * Game();
+
 class BaseFrame : public GameSystem {
 	AudioPlayer * audio;
 
@@ -64,6 +68,9 @@ protected:
 public:
 	BaseFrame(ShaderGroup * shaders);
 	~BaseFrame();
+
+	//Should be unique per-save
+	string SaveName;
 
 	//This is the main game object
 	//so it contains all the subsystems
@@ -117,6 +124,3 @@ public:
 		CLASS_MEMBER(Actors,ReflectionData::SAVE_INSTANCE)
 	END_DECLARATION
 };
-
-//Retrieve base frame
-BaseFrame * Game();

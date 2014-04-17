@@ -10,7 +10,7 @@ APP_CPPFLAGS += -std=c++11
 APP_STL:=gnustl_static
 #need exceptions for libnoise
 #compile for speed
-APP_CPPFLAGS += -fexceptions -O3
+APP_CPPFLAGS += -fexceptions -O3 -frtti
 
 
 APP_ABI := armeabi-v7a x86

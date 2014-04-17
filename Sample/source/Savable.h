@@ -22,10 +22,12 @@ class Savable {
 			//Push a new value into the container
 			container.push_back(InternalType());
 
+			InternalType & ref = container.back();
+
 			ReflectionData::savable saveData;
 			saveData.dataType = valueData.internalType;
 			saveData.internalType = ReflectionData::SAVE_NOTHING;
-			saveData.member = &container.back();
+			saveData.member = &ref;
 			saveData.memberName = ""; //No name since its part of an array
 			//Load the value
 			LoadValue(saveData, value[i],loadData);
@@ -74,9 +76,6 @@ class Savable {
 			break;
 		case ReflectionData::SAVE_VEC4:
 			LoadSpecificContainer<ContainerType,AllocaterType,vec4>(valueData,value,loadData);
-			break;
-		case ReflectionData::SAVE_BOOL:
-			LoadSpecificContainer<ContainerType,AllocaterType,bool>(valueData,value,loadData);
 			break;
 		case ReflectionData::SAVE_INT8:
 			LoadSpecificContainer<ContainerType,AllocaterType,int8_t>(valueData,value,loadData);
@@ -157,9 +156,6 @@ class Savable {
 			break;
 		case ReflectionData::SAVE_VEC4:
 			SaveSpecificContainer<ContainerType,AllocaterType,vec4>(valueData,value);
-			break;
-		case ReflectionData::SAVE_BOOL:
-			SaveSpecificContainer<ContainerType,AllocaterType,bool>(valueData,value);
 			break;
 		case ReflectionData::SAVE_INT8:
 			SaveSpecificContainer<ContainerType,AllocaterType,int8_t>(valueData,value);
