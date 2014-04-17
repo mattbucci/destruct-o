@@ -153,7 +153,7 @@ public:
     const Node* Skeleton() const;
 
 	// Accessor method for fast node lookup list
-	Node * FastNodeLookup(string node);
+	Node * FastNodeLookup(const string & node);
     
     // Accessor method for the animations
     const std::map<std::string, Animation *>& Animations() const;

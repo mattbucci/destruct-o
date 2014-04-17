@@ -48,7 +48,7 @@ public:
 	void Enable(bool enableFirstPerson);
 
 	// Read the input from the user
-	virtual void ReadInput(set<Sint64> pressedKeys, vector<InputEvent> input);
+	virtual void ReadInput(const set<Sint64> & pressedKeys, vector<InputEvent> input);
 
 	//In the future this will be used to draw the virtual joysticks on mobile
 	virtual void Draw(double width, double height, GL2DProgram * shader);

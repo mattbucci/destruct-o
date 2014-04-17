@@ -41,9 +41,20 @@ vec2 VoxEngine::scaledSize;
 //The scaling applied to the mouse positions
 vec2 VoxEngine::scaleFactor;
 
+/*
+//For heap testing on windows. Is actually very useful
+int heapHook(int nAllocType, void *pvData,
+      size_t nSize, int nBlockUse, long lRequest,
+      const unsigned char * szFileName, int nLine ) {
+	int x = 5;
+	return 1;
+}
+*/
+
 //Program entry point
 int main(int argc, char** argv)
 {
+	//_CrtSetAllocHook(heapHook);
 	VoxEngine::Start();
 	return 0;
 }
@@ -444,4 +455,11 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 #endif
 
 	return displayWindow;
+}
+
+#ifdef malloc
+#undef malloc
+#endif
+void *  __secret(size_t size) {
+	return malloc(size);
 }

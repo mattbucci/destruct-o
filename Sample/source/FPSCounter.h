@@ -3,7 +3,7 @@
 #include "stdafx.h"
 
 class FPSCounter {
-	list<double> frameTimes;
+	vector<double> frameTimes;
 	void cleanupOldFrames();
 public:
 	void MarkFrameRendered();

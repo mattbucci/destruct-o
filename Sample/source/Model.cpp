@@ -593,6 +593,6 @@ Model* Model::LoadFromCompressedJsonFile(const std::string &directory, const std
 }
 
 
-Node * Model::FastNodeLookup(string node) {
+Node * Model::FastNodeLookup(const string & node) {
 	return nodes[node];
 }

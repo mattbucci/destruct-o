@@ -70,7 +70,7 @@ void FirstPersonMode::Enable(bool enableFirstPerson) {
 }
 
 //Update the looking direction based off input events
-void FirstPersonMode::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> input) {
+void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEvent> input) {
 	if (!firstPersonEnabled)
 		return;
 
