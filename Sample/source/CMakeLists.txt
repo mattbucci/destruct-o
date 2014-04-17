@@ -359,6 +359,8 @@ FILE(GLOB CoreFiles
 	Frames.cpp
 	BaseFrame.h
 	BaseFrame.cpp
+	MenuFrame.h
+	MenuFrame.cpp
 	stdafx.h
 	stdafx.cpp
 )
