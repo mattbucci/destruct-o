@@ -27,4 +27,6 @@ public:
 	//there is no point in updating it at 100hz
 	//it might as well update as its drawn
 	void DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize);
+
+	void MarkDamage(vec2 source);
 };

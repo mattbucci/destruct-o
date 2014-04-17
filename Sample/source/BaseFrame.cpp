@@ -300,3 +300,7 @@ BaseFrame * Game() {
 	_ASSERTE(typeid(*CurrentSystem) == typeid(BaseFrame));
 	return (BaseFrame*)CurrentSystem;
 }
+
+HUD* BaseFrame::GetHUD() {
+	return &hud;
+}

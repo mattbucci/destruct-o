@@ -8,11 +8,12 @@
 #define MINIMAP_SIZE 200
 #define MINIMAP_DOT_SIZE 20
 
-#define DAMAGE_INDICATOR_TIME 1
+#define DAMAGE_INDICATOR_SIZE 100
+#define DAMAGE_INDICATOR_TIME 10
 
 HUD::HUD(BaseFrame* baseFrame) :
 	//Use the tint to tint the white arrow mostly red
-	damageIndicator(Rect(0,0,100,100),"hud/arrow.png",vec4(7,.2,.2,.66)),
+	damageIndicator(Rect(0,0,DAMAGE_INDICATOR_SIZE,DAMAGE_INDICATOR_SIZE),"hud/arrow.png",vec4(7,.2,.2,.66)),
 	//Again use tint to make the white dot bright red (or green or orange or anything)
 	//Note you can change the tint on the fly
 	minimapDot(Rect(0,0,MINIMAP_DOT_SIZE,MINIMAP_DOT_SIZE),"hud/dot.png",vec4(1,0,0,1)),
@@ -29,6 +30,11 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	ActorPlayer* player = baseFrame->Actors.Player();
 	FirstPersonMode* fps = baseFrame->FirstPerson;
 	ContiguousList<PhysicsActor*>* actors = baseFrame->Physics.GetActors();
+
+	//Grab Player Position and Look Vector
+	float px = player->GetPosition().x;
+	float py = player->GetPosition().y;
+	float playerAngle = fps->GetAngleVector().x;
 
 	// ---------------------------------
 	// |||||||||||| MINIMAP ||||||||||||
@@ -54,11 +60,6 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 
 	//Translate Position to Exact Center of Minimap
 	shader->Model.Translate(MINIMAP_DOT_SIZE * .5f, MINIMAP_DOT_SIZE * .5f, 0);
-
-	//Grab Player Position and Look Vector
-	float px = player->GetPosition().x;
-	float py = player->GetPosition().y;
-	float playerAngle = fps->GetAngleVector().x;
 
 	int s = actors->size();
 	for(int i = 0; i < s; i++) {
@@ -115,43 +116,48 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 
 	for(auto it = damagePoints.begin(); it != damagePoints.end();) {
 		if(simTime > (*it).first) {
-			//Don't Erase for Now... Just put it somewhere else
-			//it = damagePoints.erase(it);
-
-			//----- Ooo Fancy -----
-			(*it) = pair<double, vec2>(Game()->Now() + DAMAGE_INDICATOR_TIME + (rand() % 100)/100.0f, vec2(rand() % 360 - 360/2.0f, rand() % 360 - 360/2.0f));
-			it++;
-			//---------------------
+			//Erase if a Damage Indicator expires
+			it = damagePoints.erase(it);
 		} else {
+			//Gather information about Damage Point
 			double ptTime = (*it).first;
+			float x = (*it).second.x;
+			float y = (*it).second.y;
+			float damageAngle = 180 / M_PI * atan2(y - py, x - px);
+
+			//Save Center of Screen Location
 			shader->Model.PushMatrix();
 
-			//Rotate some degree depending on which angle you want the arrow to show from
-			//In this case we've chosen a trick using the time
-			//to make the arrow rotate for no reason
-			shader->Model.Rotate((*it).second.x,vec3(0,0,1));
+			//Rotate to Angle of Damage relative to Player
+			shader->Model.Rotate(playerAngle - damageAngle, vec3(0, 0, 1));
 
-			//Translate outwards
-			//Puts 0 degrees directly up
+			//Translate Outwards to Damage Indicator Circle
 			shader->Model.Translate(0,-dist,0);
 
 			//Offset by the size of the arrow so it draws from the center
-			shader->Model.Translate(-50,-50,0);
+			shader->Model.Translate(-DAMAGE_INDICATOR_SIZE*.5f,-DAMAGE_INDICATOR_SIZE*.5f,0);
 
 			//Apply all the model changes we've made
 			shader->Model.Apply();
 
+			//Set Color Intensity based on Time on Screen
 			damageIndicator.SetColor(vec4(7,.2,.2,(.66f * (ptTime - simTime) / DAMAGE_INDICATOR_TIME)));
 
 			//Draw Damage Indicator
 			damageIndicator.Draw(shader);
 
+			//Reset to Center of Screen
 			shader->Model.PopMatrix();
 
+			//Iterate to Next Indicator
 			it++;
 		}
 	}
 
 	//Reset to the original matrix
 	shader->Model.PopMatrix();
+}
+
+void HUD::MarkDamage(vec2 source) {
+	damagePoints.push_back(pair<double, vec2>(Game()->Now() + DAMAGE_INDICATOR_TIME, source));
 }

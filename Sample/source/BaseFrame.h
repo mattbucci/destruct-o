@@ -125,6 +125,9 @@ public:
     // Model group accessor
     ModelGroup* Models();
 
+	// Get HUD
+	HUD* GetHUD();
+
 	//Define how the base frame saves
 	CLASS_DECLARATION(BaseFrame)
 		INHERITS_FROM(GameSystem)
