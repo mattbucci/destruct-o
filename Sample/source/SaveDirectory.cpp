@@ -21,6 +21,14 @@ std::string OS::SaveDirectory()
 
 #else
 
-#error Anthony please fix me
+// Return a save file directory
+std::string OS::SaveDirectory()
+{
+    // Find the magical save directoy
+    std::string saveDir = "/mnt/sdcard/";
+    
+    // Return the magical save directory
+    return saveDir;
+}
 
 #endif

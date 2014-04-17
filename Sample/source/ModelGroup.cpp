@@ -150,7 +150,10 @@ void ModelGroup::AddModel(std::string& directory, std::string& path, std::string
 {
     // Add this model to the model list
     double s = OS::Now();
-    models[name] = Model::LoadFromJsonFile(directory, path, textureCache);
+    Model * loadedModel = Model::LoadFromJsonFile(directory, path, textureCache);
+	modelGroupMutex.lock();
+	models[name] = loadedModel;
+	modelGroupMutex.unlock();
     double f = OS::Now() - s;
     cout << "Loaded: " << path << " (in " << f << " seconds) ==> " << name << endl;
 }
@@ -159,7 +162,10 @@ void ModelGroup::AddCompressedModel(std::string& directory, std::string& path, s
 {
     // Add this model to the model list
     double s = OS::Now();
-    models[name] = Model::LoadFromCompressedJsonFile(directory, path, textureCache);
+	Model *loadedModel  = Model::LoadFromCompressedJsonFile(directory, path, textureCache);
+	modelGroupMutex.lock();
+	models[name] = loadedModel;
+	modelGroupMutex.unlock();
     double f = OS::Now() - s;
     cout << "Loaded: " << path << " (in " << f << " seconds) ==> " << name << endl;
 }

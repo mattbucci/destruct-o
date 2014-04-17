@@ -21,6 +21,7 @@
 #include "Model.h"
 #include "ModelInstance.h"
 #include "TextureCache.h"
+#include <mutex>
 
 class ModelGroup
 {
@@ -29,6 +30,9 @@ public:
     typedef std::map<std::string, Model *>::const_iterator const_iterator;
     typedef std::map<std::string, Model *>::size_type size_type;
 private:
+	//Protect the map while adding to the model group
+	mutex modelGroupMutex;
+
     // The models in the model group
     std::map<std::string, Model *> models;
     std::map<std::string, Transform> offsets;

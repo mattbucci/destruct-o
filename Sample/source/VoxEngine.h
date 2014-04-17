@@ -11,6 +11,7 @@
 class VoxEngine {
 	//Entry point for the game engine
 	static void Start();
+
 	//Build an SDL context
 	static SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion, float requiredGLSLVersion);
 
