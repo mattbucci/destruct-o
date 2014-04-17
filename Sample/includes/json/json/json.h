@@ -1,7 +1,9 @@
 /// Json-cpp amalgated header (http://jsoncpp.sourceforge.net/).
 /// It is intented to be used with #include <json/json.h>
 
+#ifdef _MSC_VER
 #include "FSBAllocator.hh"
+#endif
 
 // //////////////////////////////////////////////////////////////////////
 // Beginning of content of file: LICENSE
