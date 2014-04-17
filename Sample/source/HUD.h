@@ -14,6 +14,8 @@ class HUD {
 	BaseFrame* baseFrame;
 	ActorPlayer* player;
 
+	float minimapScale;
+
 	TexturedRect damageIndicator;
 	TexturedRect minimapDot;
 	TexturedRect minimapBackground;

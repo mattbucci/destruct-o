@@ -52,3 +52,7 @@ void ActorSystem::Draw(ShaderGroup * shaders) {
 	for (unsigned int i = 0; i < allActors.size(); i++) 
 		allActors[i]->Draw(modelShader);
 }
+
+ContiguousList<Actor*>* ActorSystem::GetActors() {
+	return &allActors;
+}

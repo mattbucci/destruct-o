@@ -16,15 +16,19 @@ HUD::HUD(BaseFrame* baseFrame) :
 	//Again use tint to make the white dot bright red (or green or orange or anything)
 	//Note you can change the tint on the fly
 	minimapDot(Rect(0,0,MINIMAP_DOT_SIZE,MINIMAP_DOT_SIZE),"hud/dot.png",vec4(1,0,0,1)),
-	minimapBackground(Rect(0,0,MINIMAP_SIZE,MINIMAP_SIZE),"hud/minimap.png", vec4(1, 1, 1, .6)) {
+	minimapBackground(Rect(0,0,MINIMAP_SIZE,MINIMAP_SIZE),"hud/minimap.png", vec4(1, 1, 1, .5)) {
 		this->baseFrame = baseFrame;
+		minimapScale = 1.0f;
 }
 
 //Since the hud is purely visual
 //there is no point in updating it at 100hz
 //it might as well update as its drawn
 void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
-	static ActorPlayer* player = baseFrame->Actors.Player();
+	//Update References
+	ActorPlayer* player = baseFrame->Actors.Player();
+	FirstPersonMode* fps = baseFrame->FirstPerson;
+	ContiguousList<PhysicsActor*>* actors = baseFrame->Physics.GetActors();
 
 	// ---------------------------------
 	// |||||||||||| MINIMAP ||||||||||||
@@ -53,17 +57,37 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	//Draw the dot
 	minimapDot.Draw(shader);
 
+	shader->Model.Translate(MINIMAP_DOT_SIZE * .5f, MINIMAP_DOT_SIZE * .5f, 0);
+
 	//Make the dot pulse gently
 	float period = sin(fmod(Game()->Now(),3.141592));
-	minimapDot.SetColor(vec4(1,0,0,.5f+.5f*period));
 
-	for(int i = 0; i < 10; i++) {
-		int x = rand() % (MINIMAP_SIZE-20) - (MINIMAP_SIZE-20) * .5f;
-		int y = rand() % (MINIMAP_SIZE-20) - (MINIMAP_SIZE-20) * .5f;
+	float px = player->GetPosition().x;
+	float py = player->GetPosition().y;
+	vec2 playerAngleVector = fps->GetAngleVector();
+	float prad = playerAngleVector.x;
+
+	int s = actors->size();
+	for(int i = 0; i < s; i++) {
+		float x = (*actors)[i]->GetPosition().x;
+		float y = (*actors)[i]->GetPosition().y;
+
+		float arad = 180 / M_PI * atan2(y - py, x - px);
+		float adis = sqrtf((y - py) * (y - py) + (x - px) * (x - px)) * minimapScale;
+
+		float intensity = min(1.0f, (MINIMAP_SIZE*.5f - adis - MINIMAP_DOT_SIZE*.5f) / (MINIMAP_SIZE * .064f));
+		minimapDot.SetColor(vec4(1,0,0,intensity));
+
+		if(adis == 0) { // Hacky way to prevent redraw of player dot.
+			continue;
+		}
 
 		//Translate to Center of Minimap
 		shader->Model.PushMatrix();
-		shader->Model.Translate(x, y, 0);
+		shader->Model.Rotate(prad - arad, vec3(0, 0, 1));
+		shader->Model.Translate(vec3(0, -adis, 0));
+		shader->Model.Rotate(prad - arad, vec3(0, 0, -1));
+		shader->Model.Translate(vec3(-MINIMAP_DOT_SIZE * .5, -MINIMAP_DOT_SIZE * .5, 0));
 		shader->Model.Apply();
 
 		minimapDot.Draw(shader);

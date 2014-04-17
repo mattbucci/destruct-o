@@ -67,6 +67,8 @@ public:
 	//second actor is the damaging actor, will be NULL if no actor associated
 	//FactionId is the killing faction
 	GameEvent<void(Actor*,Actor*,FactionId)> ActorKilled;
+	//Actor Accessor
+	ContiguousList<Actor*>* GetActors();
 
 	//Actor system is essentially a list of actors
 	CLASS_DECLARATION(ActorSystem)

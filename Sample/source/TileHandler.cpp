@@ -226,6 +226,8 @@ GameTile * TileHandler::getTile(vec2 pos) {
 	}
 
 	if(wait) {
+		cout << "WARNING: SYNCRONOUS TILE GENERATION" << endl;
+
 		tile = NULL;
 		//While tile not Ready
 		while(tile == NULL) {
