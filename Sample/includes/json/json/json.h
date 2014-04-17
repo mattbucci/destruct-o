@@ -1,6 +1,8 @@
 /// Json-cpp amalgated header (http://jsoncpp.sourceforge.net/).
 /// It is intented to be used with #include <json/json.h>
 
+#include "FSBAllocator.hh"
+
 // //////////////////////////////////////////////////////////////////////
 // Beginning of content of file: LICENSE
 // //////////////////////////////////////////////////////////////////////
@@ -487,6 +489,7 @@ namespace Json {
             duplicate,
             duplicateOnCopy
          };
+		 //CZString() {cstr_ = NULL;}
          CZString( ArrayIndex index );
          CZString( const char *cstr, DuplicationPolicy allocate );
          CZString( const CZString &other );
@@ -505,7 +508,11 @@ namespace Json {
 
    public:
 #  ifndef JSON_USE_CPPTL_SMALLMAP
+#ifdef _MSC_VER
+	  typedef std::map<CZString, Value, std::less<CZString>, FSBAllocator<pair<const CZString, Value>>> ObjectValues;
+#else
       typedef std::map<CZString, Value> ObjectValues;
+#endif
 #  else
       typedef CppTL::SmallMap<CZString, Value> ObjectValues;
 #  endif // ifndef JSON_USE_CPPTL_SMALLMAP

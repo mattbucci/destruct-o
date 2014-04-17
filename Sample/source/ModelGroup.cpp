@@ -18,6 +18,8 @@
 #include "ModelGroup.h"
 #include "lodepng.h"
 #include "OS.h"
+#include <thread>
+#include "Semaphore.h"
 
 // Create an empty model group
 ModelGroup::ModelGroup(TextureCache& _textureCache)
@@ -60,36 +62,83 @@ ModelGroup::ModelGroup(const std::string& manifestPath, TextureCache& _textureCa
         throw new std::runtime_error("Model::Model(const string& manifestPath, TextureCache& _textureCache) - Manifest root is not an array");
     }
     
+	double start = OS::Now();
+
+	vector<Json::Value> modelJson;
+	for (auto model : root)
+		modelJson.push_back(model);
+
     // Iterate through all the meshes included in the manifest
-    for(Json::Value::iterator model = root.begin(); model != root.end(); model++)
-    {
-        // Get the model information
-        std::string name = (*model)["name"].asString();
-        std::string path = (*model)["path"].asString();
-        std::string directory = (*model)["directory"].asString();
-        bool compressed = (*model)["compressed"].asBool();
+	int curMesh = -1;
+	int * meshIterator = &curMesh;
+
+	mutex * modelIteratorMutex = new mutex();
+	semaphore * deadThreads = new semaphore();
+
+	static const int workerThreads = 4;
+
+	//Launch four worker threads
+	for (int i = 0; i < workerThreads; i++) {
+		thread t([&,meshIterator,modelIteratorMutex,modelJson]() {
+			while (1) {
+				//Critical section
+				modelIteratorMutex->lock();
+
+				//Check if all models are loaded
+				if (*meshIterator == (modelJson.size()-1)) {
+					modelIteratorMutex->unlock();
+					deadThreads->increase();
+					return;
+				}
+				
+				//Next model
+				(*meshIterator)++;
+
+				const Json::Value & model = modelJson[*meshIterator];
+
+				modelIteratorMutex->unlock();
+
+				
+
+				// Get the model information
+				std::string name = (model)["name"].asString();
+				std::string path = (model)["path"].asString();
+				std::string directory = (model)["directory"].asString();
+				bool compressed = (model)["compressed"].asBool();
         
-        // Load the transforms
-        const Json::Value& offset = (*model)["offset"];
-        if(offset != Json::Value::null && offset.isObject())
-        {
-            offsets[name] = Transform(offset);
-        }
-        else
-        {
-            offsets[name] = Transform();
-        }
+				// Load the transforms
+				const Json::Value& offset = (model)["offset"];
+				if(offset != Json::Value::null && offset.isObject())
+				{
+					offsets[name] = Transform(offset);
+				}
+				else
+				{
+					offsets[name] = Transform();
+				}
         
-        // Load this model
-        if(compressed)
-        {
-            AddCompressedModel(directory, path, name);
-        }
-        else
-        {
-            AddModel(directory, path, name);
-        }
-    }
+				// Load this model
+				if(compressed)
+				{
+					AddCompressedModel(directory, path, name);
+				}
+				else
+				{
+					AddModel(directory, path, name);
+				}					
+			}
+		});
+		t.detach();
+	}
+	//Decrease four times, once for each thread
+	for (int i = 0; i < workerThreads; i++)
+		deadThreads->decrease();
+
+	cout << "All meshes loaded: " << OS::Now()-start << "s \n";
+
+	delete modelIteratorMutex;
+	delete deadThreads;
+
 }
 
 // Insert a model into the model group
