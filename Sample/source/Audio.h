@@ -20,7 +20,6 @@ private:
     ActorPlayer * user;
     Music MusicPlayer;
     Effect EffectPlayer;
-    void clean_up();
 public:
     AudioPlayer(uint8_t volume);
     void Pause();
