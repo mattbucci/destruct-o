@@ -29,8 +29,11 @@ void Effect::PlayEffect(event action) {
     }
     else {
         if (action.pos != vec3(0,0,0)) {
-            int distance = pow(glm::length(action.pos-vec3(0,0,0)),1.3);
-            if(distance >= 250) distance = 250;
+			float distancefactor = 3*(pow(glm::length(action.pos - vec3(0, 0, 0)), -.3) - .2);
+			if (distancefactor > 1) distancefactor = 1;
+			cout << distancefactor << endl;
+            int distance = 255 - 255 * distancefactor;
+
             int angle = acos(action.pos.x)+(action.pos.y < 0 ? 180 : 0);
             
             Mix_SetPosition(action.id, angle, distance);
