@@ -28,7 +28,8 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
     : GameSystem(shaders), 
 	Physics(&Voxels), 
 	Actors(&Physics),
-	achievements(&notification,this)
+	achievements(&notification,this),
+	hud(this)
 {
 	cout << "\t Constructing base frame\n";
     
