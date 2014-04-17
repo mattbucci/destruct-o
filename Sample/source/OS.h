@@ -11,6 +11,9 @@ public:
 	static void WaitUntil(double until);
 	//Returns the current time in seconds
 	static double Now(void);
+    
+    // Returns a directory where you can save to
+    static std::string SaveDirectory();
 private:
 #ifdef  _WIN32
 	//For windows 

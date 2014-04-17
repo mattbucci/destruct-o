@@ -30,9 +30,9 @@ class ActorPlayer;
 class ParticleSystem;
 class Demo;
 
-
 //Retrieve base frame
 BaseFrame * Game();
+
 
 class BaseFrame : public GameSystem {
 	AudioPlayer * audio;

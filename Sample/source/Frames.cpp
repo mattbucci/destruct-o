@@ -4,6 +4,7 @@
 
 //Frames
 #include "BaseFrame.h"
+#include "MenuFrame.h"
 #include <thread>
 
 //The current system
@@ -24,10 +25,12 @@ void Frames::BuildSystemList() {
 	cout << "Building systems list...";
 
 	//Build each frame
-	systems[FRAME_MAINMENU] = new BaseFrame(shaders);
-
+	//systems[FRAME_MAINMENU] = new MenuFrame(shaders);
+	
 	//Set initial frame  
-	SetSystem(FRAME_MAINMENU);
+	//SetSystem(FRAME_MAINMENU);
+	systems[FRAME_GAME] = new BaseFrame(shaders);
+	SetSystem(FRAME_GAME);
 	//Start deferred loading on another thread
 	loadingComplete = false;
 	//Thread starts immediately

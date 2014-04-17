@@ -299,6 +299,7 @@ FILE(GLOB UtilityFiles
 	GameEvent.cpp
 	OS.h
 	OS.cpp
+    SaveDirectory.cpp
 	Semaphore.h
 	Semaphore.cpp
 	FPSCounter.h
@@ -318,6 +319,8 @@ FILE(GLOB UtilityFiles
 	LoadingScreen.cpp
 	IntRect.h
 	IntRect.cpp
+	Network.cpp
+	Network.h
 )
 source_group(Utilities FILES ${UtilityFiles})
 
@@ -356,6 +359,8 @@ FILE(GLOB CoreFiles
 	Frames.cpp
 	BaseFrame.h
 	BaseFrame.cpp
+	MenuFrame.h
+	MenuFrame.cpp
 	stdafx.h
 	stdafx.cpp
 )

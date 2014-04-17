@@ -22,12 +22,11 @@ class Savable {
 			//Push a new value into the container
 			container.push_back(InternalType());
 
-			InternalType & ref = container.back();
-
 			ReflectionData::savable saveData;
 			saveData.dataType = valueData.internalType;
 			saveData.internalType = ReflectionData::SAVE_NOTHING;
-			saveData.member = &ref;
+			saveData.member = &container.back();
+			//saveData.member = (void *) &container.back();
 			saveData.memberName = ""; //No name since its part of an array
 			//Load the value
 			LoadValue(saveData, value[i],loadData);
