@@ -18,13 +18,15 @@ public:
 	Actor();
 	virtual ~Actor();
 
-	//Update this actor with the delta and current time
-	//returns false if the actor should be destroyed
+	//Update this actor 
+	//returns true if the actor should be destroyed
+	//otherwise return false
 	virtual bool Update();
 
 	//Draw this actor
 	virtual void Draw();
 
 	CLASS_DECLARATION(ActorSystem)
+		CLASS_MEMBER(valid,ReflectionData::SAVE_BOOL)
 	END_DECLARATION
 };

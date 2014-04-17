@@ -8,10 +8,9 @@ PhysicsActor::PhysicsActor(vec3 size) :
 	Position(position) {
 	this->size = size;
 	onGround = false;
-	Game()->Physics.RegisterPhysicsActor(this);
 }
 PhysicsActor::~PhysicsActor() {
-	Game()->Physics.UnregisterPhysicsActor(this);
+	
 }
 
 //Get the position of this physics actor

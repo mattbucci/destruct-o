@@ -25,7 +25,7 @@
 #include "Building.h"
 
 BaseFrame::BaseFrame(ShaderGroup * shaders)
-    : GameSystem(shaders), Physics(&Voxels)
+    : GameSystem(shaders), Physics(&Voxels), Actors(&Physics)
 {
 	cout << "\t Constructing base frame\n";
 		
@@ -105,7 +105,7 @@ bool BaseFrame::Load(string saveFile) {
 	//Deserialize the data
 	Savable::Deserialize(fileData,this);
     
-    audio->PlayerInit(player);
+    audio->PlayerInit(Actors.Player());
 	return true;
 }
 
@@ -124,14 +124,10 @@ void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
 #include "ActorAI.h"
 
 void BaseFrame::OnFrameFocus() {
-	//Build actors, right now just the player
-	player = new ActorPlayer();
-	//The player autoregisters himself with the actor system
-	//we do not need to do that by hand
     
 	//example remove me
-	new ActorAI();
-	new ActorAI();
+	Actors.BuildActor<ActorAI>();
+	Actors.BuildActor<ActorAI>();
 	//Physics.BuildVoxel(vec3(40,42,80));
 
 	//The physics demo
@@ -153,10 +149,10 @@ void BaseFrame::Build()
     
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
-	audio->PlayerInit(player);
+	audio->PlayerInit(Actors.Player());
     audio->DemoInit(demo);
     achievements = new Achievements(notification);
-    achievements->InitPlayerAchievements(player);
+    achievements->InitPlayerAchievements(Actors.Player());
     achievements->InitPhysicsAchievements(&Physics);
 }
 
@@ -177,12 +173,12 @@ bool BaseFrame::Update(vector<InputEvent> inputEvents) {
 	//The player is the only actor which reads input
 	//player->ReadInput(inputEvents);
 
-	Voxels.Update(player->GetPosition());
+	Voxels.Update(Actors.Player()->GetPosition());
 
 	//Update actors
 	Actors.Update();
 
-	demo->OnInput(inputEvents,player->GetPosition(),FirstPerson->GetLookVector());
+	demo->OnInput(inputEvents,Actors.Player()->GetPosition(),FirstPerson->GetLookVector());
 	demo->Update();
 
 	//Update physics/Particles
@@ -192,7 +188,7 @@ bool BaseFrame::Update(vector<InputEvent> inputEvents) {
 		//testSystem->UpdateEmitter(now);
 
 	//Update demo
-	demo->CheckTouchInput(player->GetPosition(),FirstPerson->GetLookVector());
+	demo->CheckTouchInput(Actors.Player()->GetPosition(),FirstPerson->GetLookVector());
 	return true;
 }
 
@@ -213,7 +209,7 @@ void BaseFrame::Draw(double width, double height)
 
 	//We add 1.5 to ground level. This assumes the person is 5ft between the ground
 	//and his eye line
-	vec3 pos = player->GetPosition();
+	vec3 pos = Actors.Player()->GetPosition();
 
 
 	//Draw the frame

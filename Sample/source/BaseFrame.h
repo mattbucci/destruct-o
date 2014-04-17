@@ -31,7 +31,6 @@ class ParticleSystem;
 class Demo;
 
 class BaseFrame : public GameSystem {
-	ActorPlayer * player;
 	AudioPlayer * audio;
 
 	Demo * demo;
@@ -71,12 +70,13 @@ public:
 	GameCamera Camera;
 	VoxelSystem Voxels;
 	ViewDistanceCalc ViewDistance;
-	ActorSystem Actors;
 	
 	// First person mode will either be desktop or mobile variant, so use a pointer
 	FirstPersonMode *FirstPerson;
 	PhysicsSystem Physics;
 	ParticleCloud Particles;
+
+	ActorSystem Actors;
     
     // Model instances to draw for the demo
     std::vector<ModelInstance *> modelInstances;
@@ -115,7 +115,6 @@ public:
 		CLASS_MEMBER(FirstPerson,ReflectionData::SAVE_USEROWNEDHANDLE)
 		CLASS_MEMBER(Physics,ReflectionData::SAVE_INSTANCE)
 		CLASS_MEMBER(Actors,ReflectionData::SAVE_INSTANCE)
-		CLASS_MEMBER(player,ReflectionData::SAVE_HANDLE)
 	END_DECLARATION
 };
 

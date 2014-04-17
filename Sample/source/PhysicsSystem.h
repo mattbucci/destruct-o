@@ -92,5 +92,6 @@ public:
 	GameEvent<void(PhysicsVoxel*)> VoxelDisintegrating;
 	CLASS_DECLARATION(PhysicsSystem)
 		CLASS_CONTAINER_MEMBER(allVoxels,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
+		CLASS_CONTAINER_MEMBER(actors,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_HANDLE);
 	END_DECLARATION
 };

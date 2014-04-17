@@ -1,33 +1,40 @@
 #include "stdafx.h"
 #include "ActorSystem.h"
 #include "Actor.h"
+#include "ActorPlayer.h"
 
 
-ActorSystem::ActorSystem() {
+ActorSystem::ActorSystem(PhysicsSystem * physics) {
+	this->physics = physics;
+	player = BuildActor<ActorPlayer>();
 }
 ActorSystem::~ActorSystem() {
 	//cleanup all the actors
-	//they auto-deregister, so we have to iterate over a separate list
-	ContiguousList<Actor*> actors = allActors;
-	for (auto actor : actors)
+	for (auto actor : allActors)
 		delete actor;
 }
 
-//Should be called by Actor.cpp only
-//no one else call these
-void ActorSystem::Register(Actor * toRegister) {
-	allActors.push_back(toRegister);
-}
-void ActorSystem::Unregister(Actor * toUnregister) {
-	allActors.erase(toUnregister);
-}
 	
 //Update the actors, called by base frame
 void ActorSystem::Update() {
 
 	//Update all the actors
-	for (unsigned int i = 0; i < allActors.size(); i++) 
-		allActors[i]->Update();
+	for (auto it = allActors.begin(); it != allActors.end(); ) 
+		if ((*it)->Update()) {
+			//Unregister physics actors
+			if (dynamic_cast<PhysicsActor*>(*it) != NULL)
+				physics->UnregisterPhysicsActor((PhysicsActor*)*it);
+			//Cleanup memory
+			delete *it;
+			//erase from list
+			it = allActors.erase(it);
+		}
+		else
+			it++;
+}
+
+ActorPlayer * ActorSystem::Player() {
+	return player;
 }
 
 //Draw all the actors

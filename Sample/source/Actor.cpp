@@ -7,19 +7,15 @@ CLASS_SAVE_CONSTRUCTOR(Actor);
 
 Actor::Actor() {
 	valid = true;
-	//Assume if an actor is created the frame is the game frame
-	Game()->Actors.Register(this);
 }
 Actor::~Actor() {
-	//Assume if an actor is created the frame is the game frame
-	Game()->Actors.Unregister(this);
 }
 
 
 
 //Update this actor with the delta and current time
 bool Actor::Update() {
-	return valid;
+	return !valid;
 }
 
 //Draw this actor
