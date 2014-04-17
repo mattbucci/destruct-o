@@ -46,56 +46,58 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	//Draw Background
 	minimapBackground.Draw(shader);
 
-	//Translate to Center of Minimap
+	//Draw Player @ Center of Minimap
 	shader->Model.Translate(MINIMAP_SIZE * .5f - MINIMAP_DOT_SIZE * .5f, MINIMAP_SIZE * .5f - MINIMAP_DOT_SIZE * .5f,0);
-
-	//Apply all the model changes we've made
 	shader->Model.Apply();
-
 	minimapDot.SetColor(vec4(0, 0, 0, 1));
-
-	//Draw the dot
 	minimapDot.Draw(shader);
 
+	//Translate Position to Exact Center of Minimap
 	shader->Model.Translate(MINIMAP_DOT_SIZE * .5f, MINIMAP_DOT_SIZE * .5f, 0);
 
-	//Make the dot pulse gently
-	float period = sin(fmod(Game()->Now(),3.141592));
-
+	//Grab Player Position and Look Vector
 	float px = player->GetPosition().x;
 	float py = player->GetPosition().y;
-	vec2 playerAngleVector = fps->GetAngleVector();
-	float prad = playerAngleVector.x;
+	float playerAngle = fps->GetAngleVector().x;
 
 	int s = actors->size();
 	for(int i = 0; i < s; i++) {
+		//Grab Actor Position
 		float x = (*actors)[i]->GetPosition().x;
 		float y = (*actors)[i]->GetPosition().y;
 
-		float arad = 180 / M_PI * atan2(y - py, x - px);
-		float adis = sqrtf((y - py) * (y - py) + (x - px) * (x - px)) * minimapScale;
+		//Calculate Actor Angle Relative to Player
+		float actorAngle = 180 / M_PI * atan2(y - py, x - px);
+		//Calculate Actor Distance Relative to Player
+		float actorDistance = sqrtf((y - py) * (y - py) + (x - px) * (x - px)) * minimapScale;
 
-		float intensity = min(1.0f, (MINIMAP_SIZE*.5f - adis - MINIMAP_DOT_SIZE*.5f) / (MINIMAP_SIZE * .064f));
+		//Intensity fade near edges of Minimap
+		float intensity = min(1.0f, (MINIMAP_SIZE*.5f - actorDistance - MINIMAP_DOT_SIZE*.5f) / (MINIMAP_SIZE * .064f));
 		minimapDot.SetColor(vec4(1,0,0,intensity));
 
-		if(adis == 0) { // Hacky way to prevent redraw of player dot.
+		//Hacky way to prevent redraw of player dot.
+		//Will also omit players directly below player
+		//This should be done in a smarter way later.
+		if(actorDistance == 0) {
 			continue;
 		}
 
-		//Translate to Center of Minimap
+		//Translate to Relative Location on Minimap
 		shader->Model.PushMatrix();
-		shader->Model.Rotate(prad - arad, vec3(0, 0, 1));
-		shader->Model.Translate(vec3(0, -adis, 0));
-		shader->Model.Rotate(prad - arad, vec3(0, 0, -1));
+		shader->Model.Rotate(playerAngle - actorAngle, vec3(0, 0, 1));
+		shader->Model.Translate(vec3(0, -actorDistance, 0));
+		shader->Model.Rotate(playerAngle - actorAngle, vec3(0, 0, -1));
 		shader->Model.Translate(vec3(-MINIMAP_DOT_SIZE * .5, -MINIMAP_DOT_SIZE * .5, 0));
 		shader->Model.Apply();
 
+		//Draw the Actor as a Dot on Map
 		minimapDot.Draw(shader);
 
+		//Reset to Center of Minimap
 		shader->Model.PopMatrix();
 	}
 
-	//Reset to the original amtrix
+	//Reset to the original matrix
 	shader->Model.PopMatrix();
 
 	// ---------------------------------
