@@ -319,6 +319,8 @@ FILE(GLOB UtilityFiles
 	LoadingScreen.cpp
 	IntRect.h
 	IntRect.cpp
+	Network.cpp
+	Network.h
 )
 source_group(Utilities FILES ${UtilityFiles})
 

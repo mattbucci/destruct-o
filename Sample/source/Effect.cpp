@@ -55,13 +55,6 @@ bool Effect::load_files() {
     
 	SDL_RWops *file = SDL_RWFromFile(filename.c_str(), "r");
 	long size;
-	
-	cout << "Parsing particle file \"" << filename << "\":";
-    
-	if(!file) {
-		cout << "\nFailed to open particle data file \"" << filename << "\"\n";
-		return NULL;
-	}
     
 	//Use the SDL system to read the file
 	SDL_RWseek(file , 0 , RW_SEEK_END);

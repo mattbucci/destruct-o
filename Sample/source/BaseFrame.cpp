@@ -8,7 +8,7 @@
 #include "ShaderGroup.h"
 #include "ActorPlayer.h"
 #include "VoxEngine.h"
-
+#include "Network.h"
 #include "GLLighting.h"
 #include "Frames.h"
 
