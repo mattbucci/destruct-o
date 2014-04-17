@@ -360,7 +360,7 @@ void Demo::SwitchDemo(int newDemo, vec3 playerPos, vec3 playerFacing) {
 	//Next start the new demo
 }
 
-void Demo::Update(double now, double delta)
+void Demo::Update()
 {
 
 }

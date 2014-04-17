@@ -23,7 +23,7 @@ public:
 	~ActorSystem();
 	
 	//Update the actors, called by base frame
-	void Update(double delta, double now);
+	void Update();
 
 	//Draw all the actors
 	void Draw(ShaderGroup * shaders);

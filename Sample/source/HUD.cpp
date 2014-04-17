@@ -2,6 +2,7 @@
 #include "HUD.h"
 #include "GL2DProgram.h"
 #include "VoxEngine.h"
+#include "BaseFrame.h"
 
 HUD::HUD() :
 	//Use the tint to tint the white arrow mostly red
@@ -24,7 +25,7 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	//Rotate some degree depending on which angle you want the arrow to show from
 	//In this case we've chosen a trick using the time
 	//to make the arrow rotate for no reason
-	shader->Model.Rotate(fmod(VoxEngine::GetGameSimTime(),10)/10*360,vec3(0,0,1));
+	shader->Model.Rotate(fmod(Game()->Now(),10)/10*360,vec3(0,0,1));
 	//Translate outwards
 	//Puts 0 degrees directly up
 	shader->Model.Translate(0,-200,0);
@@ -61,7 +62,7 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	shader->Model.Apply();
 
 	//Make the dot pulse gently
-	float period = sin(fmod(VoxEngine::GetGameSimTime(),3.141592));
+	float period = sin(fmod(Game()->Now(),3.141592));
 	minimapDotExample.SetColor(vec4(1,0,0,.5f+.5f*period));
 
 	//Draw the dot

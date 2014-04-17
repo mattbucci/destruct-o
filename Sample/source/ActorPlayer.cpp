@@ -25,7 +25,7 @@ ActorPlayer::~ActorPlayer() {
 }
 
 //Update the position based off the most recent movement and direction vectors
-bool ActorPlayer::Update(float delta, float now) {
+bool ActorPlayer::Update() {
 	//Your movement speed is the multiplier right now
 	vec2 playerMotion = Game()->FirstPerson->GetMoveVector()*movementSpeed;
 	
@@ -89,5 +89,5 @@ bool ActorPlayer::Update(float delta, float now) {
             onGround = true;
         }
 		*/
-	return Actor::Update(delta,now);
+	return Actor::Update();
 }

@@ -42,19 +42,19 @@ class PhysicsSystem : public Savable {
 
 
 	//Collide physics voxels with other physics voxels
-	void collideVoxelsToVoxels(float delta);
+	void collideVoxelsToVoxels();
 	//Collide physics voxels with actors
-	void collideVoxelsToActors(float delta);
+	void collideVoxelsToActors();
 	//Collide actors with actors
-	void collideActorsToActors(float delta);
+	void collideActorsToActors();
 
 
 	//Update and finalize physics voxels
 	//also handles terrain interactions
-	void updatePhysicsVoxels(float delta);
+	void updatePhysicsVoxels();
 	//Update and finalize physics actors
 	//also handles terrain interactions
-	void updatePhysicsActors(float delta);
+	void updatePhysicsActors();
 
 	//A tie to the voxel system used to lookup the terrain height at various points
 	VoxelSystem * voxelSystem;
@@ -83,7 +83,7 @@ public:
 	void UnregisterPhysicsActor(PhysicsActor * toUnregister);
 
 	//Update the physics voxels, called by base frame
-	void Update(double delta, double now);
+	void Update();
 
 	//Draw all the actors
 	void Draw(ShaderGroup * shaders);

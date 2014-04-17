@@ -4,6 +4,7 @@
 #include "OS.h"
 #include "ParticleData.h"
 #include "Utilities.h"
+#include "VoxEngine.h"
 
 
 Particle::Particle(double gameTime, float systemLifeFactor, ParticleSystem * owner, ParticleData * systemData) {
@@ -50,7 +51,7 @@ Particle::Particle(double gameTime, float systemLifeFactor, ParticleSystem * own
 }
 
 //Updates the position of the particle
-bool Particle::Update(double time, double delta) {
+bool Particle::Update(double time) {
 	if (time >= deathAt)
 		//Mark this particle for destruction
 		return true;
@@ -63,10 +64,10 @@ bool Particle::Update(double time, double delta) {
 	Scale = SystemData->Scale.ValueAtSequence(lifeFactor) * scaleVariation;
 	//Now get/apply forces
 	vec3 acceleration = SystemData->Acceleration.ValueAtSequence(lifeFactor);
-	Velocity += acceleration*(float)delta;
-	Position += Velocity*(float)delta;
+	Velocity += acceleration*(float)SIMULATION_DELTA;
+	Position += Velocity*(float)SIMULATION_DELTA;
 	//Finally calculate the current frame
-	unroundedFrame += SystemData->AnimationSpeed.ValueAtSequence(lifeFactor)*delta;
+	unroundedFrame += SystemData->AnimationSpeed.ValueAtSequence(lifeFactor)*SIMULATION_DELTA;
 	Frame = (int)unroundedFrame;
 
 	return false;

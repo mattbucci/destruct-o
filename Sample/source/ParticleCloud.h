@@ -23,7 +23,7 @@ class ParticleCloud {
 public:
 
 	//Updates the contents of the particle cloud automatically
-	void UpdateCloud(double time, double delta);
+	void UpdateCloud();
 
 	//Build a particle system with the given particle data
 	//to last the specified amount of time

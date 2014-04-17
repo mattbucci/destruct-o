@@ -9,6 +9,7 @@ GameSystem::GameSystem(ShaderGroup * _shaders)
 {
 	nextFrameTime = 0;
 	fps = 40;
+	simTime = 0;
 }
 
 GameSystem::~GameSystem() {
@@ -47,15 +48,9 @@ void GameSystem::passEventsToControl(vector<InputEvent> & inputEvents) {
 }
 
 
-bool GameSystem::Update(double delta,double now, vector<InputEvent> inputEvents) {
+bool GameSystem::Update(vector<InputEvent> inputEvents) {
 	//Run the dialog system and monitor pressed keys
 	passEventsToControl(inputEvents);
-
-	//Handle frame drawing
-	//Maintain a constant fps for now
-	//this is changed to fix update, variable draw when certain frames are running
-	OS::WaitUntil(nextFrameTime);
-	nextFrameTime = OS::Now()+1.0/(double)fps;
 
 	return true;
 }
@@ -93,4 +88,8 @@ void GameSystem::OnFrameLeave() {
 	//Send the leave event to the controls
 	InputEvent ie(InputEvent::MouseMove,0,-1,-1);
 	Controls.FireEvent(ie);
+}
+
+double GameSystem::Now() {
+	return simTime;
 }

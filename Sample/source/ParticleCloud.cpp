@@ -4,16 +4,16 @@
 #include "ShaderGroup.h"
 #include "GLParticleProgram.h"
 #include "GL3DProgram.h"
-#include "VoxEngine.h"
+#include "BaseFrame.h"
 
 //Updates the contents of the particle cloud automatically
-void ParticleCloud::UpdateCloud(double time, double delta) {
+void ParticleCloud::UpdateCloud() {
 
 	//First update each particle
 	for (auto it = particles.begin(); it != particles.end(); ) {
 		ParticleSystem * current = *it;
 		
-		if (current->UpdateEmitter(time,delta)) {
+		if (current->UpdateEmitter()) {
 			//Cleanup that particle system
 			delete current;
 			//Remove it from the list
@@ -26,7 +26,7 @@ void ParticleCloud::UpdateCloud(double time, double delta) {
 }
 
 ParticleSystem * ParticleCloud::BuildParticleSystem(const ParticleData & particleType,float lifeTime) {
-	ParticleSystem * ps = new ParticleSystem(particleType,VoxEngine::GetGameSimTime(),lifeTime);
+	ParticleSystem * ps = new ParticleSystem(particleType,Game()->Now(),lifeTime);
 	particles.push_back(ps);
 	return ps;
 }

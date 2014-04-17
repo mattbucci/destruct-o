@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "Notification.h"
-#include "VoxEngine.h"
+#include "BaseFrame.h"
 
 Notification::Notification(void) {
 	position = Rect(0, 0, 800, 30);
@@ -27,9 +27,9 @@ void Notification::notify(string msg) {
 }
 
 void Notification::Draw(GL2DProgram * shader) {
-	if(VoxEngine::GetGameSimTime() > updateTime) {
+	if(Game()->Now() > updateTime) {
 		if(q.size() > 0) {
-			updateTime = VoxEngine::GetGameSimTime() + NOTIFICATION_TIME;
+			updateTime = Game()->Now() + NOTIFICATION_TIME;
 			text->SetText(q.front());
 			text->SetVisible(true);
 			q.pop();

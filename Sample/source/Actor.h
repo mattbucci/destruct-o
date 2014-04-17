@@ -12,8 +12,7 @@ protected:
 	//Safely erase this actor during the next update cycle
 	void Destroy();
 
-	//Retrieve the game object
-	BaseFrame * Game();
+
 public:
 	//Automatically registers this actor
 	Actor();
@@ -21,7 +20,7 @@ public:
 
 	//Update this actor with the delta and current time
 	//returns false if the actor should be destroyed
-	virtual bool Update(float delta, float now);
+	virtual bool Update();
 
 	//Draw this actor
 	virtual void Draw();

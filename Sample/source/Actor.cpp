@@ -15,13 +15,10 @@ Actor::~Actor() {
 	Game()->Actors.Unregister(this);
 }
 
-BaseFrame * Actor::Game() {
-	//Assume actors are only created when the current system is the game frame
-	return (BaseFrame*)CurrentSystem;
-}
+
 
 //Update this actor with the delta and current time
-bool Actor::Update(float delta, float now) {
+bool Actor::Update() {
 	return valid;
 }
 

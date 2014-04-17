@@ -3,6 +3,8 @@
 
 static float actorAIX = 68.5;
 
+CLASS_SAVE_CONSTRUCTOR(ActorAI);
+
 ActorAI::ActorAI() : PhysicsActor(vec3(2,2,5)) {
 	Position = (vec3(40,42,actorAIX));
 	actorAIX += 10;

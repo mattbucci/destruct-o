@@ -7,4 +7,7 @@ public:
 	ActorAI();
 	~ActorAI();
 
+	CLASS_DECLARATION(ActorAI)
+		INHERITS_FROM(PhysicsActor)
+	END_DECLARATION
 };

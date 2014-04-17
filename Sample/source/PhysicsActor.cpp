@@ -24,8 +24,8 @@ bool PhysicsActor::OnGround() {
 }
 
 //Apply velocity/acceleration to this actor
-bool PhysicsActor::Update(float delta, float now) {
-	return Actor::Update(delta,now);
+bool PhysicsActor::Update() {
+	return Actor::Update();
 }
 //Check for the special case of a collision with an axis aligned voxel
 //The fed position should be the center of the voxel

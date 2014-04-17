@@ -179,7 +179,7 @@ PhysicsSystem::Intersection CalculateIntersection(vec3 cuboidPositionA, vec3 hal
 
 //Update and finalize physics actors
 //also handles terrain interactions
-void PhysicsSystem::updatePhysicsActors(float delta) {
+void PhysicsSystem::updatePhysicsActors() {
 	//Update all the physics voxels
 	for (auto actor : actors) {
  		actor->acceleration += vec3(0,0,-10);
@@ -252,8 +252,8 @@ void PhysicsSystem::updatePhysicsActors(float delta) {
 		//Always decrease the total energy in the system
 		actor->velocity *= .99;
 		//Apply forces!
-		actor->velocity += actor->acceleration*(float)delta;
-		actor->position += actor->velocity*(float)delta;
+		actor->velocity += actor->acceleration*(float)SIMULATION_DELTA;
+		actor->position += actor->velocity*(float)SIMULATION_DELTA;
 
 		//Clear forces
 		actor->acceleration = vec3();
@@ -267,13 +267,13 @@ PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate,double lifeTime) {
 	if (lifeTime <= 0)
 		voxel->DeathAt = -1;
 	else
-		voxel->DeathAt = lifeTime + VoxEngine::GetGameSimTime();
+		voxel->DeathAt = lifeTime + Game()->Now();
 	allVoxels.push_back(voxel);
 	return voxel;
 }
 
 //Update and finalize physics voxels
-void PhysicsSystem::updatePhysicsVoxels(float delta) {
+void PhysicsSystem::updatePhysicsVoxels() {
 	//Update all the physics voxels
 	for (auto voxel : allVoxels) {
  		voxel->Acceleration += vec3(0,0,-10);
@@ -335,11 +335,11 @@ void PhysicsSystem::updatePhysicsVoxels(float delta) {
 		//Always decrease the total energy in the system
 		voxel->Velocity *= .99;
 		//Apply forces!
-		voxel->Velocity += voxel->Acceleration*(float)delta;
-		voxel->Position += voxel->Velocity*(float)delta;
+		voxel->Velocity += voxel->Acceleration*(float)SIMULATION_DELTA;
+		voxel->Position += voxel->Velocity*(float)SIMULATION_DELTA;
 	}
 }
-void PhysicsSystem::collideVoxelsToVoxels(float delta) {
+void PhysicsSystem::collideVoxelsToVoxels() {
 	allVoxels.sort([](PhysicsVoxel * a, PhysicsVoxel * b) -> bool {
 		return a->Position.x < b->Position.x;
 	});
@@ -401,7 +401,7 @@ void PhysicsSystem::collideVoxelsToVoxels(float delta) {
 }
 
 
-void PhysicsSystem::collideVoxelsToActors(float delta) {
+void PhysicsSystem::collideVoxelsToActors() {
 	//Now do the O(n^2) which checks for collisions
 	for (auto actor : actors) {
 		vec3 actorPosition = actor->position;
@@ -445,7 +445,7 @@ void PhysicsSystem::collideVoxelsToActors(float delta) {
 	}
 }
 
-void PhysicsSystem::collideActorsToActors(float delta) {
+void PhysicsSystem::collideActorsToActors() {
 	//Now do the O(n^2) which checks for collisions
 	for (int a = 0; a < actors.size(); a++) {
 		PhysicsActor * actorA = actors[a];
@@ -499,13 +499,13 @@ void PhysicsSystem::collideActorsToActors(float delta) {
 }
 
 //Update the actors, called by base frame
-void PhysicsSystem::Update(double delta, double now) {
+void PhysicsSystem::Update() {
 	//Set all voxels to have no forces
 	//And check if any voxels should expire
 	for (auto it = allVoxels.begin(); it != allVoxels.end();){
 		PhysicsVoxel * voxel = *it;
 		voxel->Acceleration = vec3();
-		if ((voxel->DeathAt > 0) && (voxel->DeathAt < now)) {
+		if ((voxel->DeathAt > 0) && (voxel->DeathAt < Game()->Now())) {
 			//disintegrate voxel
 			//this is temporary. will be replaced by an event soon
 			if (voxel->MaterialId == 0) {
@@ -543,17 +543,17 @@ void PhysicsSystem::Update(double delta, double now) {
 		actor->onGround = false;
 	
 	//Now check for collisions between everything that can experience them
-	collideVoxelsToVoxels((float)delta);
-	collideVoxelsToActors((float)delta);
-	collideActorsToActors((float)delta);
+	collideVoxelsToVoxels();
+	collideVoxelsToActors();
+	collideActorsToActors();
 	//There are two missing
-	//collideVoxelsToBuildings((float)delta);
-	//collideActorsToBuildings((float)delta);
+	//collideVoxelsToBuildings((float)SIMULATION_DELTA);
+	//collideActorsToBuildings((float)SIMULATION_DELTA);
 
 	//Now collide voxels and actors with the ground
 	//then apply the accumulated acceleration on each
-	updatePhysicsVoxels((float)delta);
-	updatePhysicsActors((float)delta);
+	updatePhysicsVoxels();
+	updatePhysicsActors();
 }
 
 

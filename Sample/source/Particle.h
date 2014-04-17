@@ -32,6 +32,6 @@ public:
 
 	//Updates the position of the particle
 	//returns true if the particle life has expired
-	bool Update(double time, double delta);
+	bool Update(double time);
 };
  

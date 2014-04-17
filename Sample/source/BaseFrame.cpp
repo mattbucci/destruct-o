@@ -10,6 +10,7 @@
 #include "VoxEngine.h"
 
 #include "GLLighting.h"
+#include "Frames.h"
 
 #include "Window.h"
 #include "Button.h"
@@ -159,11 +160,11 @@ void BaseFrame::Build()
     achievements->InitPhysicsAchievements(&Physics);
 }
 
-bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) {
+bool BaseFrame::Update(vector<InputEvent> inputEvents) {
     // Update the model instances
     for(std::vector<ModelInstance *>::iterator it = modelInstances.begin(); it != modelInstances.end(); ++it)
     {
-        (*it)->Update(delta, now);
+        (*it)->Update(SIMULATION_DELTA, Now());
     }
     
     //Issue events to dialog
@@ -179,14 +180,14 @@ bool BaseFrame::Update(double delta,double now, vector<InputEvent> inputEvents) 
 	Voxels.Update(player->GetPosition());
 
 	//Update actors
-	Actors.Update(delta,now);
+	Actors.Update();
 
 	demo->OnInput(inputEvents,player->GetPosition(),FirstPerson->GetLookVector());
-	demo->Update(now,delta);
+	demo->Update();
 
 	//Update physics/Particles
-	Physics.Update(delta,now);
-	Particles.UpdateCloud(now,delta);
+	Physics.Update();
+	Particles.UpdateCloud();
 	//if (testSystem != NULL)
 		//testSystem->UpdateEmitter(now);
 
@@ -287,4 +288,13 @@ void BaseFrame::PushNotification(string txt) {
 ModelGroup* BaseFrame::Models() 
 {
     return models;
+}
+
+
+//Retrieve the game object
+//global function
+BaseFrame * Game() {
+	//Can only be used when the game is running
+	_ASSERTE(typeid(*CurrentSystem) == typeid(BaseFrame));
+	return (BaseFrame*)CurrentSystem;
 }

@@ -33,7 +33,7 @@ public:
 
 	void SwitchDemo(int newDemo, vec3 playerPos, vec3 playerFacing);
 
-	void Update(double now, double delta);
+	void Update();
 
 	float CurrentAcidStrength;
 

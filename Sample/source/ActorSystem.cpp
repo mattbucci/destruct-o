@@ -23,11 +23,11 @@ void ActorSystem::Unregister(Actor * toUnregister) {
 }
 	
 //Update the actors, called by base frame
-void ActorSystem::Update(double delta, double now) {
+void ActorSystem::Update() {
 
 	//Update all the actors
 	for (unsigned int i = 0; i < allActors.size(); i++) 
-		allActors[i]->Update((float)delta,(float)now);
+		allActors[i]->Update();
 }
 
 //Draw all the actors

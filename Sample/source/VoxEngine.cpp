@@ -30,7 +30,7 @@ double VoxEngine::gameEventDelta;
 
 //The current time in the simulation loop
 //always starts at 0.0
-double VoxEngine::gameSimulationTime = 0.0;
+double VoxEngine::globalTime = 0.0;
 
 //The current size of the window
 int VoxEngine::curWidth;
@@ -210,9 +210,9 @@ void VoxEngine::Start() {
 	//Mark the simulation starting time
 	//Start the simulation one update loop into the past
 	//this gurantees at least one update is run before the first Draw()
-	gameSimulationTime = 0;
-	gameEventDelta = gameSimulationTime-OS::Now();
-	gameSimulationTime = -SIMULATION_TIME;
+	globalTime = 0;
+	gameEventDelta = globalTime-OS::Now();
+	globalTime = -SIMULATION_DELTA;
 	
 	//The game loop begins
 	while (continueGameLoop) {
@@ -222,10 +222,10 @@ void VoxEngine::Start() {
 		//was paused for some reason (break point)
 		//and jump the time up, so that it seems like no time passed
 		//at all
-		if (((OS::Now()+gameEventDelta) - gameSimulationTime) >= 2.0) {
+		if (((OS::Now()+gameEventDelta) - globalTime) >= 2.0) {
 			//Do jump ahead
 			cout << "Note: performed jumpahead from " << gameEventDelta;
-			gameEventDelta = gameSimulationTime-OS::Now();
+			gameEventDelta = globalTime-OS::Now();
 			cout << " to " << gameEventDelta << "\n";
 		}
 
@@ -233,17 +233,18 @@ void VoxEngine::Start() {
 		//If you become more behind during calculation
 		//we continue anyways, so that frames are drawn sometimes
 		//even if they fall behind a bit
-		double timeDifference = (OS::Now()+gameEventDelta)-gameSimulationTime;
-		while (timeDifference >= SIMULATION_TIME) {
-			timeDifference -= SIMULATION_TIME;
+		double timeDifference = (OS::Now()+gameEventDelta)-globalTime;
+		while (timeDifference >= SIMULATION_DELTA) {
+			timeDifference -= SIMULATION_DELTA;
 			//Run the simulation
 			//Read events
 			vector<InputEvent> eventQueue;
 			ProcessEvents(eventQueue);
 			//Simulate actions
-			CurrentSystem->Update(SIMULATION_TIME,gameSimulationTime,eventQueue);
+			CurrentSystem->Update(eventQueue);
 			//Update the simulation time
-			gameSimulationTime += SIMULATION_TIME;
+			globalTime += SIMULATION_DELTA;
+			CurrentSystem->simTime += SIMULATION_DELTA;
 		}
 
 		//Run the frame draw
@@ -292,10 +293,6 @@ void VoxEngine::ResizeWindow() {
 	//Save calculated size information
 	scaledSize = finalResolution;
 	scaleFactor = scaledSize/newSize;
-}
-
-double VoxEngine::GetGameSimTime() {
-	return gameSimulationTime;
 }
 
 void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {

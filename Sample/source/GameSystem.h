@@ -12,7 +12,7 @@
 class Sprite;
 class ShaderGroup;
 
-class GameSystem : protected GameEventSubscriber {
+class GameSystem : protected GameEventSubscriber, public Savable {
 protected:
 	FPSCounter fpsCount;
 	set<Sint64> currentlyPressedKeys;
@@ -24,6 +24,10 @@ protected:
 	//For basic game system draw controls
 	double nextFrameTime;
 	int fps;
+
+	//Updated by VoxEngine when this frame is running
+	double simTime;
+	friend class VoxEngine;
 public:
 	GameSystem(ShaderGroup * shaders);
 	virtual ~GameSystem();
@@ -46,10 +50,19 @@ public:
 	//When this frame stops running this will be called
 	virtual void OnFrameLeave();
 
+	//Get simulation time
+	//relative to this frame
+	double Now();
+
 	//When this frame is in focus these will happen
-	//Update happens every SIMULATION_TIME  (.01s right now, which is 10ms)
+	//Update happens every SIMULATION_DELTA  (.01s right now, which is 10ms)
 	//actually simulation update doesn't happen at all right now
-	virtual bool Update(double delta,double now, vector<InputEvent> inputEvents);
+	virtual bool Update(vector<InputEvent> inputEvents);
 	//Draw happens whenever possible
 	virtual void Draw(double width, double height);
+
+	//Save time
+	CLASS_DECLARATION(GameSystem)
+		CLASS_MEMBER(simTime,ReflectionData::SAVE_DOUBLE)
+	END_DECLARATION
 }; 

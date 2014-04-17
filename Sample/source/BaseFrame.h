@@ -30,7 +30,7 @@ class ActorPlayer;
 class ParticleSystem;
 class Demo;
 
-class BaseFrame : public GameSystem, public Savable {
+class BaseFrame : public GameSystem {
 	ActorPlayer * player;
 	AudioPlayer * audio;
 
@@ -53,7 +53,7 @@ class BaseFrame : public GameSystem, public Savable {
 		shader->Fog.SetFogColor(vec4(.5,.5,.5,1));
 		shader->Fog.SetFogDistance(fogDistance);
 		//Setup acid shader
-		shader->Acid.SetCurrentTime(VoxEngine::GetGameSimTime());
+		shader->Acid.SetCurrentTime(Game()->Now());
 		//Acid factor currently managed by the demo system
 		//this will be moved to a more powerful game logic system in the future
 		shader->Acid.SetAcidFactor(demo->CurrentAcidStrength);
@@ -94,7 +94,7 @@ public:
 
 	//Override update to remove FPS control
 	//provided by the game system
-	virtual bool Update(double delta,double now, vector<InputEvent> inputEvents);
+	virtual bool Update(vector<InputEvent> inputEvents) override;
 
 	//synchronously saves the game
 	//returns true if successful
@@ -111,9 +111,13 @@ public:
 
 	//Define how the base frame saves
 	CLASS_DECLARATION(BaseFrame)
+		INHERITS_FROM(GameSystem)
 		CLASS_MEMBER(FirstPerson,ReflectionData::SAVE_USEROWNEDHANDLE)
 		CLASS_MEMBER(Physics,ReflectionData::SAVE_INSTANCE)
 		CLASS_MEMBER(Actors,ReflectionData::SAVE_INSTANCE)
 		CLASS_MEMBER(player,ReflectionData::SAVE_HANDLE)
 	END_DECLARATION
 };
+
+//Retrieve base frame
+BaseFrame * Game();

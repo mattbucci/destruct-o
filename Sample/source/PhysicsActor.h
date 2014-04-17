@@ -39,7 +39,7 @@ public:
 
 
 	//Apply velocity/acceleration to this actor
-	virtual bool Update(float delta, float now);
+	virtual bool Update();
 
 
 

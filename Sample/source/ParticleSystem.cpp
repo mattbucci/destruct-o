@@ -26,8 +26,9 @@ ParticleSystem::~ParticleSystem() {
 }
 
 //Update the particle emitter spawning particles
-bool ParticleSystem::UpdateEmitter(double now, double delta) {
+bool ParticleSystem::UpdateEmitter() {
 	//Adjust the time so it's relative to you
+	double now = Game()->Now();
 	double systemTime = now-creationTime;
 	BaseFrame * game = (BaseFrame*)CurrentSystem;
 	float systemLifeFactor = (float)(systemTime/(deathAt-creationTime));
@@ -57,7 +58,7 @@ bool ParticleSystem::UpdateEmitter(double now, double delta) {
 	//Update all the particles
 	for (auto it = particleList.begin(); it != particleList.end();) {
 		Particle * p = *it;
-		if (p->Update(now,delta)) {
+		if (p->Update(now)) {
 			//The particle requested death, cleanup
 			delete p;
 			it = particleList.erase(it);

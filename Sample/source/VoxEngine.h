@@ -6,7 +6,7 @@
 #include "InputEvent.h"
 
 
-#define SIMULATION_TIME .01
+#define SIMULATION_DELTA .01
 
 class VoxEngine {
 	//Entry point for the game engine
@@ -29,9 +29,8 @@ class VoxEngine {
 	//game simulation time
 	static double gameEventDelta;
 
-	//The current time in the simulation loop
-	//always starts at 0.0
-	static double gameSimulationTime;
+	//The current time in the game
+	static double globalTime;
 
 	//The current size of the window
 	static int curWidth;
@@ -44,6 +43,4 @@ class VoxEngine {
 
 	friend int main(int argc, char** argv);
 public:
-	//This gets the update cycle time
-	static double GetGameSimTime();
 };
