@@ -25,7 +25,8 @@ class Savable {
 			ReflectionData::savable saveData;
 			saveData.dataType = valueData.internalType;
 			saveData.internalType = ReflectionData::SAVE_NOTHING;
-			saveData.member = &container.back();
+#warning FIXME Anthony FIXME
+			//saveData.member = (void *) &container.back();
 			saveData.memberName = ""; //No name since its part of an array
 			//Load the value
 			LoadValue(saveData, value[i],loadData);
