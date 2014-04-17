@@ -28,7 +28,10 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
     : GameSystem(shaders), Physics(&Voxels), Actors(&Physics)
 {
 	cout << "\t Constructing base frame\n";
-		
+    
+    // Remove me test
+    cout << "Save directory is: " << OS::SaveDirectory() << endl;
+    
 	// Create the first person controller depending on the current platform
 #ifdef __MOBILE__
 	FirstPerson = new FirstPersonModeMobile();

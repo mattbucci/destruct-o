@@ -299,6 +299,7 @@ FILE(GLOB UtilityFiles
 	GameEvent.cpp
 	OS.h
 	OS.cpp
+    SaveDirectory.cpp
 	Semaphore.h
 	Semaphore.cpp
 	FPSCounter.h

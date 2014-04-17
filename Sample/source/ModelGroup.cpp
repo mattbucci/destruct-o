@@ -78,8 +78,10 @@ ModelGroup::ModelGroup(const std::string& manifestPath, TextureCache& _textureCa
 	static const int workerThreads = 4;
 
 	//Launch four worker threads
-	for (int i = 0; i < workerThreads; i++) {
-		thread t([&,meshIterator,modelIteratorMutex,modelJson]() {
+	for (int i = 0; i < workerThreads; i++)
+    {
+		thread t([&,meshIterator,modelIteratorMutex,modelJson]()
+        {
 			while (1) {
 				//Critical section
 				modelIteratorMutex->lock();
@@ -132,7 +134,9 @@ ModelGroup::ModelGroup(const std::string& manifestPath, TextureCache& _textureCa
 	}
 	//Decrease four times, once for each thread
 	for (int i = 0; i < workerThreads; i++)
+    {
 		deadThreads->decrease();
+    }
 
 	cout << "All meshes loaded: " << OS::Now()-start << "s \n";
 
