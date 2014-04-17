@@ -23,7 +23,7 @@
  * @param _model Model to provide an instance of
  */
 ModelInstance::ModelInstance(Model *_model)
-    : model(_model), skeleton(new Node(*(_model->Skeleton()))), transform(Transform()), animation(NULL), animationStartTime(0.0)
+    : model(_model), skeleton(new Node(*(_model->Skeleton()))), transform(Transform()), animation(NULL), nodes(skeleton->AllNodes()), animationStartTime(0.0)
 {
     
 }
@@ -48,8 +48,8 @@ void ModelInstance::Update(double delta, double now)
         for (Animation::const_iterator bone = animation->begin(); bone != animation->end(); bone++)
         {
             // Lookup the node for this bone
-            Node *node = skeleton->FindNode(bone->first);
-            const Node *iNode = model->Skeleton()->FindNode(bone->first);
+            Node *node = nodes[bone->first];
+            const Node *iNode = model->FastNodeLookup(bone->first);
             
             // Iterate through the keyframes to select the bone
             for(std::vector<Animation::Keyframe *>::const_iterator keyframe = bone->second.begin(); keyframe != bone->second.end(); keyframe++)

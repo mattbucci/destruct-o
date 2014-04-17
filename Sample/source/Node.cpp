@@ -209,3 +209,20 @@ const std::vector<Node *>& Node::Children() const
 {
     return children;
 }
+
+
+//Add all nodes (including the current one) to the given map
+void Node::addAllNodes(std::map<std::string,Node *> & addTo) {
+	addTo[id] = this;
+	for (auto child : children)
+		child->addAllNodes(addTo);
+}
+
+
+ // Construct a flattened map of all nodes (including this one) in the node tree
+std::map<std::string,Node *> Node::AllNodes()
+{
+	std::map<std::string,Node *> nodes;
+	addAllNodes(nodes);
+	return nodes;
+}

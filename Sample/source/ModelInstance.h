@@ -33,6 +33,9 @@ class ModelInstance
     
     /** The currently playing animation */
     const Animation *animation;
+
+	// flattened node list of the model
+	std::map<std::string,Node *> nodes;
     
     /** The time at which the animation was started */
     float animationStartTime;
