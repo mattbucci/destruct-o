@@ -14,8 +14,35 @@ MenuFrame::MenuFrame(ShaderGroup * shaders)
 : GameSystem(shaders)
 {
 
-	cout << "\t Finished base frame\n";
 	//testSystem = NULL;
+	Window * window = new Window(Rect(0, 0, 200, 400), "On Bottom");
+	window->hPin = Control::CENTER;
+	window->vPin = Control::MAX;
+	window->SetVisible(false);
+	Controls.AddWindow(window);
+	//Give it a list box with a bunch of random crap
+	vector<string> randomCrap;
+	randomCrap.push_back("Monkey");
+	randomCrap.push_back("Walrus");
+	randomCrap.push_back("Cheeto");
+	randomCrap.push_back("Spaghetii");
+	randomCrap.push_back("Canada");
+	randomCrap.push_back("Banana");
+	randomCrap.push_back("One");
+	randomCrap.push_back("Seventeen");
+	randomCrap.push_back("Lamp");
+	randomCrap.push_back("Voxel");
+	randomCrap.push_back("Game");
+	randomCrap.push_back("Walrus");
+	randomCrap.push_back("Still Walrus");
+	randomCrap.push_back("Cloud");
+	Listbox * list = new Listbox();
+	list->position = Rect(0, 0, 180, 150);
+	list->hPin = list->vPin = Control::CENTER;
+	list->SetEntries(randomCrap);
+	//When the user selects something, change the title to the 
+	//selected item
+	window->AddControl(list);
 }
 
 MenuFrame::~MenuFrame()
@@ -41,7 +68,10 @@ void MenuFrame::OnFrameFocus() {
 }
 
 void MenuFrame::Build()
-{
+{    //Build the sample dialog 
+	//Build a window that says "On Top"
+
+
 
 }
 
