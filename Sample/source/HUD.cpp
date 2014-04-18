@@ -66,17 +66,23 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	//Draw Background
 	minimapBackground.Draw(shader);
 
+	//Translate Position to Exact Center of Minimap
+	shader->Model.Translate(MINIMAP_SIZE * .5f, MINIMAP_SIZE * .5f, 0);
+
 	//Draw Player @ Center of Minimap
-	shader->Model.Translate(MINIMAP_SIZE * .5f - MINIMAP_DOT_SIZE * .5f, MINIMAP_SIZE * .5f - MINIMAP_DOT_SIZE * .5f,0);
+	shader->Model.PushMatrix();
+	shader->Model.Translate(-MINIMAP_DOT_SIZE * .5f, -MINIMAP_DOT_SIZE * .5f,100.0f);
 	shader->Model.Apply();
 	minimapDot.SetColor(vec4(0, 0, 0, 1));
 	minimapDot.Draw(shader);
-
-	//Translate Position to Exact Center of Minimap
-	shader->Model.Translate(MINIMAP_DOT_SIZE * .5f, MINIMAP_DOT_SIZE * .5f, 0);
+	shader->Model.PopMatrix();
 
 	int s = actors->size();
 	for(int i = 0; i < s; i++) {
+		//Ignore the Player
+		if((*actors)[i] == player)
+			continue;
+
 		//Grab Actor Position
 		float x = (*actors)[i]->GetPosition().x;
 		float y = (*actors)[i]->GetPosition().y;
@@ -93,9 +99,6 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 		//Hacky way to prevent redraw of player dot.
 		//Will also omit players directly below player
 		//This should be done in a smarter way later.
-		if(actorDistance == 0) {
-			continue;
-		}
 
 		//Translate to Relative Location on Minimap
 		shader->Model.PushMatrix();
