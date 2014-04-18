@@ -7,17 +7,25 @@
 
 #define MINIMAP_SIZE 200
 #define MINIMAP_DOT_SIZE 20
-
 #define DAMAGE_INDICATOR_SIZE 100
-#define DAMAGE_INDICATOR_TIME 10
+
+#define MOBILE_MINIMAP_SIZE 200
+#define MOBILE_MINIMAP_DOT_SIZE 20
+#define MOBILE_DAMAGE_INDICATOR_SIZE 100
+
+#define DAMAGE_INDICATOR_TIME 1
 
 HUD::HUD(BaseFrame* baseFrame) :
-	//Use the tint to tint the white arrow mostly red
+#ifdef __MOBILE__
+	damageIndicator(Rect(0,0,MOBILE_DAMAGE_INDICATOR_SIZE,MOBILE_DAMAGE_INDICATOR_SIZE),"hud/arrow.png",vec4(7,.2,.2,.66)),
+	minimapDot(Rect(0,0,MOBILE_MINIMAP_DOT_SIZE,MOBILE_MINIMAP_DOT_SIZE),"hud/dot.png",vec4(1,0,0,1)),
+	minimapBackground(Rect(0,0,MOBILE_MINIMAP_SIZE,MOBILE_MINIMAP_SIZE),"hud/minimap.png", vec4(1, 1, 1, .5))
+#else
 	damageIndicator(Rect(0,0,DAMAGE_INDICATOR_SIZE,DAMAGE_INDICATOR_SIZE),"hud/arrow.png",vec4(7,.2,.2,.66)),
-	//Again use tint to make the white dot bright red (or green or orange or anything)
-	//Note you can change the tint on the fly
 	minimapDot(Rect(0,0,MINIMAP_DOT_SIZE,MINIMAP_DOT_SIZE),"hud/dot.png",vec4(1,0,0,1)),
-	minimapBackground(Rect(0,0,MINIMAP_SIZE,MINIMAP_SIZE),"hud/minimap.png", vec4(1, 1, 1, .5)) {
+	minimapBackground(Rect(0,0,MINIMAP_SIZE,MINIMAP_SIZE),"hud/minimap.png", vec4(1, 1, 1, .5))
+#endif
+{
 		this->baseFrame = baseFrame;
 		minimapScale = 1.0f;
 }
@@ -26,10 +34,11 @@ HUD::HUD(BaseFrame* baseFrame) :
 //there is no point in updating it at 100hz
 //it might as well update as its drawn
 void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
+
 	//Update References
-	ActorPlayer* player = baseFrame->Actors.Player();
-	FirstPersonMode* fps = baseFrame->FirstPerson;
-	ContiguousList<PhysicsActor*>* actors = baseFrame->Physics.GetActors();
+	player = baseFrame->Actors.Player();
+	fps = baseFrame->FirstPerson;
+	actors = baseFrame->Physics.GetActors();
 
 	//Grab Player Position and Look Vector
 	float px = player->GetPosition().x;
@@ -43,8 +52,13 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	//Preserve the current matrix
 	shader->Model.PushMatrix();
 
-	//Translate to the edge of the minimap
-	shader->Model.Translate(0.0f, viewPortSize.y - MINIMAP_SIZE - 0.0f, 0);
+	vec2 minimapLoc;
+#ifdef __MOBILE__
+	minimapLoc = vec2(40.0f, 40.0f);
+#else
+	minimapLoc = vec2(0.0f, viewPortSize.y - MINIMAP_SIZE);
+#endif
+	shader->Model.Translate(minimapLoc.x, minimapLoc.y, 0);
 
 	//Apply Matrix Transformations
 	shader->Model.Apply();

@@ -7,12 +7,16 @@
 class BaseFrame;
 class ActorPlayer;
 class GL2DProgram;
+class FirstPersonMode;
+class PhysicsActor;
 
 class HUD {
 	ContiguousList<pair<double, vec2>> damagePoints;
 
 	BaseFrame* baseFrame;
 	ActorPlayer* player;
+	FirstPersonMode* fps;
+	ContiguousList<PhysicsActor*>* actors;
 
 	float minimapScale;
 
