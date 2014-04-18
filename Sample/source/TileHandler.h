@@ -25,16 +25,13 @@ class TileHandler : public Savable
 	CityGen citygenerator;
 
 	mutex genRunningMtx;
-	unique_lock<mutex> genRunningLck;
 
 	mutex genMtx;
 	condition_variable genCv;
-	unique_lock<mutex> genLck;
 	list<vec2> genQueue;
 
 	mutex worldMtx;
 	condition_variable worldCv;
-	unique_lock<mutex> worldLck;
 	ContiguousList<GameTile*> worldSet;
 	//Represents the positions of all tiles currently loaded
 	//must have world lock to use

@@ -126,7 +126,6 @@ void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
 #include "ActorAI.h"
 
 void BaseFrame::OnFrameFocus() {
-    
 	//example remove me
 	Actors.BuildActor<ActorAI>();
 	Actors.BuildActor<ActorAI>();

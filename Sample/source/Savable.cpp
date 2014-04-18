@@ -7,6 +7,9 @@
 #include "ReflectionStore.h"
 #include "LoadData.h"
 
+//Disable this to disable compression
+#define COMPRESS_SAVES
+
 void Savable::SaveValue(ReflectionData::savable valueData,Json::Value & value) {
 	switch (valueData.dataType) {
 	case ReflectionData::SAVE_VEC2:
@@ -360,7 +363,9 @@ vector<unsigned char> Savable::Serialize(Savable * classToSerialize) {
 		rawData[i] = json[i];
 
 	//Deflate the vector
-	//rawData = deflateArray(rawData);
+#ifdef COMPRESS_SAVES
+	rawData = deflateArray(rawData);
+#endif
 
 	return rawData;
 }
@@ -378,8 +383,10 @@ Savable * Savable::Deserialize(vector<unsigned char> serializedData) {
 	Json::Reader reader;
 	Json::Value root;
 
-	//Decompress data
-	//serializedData = inflateArray(serializedData);
+	//Compress data
+#ifdef COMPRESS_SAVES
+	serializedData = inflateArray(serializedData);
+#endif
 
 	//parse the json object 
 	reader.parse(string((char*)&serializedData[0],serializedData.size()),root);
@@ -397,7 +404,9 @@ void Savable::Deserialize(vector<unsigned char> serializedData, Savable * saveIn
 	Json::Value root;
 
 	//Decompress data
-	//serializedData = inflateArray(serializedData);
+#ifdef COMPRESS_SAVES
+	serializedData = inflateArray(serializedData);
+#endif
 
 	//parse the json object 
 	reader.parse(string((char*)&serializedData[0],serializedData.size()),root);

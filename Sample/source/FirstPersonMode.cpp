@@ -9,6 +9,7 @@ FirstPersonMode::FirstPersonMode()
 	jumpRequested = false;
 	debug = false;
 	debug_target_height = 0;
+	lookVector = vec3(1,0,0);
 }
 FirstPersonMode::~FirstPersonMode() {
 

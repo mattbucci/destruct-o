@@ -17,10 +17,7 @@ TileHandler::~TileHandler(void)
 	delete handlerThread;
 }
 
-TileHandler::TileHandler() : 
-	genLck(genMtx, std::defer_lock), 
-	worldLck(worldMtx, std::defer_lock), 
-	genRunningLck(genRunningMtx, defer_lock){
+TileHandler::TileHandler()  {
 	runThread = true;
 	handlerThread = NULL;
 	//Initialize Terrain Generator
@@ -35,6 +32,7 @@ TileHandler::TileHandler() :
 void TileHandler::handlerLoop() {
 	unique_lock<mutex> genLck(genMtx,defer_lock);
 	unique_lock<mutex> worldLck(worldMtx,defer_lock);
+	unique_lock<mutex> genRunningLck(genRunningMtx,defer_lock);
 
 
 	//Gen lock locked by default
@@ -76,8 +74,8 @@ void TileHandler::handlerLoop() {
 					break;
 				}
 			}
-			worldCv.notify_all();
 			worldLck.unlock();
+			worldCv.notify_all();
 
 			//Unlock genRunningLock briefly
 			//so if someone wants to stop the cycle they can
@@ -98,8 +96,12 @@ void TileHandler::handlerLoop() {
 		double now = Game()->Now();
 		for (auto it = worldSet.begin(); it != worldSet.end();) {
 			if (now >= (*it)->UseByDate) {
+				vec2 tilePos = vec2((*it)->tile_x,(*it)->tile_y);
+				//Cache to disk
+				(*it)->SaveTile(saveDirectory() + tileName(tilePos));
+
 				//Erase from the list of tiles in memory
-				cachedTiles.erase(vec2((*it)->tile_x,(*it)->tile_y));
+				cachedTiles.erase(tilePos);
 				//Cleanup tile
 				delete *it;
 				it = worldSet.erase(it);
@@ -119,46 +121,48 @@ void TileHandler::handlerLoop() {
 
 //Construct a new tile, or load one from disk and construct it
 GameTile * TileHandler::genRoutine(vec2 pos) {
-	bool tileOnDisk = false;
-	worldLck.lock();
+ 	bool tileOnDisk = false;
+	
+	{
+		//Lock the world mutex
+		lock_guard<mutex> locker(worldMtx);
+		//Check if the tile is in the list of generated tiles
+		for (auto genPos : listOfGeneratedTiles)
+			if (pos == genPos) {
+				tileOnDisk = true;
+				break;
+			}
+	}
 
-	//Check if the tile is in the list of generated tiles
-	for (auto genPos : listOfGeneratedTiles)
-		if (pos == genPos) {
-			tileOnDisk = true;
-			break;
-		}
 
-	worldLck.unlock();
 	
 	if (tileOnDisk) {
 		//If the tile is on disk load it off
 		GameTile * gameTile = GameTile::LoadTileFromDisk(saveDirectory() + tileName(pos));
-		gameTile->tile_x = (int)pos.x;
-		gameTile->tile_y = (int)pos.y;
-		return gameTile;
+		if (gameTile != NULL) {
+			gameTile->tile_x = (int)pos.x;
+			gameTile->tile_y = (int)pos.y;
+			return gameTile;
+		}
+		cout << "Error! Data lost. Previously generated tile is being overwritten by newly generated tile because tile was missing from disk.\n";
 	}
-	else {
-		//Check if the file is in the list of created files
-		GameTile * newTile = GameTile::CreateGameTile((int)pos.x, (int)pos.y);
-		//Generate Terrain Data
-		terraingenerator.generateTerrain(newTile);
-		//Generate Cities
-		citygenerator.GenerateCities(newTile);
-		return newTile;
-	}
+	//Check if the file is in the list of created files
+	GameTile * newTile = GameTile::CreateGameTile((int)pos.x, (int)pos.y);
+	//Generate Terrain Data
+	terraingenerator.generateTerrain(newTile);
+	//Generate Cities
+	citygenerator.GenerateCities(newTile);
+	return newTile;
 }
 
 void TileHandler::predictTile(vec2 pos) {
-
-	//Ensure World Set Lock Owned
-	_ASSERTE(worldLck.owns_lock());
-
 	// Check if Tile Already Exists
 	bool exists = false;
 	int s = worldSet.size();
 	for(int i = 0; i < s; i++) {
 		if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y) {
+			//Still in use maybe	
+			worldSet[i]->UseByDate = Game()->Now()+TILE_LIFETIME;
 			exists = true;
 			break;
 		}
@@ -169,35 +173,24 @@ void TileHandler::predictTile(vec2 pos) {
 	}
 
 	//Grab Lock
-	genLck.lock();
+	lock_guard<mutex> locked(genMtx);
 
 	//Add to Queue & Notify Handler
 	genQueue.push_back(pos);
 	//Add Placeholder Tile to WorldSet for Duplicate Prevention
 	worldSet.push_back(GameTile::CreatePlaceholderTile((int)pos.x, (int)pos.y));
 	genCv.notify_one();
-
-	//Release Lock
-	genLck.unlock();
 }
 
 void TileHandler::forceTile(vec2 pos) {
-
-	//Ensure World Set Lock Owned
-	_ASSERTE(worldLck.owns_lock());
-
-	//Grab Gen Queue Lock
-	genLck.lock();
+		//Grab gen Lock
+	lock_guard<mutex> locked(genMtx);
 
 	//Add to Queue & Notify Handler
 	genQueue.push_front(pos);
 	//Add Placeholder Tile to WorldSet for Duplicate Prevention
 	worldSet.push_back(GameTile::CreatePlaceholderTile((int)pos.x, (int)pos.y));
 	genCv.notify_one();
-
-	//Release Gen Queue Lock
-	genLck.unlock();
-
 }
 
 void TileHandler::setSeed(int seed) {
@@ -210,6 +203,7 @@ int TileHandler::getSeed() {
 
 GameTile * TileHandler::getTile(vec2 pos) {
 	//Obtain Lock on World Set
+	unique_lock<mutex> worldLck(worldMtx,defer_lock);
 	worldLck.lock();
 
 	//Search World Set for Tile
@@ -237,7 +231,6 @@ GameTile * TileHandler::getTile(vec2 pos) {
 		while(tile == NULL) {
 			//Wait for World Update
 			worldCv.wait(worldLck);
-			_ASSERTE(worldLck.owns_lock());
 
 			//Check for Expected Tile
 			int s = worldSet.size();
@@ -273,9 +266,6 @@ GameTile * TileHandler::getTile(vec2 pos) {
 
 //Retrieve a tile pointer safely if the tile is cached
 GameTile * TileHandler::findCachedTile(vec2 pos) {
-	//Ensure World Set Lock Owned
-	_ASSERTE(worldLck.owns_lock());
-
 	//Search World Set for Tile
 	int s = worldSet.size();
 	for(int i = 0; i < s; i++) {
@@ -297,13 +287,10 @@ string TileHandler::tileName(vec2 pos) {
 
 //Retrieves a copy of compressed tile data for the given tile
 vector<unsigned char> TileHandler::RetrieveCompressedTileData(vec2 pos) {
-	//Ensure World Set Lock Owned
-	_ASSERTE(worldLck.owns_lock());
-
 
 	GameTile * tile = findCachedTile(pos);
 	//ensure the internal array exists
-	if (!tile->Cells)
+	if ((tile != NULL) && (!tile->Cells))
 		tile = NULL;
 
 	if (tile == NULL) {
@@ -328,9 +315,9 @@ vector<unsigned char> TileHandler::RetrieveCompressedTileData(vec2 pos) {
 void TileHandler::Save(Json::Value & parentValue) {
 	//Stop generation during save/load
 	//this is the only safe order to acquire these mutexes
-	lock_guard<unique_lock<mutex>> lockerA(genRunningLck);
-	lock_guard<unique_lock<mutex>> lockerB(worldLck);
-	lock_guard<unique_lock<mutex>> lockerC(genLck);
+	lock_guard<mutex> lockerA(genRunningMtx);
+	lock_guard<mutex> lockerB(worldMtx);
+	lock_guard<mutex> lockerC(genMtx);
 
 	//Create relevant directories
 	OS::BuildPath(saveDirectory());
@@ -359,9 +346,9 @@ void TileHandler::Save(Json::Value & parentValue) {
 void TileHandler::Load(Json::Value & parentValue, LoadData & loadData) {
 	//Stop generation during save/load
 	//this is the only safe order to acquire these mutexes
-	lock_guard<unique_lock<mutex>> lockerA(genRunningLck);
-	lock_guard<unique_lock<mutex>> lockerB(worldLck);
-	lock_guard<unique_lock<mutex>> lockerC(genLck);
+	lock_guard<mutex> lockerA(genRunningMtx);
+	lock_guard<mutex> lockerB(worldMtx);
+	lock_guard<mutex> lockerC(genMtx);
 
 	//Clean the state
 	//genRunningMtx guarantees this is safe
@@ -397,8 +384,12 @@ void TileHandler::Load(Json::Value & parentValue, LoadData & loadData) {
 		}
 
 		//If it was cached, cache it again
-		if (cached)
-			worldSet.push_back(GameTile::LoadCompressedTileFromMemory(tileData));
+		if (cached) {
+			GameTile * tile = GameTile::LoadCompressedTileFromMemory(tileData);
+			tile->tile_x = (int)tilePosition.x;
+			tile->tile_y = (int)tilePosition.y;
+			worldSet.push_back(tile);
+		}
 		else {
 			//Dump it to file
 			//as it was before
