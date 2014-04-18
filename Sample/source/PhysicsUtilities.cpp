@@ -144,7 +144,7 @@ Intersection PhysicsUtilities::CalculateIntersection(vec3 cuboidPositionA, vec3 
 
 
 
-bool PhysicsUtilities::TraceToVoxel(const vec3 & from, const vec3 & direction, vec3 at, vec3 & rayCollision, vec3 & surfaceNormal) {
+bool PhysicsUtilities::TraceToVoxel(const vec3 & from, const vec3 & direction, vec3 at, float & rayLength, vec3 & surfaceNormal) {
 	static PhysicsTriangle voxelTriangles[12] = {
 		//Top
 		PhysicsTriangle(vec3(0,0,1), vec3( 0.0f,0.0f,1.0f),
@@ -194,7 +194,68 @@ bool PhysicsUtilities::TraceToVoxel(const vec3 & from, const vec3 & direction, v
 		double surf;
 		vec3 norm;
 		if (PhysicsTriangle::RayIntersects(voxelTriangles[i],at,from,direction,&surf,&norm)) {
-			rayCollision = ((float)surf)*direction+from;
+			rayLength = (float)surf;
+			surfaceNormal = norm;
+			//Stop checking voxels
+			return true;
+		}
+	}
+	return false;
+}
+
+
+
+bool PhysicsUtilities::TraceToCuboid(const vec3 & from, const vec3 & direction, vec3 at, vec3 size, float & rayLength, vec3 & surfaceNormal) {
+	static PhysicsTriangle voxelTriangles[12] = {
+		//Top
+		PhysicsTriangle(vec3(0,0,1), vec3( 0.0f,0.0f,1.0f),
+		vec3( 1.0f,0.0f,1.0f),
+		vec3( 0.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3(0,0,1), vec3(1.0f,1.0f,1.0f),
+		vec3(-1.0f,1.0f,1.0f),
+		vec3(1.0f,0.0f,1.0f)),
+		//Bottom
+		PhysicsTriangle(vec3(0,0,-1), vec3( 0.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,0.0f),
+		vec3( 0.0f,1.0f,0.0f)),
+		PhysicsTriangle(vec3(0,0,-1), vec3(1.0f,1.0f,0.0f),
+		vec3(-1.0f,1.0f,0.0f),
+		vec3(1.0f,0.0f,0.0f)),
+		//left
+		PhysicsTriangle(vec3(-1,0,0), vec3( 0.0f,0.0f,0.0f),
+		vec3( 0.0f,1.0f,0.0f),
+		vec3( 0.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3(-1,0,0), vec3( 0.0f,0.0f,0.0f),
+		vec3( 0.0f,0.0f,1.0f),
+		vec3( 0.0f,1.0f,1.0f)),
+		//right
+		PhysicsTriangle(vec3(1,0,0), vec3( 1.0f,0.0f,0.0f),
+		vec3( 1.0f,1.0f,0.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3(1,0,0), vec3( 1.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,1.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+		//front
+		PhysicsTriangle(vec3(0,-1,0), vec3( 0.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,0.0f),
+		vec3( 1.0f,0.0f,1.0f)),
+		PhysicsTriangle(vec3(0,-1,0), vec3( 0.0f,0.0f,0.0f),
+		vec3( 0.0f,0.0f,1.0f),
+		vec3( 1.0f,0.0f,1.0f)),
+		//back
+		PhysicsTriangle(vec3(0,1,0), vec3( 0.0f,1.0f,0.0f),
+		vec3( 1.0f,1.0f,0.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3(0,1,0), vec3( 0.0f,1.0f,0.0f),
+		vec3( 0.0f,1.0f,1.0f),
+		vec3( 1.0f,1.0f,1.0f)),
+	};
+	//Check every triangle in this voxel for a collision
+	for (int i = 0 ; i < 12; i++) {
+		double surf;
+		vec3 norm;
+		if (PhysicsTriangle::RayIntersects(voxelTriangles[i],at,from,direction,&surf,&norm)) {
+			rayLength = (float)surf;
 			surfaceNormal = norm;
 			//Stop checking voxels
 			return true;

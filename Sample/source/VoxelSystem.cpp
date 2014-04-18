@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "VoxelSystem.h"
 #include "lodepng.h"
-#include "TerrainGen.h"
 
 #include "GL3DProgram.h"
 #include "OS.h"
@@ -13,8 +12,8 @@
 #include "BasicVoxelRenderSystem.h"
 #include "ShaderGroup.h"
 
-#include <sstream>
-#include <thread>
+#include "PhysicsUtilities.h"
+
 
 VoxelSystem::VoxelSystem() {
 	cellRenderer = VoxelDrawSystem::BuildAppropriateSystem();
@@ -243,3 +242,78 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 }
 
 
+bool VoxelSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec3 & surfaceNormal) {
+	//Ray trace in 2d to get a short list of possible colliding voxels from the terrain
+	vec2 p0 = vec2(from);
+	//Hits surfaces up to 200 away
+	vec2 p1 = vec2(from+direction*200.0f);
+
+	//2d ray tracing adapted from
+	//http://playtechs.blogspot.com/2007/03/raytracing-on-grid.html
+	vec2 d = glm::abs(p1-p0);
+
+	int x = int(floor(p0.x));
+	int y = int(floor(p0.y));
+
+	int n = 1;
+	int x_inc, y_inc;
+	float error;
+
+	if (d.x == 0) {
+		x_inc = 0;
+		error = std::numeric_limits<float>::infinity();
+	}
+	else if (p1.x > p0.x) {
+		x_inc = 1;
+		n += int(floor(p1.x)) - x;
+		error = (floor(p0.x) + 1 - p0.x) * d.y;
+	}
+	else {
+		x_inc = -1;
+		n += x - int(floor(p1.x));
+		error = (p0.x - floor(p0.x)) * d.y;
+	}
+
+	if (d.y == 0) {
+		y_inc = 0;
+		error -= std::numeric_limits<float>::infinity();
+	}
+	else if (p1.y > p0.y) {
+		y_inc = 1;
+		n += int(floor(p1.y)) - y;
+		error -= (floor(p0.y) + 1 - p0.y) * d.x;
+	}
+	else {
+		y_inc = -1;
+		n += y - int(floor(p1.y));
+		error -= (p0.y - floor(p0.y)) * d.x;
+	}
+
+	for (; n > 0; --n) {
+		//Paint it to mark it as visited
+		//voxelSystem->Paint(vec2(x,y),5);
+		//Check the voxel for a ray collision in 3d space
+		//Check every voxel that's in this 2d region
+		float height = GetPositionHeight(vec2(x,y));
+		int stackSize = GetPositionStackSize(vec2(x,y));
+		for (int stack = 0; stack <= stackSize; stack++) {
+			if (PhysicsUtilities::TraceToVoxel(from,direction,vec3(x,y,height-(float)stack),rayCollision,surfaceNormal))
+				//Collided with terrain
+				return true;
+		}
+
+
+		//Move to the next voxel
+		if (error > 0) {
+			y += y_inc;
+			error -= d.x;
+		}
+		else {
+			x += x_inc;
+			error += d.y;
+		}
+	}
+
+	//No collision found
+	return false;
+}

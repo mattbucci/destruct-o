@@ -197,8 +197,8 @@ void TerrainChunk::Reconstruct() {
 	int vcount = 0;
 	for (int i = 0; i < quads.size(); i++) {
 		//Lighting is currently broken
-		//set every surface to be mostly lit
-		unsigned char shading = 200; 
+		//set every surface to be fully lit
+		unsigned char shading = 255; 
 
 		//Generate interleaved data for each vertex
 		//of each found quad

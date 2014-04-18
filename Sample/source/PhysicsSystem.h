@@ -56,8 +56,11 @@ public:
 	PhysicsSystem(VoxelSystem * system);
 	~PhysicsSystem();
 
-	//Traces a line to the first intersecting terrain or physics voxel
-	bool Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec3 & surfaceNormal);
+	//Traces a line to the first intersecting physics voxel
+	bool Raytrace(vec3 from, vec3 direction, float & rayLength, vec3 & surfaceNormal);
+
+	//Traces a line to the first intersecting physics actor
+	bool Raytrace(vec3 from, vec3 direction, float & rayLength, vec3 & surfaceNormal, PhysicsActor * & hitActor);
 
 	//Constructs a voxel at the given coordinate
 	//returns the voxel
