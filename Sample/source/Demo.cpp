@@ -7,6 +7,7 @@
 #include "ParticleSystem.h"
 #include "ParticleData.h"
 #include "Utilities.h"
+#include "Universal.h"
 
 Demo::Demo() {
 	CurrentAcidStrength = 0;
@@ -141,8 +142,9 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 			else if (eve.Key == 'z') {
 				const float initialEnergy = 20.0f;
 				const float initialDisplacement = 0.5f;
-				vec3 hit, norm;
-				if (game->Physics.Raytrace(playerPos+vec3(0,0,2.5),playerFacing,hit,norm)) {
+				vec3 hit;
+				
+				if (Universal::Trace(playerPos+vec3(0,0,2.5),playerFacing,&hit)) {
 
 					vector<vec4> displacedVoxels = game->Voxels.Crater(hit,5);
 					for (vec4 & voxRemoved : displacedVoxels) {
@@ -168,8 +170,8 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 			else if (eve.Key == 'x') {
 				const float initialEnergy = 50.0f;
 				const float initialDisplacement = 2.0f;
-				vec3 hit, norm;
-				if (game->Physics.Raytrace(playerPos + vec3(0, 0, 2.5), playerFacing, hit, norm)) {
+				vec3 hit;
+				if (Universal::Trace(playerPos + vec3(0, 0, 2.5), playerFacing, &hit)) {
 
 					ParticleData * rules;
 					rules = ParticleData::LoadParticleData("particles/explosion.vpart");
@@ -210,9 +212,9 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 			}
 			else if (eve.Key == 't') {
 				//takeover an area
-				vec3 hit, norm;
+				vec3 hit;
 				int size = 20;
-				if(game->Physics.Raytrace(playerPos + vec3(0, 0, 2.5), playerFacing, hit, norm)) {
+				if(Universal::Trace(playerPos + vec3(0, 0, 2.5), playerFacing, &hit)) {
 					for (int x = -size/2; x < size/2; x++) {
 						for (int y = -size/2; y < size/2; y++) {
 							game->Voxels.Paint(vec2(hit.x+x, hit.y+y), 3);
@@ -245,8 +247,8 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				//Yes you leak a particle data every time you do this
 				//should be fixed
 				ParticleData * rules;
-                vec3 hit, norm;
-                if (game->Physics.Raytrace(playerPos + vec3(0, 0, 2.5), playerFacing, hit, norm)) {
+                vec3 hit;
+                if (Universal::Trace(playerPos + vec3(0, 0, 2.5), playerFacing, &hit)) {
                     rules = ParticleData::LoadParticleData("particles/fire.vpart");
                     if (rules == NULL)
                         return;
@@ -262,8 +264,8 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
                 //Yes you leak a particle data every time you do this
                 //should be fixed
                 ParticleData * rules;
-                vec3 hit, norm;
-                if (game->Physics.Raytrace(playerPos + vec3(0, 0, 2.5), playerFacing, hit, norm)) {
+                vec3 hit;
+                if (Universal::Trace(playerPos + vec3(0, 0, 2.5), playerFacing, &hit)) {
                     rules = ParticleData::LoadParticleData("particles/exampleAnimated.vpart");
                     if (rules == NULL)
                         return;

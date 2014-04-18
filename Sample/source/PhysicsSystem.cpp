@@ -26,7 +26,7 @@ PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	section.autoredeuce(false);
 
 	//For now stick this particle stuff here
-    physicsVoxelErase = ParticleData::LoadParticleData("particles/physicsDisintegrate.vpart");
+	physicsVoxelErase = ParticleData::LoadParticleData("particles/physicsDisintegrate.vpart");
 }
 PhysicsSystem::~PhysicsSystem() {
 	//cleanup all the voxels
@@ -41,7 +41,7 @@ PhysicsSystem::~PhysicsSystem() {
 void PhysicsSystem::updatePhysicsActors() {
 	//Update all the physics voxels
 	for (auto actor : actors) {
- 		actor->acceleration += vec3(0,0,-10);
+		actor->acceleration += vec3(0,0,-10);
 	
 		vec3 actorPosition = actor->position;
 		vec3 halfActorSize = actor->size*.5f;
@@ -135,7 +135,7 @@ PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate,double lifeTime) {
 void PhysicsSystem::updatePhysicsVoxels() {
 	//Update all the physics voxels
 	for (auto voxel : allVoxels) {
- 		voxel->Acceleration += vec3(0,0,-10);
+		voxel->Acceleration += vec3(0,0,-10);
 	
 		//Do ground collisions now
 		//There are (usually) four different tiles you're over
@@ -481,7 +481,7 @@ void PhysicsSystem::UnregisterPhysicsActor(PhysicsActor * toUnregister) {
 }
 
 //Traces a line to the first intersecting physics voxel
-bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, float & rayLength, vec3 & surfaceNormal) {
+bool PhysicsSystem::RaytraceToPhysicsVoxel(vec3 from, vec3 direction, float & rayLength, vec3 & surfaceNormal) {
 	//Find the shortest ray
 	float shortestRay = 100000;
 	vec3 normal;
@@ -491,8 +491,8 @@ bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, float & rayLength, vec3 
 		float foundRay;
 		vec3 foundNormal;
 		//Traces go from the lower left corner
-		if (PhysicsUtilities::TraceToVoxel(from,direction,physicsVoxel->Position-vec3(.5,.5,.5),rayLength,foundNormal)) {
-			if (foundRay < rayLength) {
+		if (PhysicsUtilities::TraceToVoxel(from,direction,physicsVoxel->Position-vec3(.5,.5,.5),foundRay,foundNormal)) {
+			if (foundRay < shortestRay) {
 				normal = foundNormal;
 				shortestRay = foundRay;
 				collided = true;
@@ -510,7 +510,7 @@ bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, float & rayLength, vec3 
 }
 
 //Traces a line to the first intersecting physics actor
-bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, float & rayLength, vec3 & surfaceNormal, PhysicsActor * & hitActor) {
+bool PhysicsSystem::RaytraceToActor(vec3 from, vec3 direction, PhysicsActor * toIgnore, float & rayLength, vec3 & surfaceNormal, PhysicsActor * & hitActor) {
 	//Find the shortest ray
 	float shortestRay = 100000;
 	vec3 normal;
@@ -519,11 +519,17 @@ bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, float & rayLength, vec3 
 	for (auto physicsActor : actors) {
 		float foundRay;
 		vec3 foundNormal;
+
+		//Skip this one
+		if (physicsActor == toIgnore)
+			continue;
+
 		//Traces go from the lower left corner
-		if (PhysicsUtilities::TraceToCuboid(from,direction,physicsActor->position-physicsActor->size/2.0f,physicsActor->size,rayLength,foundNormal)) {
-			if (foundRay < rayLength) {
+		if (PhysicsUtilities::TraceToCuboid(from,direction,physicsActor->position-physicsActor->size/2.0f,physicsActor->size,foundRay,foundNormal)) {
+			if (foundRay < shortestRay) {
 				normal = foundNormal;
 				shortestRay = foundRay;
+				hitActor = physicsActor;
 				collided = true;
 			}
 		}

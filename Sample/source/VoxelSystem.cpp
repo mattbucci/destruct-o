@@ -242,7 +242,7 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 }
 
 
-bool VoxelSystem::Raytrace(vec3 from, vec3 direction, float & rayLength, vec3 & surfaceNormal) {
+bool VoxelSystem::RaytraceToTerrain(vec3 from, vec3 direction, float & rayLength, vec3 & surfaceNormal) {
 	//Ray trace in 2d to get a short list of possible colliding voxels from the terrain
 	vec2 p0 = vec2(from);
 	//Hits surfaces up to 200 away
