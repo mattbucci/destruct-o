@@ -88,19 +88,16 @@ int VoxelSystem::GetPositionStackSize(vec2 pos) {
 }
 
 void VoxelSystem::forTilesInRect(IntRect region, function<void(GameTile * tile)> foreachFunction) {
-	for (float x = region.StartX;; x+=TILE_SIZE) {
-		for (float y = region.StartY;; y+=TILE_SIZE) {
+	//Align the starting position with the nearest tile boundary
+
+	region.StartX = floor((float)region.StartX/(float)TILE_SIZE)*TILE_SIZE;
+	region.StartY = floor((float)region.StartY/(float)TILE_SIZE)*TILE_SIZE;
+	for (float x = region.StartX; x < region.EndX; x+=TILE_SIZE) {
+		for (float y = region.StartY; y < region.EndY; y+=TILE_SIZE) {
 			//Retrieve a valid tile for this position
 			//and call the foreachFunction
 			foreachFunction(GetTile(glm::floor(vec2(x/TILE_SIZE,y/TILE_SIZE))));
-
-			//Exit only after an iteration past the end
-			if (y >= region.EndY)
-				break;
 		}
-		//Exit only after an iteration past the end
-		if (x >= region.EndX)
-			break;
 	}
 }
 
