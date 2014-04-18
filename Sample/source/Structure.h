@@ -53,7 +53,7 @@ public:
 	vec3 Position;
 
 	//Attempt to ray trace to this structure
-	bool Trace(const vec3 & from, const vec3 & direction, vec3 & rayCollision, vec3 & surfaceNormal);
+	bool Trace(const vec3 & from, const vec3 & direction, float & rayLength, vec3 & surfaceNormal);
 
 	//Remove voxel at position
 	void EditorRemoveVoxel(vec3 position);

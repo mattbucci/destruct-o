@@ -151,14 +151,14 @@ bool PhysicsUtilities::TraceToVoxel(const vec3 & from, const vec3 & direction, v
 		vec3( 1.0f,0.0f,1.0f),
 		vec3( 0.0f,1.0f,1.0f)),
 		PhysicsTriangle(vec3(0,0,1), vec3(1.0f,1.0f,1.0f),
-		vec3(-1.0f,1.0f,1.0f),
+		vec3(0.0f,1.0f,1.0f),
 		vec3(1.0f,0.0f,1.0f)),
 		//Bottom
 		PhysicsTriangle(vec3(0,0,-1), vec3( 0.0f,0.0f,0.0f),
 		vec3( 1.0f,0.0f,0.0f),
 		vec3( 0.0f,1.0f,0.0f)),
 		PhysicsTriangle(vec3(0,0,-1), vec3(1.0f,1.0f,0.0f),
-		vec3(-1.0f,1.0f,0.0f),
+		vec3(0.0f,1.0f,0.0f),
 		vec3(1.0f,0.0f,0.0f)),
 		//left
 		PhysicsTriangle(vec3(-1,0,0), vec3( 0.0f,0.0f,0.0f),
@@ -206,51 +206,51 @@ bool PhysicsUtilities::TraceToVoxel(const vec3 & from, const vec3 & direction, v
 
 
 bool PhysicsUtilities::TraceToCuboid(const vec3 & from, const vec3 & direction, vec3 at, vec3 size, float & rayLength, vec3 & surfaceNormal) {
-	static PhysicsTriangle voxelTriangles[12] = {
+	PhysicsTriangle voxelTriangles[12] = {
 		//Top
-		PhysicsTriangle(vec3(0,0,1), vec3( 0.0f,0.0f,1.0f),
-		vec3( 1.0f,0.0f,1.0f),
-		vec3( 0.0f,1.0f,1.0f)),
-		PhysicsTriangle(vec3(0,0,1), vec3(1.0f,1.0f,1.0f),
-		vec3(-1.0f,1.0f,1.0f),
-		vec3(1.0f,0.0f,1.0f)),
+		PhysicsTriangle(vec3(0,0,1), vec3( 0.0f,0.0f,size.z),
+		vec3( size.x,0.0f,size.z),
+		vec3( 0.0f,1.0f,size.z)),
+		PhysicsTriangle(vec3(0,0,1), vec3(size.x,1.0f,size.z),
+		vec3(0.0f,1.0f,size.z),
+		vec3(size.x,0.0f,size.z)),
 		//Bottom
 		PhysicsTriangle(vec3(0,0,-1), vec3( 0.0f,0.0f,0.0f),
-		vec3( 1.0f,0.0f,0.0f),
+		vec3(size.x,0.0f,0.0f),
 		vec3( 0.0f,1.0f,0.0f)),
-		PhysicsTriangle(vec3(0,0,-1), vec3(1.0f,1.0f,0.0f),
-		vec3(-1.0f,1.0f,0.0f),
-		vec3(1.0f,0.0f,0.0f)),
+		PhysicsTriangle(vec3(0,0,-1), vec3(size.x,1.0f,0.0f),
+		vec3(0.0f,1.0f,0.0f),
+		vec3(size.x,0.0f,0.0f)),
 		//left
 		PhysicsTriangle(vec3(-1,0,0), vec3( 0.0f,0.0f,0.0f),
 		vec3( 0.0f,1.0f,0.0f),
-		vec3( 0.0f,1.0f,1.0f)),
+		vec3( 0.0f,1.0f,size.z)),
 		PhysicsTriangle(vec3(-1,0,0), vec3( 0.0f,0.0f,0.0f),
-		vec3( 0.0f,0.0f,1.0f),
-		vec3( 0.0f,1.0f,1.0f)),
+		vec3( 0.0f,0.0f,size.z),
+		vec3( 0.0f,1.0f,size.z)),
 		//right
-		PhysicsTriangle(vec3(1,0,0), vec3( 1.0f,0.0f,0.0f),
-		vec3( 1.0f,1.0f,0.0f),
-		vec3( 1.0f,1.0f,1.0f)),
-		PhysicsTriangle(vec3(1,0,0), vec3( 1.0f,0.0f,0.0f),
-		vec3( 1.0f,0.0f,1.0f),
-		vec3( 1.0f,1.0f,1.0f)),
+		PhysicsTriangle(vec3(1,0,0), vec3( size.x,0.0f,0.0f),
+		vec3( size.x,1.0f,0.0f),
+		vec3( size.x,1.0f,size.z)),
+		PhysicsTriangle(vec3(1,0,0), vec3( size.x,0.0f,0.0f),
+		vec3( size.x,0.0f,size.z),
+		vec3( size.x,1.0f,size.z)),
 		//front
 		PhysicsTriangle(vec3(0,-1,0), vec3( 0.0f,0.0f,0.0f),
-		vec3( 1.0f,0.0f,0.0f),
-		vec3( 1.0f,0.0f,1.0f)),
+		vec3( size.x,0.0f,0.0f),
+		vec3( size.x,0.0f,size.z)),
 		PhysicsTriangle(vec3(0,-1,0), vec3( 0.0f,0.0f,0.0f),
-		vec3( 0.0f,0.0f,1.0f),
-		vec3( 1.0f,0.0f,1.0f)),
+		vec3( 0.0f,0.0f,size.z),
+		vec3( size.x,0.0f,size.z)),
 		//back
 		PhysicsTriangle(vec3(0,1,0), vec3( 0.0f,1.0f,0.0f),
-		vec3( 1.0f,1.0f,0.0f),
-		vec3( 1.0f,1.0f,1.0f)),
+		vec3( size.x,1.0f,0.0f),
+		vec3( size.x,1.0f,size.z)),
 		PhysicsTriangle(vec3(0,1,0), vec3( 0.0f,1.0f,0.0f),
-		vec3( 0.0f,1.0f,1.0f),
-		vec3( 1.0f,1.0f,1.0f)),
+		vec3( 0.0f,1.0f,size.z),
+		vec3( size.x,1.0f,size.z)),
 	};
-	//Check every triangle in this voxel for a collision
+	//Check every triangle in this cuboid for a collision
 	for (int i = 0 ; i < 12; i++) {
 		double surf;
 		vec3 norm;

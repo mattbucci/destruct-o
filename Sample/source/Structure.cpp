@@ -5,19 +5,18 @@
 #include "GL3DProgram.h"
 
 //Attempt to ray trace to this structure
-bool Structure::Trace(const vec3 & from, const vec3 & direction, vec3 & rayCollision, vec3 & surfaceNormal) {
+bool Structure::Trace(const vec3 & from, const vec3 & direction, float & rayLength, vec3 & surfaceNormal) {
 	bool collision = false;
 	float minDist = 10000;
 	for (int i = 0; i != Cells.size(); i++) {
-		vec3 colCandidate;
+		float candidateLength;
 		vec3 candidateNormal;
 		//Trace to each voxel and look for collisions with the ray
-		if (PhysicsUtilities::TraceToVoxel(from,direction,Cells[i].pos,colCandidate,candidateNormal)) {
-			float dist = glm::length(from-colCandidate);
-			if (dist < minDist) {
-				minDist = dist;
+		if (PhysicsUtilities::TraceToVoxel(from,direction,Cells[i].pos,candidateLength,candidateNormal)) {
+			if (candidateLength < minDist) {
+				minDist = candidateLength;
 				collision = true;
-				rayCollision = colCandidate;
+				rayLength = candidateLength;
 				surfaceNormal = candidateNormal;
 			}
 		}

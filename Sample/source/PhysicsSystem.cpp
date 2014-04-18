@@ -490,7 +490,8 @@ bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, float & rayLength, vec3 
 	for (auto physicsVoxel : allVoxels) {
 		float foundRay;
 		vec3 foundNormal;
-		if (PhysicsUtilities::TraceToVoxel(from,direction,physicsVoxel->Position,rayLength,foundNormal)) {
+		//Traces go from the lower left corner
+		if (PhysicsUtilities::TraceToVoxel(from,direction,physicsVoxel->Position-vec3(.5,.5,.5),rayLength,foundNormal)) {
 			if (foundRay < rayLength) {
 				normal = foundNormal;
 				shortestRay = foundRay;
@@ -518,7 +519,8 @@ bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, float & rayLength, vec3 
 	for (auto physicsActor : actors) {
 		float foundRay;
 		vec3 foundNormal;
-		if (PhysicsUtilities::TraceToVoxel(from,direction,physicsVoxel->Position,rayLength,foundNormal)) {
+		//Traces go from the lower left corner
+		if (PhysicsUtilities::TraceToCuboid(from,direction,physicsActor->position-physicsActor->size/2.0f,physicsActor->size,rayLength,foundNormal)) {
 			if (foundRay < rayLength) {
 				normal = foundNormal;
 				shortestRay = foundRay;

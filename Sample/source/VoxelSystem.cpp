@@ -242,7 +242,7 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 }
 
 
-bool VoxelSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec3 & surfaceNormal) {
+bool VoxelSystem::Raytrace(vec3 from, vec3 direction, float & rayLength, vec3 & surfaceNormal) {
 	//Ray trace in 2d to get a short list of possible colliding voxels from the terrain
 	vec2 p0 = vec2(from);
 	//Hits surfaces up to 200 away
@@ -297,7 +297,7 @@ bool VoxelSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec3 
 		float height = GetPositionHeight(vec2(x,y));
 		int stackSize = GetPositionStackSize(vec2(x,y));
 		for (int stack = 0; stack <= stackSize; stack++) {
-			if (PhysicsUtilities::TraceToVoxel(from,direction,vec3(x,y,height-(float)stack),rayCollision,surfaceNormal))
+			if (PhysicsUtilities::TraceToVoxel(from,direction,vec3(x,y,height-(float)stack),rayLength,surfaceNormal))
 				//Collided with terrain
 				return true;
 		}

@@ -54,7 +54,7 @@ public:
 	void Paint(vec2 pos, int newMaterial);
 
 	//Traces a line to the first intersecting terrain
-	bool Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec3 & surfaceNormal);
+	bool Raytrace(vec3 from, vec3 direction, float & rayLength, vec3 & surfaceNormal);
 
 	//Deforms a region of voxels, punching a crater into the given position
 	//all voxels removed are returned as positions
