@@ -8,8 +8,11 @@ GL2DVertexGroup::GL2DVertexGroup(GLenum gltype, int vertexCount) {
 	vertices = new vec2[vertexCount];
 	vertexTextureCoords = new vec2[vertexCount];
 
-	for (int i = 0; i < vertexCount; i++)
+	for (int i = 0; i < vertexCount; i++) {
 		vertexTextureCoords[i] = vec2(1.0f,1.0f);
+		vertices[i] = vec2();
+	}
+		
 
 	this->gltype = gltype;
 	this->vertexCount = vertexCount;

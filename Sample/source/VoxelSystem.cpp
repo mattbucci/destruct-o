@@ -18,11 +18,9 @@
 
 VoxelSystem::VoxelSystem() {
 	cellRenderer = VoxelDrawSystem::BuildAppropriateSystem();
-	tiles = new TileHandler();
-	tiles->init();
 
 	//Just get the starting tile
-	tiles->getTile(vec2(0, 0));
+	tiles.getTile(vec2(0, 0));
 
 	//Load the tile textures
 	unsigned int textureWidth, textureHeight;
@@ -51,7 +49,7 @@ VoxelSystem::~VoxelSystem() {
 
 GameTile * VoxelSystem::GetTile(vec2 pos) {
 	//TileHandler Guaranteed to Return Tile
-	return tiles->getTile(pos);
+	return tiles.getTile(pos);
 }
 
 TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
@@ -196,7 +194,7 @@ void VoxelSystem::Draw(ShaderGroup * shaders, vec3 drawPos, IntRect drawRegion) 
 
 void VoxelSystem::Update(vec3 player_pos){
 	//Pass to TileHandler
-	tiles->getTile(vec2(floor(player_pos.x / TILE_SIZE), floor(player_pos.y / TILE_SIZE)));
+	tiles.getTile(vec2(floor(player_pos.x / TILE_SIZE), floor(player_pos.y / TILE_SIZE)));
 }
 
 int VoxelSystem::GetLastVoxelCount() {

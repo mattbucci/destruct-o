@@ -55,7 +55,9 @@ GameTile * GameTile::LoadTileFromDisk(string tileImagePath) {
 	_ASSERTE(width==TILE_SIZE);
 	_ASSERTE(height==TILE_SIZE);
 	cout << "\tLoaded image file, now converting to game tile data.\n";
-	return LoadTileFromMemory(tileData);
+	GameTile * tile = new GameTile();
+	tile->readImageData(tileData);
+	return tile; 
 }
 
 //Patch edge heights to be realistic values
@@ -72,47 +74,43 @@ void GameTile::PatchStackEdges(TileCell * cellList, int cellWidth) {
 }
 
 
+void GameTile::readImageData(const vector<unsigned char> & imageData) {
+	_ASSERTE(imageData.size() == (TILE_SIZE*TILE_SIZE*4));
+	for (unsigned int i = 0; i < imageData.size(); i+= 4) {
+		//Load every RGBA pixel into a tile cell
+		Cells[i/4].height = imageData[i+0];
+		Cells[i/4].materialId = imageData[i+1];
+		//Stack height must be calculated separately
+		Cells[i/4].stackHeight = 0;
+	}
 
+	UpdateTileSection(0,0,TILE_SIZE,TILE_SIZE);
+}
 
 //Load a game tile from memory
 //pending
-GameTile * GameTile::LoadTileFromMemory(const vector<unsigned char> & tileData) {
-	_ASSERTE(tileData.size() == (TILE_SIZE*TILE_SIZE*4));
-	cout << "Starting Load of tile from memory\n";
-	GameTile * tile = new GameTile();
-	for (unsigned int i = 0; i < tileData.size(); i+= 4) {
-		//Load every RGBA pixel into a tile cell
-		tile->Cells[i/4].height = tileData[i+0];
-		tile->Cells[i/4].materialId = tileData[i+1];
-		//Stack height must be calculated separately
-		tile->Cells[i/4].stackHeight = 0;
+GameTile * GameTile::LoadCompressedTileFromMemory(const vector<unsigned char> & tileData) {
+	unsigned int width;
+	unsigned int height;
+	vector<unsigned char> imageData;
+
+	cout << "Starting load of tile from memory\n";
+	//First load the tile map data from the image
+	if (lodepng::decode(imageData,width,height,tileData)) {
+		cout << "\tImage load failed.\n";
+		//Error
+		return NULL;
 	}
-
-	cout << "\tLoaded game tile data. Now building stacks.\n";
-	tile->UpdateTileSection(0,0,TILE_SIZE,TILE_SIZE);
-
-	cout << "\tTile Load Complete.\n";
-	return tile;
+	_ASSERTE(width==TILE_SIZE);
+	_ASSERTE(height==TILE_SIZE);
+	cout << "\tLoaded image file, now converting to game tile data.\n";
+	GameTile * tile = new GameTile();
+	tile->readImageData(imageData);
+	return tile; 
 }
 
 void GameTile::LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tileData, GameTile * newTile) {
-	_ASSERTE(tileData.size() == (TILE_SIZE * TILE_SIZE * 4));
-
-	for (unsigned int i = 0; i < tileData.size(); i+= 4) {
-		newTile->Cells[i/4].height = tileData[i+0];
-		newTile->Cells[i/4].materialId = tileData[i+1];
-		newTile->Cells[i/4].stackHeight = 0;
-	}
-
-	newTile->UpdateTileSection(0,0,TILE_SIZE,TILE_SIZE);
-	for (int i = 0; i < TILE_SIZE; i++) {
-		newTile->Cells[i].stackHeight = 2;
-		newTile->Cells[i+(TILE_SIZE-1)*TILE_SIZE].stackHeight = 2;
-	}
-	for (int i = 0; i < TILE_SIZE; i++) {
-		newTile->Cells[i*TILE_SIZE + 0].stackHeight = 2;
-		newTile->Cells[i*TILE_SIZE + TILE_SIZE - 1].stackHeight = 2;
-	}
+	newTile->readImageData(tileData);
 }
 
 //Recalculate stack heights for the given region of tile cells
@@ -239,8 +237,8 @@ void GameTile::Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vecto
 	UpdateTileSection(fx,fy,tox,toy);
 }
 
-//Save the tile to disk
-void GameTile::SaveTile(string saveName) {
+//Recode the tile to uncompressed png data
+vector<unsigned char> GameTile::recode() {
 	//Convert the tile to RGBA pixel data
 	vector<unsigned char> rawTileData(TILE_SIZE*TILE_SIZE*4);
 	for (int y = 0; y < TILE_SIZE; y++) {
@@ -252,10 +250,29 @@ void GameTile::SaveTile(string saveName) {
 			rawTileData[cellIndex*4+3] = 0;
 		}
 	}
-	unsigned int error = lodepng::encode(saveName.c_str(),rawTileData,TILE_SIZE,TILE_SIZE);
+	return rawTileData;
+}
+
+//Save the tile to disk
+void GameTile::SaveTile(string saveName) {
+	vector<unsigned char> input(recode());
+	unsigned int error = lodepng::encode(saveName.c_str(),input,TILE_SIZE,TILE_SIZE);
 	if (error) {
 		cout << "Failed to save tile. Lodepng error " << error << ": "<< lodepng_error_text(error) << "\n";
 	}
+}
+
+
+//Save the tile to memory
+vector<unsigned char> GameTile::SaveTileToMemory() {
+	vector<unsigned char> input(recode());
+	vector<unsigned char> output;
+	unsigned int error = lodepng::encode(output,input,TILE_SIZE,TILE_SIZE);
+	if (error) {
+		cout << "Failed to save tile. Lodepng error " << error << ": "<< lodepng_error_text(error) << "\n";
+		return vector<unsigned char>();
+	}
+	return output;
 }
 
 //Render the given region using the specified detail level

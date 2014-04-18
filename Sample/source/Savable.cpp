@@ -360,7 +360,7 @@ vector<unsigned char> Savable::Serialize(Savable * classToSerialize) {
 		rawData[i] = json[i];
 
 	//Deflate the vector
-	rawData = deflateArray(rawData);
+	//rawData = deflateArray(rawData);
 
 	return rawData;
 }
@@ -379,7 +379,7 @@ Savable * Savable::Deserialize(vector<unsigned char> serializedData) {
 	Json::Value root;
 
 	//Decompress data
-	serializedData = inflateArray(serializedData);
+	//serializedData = inflateArray(serializedData);
 
 	//parse the json object 
 	reader.parse(string((char*)&serializedData[0],serializedData.size()),root);
@@ -397,7 +397,7 @@ void Savable::Deserialize(vector<unsigned char> serializedData, Savable * saveIn
 	Json::Value root;
 
 	//Decompress data
-	serializedData = inflateArray(serializedData);
+	//serializedData = inflateArray(serializedData);
 
 	//parse the json object 
 	reader.parse(string((char*)&serializedData[0],serializedData.size()),root);

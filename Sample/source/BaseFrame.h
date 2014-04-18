@@ -72,6 +72,9 @@ public:
 	//Should be unique per-save
 	string SaveName;
 
+	//Get the save path to the particular save folder
+	string GetSaveLocation();
+
 	//This is the main game object
 	//so it contains all the subsystems
 	GameCamera Camera;
@@ -122,5 +125,6 @@ public:
 		CLASS_MEMBER(FirstPerson,ReflectionData::SAVE_USEROWNEDHANDLE)
 		CLASS_MEMBER(Physics,ReflectionData::SAVE_INSTANCE)
 		CLASS_MEMBER(Actors,ReflectionData::SAVE_INSTANCE)
+		CLASS_MEMBER(Voxels,ReflectionData::SAVE_INSTANCE)
 	END_DECLARATION
 };

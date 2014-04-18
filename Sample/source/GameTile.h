@@ -24,6 +24,12 @@ class GameTile {
 	//Patch edge heights to be realistic values
 	static void PatchStackEdges(TileCell * cellList, int cellWidth);
 
+	//Recode the tile to uncompressed png data
+	vector<unsigned char> recode();
+
+	//Read image data into this tile
+	void readImageData(const vector<unsigned char> & imageData);
+
 	//Terrain is chunked. Each chunk draws independently
 	TerrainChunk ** chunks;
 public:
@@ -36,7 +42,8 @@ public:
 	//Load a game tile from disk
 	static GameTile * LoadTileFromDisk(string tileImagePath);
 	//Load a game tile from memory
-	static GameTile * LoadTileFromMemory(const vector<unsigned char> & tileData);
+	//expects compressed memory!
+	static GameTile * LoadCompressedTileFromMemory(const vector<unsigned char> & tileData);
 	//Load a game tile from Memory (into existing GameTile)
 	static void LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tileData, GameTile * newTile);
 
@@ -45,6 +52,8 @@ public:
 
 	//Save the tile to disk
 	void SaveTile(string saveName);
+	//Save the tile to memory
+	vector<unsigned char> SaveTileToMemory();
 
 	//Get the height of a position within this tile (relative to this tile)
 	//don't call for positions outside of the tile

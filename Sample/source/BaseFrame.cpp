@@ -35,24 +35,23 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
 	// Create the first person controller depending on the current platform
 #ifdef __MOBILE__
 	FirstPerson = new FirstPersonModeMobile();
-#else
-	FirstPerson = new FirstPersonMode();
-#endif
-
-#ifdef __MOBILE__
 	pauseWindow = new PauseWindowMobile(this);
 #else
+	FirstPerson = new FirstPersonMode();
 	pauseWindow = new PauseWindow(this);
 #endif
+
 	Controls.AddWindow(pauseWindow);
 	notification = new Notification();
 	Controls.AddWindow(notification);
 	
 	// Enable the first person controller
 	FirstPerson->Enable(true);
+
+	//Not a unique save. Should be altered in the future
+	SaveName = "Default_Save";
     
 	cout << "\t Finished base frame\n";
-	//testSystem = NULL;
 }
 
 BaseFrame::~BaseFrame()
@@ -289,6 +288,9 @@ ModelGroup* BaseFrame::Models()
     return models;
 }
 
+string BaseFrame::GetSaveLocation() {
+	return OS::SaveDirectory() + "Saves/" + SaveName + "/";
+}
 
 //Retrieve the game object
 //global function

@@ -16,8 +16,12 @@ using namespace std;
 
 class TileHandler : public Savable
 {
-	TerrainGen* terraingenerator;
-	CityGen* citygenerator;
+	bool runThread;
+	TerrainGen terraingenerator;
+	CityGen citygenerator;
+
+	mutex genRunningMtx;
+	unique_lock<mutex> genRunningLck;
 
 	mutex genMtx;
 	condition_variable genCv;
@@ -28,6 +32,9 @@ class TileHandler : public Savable
 	condition_variable worldCv;
 	unique_lock<mutex> worldLck;
 	vector<GameTile*> worldSet;
+	//Represents the positions of all tiles currently loaded
+	//must have world lock to use
+	ContiguousList<vec2> cachedTiles;
 
 	thread* handlerThread;
 
@@ -39,14 +46,30 @@ class TileHandler : public Savable
 	void predictTile(vec2 pos);
 
 	//A list of generated tiles which may or may not be in-memory
-	vector<vec2> listOfGeneratedTiles;
+	//only access with the world lock
+	ContiguousList<vec2> listOfGeneratedTiles;
+
+	//Retrieve a tile pointer if the tile is cached
+	//data must still be checked to see if the tile is fully generated
+	//you must acquire worldlck before calling this
+	GameTile * findCachedTile(vec2 pos);
+
+	//Retrieves a copy of compressed tile data for the given tile
+	vector<unsigned char> RetrieveCompressedTileData(vec2 pos);
+
+	//Retrieve the save directory for the current save
+	string saveDirectory();
+
+	//Retrieve the name of a tile file given its position
+	string tileName(vec2 pos);
+protected:
+	//Package all tiles in save
+	virtual void Save(Json::Value & parentValue);
+	//Unpackage all tiles in load
+	virtual void Load(Json::Value & parentValue, LoadData & loadData);
 public:
-	TileHandler() : genLck(genMtx, std::defer_lock), worldLck(worldMtx, std::defer_lock){
-		terraingenerator = NULL;
-		handlerThread = NULL;
-	};
+	TileHandler();
 	~TileHandler();
-	void init();
 
 	void setSeed(int seed);
 	int getSeed();
@@ -55,7 +78,7 @@ public:
 
 	//Save relevant information
 	CLASS_DECLARATION(TileHandler)
-		//CLASS_MEMBER(allVoxels,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
+		CLASS_CONTAINER_MEMBER(cachedTiles,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_VEC2)
 		CLASS_CONTAINER_MEMBER(listOfGeneratedTiles,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_VEC2);
 	END_DECLARATION
 };

@@ -5,6 +5,8 @@
 #include "TileHandler.h"
 #include "IntRect.h"
 #include "TerrainChunkRenderer.h"
+#include "Savable.h"
+
 
 class ShaderGroup;
 class GameTile;
@@ -12,7 +14,7 @@ class VoxelDrawSystem;
 struct TileCell;
 class TerrainGen;
 
-class VoxelSystem {
+class VoxelSystem : public Savable {
 	//A debug counter for the number of voxels rendered last frame
 	int voxelCount;
 
@@ -20,7 +22,7 @@ class VoxelSystem {
 	GLuint textureId;
 
 	//The Tile Handle
-	TileHandler* tiles;
+	TileHandler tiles;
 
 	VoxelDrawSystem * cellRenderer;
 	TerrainChunkRenderer terrainRenderer;
@@ -48,7 +50,7 @@ public:
 	//all positions acceptable
 	int GetPositionStackSize(vec2 pos);
 
-	//Pain a new material at position onto any voxel in that tile
+	//Paint a new material at position onto any voxel in that tile
 	void Paint(vec2 pos, int newMaterial);
 
 	//Deforms a region of voxels, punching a crater into the given position
@@ -60,4 +62,9 @@ public:
 	//of voxels which will be rendered
 	void Draw(ShaderGroup * shaders, vec3 drawPos, IntRect drawRegion);
 	void Update(vec3 player_pos);
+
+	//Save relevant information
+	CLASS_DECLARATION(VoxelSystem)
+		CLASS_MEMBER(tiles,ReflectionData::SAVE_INSTANCE)
+	END_DECLARATION
 };

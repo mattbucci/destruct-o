@@ -75,7 +75,7 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 void CityGen::generatecitylocations(GameTile* tile){
 
 	//the amount to blur
-	const int blur = 10;
+	const int blur = 4;
 
 	//analyze the terrain
 	//We Differentiate the terrain and then blur it 4x to achieve the effect of inteligent city placement
