@@ -145,6 +145,8 @@ void BaseFrame::OnFrameFocus() {
 
 void BaseFrame::Build()
 {
+	//Generate first few tiles
+	Voxels.Update(vec3());
     // Load the model group from the manifest
     cout << "Loading models\n";
     models = new ModelGroup("meshes/manifest.json", Textures);

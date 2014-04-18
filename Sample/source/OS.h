@@ -12,9 +12,16 @@ public:
 	//Returns the current time in seconds
 	static double Now(void);
     
+	//Constructs the given path out of folders
+	static void BuildPath(string path);
+
     // Returns a directory where you can save to
     static std::string SaveDirectory();
 private:
+	//Build the given directory
+	//differs depending on OS
+	static void constructDirectory(string dirName);
+
 #ifdef  _WIN32
 	//For windows 
 	//the number of ticks in a second

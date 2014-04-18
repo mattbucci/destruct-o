@@ -12,6 +12,10 @@
 
 #pragma once
 
+//If a tile isn't used for this many seconds
+//dump it to disk
+#define TILE_LIFETIME 45
+
 using namespace std;
 
 class TileHandler : public Savable
@@ -31,7 +35,7 @@ class TileHandler : public Savable
 	mutex worldMtx;
 	condition_variable worldCv;
 	unique_lock<mutex> worldLck;
-	vector<GameTile*> worldSet;
+	ContiguousList<GameTile*> worldSet;
 	//Represents the positions of all tiles currently loaded
 	//must have world lock to use
 	ContiguousList<vec2> cachedTiles;
@@ -40,7 +44,8 @@ class TileHandler : public Savable
 
 	void handlerLoop();
 	void genThread(GameTile * newTile);
-	void genRoutine(GameTile * newTile);
+	//Construct a new tile, or load one from disk and construct it
+	GameTile * genRoutine(vec2 pos);
 
 	void forceTile(vec2 pos);
 	void predictTile(vec2 pos);

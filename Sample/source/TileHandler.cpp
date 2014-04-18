@@ -33,18 +33,22 @@ TileHandler::TileHandler() :
 }
 
 void TileHandler::handlerLoop() {
-	//Lock for Generation List (Default to Locked)
-	unique_lock<mutex> gLck(genMtx);
-	unique_lock<mutex> wLck(worldMtx, std::defer_lock);
+	unique_lock<mutex> genLck(genMtx,defer_lock);
+	unique_lock<mutex> worldLck(worldMtx,defer_lock);
+
+
+	//Gen lock locked by default
+	genLck.lock();
+
 
 	//Ensure the Lock is Secured
-	_ASSERTE(gLck.owns_lock());
+	_ASSERTE(genLck.owns_lock());
 
 	//Begin Work Loop
 	while(runThread) {
 		//Wait until work available
 		while(genQueue.size() <= 0) {
-			genCv.wait(gLck);
+			genCv.wait(genLck);
 		}
 
 		genRunningLck.lock();
@@ -53,14 +57,13 @@ void TileHandler::handlerLoop() {
 		while(genQueue.size() > 0) {
 			//Grab Work from Queue
 			vec2 pos = genQueue.front();
-			GameTile * tile = GameTile::CreateGameTile((int)pos.x, (int)pos.y);
 			genQueue.pop_front();
-			gLck.unlock();
+			genLck.unlock();
 
 			//Generation Routine
-			genRoutine(tile);
+			GameTile * tile = genRoutine(pos);
 
-			wLck.lock();
+			worldLck.lock();
 			//Add this tile to the list of tiles that exist in this world
 			listOfGeneratedTiles.push_back(pos);
 			//Add this tile to the list of tiles in memory right now
@@ -74,28 +77,76 @@ void TileHandler::handlerLoop() {
 				}
 			}
 			worldCv.notify_all();
-			wLck.unlock();
+			worldLck.unlock();
 
 			//Unlock genRunningLock briefly
 			//so if someone wants to stop the cycle they can
 			genRunningLck.unlock();
 			genRunningLck.lock();
 
-			gLck.lock();
+			genLck.lock();
 		}
 
+		//Check if any tiles have expired
+		//Note: it is only safe to acquire locks in the order: world,gen
+		//so we must unlock and relock to preserve that order
+		genLck.unlock();
+		
+
+		//Now check the worldset
+		worldLck.lock();
+		double now = Game()->Now();
+		for (auto it = worldSet.begin(); it != worldSet.end();) {
+			if (now >= (*it)->UseByDate) {
+				//Erase from the list of tiles in memory
+				cachedTiles.erase(vec2((*it)->tile_x,(*it)->tile_y));
+				//Cleanup tile
+				delete *it;
+				it = worldSet.erase(it);
+			}
+			else
+				 it++;
+		}
+
+		worldLck.unlock();
+
+		genLck.lock();
 		genRunningLck.unlock();
 	}
-
-	//Tile Handler Should Never Exit
-	_ASSERTE(false);
+	//Unlock any remaining locks
+	genLck.unlock();
 }
 
-void TileHandler::genRoutine(GameTile * newTile) {
-	//Generate Terrain Data
-	terraingenerator.generateTerrain(newTile);
-	//Generate Cities
-	citygenerator.GenerateCities(newTile);
+//Construct a new tile, or load one from disk and construct it
+GameTile * TileHandler::genRoutine(vec2 pos) {
+	bool tileOnDisk = false;
+	worldLck.lock();
+
+	//Check if the tile is in the list of generated tiles
+	for (auto genPos : listOfGeneratedTiles)
+		if (pos == genPos) {
+			tileOnDisk = true;
+			break;
+		}
+
+	worldLck.unlock();
+	
+	if (tileOnDisk) {
+		//If the tile is on disk load it off
+		GameTile * gameTile = GameTile::LoadTileFromDisk(saveDirectory() + tileName(pos));
+		gameTile->tile_x = (int)pos.x;
+		gameTile->tile_y = (int)pos.y;
+		return gameTile;
+	}
+	else {
+		//Check if the file is in the list of created files
+		GameTile * newTile = GameTile::CreateGameTile((int)pos.x, (int)pos.y);
+		//Generate Terrain Data
+		terraingenerator.generateTerrain(newTile);
+		//Generate Cities
+		citygenerator.GenerateCities(newTile);
+		return newTile;
+	}
 }
 
 void TileHandler::predictTile(vec2 pos) {
@@ -186,6 +237,7 @@ GameTile * TileHandler::getTile(vec2 pos) {
 		while(tile == NULL) {
 			//Wait for World Update
 			worldCv.wait(worldLck);
+			_ASSERTE(worldLck.owns_lock());
 
 			//Check for Expected Tile
 			int s = worldSet.size();
@@ -205,6 +257,8 @@ GameTile * TileHandler::getTile(vec2 pos) {
 			predictTile(vec2(pos.x + x_offset, pos.y + y_offset));
 		}
 	}
+
+	tile->UseByDate = Game()->Now()+TILE_LIFETIME;
 
 	//Release World Set Lock
 	worldLck.unlock();
@@ -257,7 +311,7 @@ vector<unsigned char> TileHandler::RetrieveCompressedTileData(vec2 pos) {
 		//lets read it off the disk
 		//(borrow from lodepng)
 		vector<unsigned char> tileData;
-		lodepng::load_file(tileData,saveDirectory() + "tiles/" + tileName(pos));
+		lodepng::load_file(tileData,saveDirectory() + tileName(pos));
 
 		//If for some reason the file failed to load
 		//tileData() will be empty and the function that calls this one
@@ -277,6 +331,9 @@ void TileHandler::Save(Json::Value & parentValue) {
 	lock_guard<unique_lock<mutex>> lockerA(genRunningLck);
 	lock_guard<unique_lock<mutex>> lockerB(worldLck);
 	lock_guard<unique_lock<mutex>> lockerC(genLck);
+
+	//Create relevant directories
+	OS::BuildPath(saveDirectory());
 
 	//Save tiles
 	Json::Value & tiles = parentValue["tiles"];
@@ -345,7 +402,7 @@ void TileHandler::Load(Json::Value & parentValue, LoadData & loadData) {
 		else {
 			//Dump it to file
 			//as it was before
-			lodepng::save_file(tileData,saveDirectory() + "tiles/" + tileName(tilePosition));
+			lodepng::save_file(tileData,saveDirectory() + tileName(tilePosition));
 		}
 	}
 }

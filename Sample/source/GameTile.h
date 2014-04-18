@@ -59,6 +59,11 @@ public:
 	//don't call for positions outside of the tile
 	TileCell * GetTileCell(vec2 pos);
 
+	//This is automatically updated by the tile handler
+	//when the current time is greater than this
+	//the tile will be dumped to disk
+	double UseByDate;
+
 	//Carves a square crater from fx,fy to tox,toy to depth "depth" and adds all removed voxels
 	//to the removedVoxels value, the first three values are xyz and the forth value
 	//is the material

@@ -19,9 +19,6 @@
 VoxelSystem::VoxelSystem() {
 	cellRenderer = VoxelDrawSystem::BuildAppropriateSystem();
 
-	//Just get the starting tile
-	tiles.getTile(vec2(0, 0));
-
 	//Load the tile textures
 	unsigned int textureWidth, textureHeight;
 	vector<unsigned char> image;

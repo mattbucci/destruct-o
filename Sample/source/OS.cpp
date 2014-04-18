@@ -10,6 +10,35 @@ void OS::WaitUntil(double until) {
 }
 
 
+//Constructs the given path out of folders
+//Not OS dependant (put that part in construct directory)
+void OS::BuildPath(string path) {
+	string curPath;
+	for (auto c : path) {
+		if (c == '/')
+			constructDirectory(curPath);
+		curPath += c;
+	}
+}
+
+#ifdef  _WIN32
+bool dirExists(const std::string& dirName_in) {
+	DWORD ftyp = GetFileAttributesA(dirName_in.c_str());
+	return (ftyp != INVALID_FILE_ATTRIBUTES) && (ftyp & FILE_ATTRIBUTE_DIRECTORY);
+}
+
+
+//This is OS dependant!
+void OS::constructDirectory(string dirName) {
+	//Check if it exists first
+	if (!dirExists(dirName))
+		CreateDirectory(dirName.c_str(),NULL);
+}
+#else
+//Someone please implement functions here
+#warning construct directory only has a windows implementation right now. Sorry!
+void OS::constructDirectory(string dirName) {}
+#endif
 
 
 #ifdef  _WIN32

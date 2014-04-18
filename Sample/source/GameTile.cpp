@@ -6,6 +6,7 @@
 #include "GLTerrainProgram.h"
 #include "TerrainChunk.h"
 #include "TerrainChunkRenderer.h"
+#include "BaseFrame.h"
 
 #define CHUNK_COUNT ((TILE_SIZE/CHUNK_SIZE)*(TILE_SIZE/CHUNK_SIZE))
 
@@ -13,6 +14,7 @@ GameTile::GameTile() {
 	Cells = new TileCell[TILE_SIZE*TILE_SIZE];
 	chunks = new TerrainChunk*[CHUNK_COUNT];
 	memset(chunks,0,CHUNK_COUNT*sizeof(TerrainChunk*));
+	UseByDate = Game()->Now()+1000;
 }
 
 GameTile::~GameTile() {
