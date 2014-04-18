@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Structure.h"
-#include "Tracer.h"
 #include "VoxelDrawSystem.h"
+#include "PhysicsUtilities.h"
 #include "GL3DProgram.h"
 
 //Attempt to ray trace to this structure
@@ -12,7 +12,7 @@ bool Structure::Trace(const vec3 & from, const vec3 & direction, vec3 & rayColli
 		vec3 colCandidate;
 		vec3 candidateNormal;
 		//Trace to each voxel and look for collisions with the ray
-		if (Tracer::TraceToVoxel(from,direction,Cells[i].pos,colCandidate,candidateNormal)) {
+		if (PhysicsUtilities::TraceToVoxel(from,direction,Cells[i].pos,colCandidate,candidateNormal)) {
 			float dist = glm::length(from-colCandidate);
 			if (dist < minDist) {
 				minDist = dist;

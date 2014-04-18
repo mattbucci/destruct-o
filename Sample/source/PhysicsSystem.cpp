@@ -8,25 +8,12 @@
 #include "PhysicsTriangle.h"
 #include "PhysicsActor.h"
 #include "VoxEngine.h"
-#include "Tracer.h"
 #include "ActorPlayer.h"
-
-template<class T>
-T _trunc(T d){ return (d>0) ? floor(d) : ceil(d) ; }
-
-
-//Remove the force in a given direction and return the quantity
-static float removeInDirection(vec3 & force, vec3 direction) {
-	float d = glm::dot(force,direction);
-	if (d > 0) {
-		force -= direction*d;
-		return d;
-	}
-	return 0.0f;
-}
 
 #include "ParticleData.h"
 #include "ParticleSystem.h"
+
+#include "PhysicsUtilities.h"
 
 #include "Frames.h"
 #include "GameSystem.h"
@@ -46,136 +33,6 @@ PhysicsSystem::~PhysicsSystem() {
 	for (auto voxel : allVoxels)
 		delete voxel;
 }
-
-//Given two voxel positions find intersection information
-PhysicsSystem::Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxelBPosition) {
-	PhysicsSystem::Intersection data;
-
-	if (voxelAPosition == voxelBPosition)
-		voxelAPosition += .0001;
-
-	//Estimate penetration depth as the greatest difference between A and B
-	//this works for cubes only
-	vec3 collisionVector = voxelAPosition-voxelBPosition;
-	vec3 difference = glm::abs(collisionVector);
-	//voxels are 1 large and axis aligned so this works
-	data.Depth = 1.0f-max(difference.x,max(difference.y,difference.z));
-	data.CollisionVector = glm::normalize(collisionVector);
-
-
-	//Estimate normal as the closest normal to the collision vector
-	if ((difference.x > difference.y) && (difference.x > difference.z)) {
-		//x is largest
-		if (collisionVector.x > 0)
-			data.Normal = vec3(1,0,0);
-		else
-			data.Normal = vec3(-1,0,0);
-	}
-	else if (difference.y > difference.z) {
-		//y is largest
-		if (collisionVector.y > 0)
-			data.Normal = vec3(0,1,0);
-		else
-			data.Normal = vec3(0,-1,0);
-	}
-	else {
-		//x is largest
-		if (collisionVector.z > 0)
-			data.Normal = vec3(0,0,1);
-		else
-			data.Normal = vec3(0,0,-1);
-	}
-
-	return data;
-}
-//Given a voxel position and an extents box find intersection data
-PhysicsSystem::Intersection CalculateIntersection(vec3 voxelAPosition, vec3 cuboidPosition, vec3 halfCuboidSize) {
-	PhysicsSystem::Intersection data;
-
-	if (voxelAPosition == cuboidPosition)
-		cuboidPosition += .0001;
-
-	//Estimate penetration depth as the greatest difference between A and B
-	//this works for cubes only
-	vec3 collisionVector = cuboidPosition-voxelAPosition;
-	vec3 difference = glm::abs(collisionVector);
-	//Now subtract half the cuboid size to get interpenetration sizes
-	difference = (halfCuboidSize+.5f)-difference;
-	//find the penetration depth as the smallest possible penetration
-	data.Depth = min(difference.x,min(difference.y,difference.z));
-	data.CollisionVector = glm::normalize(collisionVector);
-
-
-	//Estimate normal as the closest normal to the collision vector
-	if ((difference.x < difference.y) && (difference.x < difference.z)) {
-		//x is smallest
-		if (collisionVector.x > 0)
-			data.Normal = vec3(1,0,0);
-		else
-			data.Normal = vec3(-1,0,0);
-	}
-	else if (difference.y < difference.z) {
-		//y is smallest
-		if (collisionVector.y > 0)
-			data.Normal = vec3(0,1,0);
-		else
-			data.Normal = vec3(0,-1,0);
-	}
-	else {
-		//z is smallest
-		if (collisionVector.z > 0)
-			data.Normal = vec3(0,0,1);
-		else
-			data.Normal = vec3(0,0,-1);
-	}
-
-	return data;
-}
-
-//Given two extents boxes find the intersection
-PhysicsSystem::Intersection CalculateIntersection(vec3 cuboidPositionA, vec3 halfCuboidSizeA, vec3 cuboidPositionB, vec3 halfCuboidSizeB) {
-	PhysicsSystem::Intersection data;
-
-	if (cuboidPositionA == cuboidPositionB)
-		cuboidPositionB += .0001;
-
-	//Estimate penetration depth as the greatest difference between A and B
-	//this works for cubes only
-	vec3 collisionVector = cuboidPositionB-cuboidPositionA;
-	vec3 difference = glm::abs(collisionVector);
-	//Now subtract half the cuboid size to get interpenetration sizes
-	difference = (halfCuboidSizeA+halfCuboidSizeB)-difference;
-	//find the penetration depth as the smallest possible penetration
-	data.Depth = min(difference.x,min(difference.y,difference.z));
-	data.CollisionVector = glm::normalize(collisionVector);
-
-
-	//Estimate normal as the closest normal to the collision vector
-	if ((difference.x < difference.y) && (difference.x < difference.z)) {
-		//x is smallest
-		if (collisionVector.x > 0)
-			data.Normal = vec3(1,0,0);
-		else
-			data.Normal = vec3(-1,0,0);
-	}
-	else if (difference.y < difference.z) {
-		//y is smallest
-		if (collisionVector.y > 0)
-			data.Normal = vec3(0,1,0);
-		else
-			data.Normal = vec3(0,-1,0);
-	}
-	else {
-		//z is smallest
-		if (collisionVector.z > 0)
-			data.Normal = vec3(0,0,1);
-		else
-			data.Normal = vec3(0,0,-1);
-	}
-
-	return data;
-}
-
 
 //Update and finalize physics actors
 //also handles terrain interactions
@@ -198,8 +55,8 @@ void PhysicsSystem::updatePhysicsActors() {
 		int tilesChecked = 0;
 
 		//Use these four blocks as a support for any blocks on top of the ground
-		for (float atY = _trunc(actorVolumeStart.y);atY < actorVolumeEnd.y; atY++) {
-			for (float atX = _trunc(actorVolumeStart.x);atX < actorVolumeEnd.x; atX++) {
+		for (float atY = PhysicsUtilities::_trunc(actorVolumeStart.y);atY < actorVolumeEnd.y; atY++) {
+			for (float atX = PhysicsUtilities::_trunc(actorVolumeStart.x);atX < actorVolumeEnd.x; atX++) {
 				tilesChecked++;
 				//check if the square is under the ground for this ground tile
 				float height = voxelSystem->GetPositionHeight(vec2(atX,atY));
@@ -215,7 +72,7 @@ void PhysicsSystem::updatePhysicsActors() {
 				//So the block must be penetrating this block of terrain
 				//time to reject it
 				//simulate a block next to the penetrating actor
-				Intersection intersectionData = CalculateIntersection(vec3(vec2(atX,atY),min(height-.5f,actor->position.z))+vec3(.5,.5,0),actor->position,halfActorSize);
+				Intersection intersectionData = PhysicsUtilities::CalculateIntersection(vec3(vec2(atX,atY),min(height-.5f,actor->position.z))+vec3(.5,.5,0),actor->position,halfActorSize);
 				//If the depth is < 0 then you're not penetrating quite yet...
 				if (intersectionData.Depth < 0)
 					continue;
@@ -228,7 +85,7 @@ void PhysicsSystem::updatePhysicsActors() {
 				actor->acceleration += forceDirection*force;
 				//Remove velocity in that direction
 				float vel = 0.0f;
-				vel += removeInDirection(actor->velocity,-forceDirection);
+				vel += PhysicsUtilities::removeInDirection(actor->velocity,-forceDirection);
 				//The removed velocity will now be forthed (instead of average since some is lost)
 				//and added back in the opposite direction
 				//actors bounce a lot less than blocks, so we /5 instead of /3
@@ -304,7 +161,7 @@ void PhysicsSystem::updatePhysicsVoxels() {
 			//So the block must be penetrating this block of terrain
 			//time to reject it
 			//simulate a block next to the penetrating voxel
-			Intersection intersectionData = CalculateIntersection(voxel->Position,vec3(floorTiles[i],min(height-.5f,voxel->Position.z))+vec3(.5,.5,0));
+			Intersection intersectionData = PhysicsUtilities::CalculateIntersection(voxel->Position,vec3(floorTiles[i],min(height-.5f,voxel->Position.z))+vec3(.5,.5,0));
 			//If the depth is < 0 then you're not penetrating quite yet...
 			if (intersectionData.Depth < 0)
 				continue;
@@ -315,7 +172,7 @@ void PhysicsSystem::updatePhysicsVoxels() {
 			voxel->Acceleration += forceDirection*force;
 			//Remove Velocity in that direction
 			float vel = 0.0f;
-			vel += removeInDirection(voxel->Velocity,-forceDirection);
+			vel += PhysicsUtilities::removeInDirection(voxel->Velocity,-forceDirection);
 			//The removed Velocity will now be thirded (instead of average since some is lost)
 			//and added back in the opposite direction
 			vel /= 3.0f;
@@ -365,7 +222,7 @@ void PhysicsSystem::collideVoxelsToVoxels() {
 			for (unsigned int b = a+1; b < section.size(); b++) {
 				//Do AABB before you do full physics check... or things will be slow
 				if (section[a]->AabColiding(section[b]->Position)) {
-					Intersection intr = CalculateIntersection(section[a]->Position,section[b]->Position);
+					Intersection intr = PhysicsUtilities::CalculateIntersection(section[a]->Position,section[b]->Position);
 
 					float depth = intr.Depth;
 					float force = 100*depth;
@@ -384,8 +241,8 @@ void PhysicsSystem::collideVoxelsToVoxels() {
 					section[b]->Acceleration += -forceDirection*force; 
 					//Remove Velocity in that direction
 					float vel = 0.0f;
-					vel += removeInDirection(section[a]->Velocity,-forceDirection);
-					vel += removeInDirection(section[b]->Velocity,forceDirection);
+					vel += PhysicsUtilities::removeInDirection(section[a]->Velocity,-forceDirection);
+					vel += PhysicsUtilities::removeInDirection(section[b]->Velocity,forceDirection);
 					//The removed Velocity will now be thirded (instead of average since some is lost)
 					//and added back in the opposite direction
 					vel /= 3.0f;
@@ -412,7 +269,7 @@ void PhysicsSystem::collideVoxelsToActors() {
 		for (auto voxel : allVoxels) {
 			//Do AABB before you do full physics check... or things will be slow
 			if (actor->aabbCollision(voxel->Position)) {
-				Intersection intr = CalculateIntersection(voxel->Position,actorPosition,halfActorSize);
+				Intersection intr = PhysicsUtilities::CalculateIntersection(voxel->Position,actorPosition,halfActorSize);
 
 				float depth = intr.Depth;
 				float force = 100*depth;
@@ -430,8 +287,8 @@ void PhysicsSystem::collideVoxelsToActors() {
 				actor->Acceleration += -forceDirection*force; 
 				//Remove Velocity in that direction
 				float vel = 0.0f;
-				vel += removeInDirection(voxel->Velocity,-forceDirection);
-				vel += removeInDirection(actor->Velocity,forceDirection);
+				vel += PhysicsUtilities::removeInDirection(voxel->Velocity,-forceDirection);
+				vel += PhysicsUtilities::removeInDirection(actor->Velocity,forceDirection);
 				//The removed Velocity will now be thirded (instead of average since some is lost)
 				//and added back in the opposite direction
 				vel /= 3.0f;
@@ -463,7 +320,7 @@ void PhysicsSystem::collideActorsToActors() {
 			vec3 actorVolumeEndB =	actorB->position + halfActorSizeB;
 			//Do AABB before you do full physics check... or things will be slow
 			if (actorA->aabbCollision(actorB)) {
-				Intersection intr = CalculateIntersection(actorPositionA,halfActorSizeA,actorPositionB,halfActorSizeB);
+				Intersection intr = PhysicsUtilities::CalculateIntersection(actorPositionA,halfActorSizeA,actorPositionB,halfActorSizeB);
 
 				float depth = intr.Depth;
 				float force = 100*depth;
@@ -483,8 +340,8 @@ void PhysicsSystem::collideActorsToActors() {
 				actorA->Acceleration += -forceDirection*force; 
 				//Remove Velocity in that direction
 				float vel = 0.0f;
-				vel += removeInDirection(actorB->Velocity,-forceDirection);
-				vel += removeInDirection(actorA->Velocity,forceDirection);
+				vel += PhysicsUtilities::removeInDirection(actorB->Velocity,-forceDirection);
+				vel += PhysicsUtilities::removeInDirection(actorA->Velocity,forceDirection);
 				//The removed Velocity will now be thirded (instead of average since some is lost)
 				//and added back in the opposite direction
 				vel /= 4.0f;
@@ -612,7 +469,7 @@ bool PhysicsSystem::Raytrace(vec3 from, vec3 direction, vec3 & rayCollision, vec
 		float height = voxelSystem->GetPositionHeight(vec2(x,y));
 		int stackSize = voxelSystem->GetPositionStackSize(vec2(x,y));
 		for (int stack = 0; stack <= stackSize; stack++) {
-			if (Tracer::TraceToVoxel(from,direction,vec3(x,y,height-(float)stack),rayCollision,surfaceNormal))
+			if (PhysicsUtilities::TraceToVoxel(from,direction,vec3(x,y,height-(float)stack),rayCollision,surfaceNormal))
 				//Collided with terrain
 				return true;
 		}

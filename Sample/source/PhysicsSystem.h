@@ -30,16 +30,6 @@ class PhysicsSystem : public Savable {
 	//The voxel draw renderer
 	VoxelDrawSystem * renderer;
 
-	//Once an intersection is found, calculate this information about it
-	struct Intersection {
-		//The normal of the plane being intersected
-		vec3 Normal;
-		//The (approx) depth of the penetration
-		float Depth;
-		//The direction vector from B to A
-		vec3 CollisionVector;
-	};
-
 
 	//Collide physics voxels with other physics voxels
 	void collideVoxelsToVoxels();
@@ -59,11 +49,6 @@ class PhysicsSystem : public Savable {
 	//A tie to the voxel system used to lookup the terrain height at various points
 	VoxelSystem * voxelSystem;
 
-	//C style function for performance reasons
-	//Given two voxel positions find intersection information
-	friend Intersection CalculateIntersection(vec3 voxelAPosition, vec3 voxelBPosition);
-	friend Intersection CalculateIntersection(vec3 voxelAPosition, vec3 cuboidPosition, vec3 halfCuboidSize);
-	friend Intersection CalculateIntersection(vec3 cuboidPositionA, vec3 halfCuboidSizeA, vec3 cuboidPositionB, vec3 halfCuboidSizeB);
 
 	//Temporary particle data
 	ParticleData * physicsVoxelErase;
