@@ -76,6 +76,8 @@ public:
 		delete [] data;
 	}
 
+
+	//Mutable access
 	class iterator : public std::iterator<random_access_iterator_tag,T*>	 {
 		//The iterators current position
 		T * at;
@@ -133,17 +135,17 @@ public:
 		iterator operator-(const int & other) {
 			return iterator(at - other);
 		}
-		bool operator<(iterator & other) {
+		bool operator<(const iterator & other) const{
 			return at < other.at;
 		}
-		bool operator>(iterator & other) {
+		bool operator>(const iterator & other) const {
 			return at > other.at;
 		}
 
-		bool operator<=(iterator & other) {
+		bool operator<=(const iterator & other) const {
 			return at <= other.at;
 		}
-		bool operator>=(iterator & other) {
+		bool operator>=(const iterator & other) const {
 			return at >= other.at;
 		}
 		
@@ -155,6 +157,111 @@ public:
 		}
 	};
 
+	iterator begin() {
+		return iterator(data);
+	}
+	iterator end() {
+		return iterator(data+listSize);
+	}
+
+	T & operator[](const int index) {
+		return data[index];
+	}
+
+
+	//Const access
+	class const_iterator {
+		//The iterators current position
+		const T * at;
+		//Build a new iterator giving it only the raw start position
+		const_iterator(const T * at) {
+			this->at = at;
+		}
+		friend class ContiguousList<T>;
+	public:
+		const T & operator*() const {
+			return *at;
+		}
+
+		const T * operator->() const {
+			return *at;
+		}
+
+		//prefix operator
+		const_iterator & operator++() {
+			// Move the pointer forwards
+			at++;
+			return *this;
+		}
+		//postfix operator (not sure what the argument does?)
+		const_iterator operator++(int) {
+			iterator copy(*this);
+			at++;
+			return *this;
+		}
+		//prefix operator
+		const_iterator & operator--() {
+			// Move the pointer forwards
+			at--;
+			return *this;
+		}
+		//postfix operator (not sure what the argument does?)
+		const_iterator operator--(int) {
+			iterator copy(*this);
+			at--;
+			return *this;
+		}
+
+		const T *& operator[](const int index) const {
+			return at[index];
+		}
+
+		//Additional STL operators needed for std::sort to work
+		//may be different with different versions of STL unfortuantely
+		int operator-(iterator & other) {
+			return at - other.at;
+		}
+		const_iterator operator+(const int & other) {
+			return iterator(at+other);
+		}
+		const_iterator operator-(const int & other) {
+			return iterator(at - other);
+		}
+		bool operator<(const const_iterator & other) const {
+			return at < other.at;
+		}
+		bool operator>(const const_iterator & other) const {
+			return at > other.at;
+		}
+
+		bool operator<=(const const_iterator & other) const {
+			return at <= other.at;
+		}
+		bool operator>=(const const_iterator & other) const {
+			return at >= other.at;
+		}
+		
+		bool operator==(const const_iterator & other) const {
+			return at == other.at;
+		}
+		bool operator!=(const const_iterator & other) const {
+			return at != other.at;
+		}
+	};
+
+	const_iterator begin() const {
+		return const_iterator(data);
+	}
+	const_iterator end() const {
+		return const_iterator(data+listSize);
+	}
+
+	const T & operator[](const int index) const {
+		return data[index];
+	}
+
+
+	
 	void sort(function<bool(T a,T b)> aLessThanB) {
 		//Perform an insertion sort
 		//favored for its speed with already sorted data
@@ -171,6 +278,7 @@ public:
 		}
 	}
 
+
 	//Disable/enable auto resizing when capacity is much greater than size
 	void autoredeuce(bool reduce) {
 		autoreduceCapacity = reduce;
@@ -186,16 +294,6 @@ public:
 		listSize = 0;
 	}
 
-	iterator begin() {
-		return iterator(data);
-	}
-	iterator end() {
-		return iterator(data+listSize);
-	}
-
-	T & operator[](const int index) const {
-		return data[index];
-	}
 	//Now the complicated methods
 	void push_back(T toInsert) {
 		if (listSize == listCapacity)
