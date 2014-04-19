@@ -8,8 +8,10 @@ CLASS_SAVE_CONSTRUCTOR(ActorAI);
 ActorAI::ActorAI() : PhysicsActor(vec3(2,2,5),100, GameFactions::FACTION_ENEMY) {
 	Position = (vec3(40,42,actorAIX));
 	actorAIX += 10;
-	setModel("soldier02");
-	playAnimation("Standing_Aim_Idle");
+	//setModel("soldier02");
+	//playAnimation("Standing_Aim_Idle");
+    setModel("soldier01");
+    playAnimation("idleWgun");
 }
 ActorAI::~ActorAI() {
 

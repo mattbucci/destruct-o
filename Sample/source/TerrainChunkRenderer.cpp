@@ -25,18 +25,21 @@ TerrainChunkRenderer::HotChunk::~HotChunk() {
 //Render the set chunk
 void TerrainChunkRenderer::HotChunk::Render(GLTerrainProgram * shader) {
 	glBindVertexArray ( vertexArrayBuffer );
-	glBindBuffer ( GL_ARRAY_BUFFER, vertexData );
+	/*glBindBuffer ( GL_ARRAY_BUFFER, vertexData );
 	glVertexAttribPointer ( shader->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,Vertex) );
 	glVertexAttribPointer ( shader->AttributeTexture(), 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,TextureCoordinateX) );
-	glVertexAttribPointer ( shader->AttributeShading(), 1, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,Shading) );
+	glVertexAttribPointer ( shader->AttributeShading(), 1, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,Shading) );*/
 	glDrawArrays( GL_TRIANGLES, 0, vertexCount);
+    
+    // Don't fuck the VAOs
+    glBindVertexArray( 0 );
 }
 void TerrainChunkRenderer::HotChunk::Set(TerrainChunk * chunk, GLTerrainProgram * shader) {
 	vertexCount = chunk->VertexDataSize;
 
 	//Cache vertex data
-
 	glBindVertexArray ( vertexArrayBuffer );
+    
 	//vertex positions
 	glBindBuffer ( GL_ARRAY_BUFFER, vertexData );
 	glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(TerrainChunk::ChunkVertexData), chunk->VertexData, GL_STATIC_DRAW );
@@ -46,6 +49,9 @@ void TerrainChunkRenderer::HotChunk::Set(TerrainChunk * chunk, GLTerrainProgram 
 	glVertexAttribPointer ( shader->AttributeTexture(), 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,TextureCoordinateX) );
 	glEnableVertexAttribArray( shader->AttributeShading() );
 	glVertexAttribPointer ( shader->AttributeShading(), 1, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,Shading) );
+    
+    // Don't fuck the VAOs
+    glBindVertexArray( 0 );
 }
 
 void TerrainChunkRenderer::StartRendering(GLTerrainProgram * shader) {

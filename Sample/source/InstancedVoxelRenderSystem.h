@@ -26,7 +26,7 @@ class InstancedVoxelRenderSystem : public VoxelDrawSystem {
 	vec2 * textureCoordinates;
 	vec3 * normals;
 	vec4 * positions; //the 4th float is the material id
-	vector<GLubyte> indices;
+	vector<GLushort> indices;
 	//How many voxels are in the buffers right now
 	int bufferedVoxels;
 	//Is false until the gpu buffers have been

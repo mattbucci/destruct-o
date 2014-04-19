@@ -366,12 +366,11 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         glBindVertexArray((*renderable)->attributes);
         
         // Update the program attributes if the shader has changed
-		//Disabled until it works
-        //if(previousProgram != program)
+        if(previousProgram != program)
         {
-
             // Bind the vertex buffer of the mesh
             glBindBuffer(GL_ARRAY_BUFFER, buffers[(*renderable)->meshpart->mesh]);
+            
 			// Bind the index buffer of the mesh part
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*renderable)->indices);
             
@@ -452,12 +451,13 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         
         // Finally, we can draw the god damn mesh
         glDrawElements(GL_TRIANGLES, (GLsizei) (*renderable)->meshpart->indices.size(), GL_UNSIGNED_SHORT, NULL);
-
-		glBindVertexArray( 0 );
     }
     
     // Store the previous program
     previousProgram = program;
+    
+    // Don't fuck the VAOs
+    glBindVertexArray(0);
 }
 
 const Node* Model::Skeleton() const
