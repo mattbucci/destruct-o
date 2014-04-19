@@ -295,16 +295,16 @@ void Model::Upload()
     // Upload the mesh part data
     for(std::vector<MeshPartRenderData *>::iterator it = renderables.begin(); it != renderables.end(); it++)
     {
-		auto & meshPart = *it;
+		auto & renderable = *it;
         // Create the vertex array object for this renderable
-        glGenVertexArrays(1, &meshPart->attributes);
+        glGenVertexArrays(1, &renderable->attributes);
 
         // Create the vertex buffer for the indices
-        glGenBuffers(1, &meshPart->indices);
+        glGenBuffers(1, &renderable->indices);
         
         // Upload the index data to the gpu
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshPart->indices);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshPart->meshpart->indices.size() * sizeof(GLuint), (*it)->meshpart->indices.data(), GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderable->indices);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, renderable->meshpart->indices.size() * sizeof(GLushort), renderable->meshpart->indices.data(), GL_STATIC_DRAW);
     }
     
     // Upload material textures
@@ -542,6 +542,8 @@ Model* Model::LoadFromJsonFile(const std::string &directory, const std::string &
     return new Model(root, directory, _textureCache);
 }
 
+#include "Utilities.h"
+
 // Load a model from a compressed Json file
 Model* Model::LoadFromCompressedJsonFile(const std::string &directory, const std::string &name, TextureCache &_textureCache)
 {
@@ -569,6 +571,12 @@ Model* Model::LoadFromCompressedJsonFile(const std::string &directory, const std
         throw new std::runtime_error("Model* Model::LoadFromCompressedJsonFile() - decompression of mesh failed");
     }
     
+	vector<unsigned char> uncompressedData(buffersize);
+	memcpy((char*)&uncompressedData.front(),buffer,buffersize);
+	static int value = 5;
+	int vxx = value++;
+	lodepng::save_file(uncompressedData,(string("temp.json") + Utilities::toString(vxx)).c_str());
+
     // Calculate buffer pointers for json decode
     const char *pBegin = (const char *) buffer;
     const char *pEnd = (const char *) (buffer + buffersize);
