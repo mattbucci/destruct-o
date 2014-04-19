@@ -136,7 +136,7 @@ bool PhysicsActor::aabbCollision(PhysicsActor * other) {
 void PhysicsActor::Draw(MaterialProgram * materialShader) {
 	//Update model position
 	if (model != NULL) 
-		model->GetTransform().Translation() = position;
+		model->GetTransform().Translation() = vec3(position.x,position.y,position.z-size.z/2.0);
 	//Update the underlying actor
 	Actor::Draw(materialShader);
 }

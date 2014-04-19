@@ -125,6 +125,8 @@ void InstancedVoxelRenderSystem::startDraw(GL3DProgram * shader) {
 	//Push indices (not necessary on windows... for some reason?
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,indexBuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,36,&indices[0],GL_STATIC_DRAW);
+
+	glBindVertexArray( 0 );
 }
 
 void InstancedVoxelRenderSystem::draw(GL3DProgram * shader)
@@ -134,11 +136,11 @@ void InstancedVoxelRenderSystem::draw(GL3DProgram * shader)
 	glBindBuffer ( GL_ARRAY_BUFFER, positionBuffer );
 	glBufferSubData ( GL_ARRAY_BUFFER, 0,bufferedVoxels*sizeof(vec4), positions );
 
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,indexBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,indexBuffer);
 	
 	glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, 0, bufferedVoxels);
 
-	//glBindVertexArray( 0 );
+	glBindVertexArray( 0 );
 	//All buffered voxels now drawn
 	bufferedVoxels = 0;
 }
