@@ -70,6 +70,9 @@ public:
 	//Get the max life of this actor
 	virtual float GetMaxLife();
 
+	//Draw this actor
+	virtual void Draw(MaterialProgram * materialShader) override;
+
 	CLASS_DECLARATION(PhysicsActor)
 		INHERITS_FROM(Actor)
 		CLASS_MEMBER(position,ReflectionData::SAVE_VEC3)

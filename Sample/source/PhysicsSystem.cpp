@@ -461,11 +461,12 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 
 		//draw one voxel
 		renderer->startDraw(shader);
-		renderer->pushVoxel(shader,vec3(),5);
+		renderer->pushVoxel(shader,vec3(),8);
 		renderer->finishDraw(shader);
 
 		shader->Model.PopMatrix();
 	}
+
 }
 
 void PhysicsSystem::RegisterPhysicsActor(PhysicsActor * toRegister) {

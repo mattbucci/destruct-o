@@ -2,6 +2,8 @@
 #include "ActorSystem.h"
 #include "Actor.h"
 #include "ActorPlayer.h"
+#include "ShaderGroup.h"
+#include "MaterialProgram.h"
 
 
 ActorSystem::ActorSystem(PhysicsSystem * physics) {
@@ -39,6 +41,11 @@ ActorPlayer * ActorSystem::Player() {
 
 //Draw all the actors
 void ActorSystem::Draw(ShaderGroup * shaders) {
+
+    // Setup the mesh shader
+    MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model_skinned");
+    modelShader->UseProgram();
+
 	for (unsigned int i = 0; i < allActors.size(); i++) 
-		allActors[i]->Draw();
+		allActors[i]->Draw(modelShader);
 }

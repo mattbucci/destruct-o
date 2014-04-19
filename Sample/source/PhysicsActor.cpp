@@ -131,3 +131,12 @@ bool PhysicsActor::aabbCollision(PhysicsActor * other) {
 			(myEnd.z < voxelStart.z));
 }
 
+
+
+void PhysicsActor::Draw(MaterialProgram * materialShader) {
+	//Update model position
+	if (model != NULL) 
+		model->GetTransform().Translation() = position;
+	//Update the underlying actor
+	Actor::Draw(materialShader);
+}

@@ -336,6 +336,8 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
                 Model::animation_const_iterator anim = instance->GetModel()->Animations().begin();
                 std::advance(anim, (rand() % instance->GetModel()->Animations().size()));
                 instance->PlayAnimation(anim->first);
+
+				//anim->second->Length()
                 
                 // Set the location of this instance
                 instance->GetTransform().Translation() = playerPos + playerFacing * 5.0f;

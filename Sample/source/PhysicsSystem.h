@@ -49,7 +49,6 @@ class PhysicsSystem : public Savable {
 	//A tie to the voxel system used to lookup the terrain height at various points
 	VoxelSystem * voxelSystem;
 
-
 	//Temporary particle data
 	ParticleData * physicsVoxelErase;
 public:
@@ -80,6 +79,6 @@ public:
 	GameEvent<void(PhysicsVoxel*)> VoxelDisintegrating;
 	CLASS_DECLARATION(PhysicsSystem)
 		CLASS_CONTAINER_MEMBER(allVoxels,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
-		CLASS_CONTAINER_MEMBER(actors,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_HANDLE);
+		CLASS_CONTAINER_MEMBER(actors,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_HANDLE)
 	END_DECLARATION
 };
