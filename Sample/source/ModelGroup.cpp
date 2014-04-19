@@ -62,16 +62,13 @@ ModelGroup::ModelGroup(const std::string& manifestPath, TextureCache& _textureCa
         throw new std::runtime_error("Model::Model(const string& manifestPath, TextureCache& _textureCache) - Manifest root is not an array");
     }
     
+    // Get start time to measure the load time of the models
 	double start = OS::Now();
 
-	vector<Json::Value> modelJson;
-	for (auto model : root)
-		modelJson.push_back(model);
+    // Get an iterator to the current Json value
+    Json::Value::iterator modelIterator = root.begin();
 
-    // Iterate through all the meshes included in the manifest
-	int curMesh = -1;
-	int * meshIterator = &curMesh;
-
+    // Create a mutex to lock the critical sections of the model loader worker threads
 	mutex * modelIteratorMutex = new mutex();
 	semaphore * deadThreads = new semaphore();
 
@@ -80,27 +77,24 @@ ModelGroup::ModelGroup(const std::string& manifestPath, TextureCache& _textureCa
 	//Launch four worker threads
 	for (int i = 0; i < workerThreads; i++)
     {
-		thread t([&,meshIterator,modelIteratorMutex,modelJson]()
+		thread t([&,modelIteratorMutex]()
         {
 			while (1) {
 				//Critical section
 				modelIteratorMutex->lock();
 
 				//Check if all models are loaded
-				if (*meshIterator == (modelJson.size()-1)) {
+				if (modelIterator == root.end())
+                {
 					modelIteratorMutex->unlock();
 					deadThreads->increase();
 					return;
 				}
 				
-				//Next model
-				(*meshIterator)++;
-
-				const Json::Value & model = modelJson[*meshIterator];
-
+				// Otherwise, get a reference to the current model to load
+                const Json::Value& model = *modelIterator;
+                modelIterator++;
 				modelIteratorMutex->unlock();
-
-				
 
 				// Get the model information
 				std::string name = (model)["name"].asString();
@@ -122,16 +116,19 @@ ModelGroup::ModelGroup(const std::string& manifestPath, TextureCache& _textureCa
 				// Load this model
 				if(compressed)
 				{
+                    // Load the compressed model file
 					AddCompressedModel(directory, path, name);
 				}
 				else
 				{
+                    // Load the uncompressed model file
 					AddModel(directory, path, name);
 				}					
 			}
 		});
 		t.detach();
 	}
+    
 	//Decrease four times, once for each thread
 	for (int i = 0; i < workerThreads; i++)
     {
@@ -142,7 +139,6 @@ ModelGroup::ModelGroup(const std::string& manifestPath, TextureCache& _textureCa
 
 	delete modelIteratorMutex;
 	delete deadThreads;
-
 }
 
 // Insert a model into the model group
