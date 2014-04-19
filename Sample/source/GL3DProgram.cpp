@@ -11,9 +11,6 @@ GL3DProgram::GL3DProgram(GLCommonShaderFile * commonShader, string vertexShaderP
 	Acid(glGetUniformLocation(programId,"uCurrentTime"),glGetUniformLocation(programId,"uAcidFactor")) 
 	{
 
-		glUniform1i( glGetUniformLocation( programId, "basic_texture"), 0);
-
-
 	attributeIndexTexture = glGetAttribLocation(programId,"vTex");
 	attributeIndexPosition = glGetAttribLocation(programId,"vPos");
 	attributeIndexVertex = glGetAttribLocation(programId,"vVert");

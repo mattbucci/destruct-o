@@ -10,8 +10,6 @@ GLTerrainProgram::GLTerrainProgram(GLCommonShaderFile * commonShader, string ver
 	Acid(glGetUniformLocation(programId,"uCurrentTime"),glGetUniformLocation(programId,"uAcidFactor")) 
 	{
 
-		glUniform1i( glGetUniformLocation( programId, "basic_texture"), 0);
-
 
 	attributeIndexTexture = glGetAttribLocation(programId,"vTex");
 	attributeIndexVertex = glGetAttribLocation(programId,"vVert");

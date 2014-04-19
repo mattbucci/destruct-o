@@ -7,7 +7,6 @@ GLParticleProgram::GLParticleProgram(GLCommonShaderFile * commonShader, string v
 	Acid(glGetUniformLocation(programId,"uCurrentTime"),glGetUniformLocation(programId,"uAcidFactor")) 
 	{
 
-	glUniform1i( glGetUniformLocation( programId, "basic_texture"), 0);
 
 	uniformView = glGetUniformLocation(programId,"uView");
 	uniformProjection = glGetUniformLocation(programId,"uProjection");
