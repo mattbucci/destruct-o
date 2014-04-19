@@ -29,6 +29,10 @@ class Actor : public Savable {
 	//This is a hack while modelinstance is private
 	friend class PhysicsActor;
 protected:
+	//When an actor is loaded
+	//handles rebuilding the model instance
+	virtual void Load(Json::Value & parentValue, LoadData & loadData) override;
+
 	//Safely erase this actor during the next update cycle
 	void Destroy();
 

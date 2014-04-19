@@ -64,3 +64,14 @@ void Actor::Draw(MaterialProgram * materialShader) {
 		model->Draw(materialShader);
 	}
 }
+
+//When an actor is loaded
+//handles rebuilding the model instance
+void Actor::Load(Json::Value & parentValue, LoadData & loadData) {
+	//Reload all class data
+	Savable::Load(parentValue,loadData);
+	//If you had a model, rebuild it
+	if (modelName.size() > 0) {
+		setModel(modelName);
+	}
+}

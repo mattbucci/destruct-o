@@ -23,6 +23,8 @@ class ActorSystem : public Savable {
 	//Keep a copy of the pointer
 	//goes against the new Game() policy, but such is life
 	PhysicsSystem * physics;
+
+
 public:
 	//Physics system must be constructed before actor system
 	ActorSystem(PhysicsSystem * physics);
