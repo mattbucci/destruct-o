@@ -295,15 +295,16 @@ void Model::Upload()
     // Upload the mesh part data
     for(std::vector<MeshPartRenderData *>::iterator it = renderables.begin(); it != renderables.end(); it++)
     {
+		auto & meshPart = *it;
         // Create the vertex array object for this renderable
-        glGenVertexArrays(1, &(*it)->attributes);
+        glGenVertexArrays(1, &meshPart->attributes);
 
         // Create the vertex buffer for the indices
-        glGenBuffers(1, &(*it)->indices);
+        glGenBuffers(1, &meshPart->indices);
         
         // Upload the index data to the gpu
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*it)->indices);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (*it)->meshpart->indices.size() * sizeof(GLuint), (*it)->meshpart->indices.data(), GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshPart->indices);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshPart->meshpart->indices.size() * sizeof(GLuint), (*it)->meshpart->indices.data(), GL_STATIC_DRAW);
     }
     
     // Upload material textures

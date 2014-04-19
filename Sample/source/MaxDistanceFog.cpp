@@ -5,8 +5,8 @@
 MaxDistanceFog::MaxDistanceFog(GLint programId) {
 	glFogDistance = glGetUniformLocation(programId,"maxDistance");
 	glFogColor = glGetUniformLocation(programId,"fogColor");
-	SetFogColor(vec4(1.0,0,1.0,1.0));
-	SetFogDistance(25.0f);
+	fogColor = (vec4(1.0,0,1.0,1.0));
+	fogDistance = (25.0f);
 }
 MaxDistanceFog::~MaxDistanceFog() {
 

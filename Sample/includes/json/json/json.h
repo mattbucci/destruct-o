@@ -2,6 +2,12 @@
 /// It is intented to be used with #include <json/json.h>
 
 #ifdef _MSC_VER
+#ifdef _DEBUG
+#define USE_BLOCK_ALLOCATOR
+#endif
+#endif
+
+#ifdef USE_BLOCK_ALLOCATOR
 #include "FSBAllocator.hh"
 #endif
 
@@ -510,7 +516,7 @@ namespace Json {
 
    public:
 #  ifndef JSON_USE_CPPTL_SMALLMAP
-#ifdef _MSC_VER
+#ifdef USE_BLOCK_ALLOCATOR
 	  typedef std::map<CZString, Value, std::less<CZString>, FSBAllocator<pair<const CZString, Value>>> ObjectValues;
 #else
       typedef std::map<CZString, Value> ObjectValues;

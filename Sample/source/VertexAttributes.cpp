@@ -77,9 +77,7 @@ VertexAttributes::VertexAttributes(const Json::Value& value)
 // Add a vertex attribute by key
 void VertexAttributes::addVertexAttributeByStorageKey(const std::string& key)
 {
-    // Storage class
-    Attribute attribute;
-    
+  
     // Check against all possible vertex attributes (if there is a better way of doing this please tell me)
     unsigned int i = 0;
     for(i = 0; i < VertexAttributeCount; i++)
@@ -87,6 +85,8 @@ void VertexAttributes::addVertexAttributeByStorageKey(const std::string& key)
         // If these keys match
         if(key.find(VertexAttributeStorageKeys[i]) == 0)
         {
+			// Storage class
+			Attribute attribute;
             // If this key is numeric
             if(key.length() > VertexAttributeStorageKeys[i].length())
             {
