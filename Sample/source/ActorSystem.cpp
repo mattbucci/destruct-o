@@ -2,6 +2,7 @@
 #include "ActorSystem.h"
 #include "Actor.h"
 #include "ActorPlayer.h"
+#include "ActorAids.h"
 #include "ShaderGroup.h"
 #include "MaterialProgram.h"
 
@@ -9,6 +10,8 @@
 ActorSystem::ActorSystem(PhysicsSystem * physics) {
 	this->physics = physics;
 	player = BuildActor<ActorPlayer>();
+	//Build AIDS too
+	BuildActor<ActorAids>();
 }
 ActorSystem::~ActorSystem() {
 	//cleanup all the actors

@@ -58,8 +58,9 @@ bool Actor::animationRunning() {
 
 //Draw this actor
 void Actor::Draw(MaterialProgram * materialShader) {
+	//facingDirection = fmod(OS::Now(),360);
 	if (model != NULL) {
-		model->GetTransform().Rotation() = glm::quat(facingDirection,vec3(0.0f, 0.0f, 1.0f));
+		model->GetTransform().Rotation() = glm::quat(facingDirection,vec3(0.0f, 0.0f, 1.0f)) * glm::quat(vec3(0.5 * M_PI, 0.0, 0.0));
 		model->Update(SIMULATION_DELTA,Game()->Now());
 		model->Draw(materialShader);
 	}

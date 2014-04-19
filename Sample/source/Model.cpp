@@ -306,7 +306,9 @@ void Model::Upload()
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderable->indices);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, renderable->meshpart->indices.size() * sizeof(GLushort), renderable->meshpart->indices.data(), GL_STATIC_DRAW);
     }
-    
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
+	//glBindVertexArray( 0 );
+
     // Upload material textures
     for(std::map<std::string, Material *>::iterator mIt = materials.begin(); mIt != materials.end(); mIt++)
     {
@@ -364,11 +366,14 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         glBindVertexArray((*renderable)->attributes);
         
         // Update the program attributes if the shader has changed
-        if(previousProgram != program)
+		//Disabled until it works
+        //if(previousProgram != program)
         {
 
             // Bind the vertex buffer of the mesh
             glBindBuffer(GL_ARRAY_BUFFER, buffers[(*renderable)->meshpart->mesh]);
+			// Bind the index buffer of the mesh part
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*renderable)->indices);
             
             // Iterate through the vertex attributes (dynamic shader parameters, as model vertex attributes vary)
             for(VertexAttributes::const_iterator attribute = (*renderable)->meshpart->mesh->Attributes().begin(); attribute != (*renderable)->meshpart->mesh->Attributes().end(); attribute++)
@@ -412,8 +417,6 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
                 glVertexAttribPointer(programAttribute, (GLsizei) VertexAttributes::AttributeSize(attribute->attribute), GL_FLOAT, GL_FALSE, (GLsizei) (*renderable)->meshpart->mesh->Attributes().AttributeFrameSize() * sizeof(GLfloat), (GLvoid *)(attribute->offset * sizeof(GLfloat)));
             }
             
-            // Bind the index buffer of the mesh part
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*renderable)->indices);
         }
 
         // Bind the material's textures to some texturing units
@@ -449,6 +452,8 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         
         // Finally, we can draw the god damn mesh
         glDrawElements(GL_TRIANGLES, (GLsizei) (*renderable)->meshpart->indices.size(), GL_UNSIGNED_SHORT, NULL);
+
+		glBindVertexArray( 0 );
     }
     
     // Store the previous program

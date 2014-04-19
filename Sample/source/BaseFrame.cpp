@@ -128,6 +128,7 @@ void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
 #include "ActorAI.h"
 
 void BaseFrame::OnFrameFocus() {
+
 	//Physics.BuildVoxel(vec3(40,42,80));
 
 	//The physics demo
@@ -258,6 +259,8 @@ void BaseFrame::Draw(double width, double height)
         // Draw the model instance
         (*it)->Draw(modelShader);
     }
+
+	Actors.Draw(shaders);
 
 	//The particle system will use a different shader entirely soon
 	Particles.Draw(shaders);
