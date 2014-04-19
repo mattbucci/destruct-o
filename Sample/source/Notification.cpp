@@ -5,11 +5,11 @@
 
 Notification::Notification(void) {
 	w = 800;
-	position = Rect(0, 0, 800, 30);
+	position = Rect(0, 0, w, 20);
 	this->color = vec4(1.0f, 1.0f, 1.0f, 0.65f);
 	hPin = Control::CENTER;
 	SetVisible(true);
-	text = new Label(0,5,"");
+	text = new Label(0,0,"");
 	text->hPin = Control::CENTER;
 	text->SetText("");
 	text->SetVisible(false);
@@ -46,5 +46,5 @@ void Notification::Draw(GL2DProgram * shader) {
 }
 
 void Notification::resizeElement() {
-	position = Rect(0, 0, w, 30);
+	position = Rect(0, 0, w, 20);
 }

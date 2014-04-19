@@ -13,7 +13,7 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 	this->p = parent;
 
 	//Set up Self
-	position = Rect(0, 30, 800, 570);
+	position = Rect(0, 20, 800, 580);
 	color = vec4(0.33f, 0.33f, 0.33f, 0.75f);
 	SetVisible(false);
 
@@ -143,5 +143,5 @@ void PauseWindow::hideOptsMenu() {
 }
 
 void PauseWindow::resizeElement() {
-	position = Rect(0, 30, w, h-30);
+	position = Rect(0, 20, w, h-20);
 }

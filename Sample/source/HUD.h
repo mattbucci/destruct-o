@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "TexturedRect.h"
 
+class ActorSystem;
 class BaseFrame;
 class ActorPlayer;
 class GL2DProgram;
@@ -13,6 +14,7 @@ class PhysicsActor;
 class HUD {
 	ContiguousList<pair<double, vec2>> damagePoints;
 
+	ActorSystem* actorSystem;
 	BaseFrame* baseFrame;
 	ActorPlayer* player;
 	FirstPersonMode* fps;
@@ -23,6 +25,8 @@ class HUD {
 	TexturedRect damageIndicator;
 	TexturedRect minimapDot;
 	TexturedRect minimapBackground;
+	TexturedRect chargeBar;
+	TexturedRect chargeBarBG;
 
 	HUD();
 public:

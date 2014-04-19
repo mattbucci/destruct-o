@@ -25,6 +25,17 @@ void TexturedRect::SetRect(Rect r) {
 	svat(3,vec2(r.X+r.Width,r.Y+r.Height));
 	sxat(3,vec2(1,1));
 }
+//Change the rect + texture bounds
+void TexturedRect::SetRectandTexRect(Rect r, Rect t) {
+	svat(0,vec2(r.X,r.Y));
+	sxat(0,vec2(t.X,t.Y));
+	svat(1,vec2(r.X,r.Y+r.Height));
+	sxat(1,vec2(t.X,t.Height));
+	svat(2,vec2(r.X+r.Width,r.Y));
+	sxat(2,vec2(t.Width,t.Y));
+	svat(3,vec2(r.X+r.Width,r.Y+r.Height));
+	sxat(3,vec2(t.Width,t.Height));
+}
 //Change the color tint
 void TexturedRect::SetColor(vec4 color) {
 	tint = color;

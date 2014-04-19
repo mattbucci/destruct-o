@@ -29,10 +29,9 @@
 class ActorPlayer;
 class ParticleSystem;
 class Demo;
-
+#define __MOBILE__
 //Retrieve base frame
 BaseFrame * Game();
-
 
 class BaseFrame : public GameSystem {
 	AudioPlayer * audio;

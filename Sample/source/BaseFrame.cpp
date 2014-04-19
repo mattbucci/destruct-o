@@ -268,16 +268,25 @@ void BaseFrame::Draw(double width, double height)
 	
 	//Update the voxel debug counter
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
-	
-	//Call the parent draw to draw interface
-	GameSystem::Draw(width,height);
+
+	//Set up the 2D Shader
+	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
+	shaders2d->UseProgram();
+	shaders2d->SetWidthHeight((float)width,(float)height);
+	//Enable sensible defaults
+	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 	// Draw the UI for joysticks
-	//Assume that gameSystem::Draw has set up the 2d shader
-	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
+
 	FirstPerson->Draw(width, height, shaders2d);
 	//draw the hud
 	hud.DrawAndUpdate(shaders2d,viewPortSize);
+
+		//Call the parent draw to draw interface
+	GameSystem::Draw(width,height);
 } 
 
 void BaseFrame::PushNotification(string txt) {

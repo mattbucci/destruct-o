@@ -3,13 +3,20 @@
 #include "Label.h"
 #include "Utilities.h"
 
-DebugWindow::DebugWindow() {
-	this->position = Rect(0,30,120,50);
+#define __MOBILE__
 
-	fps = new Label(0,5,"");
+DebugWindow::DebugWindow() {
+#ifdef __MOBILE__
+	this->position = Rect(-95,20,120,40);
+	this->hPin = Control::MAX;
+#else
+	this->position = Rect(0,20,120,40);
+#endif
+	color = vec4(1,1,1,.66);
+	fps = new Label(0,2,"");
 	fps->hPin = Control::CENTER;
 	this->AddChild(fps);
-	voxels = new Label(0,20,"");
+	voxels = new Label(0,17,"");
 	voxels->hPin = Control::CENTER;
 	takeInput = false;
 	this->AddChild(voxels);
