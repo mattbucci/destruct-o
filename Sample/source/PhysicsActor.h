@@ -3,6 +3,8 @@
 
 #include "Actor.h"
 
+#include "GameFactions.h"
+
 
 class PhysicsActor : public Actor {
 	//Size is the width/length/height of the hitbox
@@ -30,18 +32,43 @@ protected:
 	vec3 & Position;
 	vec3 & Acceleration;
 	bool OnGround();
+
+	//The max health you can have
+	float maxLife;
+
+	//your life (starts at max)
+	float life;
+
+	//The faction this actor is on
+	FactionId faction;
+
+	//Whether or not this actor can take damage
+	//invulnerable things cannot experience death
+	bool vulnerable;
+
+	//Override to prevent immediate death
+	virtual void onDeath();
 public:
-	PhysicsActor(vec3 size);
+	PhysicsActor(vec3 size, float maxLife, FactionId faction);
 	~PhysicsActor();
 
 	//Anyone can know the position
 	vec3 GetPosition();
 
+	//Get the current life of this actor
+	float GetLife();
 
-	//Apply velocity/acceleration to this actor
-	virtual bool Update();
+	//Get the faction of this actor
+	FactionId GetFaction();
 
+	//Damage this actor from a particular faction
+	virtual void Damage(FactionId damagingFaction, float damage);
 
+	//Damage this actor from a particular actor
+	virtual void Damage(PhysicsActor * damagingActor, float damage);
+
+	//Get the max life of this actor
+	virtual float GetMaxLife();
 
 	CLASS_DECLARATION(PhysicsActor)
 		INHERITS_FROM(Actor)

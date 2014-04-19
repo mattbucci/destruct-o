@@ -13,7 +13,7 @@ static const float movementSpeed = 6.0f;
 static const float gravity = -9.8f;
 static const float jumpVelocity = 20.0f;
 
-ActorPlayer::ActorPlayer() : PhysicsActor(vec3(2,2,6)) {
+ActorPlayer::ActorPlayer() : PhysicsActor(vec3(2,2,6),500, GameFactions::FACTION_PLAYER) {
 	//Start the player off in abouts the center
 	Position = (vec3(34,40,0));
     deltaPosition = 0.0;
@@ -36,7 +36,7 @@ bool ActorPlayer::Update() {
 	
     if(deltaPosition>200 && OnGround()) {
         //Let everyone know we walked
-        PlayerWalked.Fire([this](function<void(ActorPlayer*)> subscriber) {
+        Game()->Actors.ActorWalked.Fire([this](function<void(ActorPlayer*)> subscriber) {
             subscriber(this);
         });
 		cout << "Player Position: " << Position.x << "," << Position.y << "," << Position.z << endl;
@@ -58,7 +58,7 @@ bool ActorPlayer::Update() {
             Velocity.z += jumpVelocity;
             
             //Let everyone know we jumped
-            PlayerJumped.Fire([this](function<void(ActorPlayer*)> subscriber) {
+            Game()->Actors.ActorJumped.Fire([this](function<void(ActorPlayer*)> subscriber) {
                 subscriber(this);
             });
         }
@@ -89,5 +89,5 @@ bool ActorPlayer::Update() {
             onGround = true;
         }
 		*/
-	return Actor::Update();
+	return PhysicsActor::Update();
 }

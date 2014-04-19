@@ -8,9 +8,12 @@
 // Include the potentially precompiled header
 #include "stdafx.h"
 
+#include "BaseFrame.h"
 #include "Achievements.h"
+#include "Achievement.h"
 
-Achievements::Achievements(Notification* notification){
+
+Achievements::Achievements(Notification* notification, BaseFrame * game){
     this->notify = notification;
     achievementlist.push_back(new Achievement(0,5,"Baby Steps, 5 steps taken","player-walked",0,notify));
     achievementlist.push_back(new Achievement(0,25,"One Small Step for man, 25 steps taken","player-walked",0,notify));
@@ -20,42 +23,30 @@ Achievements::Achievements(Notification* notification){
     
     achievementlist.push_back(new Achievement(0,100,"Destroyer of worlds, 100 voxels destroyed","voxel-destroyed",0,notify));
     
+
+	//Achievement subscription starts here
+    GameEventSubscriber::Subscribe<void(Actor*)>(&game->Actors.ActorJumped,[this](Actor* Object) {
+		if (Object == Game()->Actors.Player())
+			incrementAchievement("player-jumped",1);
+    });
+    
+    GameEventSubscriber::Subscribe<void(Actor*)>(&game->Actors.ActorLanded,[this](Actor* Object) {
+		if (Object == Game()->Actors.Player())
+			incrementAchievement("player-landed",1);
+    });
+    
+    GameEventSubscriber::Subscribe<void(Actor*)>(&game->Actors.ActorWalked,[this](Actor* Object) {
+		if (Object == Game()->Actors.Player())
+			incrementAchievement("player-walked",1);
+    });
+    GameEventSubscriber::Subscribe<void(PhysicsVoxel*)>(&game->Physics.VoxelDisintegrating,[this](PhysicsVoxel* Object) {
+		incrementAchievement("voxel-destroyed",1);
+    });
 };
 
-void Achievements::InitPlayerAchievements(ActorPlayer * player){
-    
-    GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&player->PlayerJumped,[this](ActorPlayer* Object) {
-        for(int i = 0; i < this->achievementlist.size(); i++) {
-            if(achievementlist[i]->type=="player-jumped")
-                achievementlist[i]->IncrementValue(1);
-        }
-    });
-    
-    GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&player->PlayerLanded,[this](ActorPlayer* Object) {
-        for(int i = 0; i < this->achievementlist.size(); i++) {
-            if(achievementlist[i]->type=="player-landed")
-                achievementlist[i]->IncrementValue(1);
-        }
-    });
-    
-    GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&player->PlayerWalked,[this](ActorPlayer* Object) {
-        for(int i = 0; i < this->achievementlist.size(); i++) {
-            if(achievementlist[i]->type=="player-walked")
-                achievementlist[i]->IncrementValue(1);
-        }
-    });
-
-}
-
-void Achievements::InitPhysicsAchievements(PhysicsSystem * physics){
-    GameEventSubscriber::Subscribe<void(PhysicsVoxel*)>(&physics->VoxelDisintegrating,[this](PhysicsVoxel* Object) {
-        for(int i = 0; i < this->achievementlist.size(); i++) {
-            if(achievementlist[i]->type=="voxel-destroyed")
-                achievementlist[i]->IncrementValue(1);
-        }
-    });
-}
-
-void Achievements::InitActorAchievements(ActorSystem * actors){
-    
+void Achievements::incrementAchievement(string name, float incrementQuantity) {
+    for(int i = 0; i < this->achievementlist.size(); i++) {
+        if(achievementlist[i]->type==name)
+            achievementlist[i]->IncrementValue(incrementQuantity);
+    }
 }

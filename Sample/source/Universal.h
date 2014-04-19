@@ -23,6 +23,11 @@ private:
 	};
 public:
 
+	//Creates a concussion
+	//damaging terrain
+	//throwing back physics voxels and actors
+	//static void Concus(vec3 at,
+
 	//Traces from rayStart along rayDirection. returns true if ray hits anything
 	//any parameter can be NULL to indicate no information is desired along that pathway
 	static bool Trace(vec3 rayStart, vec3 rayDirection, vec3 * rayHitLocation, PhysicsActor ** actorHit = NULL, GameMaterial * hitMaterial = NULL, vec3 * surfaceNormal = NULL);

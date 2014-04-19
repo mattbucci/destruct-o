@@ -25,7 +25,10 @@
 #include "Building.h"
 
 BaseFrame::BaseFrame(ShaderGroup * shaders)
-    : GameSystem(shaders), Physics(&Voxels), Actors(&Physics)
+    : GameSystem(shaders), 
+	Physics(&Voxels), 
+	Actors(&Physics),
+	achievements(&notification,this)
 {
 	cout << "\t Constructing base frame\n";
     
@@ -42,8 +45,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
 #endif
 
 	Controls.AddWindow(pauseWindow);
-	notification = new Notification();
-	Controls.AddWindow(notification);
+	Controls.AddWindow(&notification);
 	
 	// Enable the first person controller
 	FirstPerson->Enable(true);
@@ -154,9 +156,6 @@ void BaseFrame::Build()
 	audio = new AudioPlayer(100);
 	audio->PlayerInit(Actors.Player());
     audio->DemoInit(demo);
-    achievements = new Achievements(notification);
-    achievements->InitPlayerAchievements(Actors.Player());
-    achievements->InitPhysicsAchievements(&Physics);
 }
 
 bool BaseFrame::Update(vector<InputEvent> inputEvents) {
@@ -281,7 +280,7 @@ void BaseFrame::Draw(double width, double height)
 } 
 
 void BaseFrame::PushNotification(string txt) {
-	notification->notify(txt);
+	notification.notify(txt);
 }
 
 ModelGroup* BaseFrame::Models() 

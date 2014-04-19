@@ -30,6 +30,8 @@ void AudioPlayer::ReceiveEvent(event action) {
 }
 void AudioPlayer::PlayerInit(ActorPlayer* user) {
     this->user = user;
+	//FIXME
+	/*
     GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&user->PlayerJumped,[this](ActorPlayer* Object) {
         event test;
         test.type="player-jump";
@@ -53,6 +55,7 @@ void AudioPlayer::PlayerInit(ActorPlayer* user) {
         test.pos = vec3(0,0,0);
         EffectPlayer.PlayEffect(test);
     });
+	*/
 
 }
 

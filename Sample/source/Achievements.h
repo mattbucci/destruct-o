@@ -9,25 +9,21 @@
 #ifndef __VoxEngine__Achievements__
 #define __VoxEngine__Achievements__
 
-#include <iostream>
-#include <vector>
-#include "Achievement.h"
-#include "PhysicsSystem.h"
-#include "ActorPlayer.h"
-#include "ActorSystem.h"
-#include "Notification.h"
+#include "stdafx.h"
+
+#include "GameEvent.h"
+
+class Achievement;
+class Notification;
+class BaseFrame;
 
 class Achievements : protected GameEventSubscriber{
     vector<Achievement*> achievementlist;
     Notification * notify;
+
+	void incrementAchievement(string name, float incrementQuantity);
 public:
-    Achievements(){};
-    Achievements(Notification* notification);
-    void InitPlayerAchievements(ActorPlayer * player);
-    
-    void InitPhysicsAchievements(PhysicsSystem * physics);
-    
-    void InitActorAchievements(ActorSystem * actors);
+    Achievements(Notification* notification, BaseFrame * game);
     
     void Update();
     

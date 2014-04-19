@@ -207,9 +207,9 @@ class Savable {
 	//Handle the json deserialize after the file has already been decoded
 	static void DeserializeJson(Json::Value & root, Savable * loadInto);
 protected:
-
+	//Called to save all the data in this class
 	virtual void Save(Json::Value & parentValue);
-
+	//Called to load all the data in this class
 	virtual void Load(Json::Value & parentValue, LoadData & loadData);
 
 	virtual void savesystem_reflect(vector<ReflectionData::savable> & reflectMembersInto) = 0;

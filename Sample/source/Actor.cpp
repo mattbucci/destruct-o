@@ -11,6 +11,10 @@ Actor::Actor() {
 Actor::~Actor() {
 }
 
+//Safely erase this actor during the next update cycle
+void Actor::Destroy() {
+	valid = false;
+}
 
 
 //Update this actor with the delta and current time

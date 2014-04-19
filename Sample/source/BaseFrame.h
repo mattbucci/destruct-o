@@ -39,9 +39,8 @@ class BaseFrame : public GameSystem {
 
 	Demo * demo;
 	DemoWindow * demoWindow;
-	Notification * notification;
+	Notification notification;
 	PauseWindow * pauseWindow;
-    Achievements * achievements;
     ModelGroup * models;
 
 	HUD hud;
@@ -87,6 +86,13 @@ public:
 	ParticleCloud Particles;
 
 	ActorSystem Actors;
+
+	//Private objects which must be initialized after everything else
+	//goes here
+private:
+	Achievements achievements;
+public:
+
     
     // Model instances to draw for the demo
     std::vector<ModelInstance *> modelInstances;
