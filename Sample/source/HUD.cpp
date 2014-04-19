@@ -26,8 +26,9 @@ HUD::HUD(BaseFrame* baseFrame) :
 	minimapBackground(Rect(0,0,MINIMAP_SIZE,MINIMAP_SIZE),"hud/minimap.png", vec4(1, 1, 1, .5))
 #endif
 {
-		this->baseFrame = baseFrame;
-		minimapScale = 1.0f;
+	//Grab Baseframe Reference
+	this->baseFrame = baseFrame;
+	minimapScale = 1.0f;
 }
 
 //Since the hud is purely visual
