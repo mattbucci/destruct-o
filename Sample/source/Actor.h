@@ -38,12 +38,16 @@ protected:
 
 	//Play an animation
 	//also allows animationRunning() to work
-	void playAnimation(string animationName);
+	void playAnimation(const string & animationName);
+
+	//Starts playing the animation if the animation is not the same one
+	//that is currently playing
+	void setAnimation(const string & animationName);
 
 	//Set the current model
 	//if modelName is invalid
 	//model will still be NULL
-	void setModel(string modelName);
+	void setModel(const string & modelName);
 
 	//Checks if an animation is running
 	//true if the animation is running
@@ -51,8 +55,11 @@ protected:
 	bool animationRunning();
 
 	//Facing direction for the model mostly
-	//in degrees
+	//in radians
 	float facingDirection;
+
+	//Just a shortcut to the actors
+	ActorSystem & Actors();
 public:
 	//Automatically registers this actor
 	Actor();

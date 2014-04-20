@@ -14,9 +14,26 @@ ActorSystem::ActorSystem(PhysicsSystem * physics) {
 	BuildActor<ActorAids>();
 }
 ActorSystem::~ActorSystem() {
+	cleanActorList();
+}
+
+void ActorSystem::cleanActorList() {
 	//cleanup all the actors
-	for (auto actor : allActors)
-		delete actor;
+	//but cleanup player and aids last
+	for (auto actor : allActors) {
+		if ((actor != player) && (actor != aids))
+			delete actor;
+	}
+	//Cleanup player and aids now
+	delete player;
+	delete aids;
+}
+
+void ActorSystem::Load(Json::Value & parentValue, LoadData & loadData) {
+	//Clean actor list saftely
+	cleanActorList();
+	//Keep loading
+	Savable::Load(parentValue,loadData);
 }
 
 	
@@ -42,13 +59,85 @@ ActorPlayer * ActorSystem::Player() {
 	return player;
 }
 
+//Get the AIDS
+ActorAids * ActorSystem::Aids() {
+	return aids;
+}
+
 //Draw all the actors
 void ActorSystem::Draw(ShaderGroup * shaders) {
 
-    // Setup the mesh shader
-    MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model_skinned");
-    modelShader->UseProgram();
+	// Setup the mesh shader
+	MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model_skinned");
+	modelShader->UseProgram();
 
 	for (unsigned int i = 0; i < allActors.size(); i++) 
 		allActors[i]->Draw(modelShader);
+}
+
+vector<PhysicsActor*> ActorSystem::GetActorsInRadius(vec3 center, float radius) {
+	vector<PhysicsActor*> found;
+
+	float radiusSquared = radius*radius;
+
+	for (auto actor : allActors) {
+		PhysicsActor * pactor = dynamic_cast<PhysicsActor*>(actor);
+		if (pactor == NULL)
+			continue;
+		//Check if the actor is within the radius
+		vec3 distance = pactor->GetPosition()-center;
+		float distanceSquared = glm::dot(distance,distance);
+		if (distanceSquared < radiusSquared)
+			found.push_back(pactor);
+	}
+
+	return found;
+}
+vector<PhysicsActor*> ActorSystem::GetEnemiesInRadius(vec3 center, float radius, FactionId fromFaction) {
+	vector<PhysicsActor*> found;
+
+	float radiusSquared = radius*radius;
+
+	for (auto actor : allActors) {
+		PhysicsActor * pactor = dynamic_cast<PhysicsActor*>(actor);
+		if (pactor == NULL)
+			continue;
+
+		//Check if the actor is an enemy
+		if (!Factions.IsEnemy(fromFaction,pactor->GetFaction()))
+			continue;
+
+		//Check if the actor is within the radius
+		vec3 distance = pactor->GetPosition()-center;
+		float distanceSquared = glm::dot(distance,distance);
+		if (distanceSquared < radiusSquared)
+			found.push_back(pactor);
+	}
+
+	return found;
+}
+
+PhysicsActor * ActorSystem::GetClosestEnemy(vec3 from, FactionId fromFaction) {
+	PhysicsActor* found = NULL;
+	float leastDistanceSquared = 10000;
+
+	for (auto actor : allActors) {
+		PhysicsActor * pactor = dynamic_cast<PhysicsActor*>(actor);
+		if (pactor == NULL)
+			continue;
+
+		//Check if the actor is an enemy
+		if (!Factions.IsEnemy(fromFaction,pactor->GetFaction()))
+			continue;
+
+		//Check if the actor is the least distance away
+		vec3 distance = pactor->GetPosition()-from;
+		float distanceSquared = glm::dot(distance,distance);
+		if (distanceSquared < leastDistanceSquared) {
+			leastDistanceSquared = distanceSquared;
+			found = pactor;
+		}
+	}
+
+	return found;
 }
