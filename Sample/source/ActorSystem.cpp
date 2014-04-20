@@ -141,3 +141,6 @@ PhysicsActor * ActorSystem::GetClosestEnemy(vec3 from, FactionId fromFaction) {
 
 	return found;
 }
+ContiguousList<Actor*>* ActorSystem::GetActors() {
+	return &allActors;
+}

@@ -470,6 +470,10 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 	glDepthMask(GL_TRUE);
 }
 
+ContiguousList<PhysicsActor*>* PhysicsSystem::GetActors() {
+	return &actors;
+}
+
 void PhysicsSystem::RegisterPhysicsActor(PhysicsActor * toRegister) {
 	actors.push_back(toRegister);
 }

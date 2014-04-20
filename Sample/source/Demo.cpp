@@ -347,7 +347,12 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
                 
                 // Store this instance for rendering
                 game->modelInstances.push_back(instance);
-            }
+            } else if (eve.Key == '\\') {
+				vec3 hit, norm;
+				if(Universal::Trace(playerPos + vec3(0, 0, 2.5), playerFacing, &hit)) {
+					((BaseFrame*)CurrentSystem)->GetHUD()->MarkDamage(vec2(hit.x, hit.y));
+				}
+			}
 		}
 	}
 }

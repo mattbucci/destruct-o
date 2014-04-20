@@ -4,17 +4,19 @@
 
 DemoWindow::DemoWindow(Demo * d) {
 	//Size yourself
-	position = Rect(10,100,720,100);
+	position = Rect(0,20,105,580);
+	hPin = Control::MAX;
 	//Add all the buttons in the appropriate places
 	//Center all the buttons vertically
-	makePyramid.vPin = fireBlock.vPin = makeFire.vPin = increaseAcid.vPin = decreaseAcid.vPin = makeMesh.vPin = Control::CENTER;
+	makePyramid.hPin = fireBlock.hPin = makeFire.hPin = increaseAcid.hPin = decreaseAcid.hPin = makeMesh.hPin = Control::CENTER;
+	makePyramid.vPin = fireBlock.vPin = makeFire.vPin = increaseAcid.vPin = decreaseAcid.vPin = makeMesh.vPin = Control::MIN;
 	//Now place each at a different horizontal position
-	makePyramid.position =	Rect(20+116*0,0,105,80);
-	fireBlock.position =	Rect(20+116*1,0,105,80);
-	makeFire.position =		Rect(20+116*2,0,105,80);
-	increaseAcid.position = Rect(20+116*3,0,105,80);
-	decreaseAcid.position = Rect(20+116*4,0,105,80);
-	makeMesh.position =     Rect(20+116*5,0,105,80);
+	makePyramid.position =	Rect(0,10+95*0,85,85);
+	fireBlock.position =	Rect(0,10+95*1,85,85);
+	makeFire.position =		Rect(0,10+95*2,85,85);
+	increaseAcid.position = Rect(0,10+95*3,85,85);
+	decreaseAcid.position = Rect(0,10+95*4,85,85);
+	makeMesh.position =     Rect(0,10+95*5,85,85);
 	//Label each button
 	makePyramid.SetText("Pyramid");
 	fireBlock.SetText("Launch");

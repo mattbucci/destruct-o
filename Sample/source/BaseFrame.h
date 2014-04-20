@@ -33,7 +33,6 @@ class Demo;
 //Retrieve base frame
 BaseFrame * Game();
 
-
 class BaseFrame : public GameSystem {
 	AudioPlayer * audio;
 
@@ -124,6 +123,9 @@ public:
     
     // Model group accessor
     ModelGroup* Models();
+
+	// Get HUD
+	HUD* GetHUD();
 
 	//Define how the base frame saves
 	CLASS_DECLARATION(BaseFrame)
