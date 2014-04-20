@@ -4,6 +4,7 @@
 #include "GL3DProgram.h"
 #include "GLTerrainProgram.h"
 #include "GLParticleProgram.h"
+#include "GLEffectProgram.h"
 #include "MaterialProgram.h"
 #include "ShaderGroup.h"
 #include "ActorPlayer.h"
@@ -231,6 +232,8 @@ void BaseFrame::Draw(double width, double height)
     Camera.Apply((MaterialProgram*)shaders->GetShader("model"));
     SetupShader<MaterialProgram>("model_skinned", fogDistance);
     Camera.Apply((MaterialProgram*)shaders->GetShader("model_skinned"));
+    SetupShader<GLEffectProgram>("effects", fogDistance);
+    Camera.Apply((GLEffectProgram*)shaders->GetShader("effects"));
     
 	//Startup 3d rendering
 	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");

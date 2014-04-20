@@ -5,7 +5,7 @@
 #include "ActorAids.h"
 #include "ShaderGroup.h"
 #include "MaterialProgram.h"
-
+#include "GLEffectProgram.h"
 
 ActorSystem::ActorSystem(PhysicsSystem * physics) {
 	this->physics = physics;
@@ -73,6 +73,13 @@ void ActorSystem::Draw(ShaderGroup * shaders) {
 
 	for (unsigned int i = 0; i < allActors.size(); i++) 
 		allActors[i]->Draw(modelShader);
+
+	//setup the effect shader
+	GLEffectProgram * effectShader = (GLEffectProgram*) shaders->GetShader("effects");
+	effectShader->UseProgram();
+
+	for (unsigned int i = 0; i < allActors.size(); i++) 
+		allActors[i]->Draw(effectShader);
 }
 
 vector<PhysicsActor*> ActorSystem::GetActorsInRadius(vec3 center, float radius) {

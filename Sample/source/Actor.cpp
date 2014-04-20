@@ -76,6 +76,10 @@ void Actor::Draw(MaterialProgram * materialShader) {
 	}
 }
 
+void Actor::Draw(GLEffectProgram * effectShader) {
+
+}
+
 //When an actor is loaded
 //handles rebuilding the model instance
 void Actor::Load(Json::Value & parentValue, LoadData & loadData) {

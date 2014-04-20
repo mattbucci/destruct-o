@@ -5,6 +5,7 @@
 #include "MaterialProgram.h"
 #include "GLParticleProgram.h"
 #include "GLTerrainProgram.h"
+#include "GLEffectProgram.h"
 #include "GLCommonShaderFile.h"
 
 ShaderGroup::ShaderGroup() {
@@ -45,6 +46,7 @@ ShaderGroup::ShaderGroup() {
 	if (!shadersP->Valid()) 
 		cout << "Failed to build opengl program\n";
 	AddShader(shadersP,"particles");
+
 	//Build Terrain Shader
 	GLTerrainProgram * shadersT = new GLTerrainProgram(&commonShader,"Interface/Shaders/universal/vsh_terrain.glsl","Interface/Shaders/universal/fsh_terrain.glsl");
 	if (!shadersT->Valid()) 
@@ -62,6 +64,12 @@ ShaderGroup::ShaderGroup() {
     if (!skinnedModelShader->Valid())
         cout << "Failed to build opengl program (model_skinned)\n";
     AddShader(skinnedModelShader,"model_skinned");
+
+	//Build Effect Shader
+	GLEffectProgram * shadersE = new GLEffectProgram(&commonShader,"Interface/Shaders/universal/vsh_effect.glsl","Interface/Shaders/universal/fsh_effect.glsl");
+	if (!shadersE->Valid()) 
+		cout << "Failed to build opengl program\n";
+	AddShader(shadersE,"effects");
 }
 
 ShaderGroup::~ShaderGroup() {

@@ -8,6 +8,7 @@ class BaseFrame;
 class ModelInstance;
 class MaterialProgram;
 class PhysicsActor;
+class GLEffectProgram;
 
 class Actor : public Savable {
 	bool valid;
@@ -71,7 +72,11 @@ public:
 	virtual bool Update();
 
 	//Draw this actor
+	//And any associated model
 	virtual void Draw(MaterialProgram * materialShader);
+
+	//Draw any associated effects
+	virtual void Draw(GLEffectProgram * effectShader);
 
 	CLASS_DECLARATION(Actor)
 		CLASS_MEMBER(valid,ReflectionData::SAVE_BOOL)
