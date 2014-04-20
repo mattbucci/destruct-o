@@ -121,7 +121,6 @@
 		F143005D19042A87002CEAE9 /* GLTerrainProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F143FF9219042A86002CEAE9 /* GLTerrainProgram.cpp */; };
 		F143005E19042A87002CEAE9 /* GLTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F143FF9419042A86002CEAE9 /* GLTexture.cpp */; };
 		F143005F19042A87002CEAE9 /* HUD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F143FF9719042A86002CEAE9 /* HUD.cpp */; };
-		F143006019042A87002CEAE9 /* HUDWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F143FF9919042A87002CEAE9 /* HUDWindow.cpp */; };
 		F143006119042A87002CEAE9 /* InputEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F143FF9B19042A87002CEAE9 /* InputEvent.cpp */; };
 		F143006219042A87002CEAE9 /* InstancedVoxelRenderSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F143FF9D19042A87002CEAE9 /* InstancedVoxelRenderSystem.cpp */; };
 		F143006319042A87002CEAE9 /* InterfaceGlobals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F143FF9F19042A87002CEAE9 /* InterfaceGlobals.cpp */; };
@@ -414,8 +413,6 @@
 		F143FF9619042A86002CEAE9 /* GLTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLTriangle.h; path = ../../source/GLTriangle.h; sourceTree = "<group>"; };
 		F143FF9719042A86002CEAE9 /* HUD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HUD.cpp; path = ../../source/HUD.cpp; sourceTree = "<group>"; };
 		F143FF9819042A86002CEAE9 /* HUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HUD.h; path = ../../source/HUD.h; sourceTree = "<group>"; };
-		F143FF9919042A87002CEAE9 /* HUDWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HUDWindow.cpp; path = ../../source/HUDWindow.cpp; sourceTree = "<group>"; };
-		F143FF9A19042A87002CEAE9 /* HUDWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HUDWindow.h; path = ../../source/HUDWindow.h; sourceTree = "<group>"; };
 		F143FF9B19042A87002CEAE9 /* InputEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputEvent.cpp; path = ../../source/InputEvent.cpp; sourceTree = "<group>"; };
 		F143FF9C19042A87002CEAE9 /* InputEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputEvent.h; path = ../../source/InputEvent.h; sourceTree = "<group>"; };
 		F143FF9D19042A87002CEAE9 /* InstancedVoxelRenderSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InstancedVoxelRenderSystem.cpp; path = ../../source/InstancedVoxelRenderSystem.cpp; sourceTree = "<group>"; };
@@ -791,8 +788,6 @@
 				F143FF9619042A86002CEAE9 /* GLTriangle.h */,
 				F143FF9719042A86002CEAE9 /* HUD.cpp */,
 				F143FF9819042A86002CEAE9 /* HUD.h */,
-				F143FF9919042A87002CEAE9 /* HUDWindow.cpp */,
-				F143FF9A19042A87002CEAE9 /* HUDWindow.h */,
 				F143FF9B19042A87002CEAE9 /* InputEvent.cpp */,
 				F143FF9C19042A87002CEAE9 /* InputEvent.h */,
 				F143FF9D19042A87002CEAE9 /* InstancedVoxelRenderSystem.cpp */,
@@ -1064,7 +1059,6 @@
 				F143007219042A87002CEAE9 /* ModelInstance.cpp in Sources */,
 				F143005C19042A87002CEAE9 /* GLShader.cpp in Sources */,
 				F143007C19042A87002CEAE9 /* ParticleData.cpp in Sources */,
-				F143006019042A87002CEAE9 /* HUDWindow.cpp in Sources */,
 				F11C7EFE18A8A7F9004BC84B /* abs.cpp in Sources */,
 				F11C7EFF18A8A7F9004BC84B /* add.cpp in Sources */,
 				F143008219042A87002CEAE9 /* PhysicsSystem.cpp in Sources */,
