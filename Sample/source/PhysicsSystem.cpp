@@ -443,7 +443,7 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 
 	//FOR DEBUG
 	//DRAW ACTOR EXTENTS
-	glDepthMask(GL_FALSE);
+	/*glDepthMask(GL_FALSE);
 	for (auto actor : actors) {
 		//Skip the player
 		if (typeid(*(Actor*)actor) == typeid(ActorPlayer))
@@ -467,7 +467,7 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 
 		shader->Model.PopMatrix();
 	}
-	glDepthMask(GL_TRUE);
+	glDepthMask(GL_TRUE);*/
 }
 
 ContiguousList<PhysicsActor*>* PhysicsSystem::GetActors() {

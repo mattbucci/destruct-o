@@ -51,6 +51,12 @@ void ModelInstance::Update(double delta, double now)
             Node *node = nodes[bone->first];
             const Node *iNode = model->FastNodeLookup(bone->first);
             
+            if(!node || !iNode)
+            {
+                std::cerr << "WTF: could not find bone -> " << bone->first << std::endl;
+                continue;
+            }
+            
             // Iterate through the keyframes to select the bone
             for(std::vector<Animation::Keyframe *>::const_iterator keyframe = bone->second.begin(); keyframe != bone->second.end(); keyframe++)
             {

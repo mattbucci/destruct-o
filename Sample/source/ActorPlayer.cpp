@@ -37,7 +37,7 @@ void ActorPlayer::Build()
     weapon = Game()->Models()->NewInstance("player_weapon");
     weapon->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, 0.0));
     weapon->GetTransform().Translation() = glm::vec3(0, -0.3, -1.95);
-    weapon->PlayAnimation("Take 001");
+    weapon->PlayAnimation("Idle");
 }
 
 //Update the position based off the most recent movement and direction vectors
