@@ -19,6 +19,7 @@
 
 #include "stdafx.h"
 #include "Model.h"
+#include "AnimationController.h"
 
 class ModelInstance
 {
@@ -31,11 +32,14 @@ class ModelInstance
     /** The transform to render the model at */
     Transform  transform;
     
+    /** The animation controller of this instance */
+    AnimationController controller;
+    
     /** The currently playing animation */
     const Animation *animation;
 
 	// flattened node list of the model
-	std::map<std::string,Node *> nodes;
+	std::map<std::string, Node *> nodes;
     
     /** The time at which the animation was started */
     float animationStartTime;
@@ -67,6 +71,12 @@ public:
     bool PlayAnimation(const std::string name);
     
     /**
+     * Assign an animation controller to this model instance
+     * @param controller the animation controller to copy and bind to the model
+     */
+    void SetController(AnimationController& controller);
+    
+    /**
      * Get a reference to the transform of the model
      * @return reference to transform
      */
@@ -87,6 +97,11 @@ public:
      * Get a const pointer to the skeleton of this model instance
      */
     const Node* Skeleton() const;
+    
+    /**
+     * Get a reference to the animation controller of this model instance
+     */
+    AnimationController& Controller();
 };
 
 #endif

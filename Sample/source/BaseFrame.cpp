@@ -271,6 +271,7 @@ void BaseFrame::Draw(double width, double height)
 	Actors.Draw(shaders);
 
     // Herp a derp
+    modelShader->UseProgram();
     Actors.Player()->DrawWeapon(modelShader);
     
 	//The particle system will use a different shader entirely soon

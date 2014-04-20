@@ -29,15 +29,32 @@ bool dirExists(const std::string& dirName_in) {
 
 
 //This is OS dependant!
-void OS::constructDirectory(string dirName) {
+void OS::constructDirectory(const std::string& path) {
 	//Check if it exists first
-	if (!dirExists(dirName))
-		CreateDirectory(dirName.c_str(),NULL);
+	if (!dirExists(path))
+		CreateDirectory(path.c_str(),NULL);
 }
+
 #else
-//Someone please implement functions here
-#warning construct directory only has a windows implementation right now. Sorry!
-void OS::constructDirectory(string dirName) {}
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+// Create a directory
+void OS::constructDirectory(const std::string& path)
+{
+    // Check if the directory already exists
+    struct stat s;
+    if(stat(path.c_str(), &s) == 0 && S_ISDIR(s.st_mode))
+    {
+        // It is a directory, get out
+        return;
+    }
+    
+    // Make the directory (-rwxrwx---)
+    mkdir(path.c_str(), S_IRWXU | S_IRWXG);
+}
+
 #endif
 
 
