@@ -19,6 +19,8 @@ ActorPlayer::ActorPlayer() : PhysicsActor(vec3(2,2,6),500, GameFactions::FACTION
     deltaPosition = 0.0;
 	debug = true;
 	debug_target_height = 0;
+    //setModel("player_weapon");
+    //playAnimation("Take 001");
 }
 ActorPlayer::~ActorPlayer() {
 
