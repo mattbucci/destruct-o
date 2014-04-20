@@ -15,7 +15,7 @@ public:
 	//Change the rect
 	void SetRect(Rect r);
 	//Change the rect + texture bounds
-	void TexturedRect::SetRectandTexRect(Rect r, Rect t);
+	void SetRectandTexRect(Rect r, Rect t);
 	//Change the color tint
 	void SetColor(vec4 color);
 
