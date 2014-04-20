@@ -69,7 +69,7 @@ ShaderGroup::ShaderGroup() {
 	GLEffectProgram * shadersE = new GLEffectProgram(&commonShader,"Interface/Shaders/universal/vsh_effect.glsl","Interface/Shaders/universal/fsh_effect.glsl");
 	if (!shadersE->Valid()) 
 		cout << "Failed to build opengl program\n";
-	AddShader(shadersE,"particles");
+	AddShader(shadersE,"effects");
 }
 
 ShaderGroup::~ShaderGroup() {
