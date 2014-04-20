@@ -9,7 +9,7 @@
 
 CLASS_SAVE_CONSTRUCTOR(ActorAI);
 
-ActorAI::ActorAI() : PhysicsActor(vec3(1.5,1.5,2.5),100, GameFactions::FACTION_ENEMY) {
+ActorAI::ActorAI() : PhysicsActor(vec3(1.5,1.5,4),100, GameFactions::FACTION_ENEMY) {
 	//setModel("soldier02");
 	//playAnimation("Standing_Aim_Idle");
     setModel("soldier01");

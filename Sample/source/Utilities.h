@@ -31,5 +31,32 @@ public:
 
 	//Move string to memory with max length specified
 	static void MoveString(string original, char * copyLocation, int maxSize);
+
+	//A POD type of vertex
+	PACK(
+	struct PODVec4 {
+		float x;
+		float y;
+		float z;
+		float w;
+	});
+	PACK(
+	struct PODVec3 {
+		float x;
+		float y;
+		float z;
+	});
+	PACK(
+	struct PODVec2 {
+		float x;
+		float y;
+	});
 };
+
+//Convert a normal vector to a POD
+Utilities::PODVec4 toPOD(vec4 vector);
+Utilities::PODVec3 toPOD(vec3 vector);
+Utilities::PODVec2 toPOD(vec2 vector);
+
+
 

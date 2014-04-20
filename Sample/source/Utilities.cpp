@@ -49,3 +49,25 @@ void Utilities::MoveString(string original, char * copyLocation, int maxSize) {
 	memset(copyLocation,0,maxSize);
 	memcpy(copyLocation,original.c_str(),min(31,maxSize));
 }
+
+Utilities::PODVec4 toPOD(vec4 vector) {
+	Utilities::PODVec4 pd;
+	pd.x = vector.x;
+	pd.y = vector.y;
+	pd.z = vector.z;
+	pd.w = vector.w;
+	return pd;
+}
+Utilities::PODVec3 toPOD(vec3 vector) {
+	Utilities::PODVec3 pd;
+	pd.x = vector.x;
+	pd.y = vector.y;
+	pd.z = vector.z;
+	return pd;
+}
+Utilities::PODVec2 toPOD(vec2 vector) {
+	Utilities::PODVec2 pd;
+	pd.x = vector.x;
+	pd.y = vector.y;
+	return pd;
+}

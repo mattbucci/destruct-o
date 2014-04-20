@@ -243,11 +243,3 @@ void TerrainChunk::Reconstruct() {
 		VertexData[vcount++].Vertex = toPOD(quads[i].b2);
 	}
 }
-
-TerrainChunk::PODVec3 TerrainChunk::toPOD(vec3 vector) {
-	PODVec3 pd;
-	pd.x = vector.x;
-	pd.y = vector.y;
-	pd.z = vector.z;
-	return pd;
-}

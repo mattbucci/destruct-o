@@ -13,6 +13,7 @@ GLParticleProgram::GLParticleProgram(GLCommonShaderFile * commonShader, string v
 	attributeIndexTexture = glGetAttribLocation(programId,"vTex");
 	attributeIndexVertex = glGetAttribLocation(programId,"vVert");
 	attributeIndexColor = glGetAttribLocation(programId,"vColor");
+	attributeIndexVertexNumber = glGetAttribLocation(programId,"vVertexNumber");
 };
 
 //Apply the given camera to this program
@@ -38,4 +39,8 @@ const GLint GLParticleProgram::AttributeVertex() {
 }
 const GLint GLParticleProgram::AttributeColor() {
 	return attributeIndexColor;
+}
+
+const GLint GLParticleProgram::AttributeVertexNumber() {
+	return attributeIndexVertexNumber;
 }
