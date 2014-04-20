@@ -220,7 +220,7 @@ void ActorAI::PathingReady(vector<vec2> path) {
 //DEFAULTS:
 //Animation table
 const string & ActorAI::lookupAnim(animation animationId) {
-	static const string table[5] = {
+	static const string table[6] = {
 		//ANIMATION_IDLE
 		"idleWgun",
 		//ANIMATION_AIM
@@ -230,9 +230,9 @@ const string & ActorAI::lookupAnim(animation animationId) {
 		//ANIMATION_JUMP
 		"jump",
 		//ANIMATION_DEATH
-		"death"
+		"death",
 		//ANIMATION_INAIR
-		"idleWgun",
+		"idleWgun"
 	};
 	return table[(int)animationId];
 }
