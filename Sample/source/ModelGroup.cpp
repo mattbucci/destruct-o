@@ -163,7 +163,15 @@ void ModelGroup::AddCompressedModel(std::string& directory, std::string& path, s
 	models[name] = loadedModel;
 	modelGroupMutex.unlock();
     double f = OS::Now() - s;
+    
+    // Log the animations
     cout << "Loaded: " << path << " (in " << f << " seconds) ==> " << name << endl;
+    cout << "---- " << name << " animations ----" << endl;
+    for(Model::animation_const_iterator it = loadedModel->Animations().begin(); it != loadedModel->Animations().end(); it++)
+    {
+        cout << " " << it->first << "\t" << it->second->Length() << " seconds" << endl;
+    }
+    cout << "-----------------------------------" << endl << endl;
 }
 
 // Create a new model instance from a model in the group

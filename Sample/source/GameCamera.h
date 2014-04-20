@@ -16,9 +16,9 @@ class GameCamera {
 	mat4 lastViewMatrix;
 	mat4 lastModelMatrix;
 	vec2 viewPortSize;
-
+    float verticalFov;
 public:
-	GameCamera();
+	GameCamera(float vFov = 60.0f);
 
 	//Should be called before any unproject calls
 	void UpdateViewSize(vec2 viewSize);
@@ -28,7 +28,7 @@ public:
 	void Apply(T * shaders) {
 		shaders->Camera.SetCameraPosition(position,position+direction,vec3(0,0,1));
 		//IF YOU CHANGE NEAR/FAR CLIPPING PLANE, PLEASE CHANGE UNPROJECT (below) AS WELL
-		shaders->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25,1000); //width/height
+		shaders->Camera.SetFrustrum(verticalFov,viewPortSize.x/viewPortSize.y,.25,1000); //width/height
 		shaders->Camera.Apply();
 
 		//Copy matrices for unproject

@@ -575,12 +575,6 @@ Model* Model::LoadFromCompressedJsonFile(const std::string &directory, const std
     {
         throw new std::runtime_error("Model* Model::LoadFromCompressedJsonFile() - decompression of mesh failed");
     }
-    
-	vector<unsigned char> uncompressedData(buffersize);
-	memcpy((char*)&uncompressedData.front(),buffer,buffersize);
-	static int value = 5;
-	int vxx = value++;
-	lodepng::save_file(uncompressedData,(string("temp.json") + Utilities::toString(vxx)).c_str());
 
     // Calculate buffer pointers for json decode
     const char *pBegin = (const char *) buffer;
@@ -607,6 +601,7 @@ Model* Model::LoadFromCompressedJsonFile(const std::string &directory, const std
 }
 
 
-Node * Model::FastNodeLookup(const string & node) {
+Node * Model::FastNodeLookup(const string & node)
+{
 	return nodes[node];
 }

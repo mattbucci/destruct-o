@@ -9,10 +9,11 @@ PauseWindow::PauseWindow(void) {
 
 PauseWindow::PauseWindow(BaseFrame* parent)
 {
-	this->parent = parent;
+	w = 0, h = 0;
+	this->p = parent;
 
 	//Set up Self
-	position = Rect(0, 30, 800, 570);
+	position = Rect(0, 20, 800, 580);
 	color = vec4(0.33f, 0.33f, 0.33f, 0.75f);
 	SetVisible(false);
 
@@ -47,14 +48,14 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 
 	//Subscribe Main Menu Buttons to Actions
 	Subscribe<void(Button*)>(&menuSave.EventClicked, [this](Button * b) {
-		if(this->parent->Save("testsavefile.json.compressed")) {
+		if(this->p->Save("testsavefile.json.compressed")) {
 			cout << "Save Successful!" << endl;
 		} else {
 			cout << "Save Unsuccessful." << endl;
 		}
 	});
 	Subscribe<void(Button*)>(&menuLoad.EventClicked, [this](Button * b) {
-		if(this->parent->Load("testsavefile.json.compressed")) {
+		if(this->p->Load("testsavefile.json.compressed")) {
 			cout << "Load Successful!" << endl;
 		} else {
 			cout << "Load Unsuccessful." << endl;
@@ -65,7 +66,7 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 	});
 	Subscribe<void(Button*)>(&menuSaveAndQuit.EventClicked, [this](Button * b) {
 		cout << "\'Save & Quit\' Button Clicked" << endl;
-		this->parent->Save("testsavefile.json.compressed");
+		this->p->Save("testsavefile.json.compressed");
 		exit(0);
 	});
 	Subscribe<void(Button*)>(&menuExit.EventClicked, [this](Button * b) {
@@ -124,10 +125,23 @@ bool PauseWindow::toggle() {
 	}
 }
 
+void PauseWindow::Draw(GL2DProgram * shaders) {
+	if(w != (int)getParent()->position.Width || h != (int)getParent()->position.Height) {
+		w = getParent()->position.Width;
+		h = getParent()->position.Height;
+		resizeElement();
+	}
+	Window::Draw(shaders);
+}
+
 void PauseWindow::showOptsMenu() {
 	optsRect.SetVisible(true);
 }
 
 void PauseWindow::hideOptsMenu() {
 	optsRect.SetVisible(false);
+}
+
+void PauseWindow::resizeElement() {
+	position = Rect(0, 20, w, h-20);
 }

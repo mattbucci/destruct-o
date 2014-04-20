@@ -75,6 +75,9 @@ public:
 	//Draw all the actors
 	void Draw(ShaderGroup * shaders);
 
+	//Get a Pointer to Actors
+	ContiguousList<PhysicsActor*>* GetActors();
+
 	//Called right before a physics voxel is destroyed
 	GameEvent<void(PhysicsVoxel*)> VoxelDisintegrating;
 	CLASS_DECLARATION(PhysicsSystem)

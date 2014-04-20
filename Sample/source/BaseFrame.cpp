@@ -29,7 +29,8 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
     : GameSystem(shaders), 
 	Physics(&Voxels), 
 	Actors(&Physics),
-	achievements(&notification,this)
+	achievements(&notification,this),
+	hud(this)
 {
 	cout << "\t Constructing base frame\n";
     
@@ -111,6 +112,9 @@ bool BaseFrame::Load(string saveFile) {
 	Savable::Deserialize(fileData,this);
     
     audio->PlayerInit(Actors.Player());
+    
+    // Build player stuff
+    Actors.Player()->Build();
 	return true;
 }
 
@@ -120,7 +124,7 @@ void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
 	REPAIR_HANDLE(FirstPerson);
 	//Continue loading
 	Savable::Load(parentValue,loadData);
-
+    
 	//Make any after-load changes
 	//Currently no particle systems after load
 	Particles.Clear();
@@ -155,6 +159,7 @@ void BaseFrame::Build()
 	audio = new AudioPlayer(100);
 	audio->PlayerInit(Actors.Player());
     audio->DemoInit(demo);
+    Actors.Player()->Build();
 }
 
 bool BaseFrame::Update(vector<InputEvent> inputEvents) {
@@ -199,7 +204,7 @@ void BaseFrame::Draw(double width, double height)
 	vec2 viewPortSize = vec2((float)width,(float)height);
 	//Save size in camera as well (for unprojection)
 	Camera.UpdateViewSize(viewPortSize);
-
+    Actors.Player()->WeaponCamera().UpdateViewSize(viewPortSize);
 	//Update the texture caching system
 	Textures.Refresh();
 
@@ -265,25 +270,37 @@ void BaseFrame::Draw(double width, double height)
 
 	Actors.Draw(shaders);
 
+    // Herp a derp
+    Actors.Player()->DrawWeapon(modelShader);
+    
 	//The particle system will use a different shader entirely soon
 	Particles.Draw(shaders);
 	
 	//Update the voxel debug counter
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
-	
-	//Call the parent draw to draw interface
-	GameSystem::Draw(width,height);
+
+	//Set up the 2D Shader
+	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
+	shaders2d->UseProgram();
+	shaders2d->SetWidthHeight((float)width,(float)height);
+	//Enable sensible defaults
+	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 	// Draw the UI for joysticks
-	//Assume that gameSystem::Draw has set up the 2d shader
-	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
+
 	FirstPerson->Draw(width, height, shaders2d);
 	//draw the hud
 	hud.DrawAndUpdate(shaders2d,viewPortSize);
+
+		//Call the parent draw to draw interface
+	GameSystem::Draw(width,height);
 } 
 
 void BaseFrame::PushNotification(string txt) {
-	notification.notify(txt);
+	notification.Notify(txt);
 }
 
 ModelGroup* BaseFrame::Models() 
@@ -301,4 +318,8 @@ BaseFrame * Game() {
 	//Can only be used when the game is running
 	_ASSERTE(typeid(*CurrentSystem) == typeid(BaseFrame));
 	return (BaseFrame*)CurrentSystem;
+}
+
+HUD* BaseFrame::GetHUD() {
+	return &hud;
 }

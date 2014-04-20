@@ -7,8 +7,9 @@ class BaseFrame;
 
 class PauseWindow : public Window
 {
+	int w, h;
 protected:
-	BaseFrame* parent;
+	BaseFrame* p;
 
 	//Main Menu Elements
 	Window menuRect;
@@ -31,8 +32,11 @@ public:
 
 	bool toggle();
 
+	virtual void Draw(GL2DProgram * shaders) override;
+
 private:
 	void showOptsMenu();
 	void hideOptsMenu();
+	void resizeElement();
 };
 

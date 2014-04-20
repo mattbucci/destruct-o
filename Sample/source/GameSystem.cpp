@@ -58,15 +58,7 @@ bool GameSystem::Update(vector<InputEvent> inputEvents) {
 //By default only runs the dialog system
 void GameSystem::Draw(double width, double height) {
 
-	//Enable the 2d shader for interface drawing
 	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
-	shaders2d->UseProgram();
-	shaders2d->SetWidthHeight((float)width,(float)height);
-	//Enable sensible defaults
-	glEnable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//Update debug data before draw
 	Controls.Debug.Fps = fpsCount.GetFps();
