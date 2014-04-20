@@ -153,6 +153,16 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 		newBuilding.PlaceStructure(tile,vec2(bPlace));
 		buildingPlacements.push_back(testRect);
 	}
+
+	//flatten terrain
+	//generate roads
+	TileCell * cells = tile->Cells;
+	for (int y = -citysize / 2; y < citysize / 2; y++) {
+		for (int x = -citysize / 2; x < citysize / 2; x++) {
+			cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 2;
+		}
+	}
+
 	/*
 	//construct spires
 	for (auto placement : buildingPlacements) {
@@ -162,18 +172,8 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 		newBuilding.PlaceStructure(tile,vec2(bPlace));
 	}
 	
-	/*
-	//flatten terrain
-	//generate roads
-	TileCell * cells = tile->Cells;
-	for (int y = -citysize / 2; y < citysize / 2; y++) {
-		for (int x = -citysize / 2; x < citysize / 2; x++) {
-			//cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 3;
-			if ((x-10 + citysize / 2) % 50 == 0 && (y-10 + citysize / 2) % 50 == 0) {
-				construct_building(tile, vec3(pos.x + x, pos.y + y, pos.z));
-			}
-		}
-	}*/
+	
+*/
 }
 
 void CityGen::generatecitylocations(GameTile* tile){
