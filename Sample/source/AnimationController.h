@@ -77,7 +77,7 @@ private:
     
 public:
     /**
-     * Create an animation controller as a copy of another
+     * Create an animation controller as a copy of another animation controller
      * @param value Json value to deserialize this animation controller from
      * @param skeleton Root node of the skeleton of the transform tree to animation
      */
@@ -96,7 +96,9 @@ public:
      */
     AnimationController();
     
-    // Destroy an animation controller (sadness)
+    /**
+     * Destroy an animation controller and any heap allocated memory associated
+     */
     ~AnimationController();
     
     /**
