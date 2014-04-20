@@ -2,6 +2,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include "Utilities.h"
 
 class GLParticleProgram;
 
@@ -15,13 +16,17 @@ class Particle;
 
 class ParticleRenderer {
 	GLuint vertexArray;
-	GLuint vertexBuffer;
-	GLuint textureBuffer;
-	GLuint colorBuffer;
+	GLuint stripedBuffer;
 
-	vec4 vertices[PARTICLE_RENDER_SWEEP*6];
-	vec2 textureCoordinates[PARTICLE_RENDER_SWEEP*6];
-	vec4 colors[PARTICLE_RENDER_SWEEP*6];
+	PACK(
+	struct particleChunk {
+		Utilities::PODVec4 vertex;
+		Utilities::PODVec2 textureCoordinate;
+		Utilities::PODVec4 color;
+		unsigned char vertNumber;
+	});
+
+	particleChunk vertices[PARTICLE_RENDER_SWEEP*6];
 
 	//Render one sweep of particles
 	void renderSweep(GLParticleProgram * shader, int particleCount);

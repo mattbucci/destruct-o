@@ -47,11 +47,11 @@ void GameFactions::Load(Json::Value & parentValue, LoadData & loadData) {
 
 //Check if two factions are allies
 bool GameFactions::IsAlly(FactionId a, FactionId b) {
-	return allies.find(pair<FactionId,FactionId>(a,b)) != allies.end();
+	return (a == b) || allies.find(pair<FactionId,FactionId>(a,b)) != allies.end();
 }
 //Check if two factions are enemies
 bool GameFactions::IsEnemy(FactionId a, FactionId b) {
-	return allies.find(pair<FactionId,FactionId>(a,b)) == allies.end();
+	return (a != b) && allies.find(pair<FactionId,FactionId>(a,b)) == allies.end();
 }
 
 //Make two factions allies

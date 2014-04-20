@@ -23,6 +23,7 @@ class PhysicsActor : public Actor {
 	vec3 acceleration;
 
 	bool onGround;
+	double lastDamageRecieved;
 
 	//The physics system has direct access to position/velocity/acceleration
 	friend class PhysicsSystem;
@@ -31,7 +32,11 @@ protected:
 	vec3 & Velocity;
 	vec3 & Position;
 	vec3 & Acceleration;
+	const vec3 & Size;
+	//Status checkups
 	bool OnGround();
+	//if you've taken any damage in the last 4 seconds this is true
+	bool BeingDamaged();
 
 	//The max health you can have
 	float maxLife;

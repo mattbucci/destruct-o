@@ -43,12 +43,15 @@ void ActorPlayer::Build()
 //Update the position based off the most recent movement and direction vectors
 bool ActorPlayer::Update() {
 	//Your movement speed is the multiplier right now
-	vec2 playerMotion = Game()->FirstPerson->GetMoveVector()*movementSpeed;
+	vec2 moveVector = Game()->FirstPerson->GetMoveVector();
+	vec2 playerMotion = moveVector*movementSpeed;
 	
 	//The side ways velocity is not effected by momentum
 	//isn't that handy
 	Velocity.x = playerMotion.x;
 	Velocity.y = playerMotion.y;
+
+	facingDirection = atan2(moveVector.y,moveVector.x);
 	
     if(deltaPosition>200 && OnGround()) {
         //Let everyone know we walked

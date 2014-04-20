@@ -8,6 +8,7 @@ class GLParticleProgram : public GLProgram {
 	GLint attributeIndexTexture;
 	GLint attributeIndexVertex;
 	GLint attributeIndexColor;
+	GLint attributeIndexVertexNumber;
 
 	GLint uniformView;
 	GLint uniformProjection;
@@ -26,4 +27,5 @@ public:
 	const GLint AttributeTexture();
 	const GLint AttributeVertex();
 	const GLint AttributeColor();
+	const GLint AttributeVertexNumber();
 };

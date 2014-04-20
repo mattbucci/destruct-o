@@ -11,6 +11,7 @@ class ShaderGroup;
 class Actor;
 class PhysicsActor;
 class ActorPlayer;
+class ActorAids;
 
 class ActorSystem : public Savable {
 	//All actors are updated and drawn
@@ -20,11 +21,18 @@ class ActorSystem : public Savable {
 	//that lucky bastard
 	ActorPlayer * player;
 
+	//But so does AIDS so it works out
+	ActorAids * aids;
+
 	//Keep a copy of the pointer
 	//goes against the new Game() policy, but such is life
 	PhysicsSystem * physics;
 
-
+	//Cleanup actors in a safe manner
+	void cleanActorList();
+protected:
+	//Overload Load so that the actor list is cleaned safely
+	virtual void Load(Json::Value & parentValue, LoadData & loadData) override;
 public:
 	//Physics system must be constructed before actor system
 	ActorSystem(PhysicsSystem * physics);
@@ -50,14 +58,24 @@ public:
 	//Get the main player
 	ActorPlayer * Player();
 
+	//Get the AIDS
+	ActorAids * Aids();
+
+
+	//Utility functions for actors and others
+	vector<PhysicsActor*> GetActorsInRadius(vec3 center, float radius);
+	vector<PhysicsActor*> GetEnemiesInRadius(vec3 center, float radius, FactionId fromFaction);
+	PhysicsActor * GetClosestEnemy(vec3 from, FactionId fromFaction);
+	
+
 	//Draw all the actors
 	void Draw(ShaderGroup * shaders);
 
 	//All Actor Events
 	//First actor is the actor the event is about
-    GameEvent<void(Actor*)> ActorJumped;
-    GameEvent<void(Actor*)> ActorLanded;
-    GameEvent<void(Actor*)> ActorWalked;
+	GameEvent<void(Actor*)> ActorJumped;
+	GameEvent<void(Actor*)> ActorLanded;
+	GameEvent<void(Actor*)> ActorWalked;
 	//second actor is the target acquired
 	GameEvent<void(Actor*,Actor*)> AITargetAcquired;
 	//second actor is the damaging actor, will be NULL if no actor associated

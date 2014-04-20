@@ -3,6 +3,8 @@
 
 #include "stdafx.h"
 
+#include "Utilities.h"
+
 #define CHUNK_SIZE 16
 
 class GameTile;
@@ -33,22 +35,14 @@ public:
 	//when first rendered becomes false
 	bool Dirty;
 
-	//A POD type of vertex
-	PACK(
-	struct PODVec3 {
-		float x;
-		float y;
-		float z;
-	});
-	//Convert a normal vector to a POD
-	static PODVec3 toPOD(vec3 vector);
+
 
 	//The interleaved data structure
 	//Use packing to insure everything is in contiguous memory
 	//and does not have padding
 	PACK(
 	struct ChunkVertexData {
-		PODVec3 Vertex;
+		Utilities::PODVec3 Vertex;
 		uint8_t TextureCoordinateX;
 		uint8_t TextureCoordinateY;
 		uint8_t TextureCoordinateSX;

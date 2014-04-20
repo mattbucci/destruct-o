@@ -27,14 +27,14 @@ bool Actor::Update() {
 //Set the current model
 //if modelName is invalid
 //model will still be NULL
-void Actor::setModel(string modelName) {
+void Actor::setModel(const string & modelName) {
 	this->modelName = modelName;
 	model = Game()->Models()->NewInstance(modelName);
 }
 
 //Play an animation
 //also allows animationRunning()
-void Actor::playAnimation(string animationName) {
+void Actor::playAnimation(const string & animationName) {
 	if (!model)
 		return;
 	//Retrieve the animation length
@@ -45,9 +45,17 @@ void Actor::playAnimation(string animationName) {
 		return;
 	//Set as the current animation
 	model->PlayAnimation(animationName);
+	lastPlayedAnimation = animationName;
 	lastAnimationEndTime = Game()->Now()+it->second->Length();
 }
 
+
+void Actor::setAnimation(const string & animationName) {
+	if (!model)
+		return;
+	if (lastPlayedAnimation != animationName)
+		playAnimation(animationName);
+}
 
 //Checks if an animation is running
 //true if the animation is running
@@ -60,7 +68,9 @@ bool Actor::animationRunning() {
 void Actor::Draw(MaterialProgram * materialShader) {
 	//facingDirection = fmod(OS::Now(),360);
 	if (model != NULL) {
-		model->GetTransform().Rotation() = glm::quat(facingDirection,vec3(0.0f, 0.0f, 1.0f)) * glm::quat(vec3(0.5 * M_PI, 0.0, 0.0));
+		//Normalize the quaternion after they're combined
+		//or terrible terrible things happen (trust me)
+		model->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, facingDirection + 0.5 * M_PI));
 		model->Update(SIMULATION_DELTA,Game()->Now());
 		model->Draw(materialShader);
 	}
@@ -75,4 +85,8 @@ void Actor::Load(Json::Value & parentValue, LoadData & loadData) {
 	if (modelName.size() > 0) {
 		setModel(modelName);
 	}
+}
+
+ActorSystem & Actor::Actors() {
+	return Game()->Actors;
 }

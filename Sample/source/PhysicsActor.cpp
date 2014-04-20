@@ -5,7 +5,8 @@
 PhysicsActor::PhysicsActor(vec3 size, float maxLife, FactionId faction) :
 	Velocity(velocity),
 	Acceleration(acceleration),
-	Position(position) {
+	Position(position),
+	Size(this->size){
 
 	//Save settings
 	this->size = size;
@@ -13,8 +14,10 @@ PhysicsActor::PhysicsActor(vec3 size, float maxLife, FactionId faction) :
 	this->faction = faction;
 	//Apply defaults
 	onGround = false;
+	lastDamageRecieved = 0;
 	life = maxLife;
 	vulnerable = true;
+	faction = GameFactions::FACTION_HOSTILE;
 }
 PhysicsActor::~PhysicsActor() {
 	
@@ -35,6 +38,10 @@ bool PhysicsActor::OnGround() {
 	return onGround;
 }
 
+bool PhysicsActor::BeingDamaged() {
+	return Game()->Now() < lastDamageRecieved+5;
+}
+
 //Get the current life of this actor
 float PhysicsActor::GetLife() {
 	return life;
@@ -47,6 +54,7 @@ void PhysicsActor::Damage(FactionId damagingFaction, float damage) {
 		return;
 	//Check that you're alive
 	if (life > 0) {
+		lastDamageRecieved = Game()->Now();
 		//Fire the damaged event
 		Game()->Actors.ActorDamaged.Fire([this,damagingFaction,damage](function<void(Actor*,Actor*,FactionId,float)> observer) {
 			observer(this,NULL,damagingFaction,damage);
@@ -73,6 +81,7 @@ void PhysicsActor::Damage(PhysicsActor * damagingActor, float damage) {
 		return;
 	//Check that you're alive
 	if (life > 0) {
+		lastDamageRecieved = Game()->Now();
 		//Fire the damaged event
 		Game()->Actors.ActorDamaged.Fire([this,damagingActor,damage](function<void(Actor*,Actor*,FactionId,float)> observer) {
 			observer(this,damagingActor,damagingActor->faction,damage);
