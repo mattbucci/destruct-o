@@ -24,6 +24,8 @@ protected:
 	Window optsRect;
 	Label optsViewDistanceLabel;
 	Slider<int> optsViewDistance;
+	Label optsHUDTransparencyLabel;
+	Slider<float> optsHUDTransparency;
 	Button optsClose;
 
 	PauseWindow(void);

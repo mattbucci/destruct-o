@@ -4,6 +4,7 @@
 #include "BaseFrame.h"
 
 typedef pair<string,int> intOption;
+typedef pair<string,float> floatOption;
 
 PauseWindow::PauseWindow(void) {
 
@@ -93,12 +94,13 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 		this->hideOptsMenu();
 	});
 
-	//Options View Distance
+	//Option View Distance
 	optsViewDistanceLabel.vPin = optsViewDistance.vPin = Control::MIN;
 	optsViewDistanceLabel.hPin = optsViewDistance.hPin = Control::CENTER;
 	optsViewDistanceLabel.position = Rect(0, 50 + 80 * 0, 300, 20);
 	optsViewDistance.SetPosition(Rect(0, 80 + 80 * 0, 300, 40));
 	optsViewDistanceLabel.SetText("View Distance");
+	optsViewDistance.SetValue(&VoxEngine::AccountOptions.ViewDistance);
 	optsRect.AddControl(&optsViewDistanceLabel);
 	optsRect.AddControl(&optsViewDistance);
 
@@ -109,6 +111,32 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 	};
 	vector<intOption> viewDistance(viewDistOpts, viewDistOpts + sizeof(viewDistOpts) / sizeof(viewDistOpts[0]));
 	optsViewDistance.SetElements(viewDistance);
+
+	//Option HUD Transparency
+	optsHUDTransparencyLabel.vPin = optsHUDTransparency.vPin = Control::MIN;
+	optsHUDTransparencyLabel.hPin = optsHUDTransparency.hPin = Control::CENTER;
+	optsHUDTransparencyLabel.position = Rect(0, 50 + 80 * 1, 300, 20);
+	optsHUDTransparency.SetPosition(Rect(0, 80 + 80 * 1, 300, 40));
+	optsHUDTransparencyLabel.SetText("HUD Transparency");
+	optsHUDTransparency.SetValue(&VoxEngine::AccountOptions.HUDTransparency);
+	optsRect.AddControl(&optsHUDTransparencyLabel);
+	optsRect.AddControl(&optsHUDTransparency);
+
+	floatOption HUDTransOpts[] = {
+		floatOption("0%", .0f),
+		floatOption("10%", .1f),
+		floatOption("20%", .2f),
+		floatOption("30%", .3f),
+		floatOption("40%", .4f),
+		floatOption("50%", .5f),
+		floatOption("60%", .6f),
+		floatOption("70%", .7f),
+		floatOption("80%", .8f),
+		floatOption("90%", .9f),
+		floatOption("100%", 1.0f)
+	};
+	vector<floatOption> HUDTrans(HUDTransOpts, HUDTransOpts + sizeof(HUDTransOpts) / sizeof(HUDTransOpts[0]));
+	optsHUDTransparency.SetElements(HUDTrans);
 }
 
 
