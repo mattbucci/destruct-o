@@ -78,7 +78,14 @@ public:
      */
     const Model* GetModel() const;
     
+    /**
+     * Get a pointer to the skeleton of this model instance
+     */
     Node* Skeleton();
+    
+    /**
+     * Get a const pointer to the skeleton of this model instance
+     */
     const Node* Skeleton() const;
 };
 

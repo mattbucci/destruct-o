@@ -110,6 +110,9 @@ bool BaseFrame::Load(string saveFile) {
 	Savable::Deserialize(fileData,this);
     
     audio->PlayerInit(Actors.Player());
+    
+    // Build player stuff
+    Actors.Player()->Build();
 	return true;
 }
 
@@ -119,7 +122,7 @@ void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
 	REPAIR_HANDLE(FirstPerson);
 	//Continue loading
 	Savable::Load(parentValue,loadData);
-
+    
 	//Make any after-load changes
 	//Currently no particle systems after load
 	Particles.Clear();
@@ -154,6 +157,7 @@ void BaseFrame::Build()
 	audio = new AudioPlayer(100);
 	audio->PlayerInit(Actors.Player());
     audio->DemoInit(demo);
+    Actors.Player()->Build();
 }
 
 bool BaseFrame::Update(vector<InputEvent> inputEvents) {
@@ -198,7 +202,7 @@ void BaseFrame::Draw(double width, double height)
 	vec2 viewPortSize = vec2((float)width,(float)height);
 	//Save size in camera as well (for unprojection)
 	Camera.UpdateViewSize(viewPortSize);
-
+    Actors.Player()->WeaponCamera().UpdateViewSize(viewPortSize);
 	//Update the texture caching system
 	Textures.Refresh();
 
@@ -262,6 +266,9 @@ void BaseFrame::Draw(double width, double height)
 
 	Actors.Draw(shaders);
 
+    // Herp a derp
+    Actors.Player()->DrawWeapon(modelShader);
+    
 	//The particle system will use a different shader entirely soon
 	Particles.Draw(shaders);
 	

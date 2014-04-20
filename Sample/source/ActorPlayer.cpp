@@ -13,17 +13,31 @@ static const float movementSpeed = 6.0f;
 static const float gravity = -9.8f;
 static const float jumpVelocity = 20.0f;
 
-ActorPlayer::ActorPlayer() : PhysicsActor(vec3(2,2,6),500, GameFactions::FACTION_PLAYER) {
+// Construct an actor player.  Weapon camera is setup for optimal weapon size
+ActorPlayer::ActorPlayer()
+    : PhysicsActor(vec3(2,2,6),500, GameFactions::FACTION_PLAYER), weapon(NULL), weaponCamera(GameCamera(40.0f))
+{
 	//Start the player off in abouts the center
 	Position = (vec3(34,40,0));
     deltaPosition = 0.0;
 	debug = true;
 	debug_target_height = 0;
-    //setModel("player_weapon");
-    //playAnimation("Take 001");
+    weaponCamera.SetCameraView(vec3(0,0,0), glm::vec3(0,-1,0));
 }
-ActorPlayer::~ActorPlayer() {
+ActorPlayer::~ActorPlayer()
+{
+    // Make sure we delete the weapon model instance
+    delete weapon;
+}
 
+// Create anything related to the actor
+void ActorPlayer::Build()
+{
+    // Construct the weapon model instance
+    weapon = Game()->Models()->NewInstance("player_weapon");
+    weapon->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, 0.0));
+    weapon->GetTransform().Translation() = glm::vec3(0, -0.3, -1.95);
+    weapon->PlayAnimation("Take 001");
 }
 
 //Update the position based off the most recent movement and direction vectors
@@ -92,4 +106,23 @@ bool ActorPlayer::Update() {
         }
 		*/
 	return PhysicsActor::Update();
+}
+
+// Draw the weapon of the actor player
+void ActorPlayer::DrawWeapon(MaterialProgram *materialShader)
+{
+    if(weapon != NULL)
+    {
+        // Update the shader
+        weaponCamera.Apply(materialShader);
+        
+        // Draw the model
+        weapon->Update(SIMULATION_DELTA,Game()->Now());
+		weapon->Draw(materialShader);
+    }
+}
+
+GameCamera& ActorPlayer::WeaponCamera()
+{
+    return weaponCamera;
 }

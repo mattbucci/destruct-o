@@ -6,7 +6,8 @@
 #define M_PI 3.141592f
 #endif
 
-GameCamera::GameCamera() {
+GameCamera::GameCamera(float vFov) : verticalFov(vFov)
+{
 	
 }
 
