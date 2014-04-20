@@ -3,8 +3,6 @@
 #include "Label.h"
 #include "Utilities.h"
 
-#define __MOBILE__
-
 DebugWindow::DebugWindow() {
 #ifdef __MOBILE__
 	this->position = Rect(-95,20,120,40);
