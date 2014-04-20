@@ -20,7 +20,7 @@ public:
 private:
 	//Build the given directory
 	//differs depending on OS
-	static void constructDirectory(string dirName);
+	static void constructDirectory(const std::string& path);
 
 #ifdef  _WIN32
 	//For windows 
