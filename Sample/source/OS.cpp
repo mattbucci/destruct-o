@@ -31,7 +31,7 @@ bool dirExists(const std::string& dirName_in) {
 //This is OS dependant!
 void OS::constructDirectory(const std::string& path) {
 	//Check if it exists first
-	if (!dirExists(dirName))
+	if (!dirExists(path))
 		CreateDirectory(path.c_str(),NULL);
 }
 
