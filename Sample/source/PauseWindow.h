@@ -2,6 +2,7 @@
 
 #include "Window.h"
 #include "Button.h"
+#include "Slider.h"
 
 class BaseFrame;
 
@@ -21,8 +22,8 @@ protected:
 
 	//Options Menu Elements
 	Window optsRect;
-	Button optsViewdistanceUp;
-	Button optsViewdistanceDown;
+	Label optsViewDistanceLabel;
+	Slider<int> optsViewDistance;
 	Button optsClose;
 
 	PauseWindow(void);
