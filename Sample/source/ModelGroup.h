@@ -36,6 +36,7 @@ private:
     // The models in the model group
     std::map<std::string, Model *> models;
     std::map<std::string, Transform> offsets;
+    std::map<std::string, AnimationController> controllers;
     
     // Texture cache for the models
     TextureCache&  textureCache;

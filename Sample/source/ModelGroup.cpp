@@ -112,6 +112,17 @@ ModelGroup::ModelGroup(const std::string& manifestPath, TextureCache& _textureCa
 				{
 					offsets[name] = Transform();
 				}
+                
+                // Load the animation controllers
+				const Json::Value& controller = (model)["controller"];
+				if(controller != Json::Value::null && controller.isObject())
+				{
+					controllers[name] = AnimationController(controller, NULL);
+				}
+				else
+				{
+					controllers[name] = AnimationController();
+				}
         
 				// Load this model
 				if(compressed)
@@ -186,6 +197,7 @@ ModelInstance* ModelGroup::NewInstance(const std::string modelName)
         ModelInstance *instance = new ModelInstance(model->second);
         instance->Skeleton()->LocalTransform() = offsets[modelName];
         instance->Skeleton()->Recalculate();
+        instance->Controller() = controllers[modelName];
         return instance;
     }
     

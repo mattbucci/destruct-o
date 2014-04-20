@@ -179,6 +179,19 @@ bool ModelInstance::PlayAnimation(const std::string name)
 }
 
 /**
+ * Assign an animation controller to this model instance
+ * @param controller the animation controller to copy and bind to the model
+ */
+void ModelInstance::SetController(AnimationController& controller)
+{
+    // Store the new controller
+    this->controller = AnimationController(controller);
+    
+    // Bind this controller to the new skeleton
+    this->controller.Bind(skeleton);
+}
+
+/**
  * Get a reference to the transform of the model
  * @return reference to transform
  */
@@ -200,5 +213,10 @@ Node* ModelInstance::Skeleton()
 const Node* ModelInstance::Skeleton() const
 {
     return skeleton;
+}
+
+AnimationController& ModelInstance::Controller()
+{
+    return controller;
 }
 
