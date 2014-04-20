@@ -1,8 +1,10 @@
 #pragma once
 
 #include "PhysicsActor.h"
+#include "EffectLaser.h"
 
 class ActorAI : public PhysicsActor {
+	EffectLaser laser;
 protected:
 
 	enum animation {
@@ -85,6 +87,10 @@ public:
 	//When a path is granted from AIDS
 	//save it
 	virtual void PathingReady(vector<vec2> path);
+	
+	//Draw any associated effects
+	//for now draw your laser, this will be delegated in the short future
+	virtual void Draw(GLEffectProgram * effectShader) override;
 
 	CLASS_DECLARATION(ActorAI)
 		INHERITS_FROM(PhysicsActor)

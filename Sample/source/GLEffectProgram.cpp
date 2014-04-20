@@ -12,6 +12,7 @@ GLEffectProgram::GLEffectProgram(GLCommonShaderFile * commonShader, string verte
 
 
 	uniformTint = glGetUniformLocation(programId,"uTint");
+	uniformTexturesEnabled = glGetUniformLocation(programId,"textureUsed");
 	attributeIndexTexture = glGetAttribLocation(programId,"vTex");
 	attributeIndexVertex = glGetAttribLocation(programId,"vVert");
 	attributeIndexColor = glGetAttribLocation(programId,"vColor");
@@ -19,6 +20,10 @@ GLEffectProgram::GLEffectProgram(GLCommonShaderFile * commonShader, string verte
 
 void GLEffectProgram::SetTint(vec4 tint) {
 	glUniform4f(uniformTint,tint.x,tint.y,tint.z,tint.w);
+}
+
+void GLEffectProgram::UseTexture(bool textureEnabled) {
+	glUniform1i(uniformTexturesEnabled,(textureEnabled) ? 5 : 0);
 }
 
 const GLint GLEffectProgram::AttributeTexture() {

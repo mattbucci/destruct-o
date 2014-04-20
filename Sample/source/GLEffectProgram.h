@@ -14,6 +14,7 @@ class GLEffectProgram : public GLProgram {
 	GLint attributeIndexColor;
 
 	GLint uniformTint;
+	GLint uniformTexturesEnabled;
 	GLCombinedMatrix cmatrix;
 public:
 	GLEffectProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath);
@@ -24,6 +25,7 @@ public:
 	GLCamera Camera;
 	
 	void SetTint(vec4 tint);
+	void UseTexture(bool textureEnabled);
 
 	//All the attributes used for drawing special effects
 	const GLint AttributeTexture();

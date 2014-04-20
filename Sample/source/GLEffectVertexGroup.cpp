@@ -51,7 +51,6 @@ GLEffectVertexGroup::EffectVertex & GLEffectVertexGroup::vat(int index) {
 void GLEffectVertexGroup::Draw(GLEffectProgram * shader, bool reupload) {
 	_ASSERTE(vertexBuffer >= 0);
 	_ASSERTE(vertexArray >= 0);
-	_ASSERTE(textureBuffer >= 0);
 
 	//If there are no vertices, abort
 	if (vertexCount == 0)
@@ -62,20 +61,6 @@ void GLEffectVertexGroup::Draw(GLEffectProgram * shader, bool reupload) {
 
 	if (sizeChanged) {
 		sizeChanged = false;
-		//vertices
-		glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
-		glBufferSubData ( GL_ARRAY_BUFFER, 0, vertexCount*sizeof(EffectVertex), vertices );
-		//vertex positions
-		glEnableVertexAttribArray ( shader->AttributeVertex() );
-		glVertexAttribPointer ( shader->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, sizeof(EffectVertex), (void*)offsetof(EffectVertex,vertex)  );
-		// texture coordinates
-		glEnableVertexAttribArray ( shader->AttributeTexture() );
-		glVertexAttribPointer ( shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, sizeof(EffectVertex), (void*)offsetof(EffectVertex,textureCoordinate)  );
-		// colors
-		glEnableVertexAttribArray ( shader->AttributeColor() );
-		glVertexAttribPointer ( shader->AttributeColor(), 4, GL_FLOAT, GL_FALSE,sizeof(EffectVertex), (void*)offsetof(EffectVertex,color)  );
-	}
-	else if (reupload) {
 		//vertices
 		glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
 		glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(EffectVertex), vertices, GL_STATIC_DRAW );
@@ -89,10 +74,22 @@ void GLEffectVertexGroup::Draw(GLEffectProgram * shader, bool reupload) {
 		glEnableVertexAttribArray ( shader->AttributeColor() );
 		glVertexAttribPointer ( shader->AttributeColor(), 4, GL_FLOAT, GL_FALSE,sizeof(EffectVertex), (void*)offsetof(EffectVertex,color)  );
 	}
+	else if (reupload) {
+		//vertices
+		glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
+		glBufferSubData ( GL_ARRAY_BUFFER, 0, vertexCount*sizeof(EffectVertex), vertices );
+		//vertex positions
+		glEnableVertexAttribArray ( shader->AttributeVertex() );
+		glVertexAttribPointer ( shader->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, sizeof(EffectVertex), (void*)offsetof(EffectVertex,vertex)  );
+		// texture coordinates
+		glEnableVertexAttribArray ( shader->AttributeTexture() );
+		glVertexAttribPointer ( shader->AttributeTexture(), 2, GL_FLOAT, GL_FALSE, sizeof(EffectVertex), (void*)offsetof(EffectVertex,textureCoordinate)  );
+		// colors
+		glEnableVertexAttribArray ( shader->AttributeColor() );
+		glVertexAttribPointer ( shader->AttributeColor(), 4, GL_FLOAT, GL_FALSE,sizeof(EffectVertex), (void*)offsetof(EffectVertex,color)  );
+	}
 
-
-
-
+	
 	glDrawArrays( gltype, 0, vertexCount );
 	glBindVertexArray(0);
 }

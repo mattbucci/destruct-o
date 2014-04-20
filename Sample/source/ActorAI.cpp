@@ -9,7 +9,7 @@
 
 CLASS_SAVE_CONSTRUCTOR(ActorAI);
 
-ActorAI::ActorAI() : PhysicsActor(vec3(1.5,1.5,4),100, GameFactions::FACTION_ENEMY) {
+ActorAI::ActorAI() : PhysicsActor(vec3(1.5,1.5,4),100, GameFactions::FACTION_ENEMY), laser(vec4(1,.25,0,1)) {
 	//setModel("soldier02");
 	//playAnimation("Standing_Aim_Idle");
     setModel("soldier01");
@@ -47,9 +47,6 @@ void ActorAI::applyFacingDirection(float desiredFacingDirection) {
 		desiredFacingDirection -= TWO_PI;
 	while (desiredFacingDirection < 0)
 		desiredFacingDirection += TWO_PI;
-
-	if (rand() < RAND_MAX/50)
-		cout << "FACING: " << facingDirection << " desired " << desiredFacingDirection << "\n";
 
 	//First determine how close you already are to that facing direction
 	float differenceA = facingDirection - desiredFacingDirection;
@@ -176,6 +173,7 @@ bool ActorAI::Update() {
 
 		}
 
+		laser.StopFiring();
 		break;
 	case AI_SCANNING:
 		if (baseMovementSpeed() < 0) {
@@ -197,7 +195,13 @@ bool ActorAI::Update() {
 		break;
 	case AI_TARGETING_ENEMY:
 		//BROKEN
-		state = AI_SCANNING;
+		if (Game()->Now() - 5 > targetAcquiredAt) {
+			state = AI_SCANNING;
+		}
+		laser.Move(Position,targetEnemy->GetPosition());
+		laser.StartFiring();
+		
+		
 		break;
 	case AI_ENGAGING_ENEMY:
 		break;
@@ -258,4 +262,8 @@ float ActorAI::turnSpeed() {
 //Change the allegiance of this AI
 void ActorAI::SetFaction(FactionId newFaction) {
 	faction = newFaction;
+}
+
+void ActorAI::Draw(GLEffectProgram * effectShader)  {
+	laser.Draw(effectShader);
 }
