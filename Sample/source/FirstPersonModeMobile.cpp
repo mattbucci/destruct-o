@@ -111,7 +111,7 @@ FirstPersonModeMobile::~FirstPersonModeMobile()
 }
 
 // Override standard read input to use touch controls
-void FirstPersonModeMobile::ReadInput(set<Sint64> pressedKeys, vector<InputEvent> input)
+void FirstPersonModeMobile::ReadInput(const set<Sint64> & pressedKeys, vector<InputEvent> input)
 {
     // Mouse sensitivity constants for now
 	static const float mouseXSensitivity = 1.0f/6.0f;
