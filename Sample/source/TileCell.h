@@ -10,4 +10,8 @@ struct TileCell {
 	unsigned char stackHeight;
 	//The material id of the cell
 	unsigned char materialId;
+	//The health of the cell
+	unsigned char cellHealth;
+	//the max health of the cell
+	unsigned char cellMaxHealth;
 };

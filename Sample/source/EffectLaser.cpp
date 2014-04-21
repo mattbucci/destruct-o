@@ -5,7 +5,7 @@
 #include "TextureCache.h"
 
 
-EffectLaser::EffectLaser(vec4 laserColor, float laserWidth) : GLEffectVertexGroup(GL_TRIANGLES,40) {
+EffectLaser::EffectLaser(vec4 laserColor, float laserWidth) : GLEffectVertexGroup(GL_TRIANGLES,60) {
 	state = LASER_IDLE;
 	lastUpdated = 0;
 	laserPower = 0;
@@ -55,7 +55,7 @@ void EffectLaser::Move(vec3 startingPos, vec3 endingPos) {
 
 	//Move the laser to those positions
 	for (int i = 0; i < 10; i++) {
-		int v = i*4;
+		int v = i*6;
 		float angle = (float)i*anglePart;
 
 

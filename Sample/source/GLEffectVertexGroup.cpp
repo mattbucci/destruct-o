@@ -45,6 +45,7 @@ GLEffectVertexGroup::~GLEffectVertexGroup() {
 	
 //For retrieving vertices
 GLEffectVertexGroup::EffectVertex & GLEffectVertexGroup::vat(int index) {
+	_ASSERTE((index >= 0) && (index < vertexCount));
 	return vertices[index];
 
 }

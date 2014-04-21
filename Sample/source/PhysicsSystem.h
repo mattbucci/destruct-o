@@ -69,6 +69,9 @@ public:
 	void RegisterPhysicsActor(PhysicsActor * toRegister);
 	void UnregisterPhysicsActor(PhysicsActor * toUnregister);
 
+	//Create an explosion affecting physics voxels and forcing them back
+	void Explode(vec3 pos, float radius, float damage);
+
 	//Update the physics voxels, called by base frame
 	void Update();
 

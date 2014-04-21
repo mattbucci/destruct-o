@@ -3,6 +3,7 @@
 #include "BaseFrame.h"
 #include "PhysicsSystem.h"
 #include "VoxelSystem.h"
+#include "PhysicsVoxel.h"
 
 //Traces from rayStart along rayDirection. returns true if ray hits anything
 //any parameter can be NULL to indicate no information is desired along that pathway
@@ -75,4 +76,43 @@ bool Universal::TraceIgnoreActor(vec3 rayStart, vec3 rayDirection, PhysicsActor 
 		return true;
 	}
 	return false;
+}
+
+//Creates a concussion
+//damaging terrain
+//throwing back physics voxels and actors
+void Universal::Concuss(vec3 at, float radius, float damage, PhysicsActor * damagingActor) {
+	_ASSERTE(damagingActor != NULL);
+	static const int maxVoxelsCreated = 50;
+	static const int maxParticlesCreated = 120;
+	static const float initialEnergy = 20.0f;
+	static const float initialDisplacement = 0.5f;
+	//Damage the terrain
+	vector<vec4> newPhysicsVoxels = Game()->Voxels.Crater(at,radius*2.0,damage);
+	//Damage the existing physics voxels
+	Game()->Physics.Explode(at,radius,damage);
+	//Now create new ones based off of the damaged terrain
+	float chanceVoxelInstantlyDisintegrates = 1.0f - (float)maxVoxelsCreated/(float)min(maxParticlesCreated,(int)newPhysicsVoxels.size());
+	float chanceVoxelInstantlyDissapears = 1.0f - (float)maxParticlesCreated/(float)newPhysicsVoxels.size();
+	chanceVoxelInstantlyDisintegrates = max(chanceVoxelInstantlyDisintegrates,0.0f);
+	chanceVoxelInstantlyDissapears = max(chanceVoxelInstantlyDissapears,0.0f);
+
+	for (auto newVoxel : newPhysicsVoxels) {
+		if (Utilities::random(0.0f,1.0f) <= chanceVoxelInstantlyDissapears)
+			continue;
+
+		//Build the voxel
+		vec3 voxPos = vec3(newVoxel);
+		//Add some random displacement
+		voxPos += vec3(Utilities::random(-initialDisplacement,initialDisplacement),Utilities::random(-initialDisplacement,initialDisplacement),Utilities::random(-initialDisplacement,initialDisplacement));
+		//voxel is alive for a random amount of time
+		PhysicsVoxel * vox = Game()->Physics.BuildVoxel(vec3(newVoxel),Utilities::random(4.0,6.0));
+		//set material and a random velocity
+		vox->MaterialId = (int)newVoxel.w;
+		vox->Velocity = vec3(Utilities::random(-initialEnergy,initialEnergy),Utilities::random(-initialEnergy,initialEnergy),Utilities::random(-initialEnergy,initialEnergy));
+
+		//If its to instantly disintegrate, change it's deathat
+		if (Utilities::random(0.0f,1.0f) >= (1-chanceVoxelInstantlyDisintegrates)) 
+			vox->DeathAt = 1.0;
+	}
 }

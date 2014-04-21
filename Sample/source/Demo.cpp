@@ -146,7 +146,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				
 				if (Universal::Trace(playerPos+vec3(0,0,2.5),playerFacing,&hit)) {
 
-					vector<vec4> displacedVoxels = game->Voxels.Crater(hit,5);
+					vector<vec4> displacedVoxels = game->Voxels.Crater(hit,5,20);
 					for (vec4 & voxRemoved : displacedVoxels) {
 						vec3 vox = vec3(voxRemoved);
 						//add a bit of random noise
@@ -195,7 +195,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
                     });
 
 
-					vector<vec4> displacedVoxels = game->Voxels.Crater(hit, 5);
+					vector<vec4> displacedVoxels = game->Voxels.Crater(hit, 5,20);
 					for (vec4 & voxRemoved : displacedVoxels) {
 						vec3 vox = vec3(voxRemoved);
 						//add a bit of random noise
