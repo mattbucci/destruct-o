@@ -122,7 +122,7 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	shader->Model.PushMatrix();
 	shader->Model.Translate(-MINIMAP_DOT_SIZE * .5f, -MINIMAP_DOT_SIZE * .5f,100.0f);
 	shader->Model.Apply();
-	minimapDot.SetColor(vec4(0, 0, 0, 1));
+	minimapDot.SetColor(vec4(0, 0, 0, hudOpaque));
 	minimapDot.Draw(shader);
 	shader->Model.PopMatrix();
 
