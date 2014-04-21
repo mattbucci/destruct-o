@@ -50,6 +50,7 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	float px = player->GetPosition().x;
 	float py = player->GetPosition().y;
 	float playerAngle = fps->GetAngleVector().x;
+	float hudOpaque = 1.0f - VoxEngine::AccountOptions.HUDTransparency;
 
 	// ---------------------------------
 	// |||||||||| CHARGE BAR |||||||||||
@@ -62,7 +63,9 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	float fill = Game()->Now() - (long int)(Game()->Now());
 	Rect a(0,0,10,180.0f * fill);
 	Rect b(0,1-fill,1,1);
+	chargeBar.SetColor(vec4(1, 1, 1, hudOpaque));
 	chargeBar.SetRectandTexRect(a,b);
+	chargeBarBG.SetColor(vec4(0, 0, 0, hudOpaque));
 	chargeBarBG.SetRect(Rect(0,0,10,180.0f * (1-fill)));
 
 	//Translate to Location
@@ -109,6 +112,7 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	shader->Model.Apply();
 
 	//Draw Background
+	minimapBackground.SetColor(vec4(1, 1, 1, hudOpaque));
 	minimapBackground.Draw(shader);
 
 	//Translate Position to Exact Center of Minimap
@@ -144,9 +148,9 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 
 		//Set Color to Identify Friend/Foe
 		if(actorSystem->Factions.IsAlly(player->GetFaction(), actor->GetFaction())) {
-			minimapDot.SetColor(vec4(1,0,0,intensity));
+			minimapDot.SetColor(vec4(0,1,0,intensity * hudOpaque));
 		} else if(actorSystem->Factions.IsEnemy(player->GetFaction(), actor->GetFaction())) {
-			minimapDot.SetColor(vec4(0,1,0,intensity));
+			minimapDot.SetColor(vec4(1,0,0,intensity * hudOpaque));
 		}
 
 		//Translate to Relative Location on Minimap
