@@ -37,7 +37,7 @@ bool Weapon::HoldingTrigger(bool trigger) {
 	//Check if you have sufficient charge
 	if (chargePool < WeaponChargeRequired()) {
 		//Fire the event that you're out of charge
-		if (!lastHoldingTrigger) {
+		if (!prev) {
 			Game()->Actors.ActorFiredWhileEmpty.Fire([this](function<void(Actor*,Weapon*)> observer) {
 				observer(weaponOwner,this);
 			});
@@ -47,7 +47,7 @@ bool Weapon::HoldingTrigger(bool trigger) {
 		
 
 	//Check if you meet the automatic requirement
-	if ((!RepeatFireAutomatically()) && lastHoldingTrigger)
+	if ((!RepeatFireAutomatically()) && prev)
 		return false;
 	
 	//Ok you can fire
