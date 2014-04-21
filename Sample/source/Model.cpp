@@ -18,6 +18,7 @@
 #include "Model.h"
 #include "OS.h"
 #include "lodepng.h"
+#include "Utilities.h"
 
 // Create an empty model for population manually
 Model::Model(TextureCache &_textureCache)
@@ -171,7 +172,9 @@ void Model::loadSkeleton(const Json::Value &root)
             skeleton->AddChild(child, false);
         }
 
-		this->nodes = skeleton->AllNodes();
+		// Flatten the skeleton into a singular node map
+        this->nodes = std::map<std::string, Node *>();
+        skeleton->GetFlatNodeTree(this->nodes);
     }
 }
 
@@ -546,8 +549,6 @@ Model* Model::LoadFromJsonFile(const std::string &directory, const std::string &
     // Return an allocated model
     return new Model(root, directory, _textureCache);
 }
-
-#include "Utilities.h"
 
 // Load a model from a compressed Json file
 Model* Model::LoadFromCompressedJsonFile(const std::string &directory, const std::string &name, TextureCache &_textureCache)

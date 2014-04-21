@@ -23,9 +23,10 @@
  * @param _model Model to provide an instance of
  */
 ModelInstance::ModelInstance(Model *_model)
-    : model(_model), skeleton(new Node(*(_model->Skeleton()))), transform(Transform()), animation(NULL), nodes(skeleton->AllNodes()), animationStartTime(0.0)
+    : model(_model), skeleton(new Node(*(_model->Skeleton()))), transform(Transform()), animation(NULL), nodes(std::map<std::string, Node *>()), animationStartTime(0.0)
 {
-    
+    // Create a flattened node tree of the local skeleton
+    skeleton->GetFlatNodeTree(nodes);
 }
 
 /**
@@ -132,6 +133,9 @@ void ModelInstance::Update(double delta, double now)
         // Recalculate the nodes
         skeleton->Recalculate();
     }
+    
+    // Update the animation controller
+    controller.Update(delta, now);
 }
 
 /**
@@ -185,7 +189,7 @@ bool ModelInstance::PlayAnimation(const std::string name)
 void ModelInstance::SetController(AnimationController& controller)
 {
     // Store the new controller
-    this->controller = AnimationController(controller);
+    this->controller = controller;
     
     // Bind this controller to the new skeleton
     this->controller.Bind(skeleton);

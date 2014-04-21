@@ -40,9 +40,6 @@ class Node
     // This node's parent
     Node                *parent;
     
-
-	//Add all nodes (including the current one) to the given map
-	void addAllNodes(std::map<std::string,Node *> & addTo);
 public:
     // Construct an empty node
     Node();
@@ -85,7 +82,7 @@ public:
     const std::vector<Node *>& Children() const;
 
     // Construct a flattened map of all nodes (including this one) in the node tree
-    std::map<std::string,Node *> AllNodes();
+    void GetFlatNodeTree(std::map<std::string, Node *>& table);
 };
 
 #endif

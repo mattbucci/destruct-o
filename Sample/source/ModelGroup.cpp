@@ -117,11 +117,12 @@ ModelGroup::ModelGroup(const std::string& manifestPath, TextureCache& _textureCa
 				const Json::Value& controller = (model)["controller"];
 				if(controller != Json::Value::null && controller.isObject())
 				{
-					controllers[name] = AnimationController(controller, NULL);
+                    controllers.insert(std::make_pair(name, AnimationController(controller)));
+					//controllers[name] = AnimationController(controller);
 				}
 				else
 				{
-					controllers[name] = AnimationController();
+					controllers.insert(std::make_pair(name, AnimationController()));
 				}
         
 				// Load this model
@@ -197,7 +198,7 @@ ModelInstance* ModelGroup::NewInstance(const std::string modelName)
         ModelInstance *instance = new ModelInstance(model->second);
         instance->Skeleton()->LocalTransform() = offsets[modelName];
         instance->Skeleton()->Recalculate();
-        instance->Controller() = controllers[modelName];
+        instance->SetController(controllers[modelName]);
         return instance;
     }
     

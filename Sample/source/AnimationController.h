@@ -18,11 +18,13 @@
 #define __ANIMATION_CONTROLLER_H__
 
 #include "stdafx.h"
-#include "AnimationLayer.h"
 #include "Transform.h"
 #include "Node.h"
 
 #include <json/json.h>
+
+// Forward declaration of necessary components
+class AnimationLayer;
 
 // AnimationController handles the animation control subsystem.
 class AnimationController
@@ -64,16 +66,36 @@ public:
         Parameter(const Json::Value& value);
     };
     
-    // The type used for storing the parameters
+    // Parameter storage typess
     typedef std::map<std::string, Parameter> parameter_store;
     typedef parameter_store::iterator        parameter_iterator;
     typedef parameter_store::const_iterator  parameter_const_iterator;
+    
+    // Layer storage types
+    typedef std::map<std::string, AnimationLayer *> layer_store;
+    typedef layer_store::iterator                   layer_iterator;
+    typedef layer_store::const_iterator             layer_const_iterator;
     
 private:
     /**
      * The parameter storage.  The state of the system is affected by them
      */
     parameter_store parameters;
+    
+    /**
+     * The layer storage.  The state of the system is affected by them
+     */
+    layer_store layers;
+    
+    /**
+     * The root transform node of the skeleton that we are to animate
+     */
+    Node *skeleton;
+    
+    /**
+     * The root transform node of the initial pose of the skeleton
+     */
+    const Node *initialSkeleton;
     
 public:
     /**
@@ -89,7 +111,20 @@ public:
      * @param value Json value to deserialize this animation controller from
      * @param skeleton Root node of the skeleton of the transform tree to animation
      */
-    AnimationController(const Json::Value& value, const Node *skeleton);
+    AnimationController(const Json::Value& value);
+    
+    /**
+     * Assignment operator.  Animation controller assumes the state of the other
+     * @param controller Controller to set this controller to
+     */
+    AnimationController& operator= (const AnimationController& controller);
+    
+    /**
+     * Update the animation controller.  Performs animation calculations and updates the skeleton
+     * @param delta time since last frame in seconds
+     * @param now the current time
+     */
+    void Update(double delta, double now);
     
     /**
      * Do nothing constructor - just to handle meshes which don't have controllers
@@ -105,7 +140,7 @@ public:
      * Bind a new skeleton to the animation controller
      * @param skeleton the root node of the skeleton to bind to the animation controller
      */
-    void Bind(Node *root);
+    void Bind(const Node *root);
 };
 
 #endif
