@@ -4,6 +4,7 @@
 #include "stdafx.h"
 
 #include "InputEvent.h"
+#include "Options.h"
 
 
 #define SIMULATION_DELTA .01
@@ -44,4 +45,6 @@ class VoxEngine {
 
 	friend int main(int argc, char** argv);
 public:
+	//Account Options
+	static Options AccountOptions;
 };

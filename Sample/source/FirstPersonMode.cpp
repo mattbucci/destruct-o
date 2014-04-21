@@ -10,6 +10,7 @@ FirstPersonMode::FirstPersonMode()
 	debug = false;
 	debug_target_height = 0;
 	lookVector = vec3(1,0,0);
+	triggerPulled = false;
 }
 FirstPersonMode::~FirstPersonMode() {
 
@@ -42,6 +43,10 @@ bool FirstPersonMode::GetJumpRequested(bool clearFlag)
 	return _t;
 }
 
+
+bool FirstPersonMode::GetTriggerPulled() {
+	return triggerPulled;
+}
 
 //debug getters
 bool FirstPersonMode::GetDebug()
@@ -150,6 +155,12 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 			}
 
 		}
+#ifndef __MOBILE__
+		else if (e.Event == InputEvent::MouseDown)
+			triggerPulled = true;
+		else if (e.Event == InputEvent::MouseUp)
+			triggerPulled = false;
+#endif
 	}
 	
 	// If we have an active joystick, override keyboard with joystick

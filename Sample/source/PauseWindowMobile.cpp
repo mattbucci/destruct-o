@@ -67,13 +67,13 @@ PauseWindowMobile::PauseWindowMobile(BaseFrame* parent) : PauseWindow(parent)
 	optsRect.color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	//Set up Options Menu Children
-	optsViewdistanceUp.vPin = optsViewdistanceDown.vPin = optsClose.vPin = Control::MIN;
+	/*optsViewdistanceUp.vPin = optsViewdistanceDown.vPin = optsClose.vPin = Control::MIN;
 	optsViewdistanceUp.hPin = optsViewdistanceDown.hPin = optsClose.hPin = Control::CENTER;
 	optsViewdistanceUp.position =	Rect(77.5, 50 + 77.5 * 1, 145, 67.5);
-	optsViewdistanceDown.position =	Rect(-77.5, 50 + 77.5 * 1, 145, 67.5);
+	optsViewdistanceDown.position =	Rect(-77.5, 50 + 77.5 * 1, 145, 67.5);*/
 	optsClose.position =			Rect(0, 50 + 77.5 * 4, 300, 50);
-	optsViewdistanceUp.SetText("+");
-	optsViewdistanceDown.SetText("-");
+	//optsViewdistanceUp.SetText("+");
+	//optsViewdistanceDown.SetText("-");
 	optsClose.SetText("Back");
 }
 

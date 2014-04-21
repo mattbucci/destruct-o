@@ -41,6 +41,8 @@ vec2 VoxEngine::scaledSize;
 //The scaling applied to the mouse positions
 vec2 VoxEngine::scaleFactor;
 
+Options VoxEngine::AccountOptions;
+
 /*
 //For heap testing on windows. Is actually very useful
 int heapHook(int nAllocType, void *pvData,

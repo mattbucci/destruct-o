@@ -21,6 +21,8 @@ protected:
 	// Since the ActorPlayer polls this object per frame, GameEvents don't comply with the way the
 	// rest of the object is implemented
 	bool jumpRequested;
+	//Check if the trigger has been pulled
+	bool triggerPulled;
 public:
 	FirstPersonMode();
 	~FirstPersonMode();
@@ -38,6 +40,9 @@ public:
 	
 	// Get if the controller wants to cause the player to jump.  Checking clears the flag
 	bool GetJumpRequested(bool clearFlag = true);
+
+	//Check if the trigger is being pulled right now
+	bool GetTriggerPulled();
 
 	//debug getters
 	bool GetDebug();

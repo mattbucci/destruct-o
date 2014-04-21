@@ -67,7 +67,7 @@ public:
 	~FirstPersonModeMobile();
 
 	// Process input
-	virtual void ReadInput(set<Sint64> pressedKeys, vector<InputEvent> input);
+	virtual void ReadInput(const set<Sint64> & pressedKeys, vector<InputEvent> input) override;
 
 	// Draw the virtual joysticks
 	virtual void Draw(double width, double height, GL2DProgram * shader);

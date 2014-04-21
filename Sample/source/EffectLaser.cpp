@@ -4,17 +4,25 @@
 #include "GLEffectProgram.h"
 #include "TextureCache.h"
 
-static const float winduptime = 1.0f;
-static const float winddowntime = 2.0f;
 
 EffectLaser::EffectLaser(vec4 laserColor, float laserWidth) : GLEffectVertexGroup(GL_TRIANGLES,40) {
 	state = LASER_IDLE;
-	lastUpdated = Game()->Now();
+	lastUpdated = 0;
+	laserPower = 0;
 	this->laserColor = laserColor;
 	this->laserWidth = laserWidth;
+	autoStateChange = false;
+	winduptime = 1.0;
+	winddowntime = 2.0;
 }
 EffectLaser::~EffectLaser() {
 
+}
+
+void EffectLaser::SetTiming(float winduptime,float winddowntime, bool autoStateChange) {
+	this->winddowntime = winddowntime;
+	this->winduptime = winduptime;
+	this->autoStateChange = autoStateChange;
 }
 
 //Fire-up the laser
@@ -72,6 +80,9 @@ void EffectLaser::Move(vec3 startingPos, vec3 endingPos) {
 //call always
 //to see laser call StartFiring()
 void EffectLaser::Draw(GLEffectProgram * program) {
+	if (lastUpdated == 0)
+		lastUpdated = Game()->Now();
+
 	double now = Game()->Now();
 	double delta =  now-lastUpdated;
 
@@ -86,6 +97,8 @@ void EffectLaser::Draw(GLEffectProgram * program) {
 		}
 		break;
 	case LASER_FIRING:
+		if (autoStateChange)
+			state = LASER_WINDINGDOWN;
 		break;
 	case LASER_WINDINGDOWN:
 		laserPower -= delta/winddowntime;
@@ -107,7 +120,7 @@ void EffectLaser::Draw(GLEffectProgram * program) {
 
 
 	program->UseTexture(true);
-	program->SetTint(laserColor*vec4(1,1,1,laserPower));
+	program->SetTint(laserColor*vec4(laserPower,laserPower,laserPower,laserPower));
 	Game()->Textures.GetTexture("effects/laser.png")->Bind();
 
 	GLEffectVertexGroup::Draw(program,true);

@@ -29,9 +29,19 @@ class EffectLaser : GLEffectVertexGroup {
 
 	//How much "power" is in the laser 1 means 100%
 	float laserPower;
+
+	float winduptime;
+	float winddowntime;
+	bool autoStateChange;
+
 public:
 	EffectLaser(vec4 laserColor, float laserWidth=.1f);
 	~EffectLaser();
+
+	//Set windup/winddown time
+	//setting autostatechange means a single call to StartFiring()
+	//will cause the laser to run through firingup/coolingdown
+	void SetTiming(float winduptime,float winddowntime, bool autoStateChange);
 
 	//Fire-up the laser
 	void StartFiring();
