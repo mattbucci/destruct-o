@@ -17,4 +17,15 @@
 #ifndef __ANIMATION_CLIP_H__
 #define __ANIMATION_CLIP_H__
 
+#include "AnimationSource.h"
+
+/**
+ * AnimationClip encapsulates the animation of a skeleton via
+ * an Animation object loaded from a model
+ */
+class AnimationClip : public AnimationSource
+{
+    
+};
+
 #endif

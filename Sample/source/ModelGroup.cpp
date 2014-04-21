@@ -74,7 +74,7 @@ ModelGroup::ModelGroup(const std::string& manifestPath, TextureCache& _textureCa
 
 	static const int workerThreads = 4;
 
-	//Launch four worker threads
+	// Launch four worker threads
 	for (int i = 0; i < workerThreads; i++)
     {
 		thread t([&,modelIteratorMutex]()
@@ -96,46 +96,19 @@ ModelGroup::ModelGroup(const std::string& manifestPath, TextureCache& _textureCa
                 modelIterator++;
 				modelIteratorMutex->unlock();
 
-				// Get the model information
+				// Get the name of the model
 				std::string name = (model)["name"].asString();
-				std::string path = (model)["path"].asString();
-				std::string directory = (model)["directory"].asString();
-				bool compressed = (model)["compressed"].asBool();
-        
-				// Load the transforms
-				const Json::Value& offset = (model)["offset"];
-				if(offset != Json::Value::null && offset.isObject())
-				{
-					offsets[name] = Transform(offset);
-				}
-				else
-				{
-					offsets[name] = Transform();
-				}
                 
-                // Load the animation controllers
-				const Json::Value& controller = (model)["controller"];
-				if(controller != Json::Value::null && controller.isObject())
-				{
-                    controllers.insert(std::make_pair(name, AnimationController(controller)));
-					//controllers[name] = AnimationController(controller);
-				}
-				else
-				{
-					controllers.insert(std::make_pair(name, AnimationController()));
-				}
-        
-				// Load this model
-				if(compressed)
-				{
-                    // Load the compressed model file
-					AddCompressedModel(directory, path, name);
-				}
-				else
-				{
-                    // Load the uncompressed model file
-					AddModel(directory, path, name);
-				}					
+                // Create a ModelInstance from this entry
+                double s = OS::Now();
+                ModelInstance *instance = ModelInstance::LoadManifestEntry(model, textureCache);
+                double f = OS::Now() - s;
+                cout << "Loaded: " << name << " (in " << f << " seconds)" << endl;
+                
+                // Insert this into the model group
+                modelGroupMutex.lock();
+                models[name] = instance;
+                modelGroupMutex.unlock();
 			}
 		});
 		t.detach();
@@ -154,7 +127,7 @@ ModelGroup::ModelGroup(const std::string& manifestPath, TextureCache& _textureCa
 }
 
 // Insert a model into the model group
-void ModelGroup::AddModel(std::string& directory, std::string& path, std::string& name)
+/*void ModelGroup::AddModel(std::string& directory, std::string& path, std::string& name)
 {
     // Add this model to the model list
     double s = OS::Now();
@@ -169,7 +142,7 @@ void ModelGroup::AddModel(std::string& directory, std::string& path, std::string
 void ModelGroup::AddCompressedModel(std::string& directory, std::string& path, std::string& name)
 {
     // Add this model to the model list
-    double s = OS::Now();
+    /*double s = OS::Now();
 	Model *loadedModel  = Model::LoadFromCompressedJsonFile(directory, path, textureCache);
 	modelGroupMutex.lock();
 	models[name] = loadedModel;
@@ -184,21 +157,18 @@ void ModelGroup::AddCompressedModel(std::string& directory, std::string& path, s
         cout << " " << it->first << "\t" << it->second->Length() << " seconds" << endl;
     }
     cout << "-----------------------------------" << endl << endl;
-}
+}*/
 
 // Create a new model instance from a model in the group
 ModelInstance* ModelGroup::NewInstance(const std::string modelName)
 {
     // Lookup the model name
-    std::map<std::string, Model *>::iterator model = models.find(modelName);
+    std::map<std::string, ModelInstance *>::iterator model = models.find(modelName);
     
     // If the model loaded successfully
     if(model != models.end())
     {
-        ModelInstance *instance = new ModelInstance(model->second);
-        instance->Skeleton()->LocalTransform() = offsets[modelName];
-        instance->Skeleton()->Recalculate();
-        instance->SetController(controllers[modelName]);
+        ModelInstance *instance = new ModelInstance(*(model->second));
         return instance;
     }
     

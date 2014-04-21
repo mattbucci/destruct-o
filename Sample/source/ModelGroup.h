@@ -27,16 +27,14 @@ class ModelGroup
 {
 public:
     // Iterator types
-    typedef std::map<std::string, Model *>::const_iterator const_iterator;
-    typedef std::map<std::string, Model *>::size_type size_type;
+    typedef std::map<std::string, ModelInstance *>::const_iterator const_iterator;
+    typedef std::map<std::string, ModelInstance *>::size_type size_type;
 private:
 	//Protect the map while adding to the model group
 	mutex modelGroupMutex;
 
     // The models in the model group
-    std::map<std::string, Model *> models;
-    std::map<std::string, Transform> offsets;
-    std::map<std::string, AnimationController> controllers;
+    std::map<std::string, ModelInstance *> models;
     
     // Texture cache for the models
     TextureCache&  textureCache;
@@ -48,8 +46,8 @@ public:
     ModelGroup(const std::string& manifestPath, TextureCache& _textureCache);
     
     // Insert a model into the model group (directory&path look it up, name is the lookup name)
-    void AddModel(std::string& directory, std::string& path, std::string& name);
-    void AddCompressedModel(std::string& directory, std::string& path, std::string& name);
+    //void AddModel(std::string& directory, std::string& path, std::string& name);
+    //void AddCompressedModel(std::string& directory, std::string& path, std::string& name);
 
     // Create a new model instance from a model in the group
     ModelInstance* NewInstance(const std::string modelName);
