@@ -162,7 +162,7 @@ void GameTile::UpdateTileSection(unsigned int rx, unsigned int ry, unsigned int 
 				int chunky = y/CHUNK_SIZE;
 				chunks[chunky*(TILE_SIZE/CHUNK_SIZE)+chunkx] = new TerrainChunk(this,x,y);
 			}
-				
+
 	}
 	else {
 		//Reconstruct the chunks which are in the region specified
@@ -307,51 +307,44 @@ void GameTile::Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShade
 		}
 	}
 
-	/*
-	//For now only render structures in DETAIL_HIGH
-	//should render boxes in other detail levels
-	if (detail == DETAIL_HIGH) {
-	//structures are large but we only measure using their corner, offset by the max building size to correct
-	rect.StartX -= 20;
-	rect.StartY -= 20;
-	rect.EndX += 20;
-	rect.EndY += 20;
-
+	voxelShader->UseProgram();
+	voxelShader->Model.PushMatrix();
+	voxelShader->Model.Translate(vec3(tile_x * TILE_SIZE, tile_y * TILE_SIZE, 0));
 	//Next check for any structures on this tile which intersect the view rectangle
 	for (auto structure : Structures) {
-	int structx = (int)structure.Position.x;
-	int structy = (int)structure.Position.y;
-	int structex = structx + (int)structure.Extents.x;
-	int structey = structy + (int)structure.Extents.y;
-	//Now see if the struct rectangle intersects the draw rectangle
+		int structx = (int)structure.Position.x;
+		int structy = (int)structure.Position.y;
+		int structex = structx + (int)structure.Extents.x;
+		int structey = structy + (int)structure.Extents.y;
+		//Now see if the struct rectangle intersects the draw rectangle
 
-	if (((rect.StartX < structx) &&
-	(rect.EndX > structex))	 &&
-	((rect.StartY < structy) &&
-	(rect.EndY > structey))) {
-	//Time to draw the structure
-	//Push the structure's position
-	if (structure.Cells.size() > 0){
-	shader->Model.PushMatrix();
-	shader->Model.Translate(structure.Position);
-	shader->Model.Apply();
-	//Track voxels drawn for debug
-	//Todo: fix broken voxel count
-	//voxelCount += structure.Cells.size();
-	//Start the draw cycle
-	renderer->startDraw(shader);
-	StructureCell * celliterator = &structure.Cells.front();
-	unsigned int endCount = structure.Cells.size();
-	//Push all the cells
-	for (unsigned int i = 0; i < endCount; i++, celliterator++)
-	renderer->pushVoxel(shader, celliterator->pos, celliterator->material);
-	//Finish drawing and remove the structure matrix
-	renderer->finishDraw(shader);
-	shader->Model.PopMatrix();
-	}
-	}
+		if (((drawRegion.StartX < structx) &&
+			(drawRegion.EndX > structex))	 &&
+			((drawRegion.StartY < structy) &&
+			(drawRegion.EndY > structey))) {
+				//Time to draw the structure
+				//Push the structure's position
+				if (structure.Cells.size() > 0){
+					voxelShader->Model.PushMatrix();
+					voxelShader->Model.Translate(structure.Position);
+					voxelShader->Model.Apply();
+					//Track voxels drawn for debug
+					//Todo: fix broken voxel count
+					//voxelCount += structure.Cells.size();
+					//Start the draw cycle
+					cellDrawSystem->startDraw(voxelShader);
+					StructureCell * celliterator = &structure.Cells.front();
+					unsigned int endCount = structure.Cells.size();
+					//Push all the cells
+					for (unsigned int i = 0; i < endCount; i++, celliterator++)
+						cellDrawSystem->pushVoxel(voxelShader, celliterator->pos, celliterator->material);
+					//Finish drawing and remove the structure matrix
+					cellDrawSystem->finishDraw(voxelShader);
+					voxelShader->Model.PopMatrix();
+				}
+		}
 	}	
-	}*/
+	voxelShader->Model.PopMatrix();
 	//Undo tile translation
 	terrainShader->Model.PopMatrix();
 }

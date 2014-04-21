@@ -92,7 +92,7 @@ public:
 		}
 
 		T * operator->() {
-			return *at;
+			return at;
 		}
 
 		//prefix operator

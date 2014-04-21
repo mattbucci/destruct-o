@@ -1,12 +1,54 @@
 #include "stdafx.h"
 #include "CityGen.h"
 #include "Structure.h"
-
+#include "Rect.h"
+#include "Utilities.h"
 //the size of each city
 const int citysize = 150;
 
 //the space between each city
 const int cityspacing = 250;
+
+
+//For comparing
+//vec2
+class comparableVec2 {
+public:
+	comparableVec2() {
+		x=y=0;
+	}
+	comparableVec2(vec2 original) {
+		x = original.x;
+		y = original.y;
+	}
+	comparableVec2(const comparableVec2 & b) {
+		x = b.x;
+		y = b.y;
+	}
+
+	comparableVec2 & operator=(const comparableVec2 & b) {
+		x = b.x;
+		y = b.y;
+		return *this;
+	}
+
+	bool operator<(const comparableVec2 & b) const {
+		if (x < b.x)
+			return true;
+		if (x > b.x)
+			return false;
+		
+		return (y < b.y);
+	}
+
+	bool operator==(const comparableVec2 & b) const {
+		return (x == b.x) && (y == b.y);
+	}
+
+	float x;
+	float y;
+};
+
 
 int CityGen::BufferIndex(GameTile* tile,int x, int y) {
 	return 4 * (y*TILE_SIZE + x);
@@ -59,17 +101,73 @@ void CityGen::construct_building(GameTile* tile, vec3 pos){
 }
 
 void CityGen::construct_city(GameTile * tile, vec3 pos) {
-	//flatten terrain
-	//generate roads
+	//First create city points at even intervals
+	const static float evenBuildingDistance = 20.0f;
+	const static float buildingSize = 15.0f;
+
+	ContiguousList<Rect> buildingPlacements;
+	
 	TileCell * cells = tile->Cells;
-	for (int y = -citysize / 2; y < citysize / 2; y++) {
-		for (int x = -citysize / 2; x < citysize / 2; x++) {
-			cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 3;
-			if ((x-10 + citysize / 2) % 50 == 0 && (y-10 + citysize / 2) % 50 == 0) {
-				construct_building(tile, vec3(pos.x + x, pos.y + y, pos.z));
-			}
+
+	//Generate lines
+	//set<vec2> usedSpace;
+	static const int lineCount = 30;
+	static const int samples = 200;
+	static const float anglePart = M_PI*2.0f/(float)lineCount;
+	for (int i = 0; i < lineCount; i++) {
+		vec2 lineDirection = glm::normalize(vec2(cos(anglePart*i),sin(anglePart*i)));
+		float lineLength = citysize*1.5;
+		float lineSection = lineLength/samples;
+
+
+		//Generate the line by sampling along it
+		
+		for (int i = 0; i < samples; i++) {
+			//Find the position
+			vec2 spos = lineDirection*(-lineLength/2.0f+i*lineSection);
+			spos = glm::floor(spos);
+			//check that the position is within city limits
+			if ((spos.x < -citysize/2.0) || (spos.y < -citysize/2.0))
+				continue;
+			if ((spos.x > citysize/2.0) || (spos.y > citysize/2.0))
+				continue;
+			//check that the position isn't too close to the center
+			float len = glm::length(spos);
+			if (len < 16)
+				continue;
+			//Place a line here
+			float height = (len*len-15*15)*.0008+2;
+			vec2 absPos = glm::floor(vec2(pos)+spos);
+			cells[int((absPos.y)*TILE_SIZE + absPos.x)].height += height;
 		}
 	}
+
+	int ringHeights[5] = {
+		30,
+		28,
+		24,
+		18,
+		10
+	};
+
+	//Place the spire
+	for (float x = -4; x <= 4; x++) {
+		for (float y = -4; y <= 4; y++) {
+			float ring = max(abs(x),abs(y));
+			vec2 spos = vec2(x,y)+vec2(pos);
+			cells[int((spos.y)*TILE_SIZE + spos.x)].height += ringHeights[(int)ring]*3/2;
+		} 
+	}
+
+	//flatten terrain
+	//generate roads
+	
+	for (int y = -citysize / 2; y < citysize / 2; y++) {
+		for (int x = -citysize / 2; x < citysize / 2; x++) {
+			cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 2;
+		}
+	}
+
 }
 
 void CityGen::generatecitylocations(GameTile* tile){
@@ -211,7 +309,6 @@ void CityGen::generatecitylocations(GameTile* tile){
 		}
 	}
 	*/
-	tile->UpdateTileSection(0, 0, TILE_SIZE, TILE_SIZE);
 	delete [] analysis;
 }
 void CityGen::GenerateCities(GameTile * tile) {
@@ -219,4 +316,5 @@ void CityGen::GenerateCities(GameTile * tile) {
 	for (int i = 0; i < tile->Cities.size(); i++) {
 		construct_city(tile, tile->Cities[i]);
 	}
+	tile->UpdateTileSection(0, 0, TILE_SIZE, TILE_SIZE);
 }

@@ -199,46 +199,85 @@ void TerrainChunk::Reconstruct() {
 		//Lighting is currently broken
 		//set every surface to be fully lit
 		unsigned char shading = 255; 
+		
+		unsigned char terX, terY;
+		int materialVotes[16];
+		memset(materialVotes,0,sizeof(int)*16);
+		//Test 5 random points and use the one with the most votes
+		vec3 quadMin = vec3(100000,100000,10000);
+		quadMin = glm::min(quadMin,quads[i].a1);
+		quadMin = glm::min(quadMin,quads[i].a2);
+		quadMin = glm::min(quadMin,quads[i].b1);
+		quadMin = glm::min(quadMin,quads[i].b2);
+		vec3 quadMax = vec3(-10000,-10000,-10000);
+		quadMax = glm::max(quadMax,quads[i].a1);
+		quadMax = glm::max(quadMax,quads[i].a2);
+		quadMax = glm::max(quadMax,quads[i].b1);
+		quadMax = glm::max(quadMax,quads[i].b2);
+
+		int materialWithMostVotes = 0;
+		int mostVotes = 0;
+
+		for (int m = 0; m < 5; m++) {
+			vec2 test = vec2(Utilities::random(quadMin.x,quadMax.x),Utilities::random(quadMin.y,quadMax.y)) + vec2(X,Y);
+			test = glm::floor(test);
+			test = glm::max(test,vec2());
+			test = glm::min(test,vec2(TILE_SIZE-1,TILE_SIZE-1));
+			TileCell & cell = owner->Cells[(int)test.y*TILE_SIZE+(int)test.x];
+			_ASSERTE(cell.materialId < 16);
+			materialVotes[cell.materialId]++;
+			if (materialVotes[cell.materialId] > mostVotes) {
+				mostVotes = materialVotes[cell.materialId];
+				materialWithMostVotes = cell.materialId;
+			}
+		}
+
+
+		if (materialWithMostVotes != 0)
+			cout << "";
+		//cell.materialId = 1;
+		terX = materialWithMostVotes % 4;
+		terY = materialWithMostVotes / 4;
 
 		//Generate interleaved data for each vertex
 		//of each found quad
 		//First triangle
 		VertexData[vcount].TextureCoordinateX = 0;
 		VertexData[vcount].TextureCoordinateY = 0;
-		VertexData[vcount].TextureCoordinateSX = 0;
-		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount].TextureCoordinateSX = terX;
+		VertexData[vcount].TextureCoordinateSY = terY;
 		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].a1);
 		VertexData[vcount].TextureCoordinateX = 0;
 		VertexData[vcount].TextureCoordinateY = quads[i].BSize;
-		VertexData[vcount].TextureCoordinateSX = 0;
-		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount].TextureCoordinateSX = terX;
+		VertexData[vcount].TextureCoordinateSY = terY;
 		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].b1);
 		VertexData[vcount].TextureCoordinateX = quads[i].ASize;
 		VertexData[vcount].TextureCoordinateY = 0;
-		VertexData[vcount].TextureCoordinateSX = 0;
-		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount].TextureCoordinateSX = terX;
+		VertexData[vcount].TextureCoordinateSY = terY;
 		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].a2);
 
 		//Second triangle
 		VertexData[vcount].TextureCoordinateX = 0;
 		VertexData[vcount].TextureCoordinateY = quads[i].BSize;
-		VertexData[vcount].TextureCoordinateSX = 0;
-		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount].TextureCoordinateSX = terX;
+		VertexData[vcount].TextureCoordinateSY = terY;
 		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].b1);
 		VertexData[vcount].TextureCoordinateX = quads[i].ASize;
 		VertexData[vcount].TextureCoordinateY = 0;
-		VertexData[vcount].TextureCoordinateSX = 0;
-		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount].TextureCoordinateSX = terX;
+		VertexData[vcount].TextureCoordinateSY = terY;
 		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].a2);
 		VertexData[vcount].TextureCoordinateX = quads[i].ASize;
 		VertexData[vcount].TextureCoordinateY = quads[i].BSize;
-		VertexData[vcount].TextureCoordinateSX = 0;
-		VertexData[vcount].TextureCoordinateSY = 0;
+		VertexData[vcount].TextureCoordinateSX = terX;
+		VertexData[vcount].TextureCoordinateSY = terY;
 		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].b2);
 	}
