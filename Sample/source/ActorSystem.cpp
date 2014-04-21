@@ -11,7 +11,7 @@ ActorSystem::ActorSystem(PhysicsSystem * physics) {
 	this->physics = physics;
 	player = BuildActor<ActorPlayer>();
 	//Build AIDS too
-	BuildActor<ActorAids>();
+	aids = BuildActor<ActorAids>();
 }
 ActorSystem::~ActorSystem() {
 	cleanActorList();

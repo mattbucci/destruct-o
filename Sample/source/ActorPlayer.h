@@ -3,6 +3,8 @@
 #include "PhysicsActor.h"
 #include "GameEvent.h"
 #include "GameCamera.h"
+#include "Weapon.h"
+#include "WeaponStarter.h"
 
 class ActorPlayer : public PhysicsActor
 {	
@@ -12,6 +14,18 @@ class ActorPlayer : public PhysicsActor
     // Weapon
     ModelInstance *weapon;
     GameCamera     weaponCamera;
+	WeaponStarter testWeapon;
+
+	//Energy pool
+	float energyPool;
+
+	//Weapon position
+	//position of the weapon bone
+	vec3 weaponBonePos;
+	//Actual position of the weapon muzzle in world space
+	vec3 weaponPos;
+	//MVP from weapon space
+	mat4 alteredMVP;
 public:
 	ActorPlayer();
 	~ActorPlayer();
@@ -29,6 +43,9 @@ public:
     
     // Draw the weapon
     void DrawWeapon(MaterialProgram * materialShader);
+
+	//Draw the effects of said weapon
+	void Draw(GLEffectProgram * shader);
     
     // Get a reference to the weapon camera
     GameCamera& WeaponCamera();

@@ -12,6 +12,7 @@ class Actor;
 class PhysicsActor;
 class ActorPlayer;
 class ActorAids;
+class Weapon;
 
 class ActorSystem : public Savable {
 	//All actors are updated and drawn
@@ -85,6 +86,13 @@ public:
 	//second actor is the damaging actor, will be NULL if no actor associated
 	//FactionId is the killing faction
 	GameEvent<void(Actor*,Actor*,FactionId)> ActorKilled;
+	//Weapon related things
+	GameEvent<void(Actor*,Weapon*)> ActorFiredWeapon;
+	//Happens with the player tries to fire without enough energy
+	//(the player is the only one stupid enough to try this)
+	GameEvent<void(Actor*,Weapon*)> ActorFiredWhileEmpty;
+
+
 	//Actor Accessor
 	ContiguousList<Actor*>* GetActors();
 
