@@ -25,6 +25,12 @@
 // Class to wrap rotation, translation, and scale transformations
 class Node
 {
+public:
+    // Flat tree map types
+    typedef std::map<std::string, Node *> flattreemap;
+    typedef std::map<std::string, const Node *> const_flattreemap;
+    
+private:
     // Name of the node
     std::string          id;
     
@@ -82,7 +88,8 @@ public:
     const std::vector<Node *>& Children() const;
 
     // Construct a flattened map of all nodes (including this one) in the node tree
-    void GetFlatNodeTree(std::map<std::string, Node *>& table);
+    void GetFlatNodeTree(flattreemap& table);
+    void GetFlatNodeTree(const_flattreemap& table) const;
 };
 
 #endif
