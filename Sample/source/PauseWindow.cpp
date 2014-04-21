@@ -3,6 +3,9 @@
 #include "PauseWindow.h"
 #include "BaseFrame.h"
 
+typedef pair<string,int> intOption;
+typedef pair<string,float> floatOption;
+
 PauseWindow::PauseWindow(void) {
 
 }
@@ -79,33 +82,61 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 	optsRect.SetTitle("Options");
 	optsRect.color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	optsRect.SetVisible(false);
-
-	//Set up Options Menu Children
-	optsViewdistanceUp.vPin = optsViewdistanceDown.vPin = optsClose.vPin = Control::MIN;
-	optsViewdistanceUp.hPin = optsViewdistanceDown.hPin = optsClose.hPin = Control::CENTER;
-	optsViewdistanceUp.position =	Rect(130, 50 + 50 * 0, 40, 40);
-	optsViewdistanceDown.position =	Rect(-130, 50 + 50 * 0, 40, 40);
-	optsClose.position =			Rect(0, 370, 300, 40);
-	optsViewdistanceUp.SetText("+");
-	optsViewdistanceDown.SetText("-");
-	optsClose.SetText("Back");
-
-	//Add Controls
 	AddChild(&optsRect);
-	optsRect.AddControl(&optsViewdistanceUp);
-	optsRect.AddControl(&optsViewdistanceDown);
-	optsRect.AddControl(&optsClose);
 
-	//Subscribe Options Menu Buttons to Actions
-	Subscribe<void(Button*)>(&optsViewdistanceUp.EventClicked, [this](Button * b) {
-		cout << "\'Increase Viewdistance\' Button Clicked" << endl;
-	});
-	Subscribe<void(Button*)>(&optsViewdistanceDown.EventClicked, [this](Button * b) {
-		cout << "\'Decrease Viewdistance\' Button Clicked" << endl;
-	});
+	//Options Back Button
+	optsClose.vPin = Control::MIN;
+	optsClose.hPin = Control::CENTER;
+	optsClose.position = Rect(0, 370, 300, 40);
+	optsClose.SetText("Back");
+	optsRect.AddControl(&optsClose);
 	Subscribe<void(Button*)>(&optsClose.EventClicked, [this](Button * b) {
 		this->hideOptsMenu();
 	});
+
+	//Option View Distance
+	optsViewDistanceLabel.vPin = optsViewDistance.vPin = Control::MIN;
+	optsViewDistanceLabel.hPin = optsViewDistance.hPin = Control::CENTER;
+	optsViewDistanceLabel.position = Rect(0, 50 + 80 * 0, 300, 20);
+	optsViewDistance.SetPosition(Rect(0, 80 + 80 * 0, 300, 40));
+	optsViewDistanceLabel.SetText("View Distance");
+	optsViewDistance.SetValue(&VoxEngine::AccountOptions.ViewDistance);
+	optsRect.AddControl(&optsViewDistanceLabel);
+	optsRect.AddControl(&optsViewDistance);
+
+	intOption viewDistOpts[] = {
+		intOption("Short", 0),
+		intOption("Normal", 1),
+		intOption("Far", 2)
+	};
+	vector<intOption> viewDistance(viewDistOpts, viewDistOpts + sizeof(viewDistOpts) / sizeof(viewDistOpts[0]));
+	optsViewDistance.SetElements(viewDistance);
+
+	//Option HUD Transparency
+	optsHUDTransparencyLabel.vPin = optsHUDTransparency.vPin = Control::MIN;
+	optsHUDTransparencyLabel.hPin = optsHUDTransparency.hPin = Control::CENTER;
+	optsHUDTransparencyLabel.position = Rect(0, 50 + 80 * 1, 300, 20);
+	optsHUDTransparency.SetPosition(Rect(0, 80 + 80 * 1, 300, 40));
+	optsHUDTransparencyLabel.SetText("HUD Transparency");
+	optsHUDTransparency.SetValue(&VoxEngine::AccountOptions.HUDTransparency);
+	optsRect.AddControl(&optsHUDTransparencyLabel);
+	optsRect.AddControl(&optsHUDTransparency);
+
+	floatOption HUDTransOpts[] = {
+		floatOption("0%", .0f),
+		floatOption("10%", .1f),
+		floatOption("20%", .2f),
+		floatOption("30%", .3f),
+		floatOption("40%", .4f),
+		floatOption("50%", .5f),
+		floatOption("60%", .6f),
+		floatOption("70%", .7f),
+		floatOption("80%", .8f),
+		floatOption("90%", .9f),
+		floatOption("100%", 1.0f)
+	};
+	vector<floatOption> HUDTrans(HUDTransOpts, HUDTransOpts + sizeof(HUDTransOpts) / sizeof(HUDTransOpts[0]));
+	optsHUDTransparency.SetElements(HUDTrans);
 }
 
 
