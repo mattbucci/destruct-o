@@ -359,6 +359,16 @@ void PhysicsSystem::collideActorsToActors() {
 
 //Update the actors, called by base frame
 void PhysicsSystem::Update() {
+	static const vec4 materialColors[16] = {
+		vec4(.39,.761,.254,1),
+		vec4(.43,.304,.214,1),
+		vec4(80.0f/255.0f,205.0f/255.0f,210.0f/255.0f,1),
+		//No colors set for anything else, make them all brown
+		vec4(.43,.304,.214,1),
+		vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),
+		vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),
+		vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),
+	};
 	//Set all voxels to have no forces
 	//And check if any voxels should expire
 	for (auto it = allVoxels.begin(); it != allVoxels.end();){
@@ -367,21 +377,8 @@ void PhysicsSystem::Update() {
 		if ((voxel->DeathAt > 0) && (voxel->DeathAt < Game()->Now())) {
 			//disintegrate voxel
 			//this is temporary. will be replaced by an event soon
-			if (voxel->MaterialId == 0) {
-				//Do green color
-				physicsVoxelErase->Color.ClearValues();
-				physicsVoxelErase->Color.AddValue(0,vec4(.39,.761,.254,1));
-				physicsVoxelErase->Color.AddValue(.5,vec4(.39,.761,.254,1));
-				physicsVoxelErase->Color.AddValue(1,vec4(.39,.761,.254,1));
-			}
-			else {
-				//Do brown color
-				physicsVoxelErase->Color.ClearValues();
-				physicsVoxelErase->Color.AddValue(0,vec4(.43,.304,.214,1));
-				physicsVoxelErase->Color.AddValue(.5,vec4(.43,.304,.214,1));
-				physicsVoxelErase->Color.AddValue(1,vec4(.43,.304,.214,1));
-			}
-
+			physicsVoxelErase->Color.ClearValues();
+			physicsVoxelErase->Color.AddValue(0,materialColors[voxel->MaterialId]);
 			ParticleSystem * testSystem = ((BaseFrame*)CurrentSystem)->Particles.BuildParticleSystem(*physicsVoxelErase, .3);
 			testSystem->Position = voxel->Position;
 			//Notify any other systems that the voxel is being destroyed
@@ -548,4 +545,25 @@ bool PhysicsSystem::RaytraceToActor(vec3 from, vec3 direction, PhysicsActor * to
 	rayLength = shortestRay;
 	surfaceNormal = normal;
 	return true;
+}
+
+void PhysicsSystem::Explode(vec3 pos, float radius, float damage) {
+	for (auto voxel : allVoxels) {
+		float dist = glm::distance(voxel->Position,pos);
+		//Check if you're within the blast radius
+		if (dist >= radius)
+			continue;
+
+		//Damage decreases linearly with distance
+		float physicsVoxelDamage = ((radius-dist)*.5+.5)*damage;
+		//Physics voxels don't have health so if you're dealing over 8 damage, vaporize them
+		if (physicsVoxelDamage >= 8.0f) {
+			//Setting death at to one guarantees death next update cycle
+			voxel->DeathAt = 1;
+			continue;
+		}
+		//Just fling the voxel based off of how much damage it was supposed to take
+		float flingForce = physicsVoxelDamage*.5f;
+		voxel->Velocity += glm::normalize(voxel->Position - pos)*flingForce;
+	}
 }

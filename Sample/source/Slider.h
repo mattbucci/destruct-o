@@ -56,6 +56,7 @@ Slider<T>::Slider() :
 	color = vec4(.66,.66,.66,1);
 
 	index = 0;
+	max = 100;
 	values.push_back(pair<string, T>("Default", 0));
 	value = NULL;
 

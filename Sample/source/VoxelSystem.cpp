@@ -206,10 +206,10 @@ void VoxelSystem::Paint(vec2 pos, int newMaterial) {
 
 //Deforms a region of voxels, punching a crater into the given position
 //all voxels removed are returned as positions
-vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
+vector<vec4> VoxelSystem::Crater(vec3 pos, float size, float damage) {
 	//render each viewable rectangle
 	vector<vec4> removedVoxels;
-	forTilesInRect(IntRect(pos.x - size / 2,pos.y - size / 2,pos.x + size / 2,pos.y + size / 2),[this,&removedVoxels,pos,size](GameTile * current_tile) {
+	forTilesInRect(IntRect(pos.x - size / 2,pos.y - size / 2,pos.x + size / 2,pos.y + size / 2),[this,&removedVoxels,pos,size,damage](GameTile * current_tile) {
 		int rectStartX, rectStartY, rectEndX, rectEndY;
 		//Get the region this tile is in
 		rectStartX = current_tile->tile_x * TILE_SIZE;
@@ -231,7 +231,10 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size) {
 		if ((rectStartY == rectEndY) || (rectStartX == rectEndX))
 			return;
 
-		current_tile->Crater(rectStartX, rectStartY, rectEndX, rectEndY, (int)(pos.z - size / 2.0), removedVoxels);
+		//adjust the explosion center for the tile
+		vec2 expCenter = vec2(pos)-(vec2(current_tile->tile_x,current_tile->tile_y) * (float)TILE_SIZE);
+
+		current_tile->Crater(IntRect(rectStartX, rectStartY, rectEndX, rectEndY), (int)(pos.z - size / 2.0),damage,vec3(expCenter,pos.z), removedVoxels);
 
 	});
 	//Return all removed voxels

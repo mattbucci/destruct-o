@@ -138,10 +138,15 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 			//Place a line here
 			float height = (len*len-15*15)*.0008+2;
 			vec2 absPos = glm::floor(vec2(pos)+spos);
-			cells[int((absPos.y)*TILE_SIZE + absPos.x)].height += height;
+			TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
+			cell.height += height;
+			//City is stronger than surrounding terrain
+			cell.cellHealth = 25;
+			cell.cellMaxHealth = 25;
 		}
 	}
 
+	//Different heights in the spire
 	int ringHeights[5] = {
 		30,
 		28,
@@ -155,7 +160,11 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 		for (float y = -4; y <= 4; y++) {
 			float ring = max(abs(x),abs(y));
 			vec2 spos = vec2(x,y)+vec2(pos);
-			cells[int((spos.y)*TILE_SIZE + spos.x)].height += ringHeights[(int)ring]*3/2;
+			TileCell & cell = cells[int((spos.y)*TILE_SIZE + spos.x)];
+			cell.height += ringHeights[(int)ring]*3/2;
+			//The tower is made of tough stuff
+			cell.cellHealth = 50;
+			cell.cellMaxHealth = 50;
 		} 
 	}
 

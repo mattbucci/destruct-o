@@ -27,7 +27,7 @@ void WeaponStarter::Fire() {
 	if (!Universal::Trace(firePoint,fireVector,&hitPos))
 		hitPos = firePoint+fireVector*100.0f;
 	
- 	Game()->Voxels.Crater(hitPos,3);
+ 	Universal::Concuss(hitPos,3,20,(PhysicsActor*)this->weaponOwner);
 	laser.StartFiring();
 	laser.Move(firePoint,hitPos);
 

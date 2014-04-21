@@ -84,6 +84,8 @@ void GameTile::readImageData(const vector<unsigned char> & imageData) {
 		Cells[i/4].materialId = imageData[i+1];
 		//Stack height must be calculated separately
 		Cells[i/4].stackHeight = 0;
+		Cells[i/4].cellHealth = imageData[i+2];
+		Cells[i/4].cellMaxHealth = Cells[i/4].cellHealth;
 	}
 
 	UpdateTileSection(0,0,TILE_SIZE,TILE_SIZE);
@@ -196,47 +198,64 @@ TileCell * GameTile::GetTileCell(vec2 pos) {
 
 //Carves a square crater from fx,fy to tox,toy to depth "depth" and adds all removed voxels
 //to the removedVoxels value
-void GameTile::Crater(int fx, int fy, int tox, int toy, int craterBottomZ, vector<vec4> & removedVoxels) {
-	_ASSERTE((fx >= 0) && (fy >= 0));
-	_ASSERTE((tox < (float)TILE_SIZE) && (toy < (float)TILE_SIZE));	
-	_ASSERTE((fx <= tox) && (fy <= toy));
+void GameTile::Crater(IntRect craterRegion, int craterBottomZ, float damageDone, vec3 epicenter, vector<vec4> & removedVoxels) {
+	_ASSERTE((craterRegion.StartX >= 0) && (craterRegion.StartY >= 0));
+	_ASSERTE((craterRegion.StartX < (float)TILE_SIZE) && (craterRegion.StartY < (float)TILE_SIZE));	
+	_ASSERTE((craterRegion.StartX <= craterRegion.EndX) && (craterRegion.StartY <= craterRegion.EndY));
 	_ASSERTE(craterBottomZ > 0);
 
 
-	for (int x = fx; x <= tox; x++) {
-		for (int y = fy; y <= toy; y++) {
+	for (int x = craterRegion.StartX; x <= craterRegion.EndX; x++) {
+		for (int y = craterRegion.StartY; y <= craterRegion.EndY; y++) {
 			TileCell& cell = Cells[y*TILE_SIZE+x];
 			int height = cell.height;
-			int heightDiff = height-craterBottomZ;
+			int heightDiff = height-craterBottomZ+1;
 			//Skip where the terrain does not intersect the crater
 			if (heightDiff < 0)
 				continue;
+
+			//Damage the voxel
+			//determine damage scaled with distance from the epicenter
+			float damageScaler = ((craterRegion.EndX - craterRegion.StartX)*1.5 - glm::distance(vec2(x,y),vec2(epicenter)));
+			damageScaler = max(0.0f,min(damageScaler,1.0f));
+			float damage = damageDone*damageScaler;
+			float originalLife = cell.cellHealth;
+			float newLife = floor(originalLife-damage);
+			//Only do partial destruction if the voxel isn't dead
+			if (newLife > 0) {
+				cell.cellHealth = (int)newLife;
+				continue;
+			}
+
 			//Keep track of all removed voxels
 			while (heightDiff >= 0) {
 				removedVoxels.push_back(vec4(x+(tile_x*TILE_SIZE),y+(tile_y*TILE_SIZE),height,cell.materialId));
 				heightDiff--;
 				height--;
 			}
+			//Expose a half health surface
+			cell.cellHealth = (int)cell.cellMaxHealth/2;
+
 			//Alter the height to create the crater
 			Cells[y*TILE_SIZE+x].height = craterBottomZ-1;
 		}
 	}
 	//Alter the values to be large enough for stack calculation
-	fx-=2;
-	fy-=2;
-	tox+=4;
-	toy+=4;
+	craterRegion.StartX-=2;
+	craterRegion.StartY-=2;
+	craterRegion.EndX+=4;
+	craterRegion.EndY+=4;
 	//Limit the values to valid ranges
-	if (fx < 1)
-		fx = 1;
-	if (fy < 1)
-		fy = 1;
-	if (tox > TILE_SIZE-1)
-		tox = TILE_SIZE-1;
-	if (toy > TILE_SIZE-1)
-		toy = TILE_SIZE-1;
+	if (craterRegion.StartX < 0)
+		craterRegion.StartX = 0;
+	if (craterRegion.StartY < 0)
+		craterRegion.StartY = 0;
+	if (craterRegion.EndX > TILE_SIZE-1)
+		craterRegion.EndX = TILE_SIZE-1;
+	if (craterRegion.EndY > TILE_SIZE-1)
+		craterRegion.EndY = TILE_SIZE-1;
 	//Rebuild the stack heights in this region
-	UpdateTileSection(fx,fy,tox,toy);
+	UpdateTileSection(craterRegion.StartX,craterRegion.StartY,craterRegion.EndX,craterRegion.EndY);
 }
 
 //Recode the tile to uncompressed png data

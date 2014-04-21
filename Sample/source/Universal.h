@@ -26,7 +26,8 @@ public:
 	//Creates a concussion
 	//damaging terrain
 	//throwing back physics voxels and actors
-	//static void Concus(vec3 at,
+	static void Concuss(vec3 at, float radius, float damage, PhysicsActor * damagingActor);
+
 
 	//Traces from rayStart along rayDirection. returns true if ray hits anything
 	//any parameter can be NULL to indicate no information is desired along that pathway

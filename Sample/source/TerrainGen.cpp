@@ -137,7 +137,7 @@ void TerrainGen::generateTerrain(GameTile * tile) {
 		else
 			rawtile[(i * 4)] = 5;
 		rawtile[(i*4) + 1] = 0; // TODO: Intelligent Material Selection
-		rawtile[(i*4) + 2] = 0;
+		rawtile[(i*4) + 2] = 10; //current life
 		rawtile[(i*4) + 3] = 0;
 	}
 

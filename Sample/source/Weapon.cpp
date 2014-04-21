@@ -5,6 +5,7 @@
 Weapon::Weapon(Actor * weaponOwner, float & pool) : chargePool(pool) {
 	lastHoldingTrigger = false;
 	this->weaponOwner = weaponOwner;
+	lastWeaponFire = 0;
 }
 Weapon::~Weapon() {
 
