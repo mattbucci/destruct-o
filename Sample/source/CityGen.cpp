@@ -9,6 +9,47 @@ const int citysize = 150;
 //the space between each city
 const int cityspacing = 250;
 
+
+//For comparing
+//vec2
+class comparableVec2 {
+public:
+	comparableVec2() {
+		x=y=0;
+	}
+	comparableVec2(vec2 original) {
+		x = original.x;
+		y = original.y;
+	}
+	comparableVec2(const comparableVec2 & b) {
+		x = b.x;
+		y = b.y;
+	}
+
+	comparableVec2 & operator=(const comparableVec2 & b) {
+		x = b.x;
+		y = b.y;
+		return *this;
+	}
+
+	bool operator<(const comparableVec2 & b) const {
+		if (x < b.x)
+			return true;
+		if (x > b.x)
+			return false;
+		
+		return (y < b.y);
+	}
+
+	bool operator==(const comparableVec2 & b) const {
+		return (x == b.x) && (y == b.y);
+	}
+
+	float x;
+	float y;
+};
+
+
 int CityGen::BufferIndex(GameTile* tile,int x, int y) {
 	return 4 * (y*TILE_SIZE + x);
 }
@@ -65,115 +106,68 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 	const static float buildingSize = 15.0f;
 
 	ContiguousList<Rect> buildingPlacements;
-	/*
-	//Place buildings along the grid with some randomness
-	for (int y = -citysize / 2 + 20; y < citysize / 2 - 20; y+=evenBuildingDistance) {
-		for (int x = -citysize / 2 + 20; x < citysize / 2 - 20; x+=evenBuildingDistance) {
-			//Add some randomness to the building placement
-			//replace with something predictable in the future
-			float randomnessA = 0;//((float)rand()/(float)RAND_MAX)*5-10;
-			float randomnessB = 0;//((float)rand()/(float)RAND_MAX)*5-10;
-			buildingPlacements.push_back(Rect(x+randomnessA,y+randomnessB,evenBuildingDistance,evenBuildingDistance));
-		}
-	}
-	//Destroy intersecting buildings
-	/*for (auto it = buildingPlacements.begin(); it != buildingPlacements.end(); it++) {
-		for (auto itx = it+1; itx != buildingPlacements.end(); ) {
-			if (it->Intersects(*itx))
-				itx = buildingPlacements.erase(itx);
-			else
-				itx++;
-		}
-	}*/
-
-	//Add the main spire
-	{
-		Building newBuilding;
-		newBuilding.ConstructSpire(vec3(0,0,1),2.25,20);
-		newBuilding.PlaceStructure(tile,vec2(pos)-vec2(3,3));
-		buildingPlacements.push_back(Rect(pos.x-9,pos.y-9,18,18));
-	}
-
-
-	vec2 cityMin = vec2(pos) - vec2(citysize,citysize)/2.0f + vec2(4,4);
-	vec2 cityMax = vec2(pos) + vec2(citysize,citysize)/2.0f - vec2(4,4);
 	
-	//Add random pedestals for turrets avoiding intersections
-	for (int i = 0; i < 10; i++) {
-		Rect testRect(Utilities::random(cityMin.x,cityMax.x-3.0f),
-			Utilities::random(cityMin.y,cityMax.y-3.0f), 3, 3);
-		//Search for an intersection
-		bool intersectionFound = false;
+	TileCell * cells = tile->Cells;
 
-		for (auto placement : buildingPlacements)
-			if (testRect.Intersects(placement)) {
-				intersectionFound = true;
-				break;
-			}
+	//Generate lines
+	//set<vec2> usedSpace;
+	static const int lineCount = 30;
+	static const int samples = 200;
+	static const float anglePart = M_PI*2.0f/(float)lineCount;
+	for (int i = 0; i < lineCount; i++) {
+		vec2 lineDirection = glm::normalize(vec2(cos(anglePart*i),sin(anglePart*i)));
+		float lineLength = citysize*1.5;
+		float lineSection = lineLength/samples;
 
-		if (intersectionFound)
-			continue;
 
-		//No intersection stamp a pedestal in the terrain and place a turret here
-		//..somehow
-		vec3 bPlace = vec3(testRect.X,testRect.Y,pos.z);
-		float height = 13-.1*glm::distance(pos,bPlace);
-		for (int x = 0; x < 2; x++) {
-			for (int y = 0; y < 2; y++) {
-				tile->GetTileCell(vec2(x+bPlace.x,y+bPlace.y))->height+= (unsigned char)height;
-			}
+		//Generate the line by sampling along it
+		
+		for (int i = 0; i < samples; i++) {
+			//Find the position
+			vec2 spos = lineDirection*(-lineLength/2.0f+i*lineSection);
+			spos = glm::floor(spos);
+			//check that the position is within city limits
+			if ((spos.x < -citysize/2.0) || (spos.y < -citysize/2.0))
+				continue;
+			if ((spos.x > citysize/2.0) || (spos.y > citysize/2.0))
+				continue;
+			//check that the position isn't too close to the center
+			float len = glm::length(spos);
+			if (len < 16)
+				continue;
+			//Place a line here
+			float height = (len*len-15*15)*.0008+2;
+			vec2 absPos = glm::floor(vec2(pos)+spos);
+			cells[int((absPos.y)*TILE_SIZE + absPos.x)].height += height;
 		}
-
-		buildingPlacements.push_back(testRect);
 	}
 
+	int ringHeights[5] = {
+		30,
+		28,
+		24,
+		18,
+		10
+	};
 
-
-	//Add random buildings avoiding interesctions
-	for (int i = 0; i < 80; i++) {
-		Rect testRect(Utilities::random(cityMin.x,cityMax.x-5.0f),
-			Utilities::random(cityMin.y,cityMax.y-5.0f), 9, 9);
-		//Search for an intrsection
-		bool intersectionFound = false;
-
-		for (auto placement : buildingPlacements)
-			if (testRect.Intersects(placement)) {
-				intersectionFound = true;
-				break;
-			}
-
-		if (intersectionFound)
-			continue;
-
-		//No intersection
-		vec3 bPlace = vec3(testRect.X,testRect.Y,pos.z);
-		float distToCenter = glm::distance(pos,bPlace);
-		Building newBuilding;
-		newBuilding.ConstructSpire(glm::normalize(vec3(pos.x,pos.y,pos.z+40)-bPlace),1.75,13-0.020*distToCenter);
-		newBuilding.PlaceStructure(tile,vec2(bPlace));
-		buildingPlacements.push_back(testRect);
+	//Place the spire
+	for (float x = -4; x <= 4; x++) {
+		for (float y = -4; y <= 4; y++) {
+			float ring = max(abs(x),abs(y));
+			vec2 spos = vec2(x,y)+vec2(pos);
+			cells[int((spos.y)*TILE_SIZE + spos.x)].height += ringHeights[(int)ring]*3/2;
+		} 
 	}
 
 	//flatten terrain
 	//generate roads
-	TileCell * cells = tile->Cells;
+	
 	for (int y = -citysize / 2; y < citysize / 2; y++) {
 		for (int x = -citysize / 2; x < citysize / 2; x++) {
 			cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 2;
 		}
 	}
 
-	/*
-	//construct spires
-	for (auto placement : buildingPlacements) {
-		
-		Building newBuilding;
-		newBuilding.ConstructSpire(glm::normalize(vec3(pos.x,pos.y,pos.z+30)-bPlace),1.75,2+10-.05*glm::distance(pos,bPlace));
-		newBuilding.PlaceStructure(tile,vec2(bPlace));
-	}
-	
-	
-*/
 }
 
 void CityGen::generatecitylocations(GameTile* tile){
