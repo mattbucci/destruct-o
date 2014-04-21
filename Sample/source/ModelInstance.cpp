@@ -53,7 +53,7 @@ void ModelInstance::Update(double delta, double now)
             
             if(!node || !iNode)
             {
-                std::cerr << "WTF: could not find bone -> " << bone->first << std::endl;
+                cout << "WTF: could not find bone -> " << bone->first << endl;
                 continue;
             }
             
