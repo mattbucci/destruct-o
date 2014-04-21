@@ -159,8 +159,8 @@ public:
     const std::map<std::string, Animation *>& Animations() const;
     
     // Construct a model object from a model file
-    static Model* LoadFromJsonFile(const std::string& directory, const std::string& name, TextureCache &_textureCache);
-    static Model* LoadFromCompressedJsonFile(const std::string& directory, const std::string& name, TextureCache &_textureCache);
+    static Model* LoadFromJsonFile(const std::string& directory, const std::string& name, const Transform& offset, TextureCache &_textureCache);
+    static Model* LoadFromCompressedJsonFile(const std::string& directory, const std::string& name, const Transform& offset, TextureCache &_textureCache);
 };
 
 #endif

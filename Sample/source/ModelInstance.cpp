@@ -249,15 +249,8 @@ ModelInstance* ModelInstance::LoadManifestEntry(const Json::Value& model, Textur
     std::string directory = (model)["directory"].asString();
     bool compressed = (model)["compressed"].asBool();
     
-    // Load the model from json or compressed json
-    ModelInstance *instance = NULL;
-    if(compressed)
-    {
-        instance = new ModelInstance(Model::LoadFromCompressedJsonFile(directory, path, textureCache));
-    } else
-    {
-        instance = new ModelInstance(Model::LoadFromJsonFile(directory, path, textureCache));
-    }
+    // The offset transform
+    Transform transform;
     
     // Search for an offset transform
     const Json::Value& offset = (model)["offset"];
@@ -265,8 +258,17 @@ ModelInstance* ModelInstance::LoadManifestEntry(const Json::Value& model, Textur
     // If an offset was specified in the manifest
     if(offset != Json::Value::null && offset.isObject())
     {
-        instance->Skeleton()->LocalTransform() = Transform(offset);
-        instance->Skeleton()->Recalculate();
+        transform = Transform(offset);
+    }
+    
+    // Load the model from json or compressed json
+    ModelInstance *instance = NULL;
+    if(compressed)
+    {
+        instance = new ModelInstance(Model::LoadFromCompressedJsonFile(directory, path, transform, textureCache));
+    } else
+    {
+        instance = new ModelInstance(Model::LoadFromJsonFile(directory, path, transform, textureCache));
     }
     
     // Search for an animation controller

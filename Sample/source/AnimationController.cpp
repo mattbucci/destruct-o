@@ -34,10 +34,10 @@ const static std::string ParameterTypeKeys[] =
  * @param skeleton Root node of the skeleton of the transform tree to animation
  */
 AnimationController::AnimationController(const AnimationController& controller)
-    : parameters(controller.parameters), layers(AnimationController::layer_store()), skeleton(NULL), initialSkeleton(NULL)
+    : AnimationSource(), parameters(controller.parameters), layers(AnimationController::layer_store())
 {
-    // Duplicate the passed skeleton
-    if(initialSkeleton && skeleton)
+    // Duplicate the skeletal model
+    if(controller.initialSkeleton && controller.skeleton)
     {
         initialSkeleton = controller.initialSkeleton;
         skeleton = new Node(*(controller.skeleton));
@@ -52,7 +52,7 @@ AnimationController::AnimationController(const AnimationController& controller)
 
 // Deserialize an animation controller
 AnimationController::AnimationController(const Json::Value& value)
-    : parameters(AnimationController::parameter_store()), layers(AnimationController::layer_store()), skeleton(NULL), initialSkeleton(NULL)
+    : AnimationSource(), parameters(AnimationController::parameter_store()), layers(AnimationController::layer_store())
 {
     // We first need to validate that this a Json object
     if(!value.isObject())
@@ -91,7 +91,7 @@ AnimationController::AnimationController(const Json::Value& value)
  * Do nothing constructor - just to handle meshes which don't have controllers
  */
 AnimationController::AnimationController()
-    : parameters(AnimationController::parameter_store()), layers(AnimationController::layer_store()), skeleton(NULL), initialSkeleton(NULL)
+    : AnimationSource(), parameters(AnimationController::parameter_store()), layers(AnimationController::layer_store())
 {
     
 }
@@ -107,11 +107,8 @@ AnimationController::~AnimationController()
         delete it->second;
     }
     
-    // Delete the skeleton if we have one
-    if(skeleton)
-    {
-        delete skeleton;
-    }
+    // Call the parent deconstructor
+    AnimationSource::~AnimationSource();
 }
 
 /**
@@ -156,19 +153,6 @@ void AnimationController::Update(double delta, double now)
     }
     
     // Blend the layers
-}
-
-/**
- * Bind a new skeleton to the animation controller
- * @param skeleton the root node of the skeleton to bind to the animation controller
- */
-void AnimationController::Bind(const Node *root)
-{
-    // Store the initial pose of the model for reference purposes
-    initialSkeleton = root;
-    
-    // Create a duplicate node structure for the result of our animation
-    skeleton = new Node(*root);
 }
 
 // Generic constructor to initialize the parameter

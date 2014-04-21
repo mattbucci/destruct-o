@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include "Transform.h"
 #include "Node.h"
+#include "AnimationSource.h"
 
 #include <json/json.h>
 
@@ -27,7 +28,7 @@
 class AnimationLayer;
 
 // AnimationController handles the animation control subsystem.
-class AnimationController
+class AnimationController : public AnimationSource
 {
 public:
     // The parameter value data structure (input type to the animation controller)
@@ -87,16 +88,6 @@ private:
      */
     layer_store layers;
     
-    /**
-     * The root transform node of the skeleton that we are to animate
-     */
-    Node *skeleton;
-    
-    /**
-     * The root transform node of the initial pose of the skeleton
-     */
-    const Node *initialSkeleton;
-    
 public:
     /**
      * Create an animation controller as a copy of another animation controller
@@ -124,7 +115,7 @@ public:
      * @param delta time since last frame in seconds
      * @param now the current time
      */
-    void Update(double delta, double now);
+    void Update(double delta, double now) override;
     
     /**
      * Do nothing constructor - just to handle meshes which don't have controllers
@@ -135,12 +126,6 @@ public:
      * Destroy an animation controller and any heap allocated memory associated
      */
     ~AnimationController();
-    
-    /**
-     * Bind a new skeleton to the animation controller
-     * @param skeleton the root node of the skeleton to bind to the animation controller
-     */
-    void Bind(const Node *root);
 };
 
 #endif

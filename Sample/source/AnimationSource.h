@@ -22,13 +22,11 @@
 
 /**
  * Animation source is a base class for all objects which provide skeletal
- * modifications.  Layers and controllers are not sources, as they manage,
- * not provide animation data.  Examples of sources are animations and 
- * animation blend groups.
- *
+ * modifications.
  */
 class AnimationSource
 {
+protected:
     /** The local storage of the target skeleton */
     Node *skeleton;
     
