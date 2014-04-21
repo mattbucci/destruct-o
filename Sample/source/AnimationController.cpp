@@ -149,13 +149,13 @@ AnimationController& AnimationController::operator= (const AnimationController& 
  */
 void AnimationController::Update(double delta, double now)
 {
-    
-    
-    // For now just update everything to check
+    // Update all the layers of animation
     for(layer_iterator it = layers.begin(); it != layers.end(); it++)
     {
         it->second->Update(delta, now);
     }
+    
+    // Blend the layers
 }
 
 /**
