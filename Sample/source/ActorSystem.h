@@ -62,6 +62,10 @@ public:
 	//Get the AIDS
 	ActorAids * Aids();
 
+	//Do AOE damage
+	//to actors
+	//also flings actors
+	void DoAOEDamage(vec3 at, float radius, float damage, PhysicsActor * damager);
 
 	//Utility functions for actors and others
 	vector<PhysicsActor*> GetActorsInRadius(vec3 center, float radius);
@@ -87,7 +91,9 @@ public:
 	//FactionId is the killing faction
 	GameEvent<void(Actor*,Actor*,FactionId)> ActorKilled;
 	//Weapon related things
-	GameEvent<void(Actor*,Weapon*)> ActorFiredWeapon;
+	//The actor, the weapon fired, the location hit
+	//location hit is broken right now
+	GameEvent<void(Actor*,Weapon*,vec3)> ActorFiredWeapon;
 	//Happens with the player tries to fire without enough energy
 	//(the player is the only one stupid enough to try this)
 	GameEvent<void(Actor*,Weapon*)> ActorFiredWhileEmpty;

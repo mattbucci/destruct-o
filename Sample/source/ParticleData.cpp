@@ -89,7 +89,7 @@ bool ParticleData::Parser::processValue(string valueName, string value) {
 		ATTEMPT_PROCESS("scalevariation",inProgress->ScaleVariation)
 
 		//If you got this far then it failed to be recognized
-		cout << "\nError on line " << lineNumber << ": Failed to recognize rule \"" << valueName << "\" as a valid rule name in section \"" << Section << "\"\n";
+		cout << "Error on line " << lineNumber << ": Failed to recognize rule \"" << valueName << "\" as a valid rule name in section \"" << Section << "\"";
 		return false;
 	case PARTICLERULES:
 		ATTEMPT_PROCESS("color",inProgress->Color)
@@ -98,10 +98,10 @@ bool ParticleData::Parser::processValue(string valueName, string value) {
 		ATTEMPT_PROCESS("animationspeed",inProgress->AnimationSpeed)
 
 		//If you got this far then it failed to be recognized
-		cout << "\nError on line " << lineNumber << ": Failed to recognize rule \"" << valueName << "\" as a valid rule name in section \"" << Section << "\"\n";
+		cout << "Error on line " << lineNumber << ": Failed to recognize rule \"" << valueName << "\" as a valid rule name in section \"" << Section << "\"";
 		return false;
 	case NOSECTION:
-		cout << "\nError on line " << lineNumber << ": No section header before rule. All rules must be within a section.\n";
+		cout << "Error on line " << lineNumber << ": No section header before rule. All rules must be within a section.\n";
 		return false;
 	}
 
@@ -123,7 +123,7 @@ bool ParticleData::Parser::readProperty(string propertyName, string value) {
 		else if (value == "SCREEN")
 			inProgress->MaterialStyle = SCREEN;
 		else {
-			cout << "\nError on line " << lineNumber << ": Failed to recognize style \"" << value << "\" as a valid material style.\n";
+			cout << "Error on line " << lineNumber << ": Failed to recognize style \"" << value << "\" as a valid material style.\n";
 			return false;
 		}
 	}
@@ -134,7 +134,7 @@ bool ParticleData::Parser::readProperty(string propertyName, string value) {
 	else if (propertyName == "columns")
 		inProgress->Columns = (float)atoi(value.c_str());
 	else {
-		cout << "\nError on line " << lineNumber << ": Failed to recognize property \"" << propertyName << "\" as a valid property.\n";
+		cout << "Error on line " << lineNumber << ": Failed to recognize property \"" << propertyName << "\" as a valid property.\n";
 		return false;
 	}
 	return true;
@@ -150,7 +150,7 @@ bool ParticleData::Parser::parseLine(string partOne, string partTwo, bool header
 		else if (partOne == "Properties")
 			Section = PROPERTIES;
 		else {
-			cout << "\nError on line " << lineNumber << ": Header: \"" << partOne << "\" is not recognized as a valid section header.\n";
+			cout << "Error on line " << lineNumber << ": Header: \"" << partOne << "\" is not recognized as a valid section header.\n";
 			return false;
 		}
 		lastSectionName = partOne;
@@ -162,7 +162,7 @@ bool ParticleData::Parser::parseLine(string partOne, string partTwo, bool header
 			//It's a list of values, break up the list and then add each value in the list individually
 			//Lets check the list has a terminator
 			if (partTwo[partTwo.size()-1] != '}') {
-				cout << "\nError on line " << lineNumber << ": Missing list terminator '}'\n";
+				cout << "Error on line " << lineNumber << ": Missing list terminator '}'\n";
 				return false;
 			}
 			string buffer;
@@ -190,7 +190,7 @@ bool ParticleData::Parser::parseLine(string partOne, string partTwo, bool header
 	}
 	else {
 		if ((partTwo.size() < 2) || (partTwo[0] != '"') || (partTwo[partTwo.size()-1] != '"')) {
-			cout << "\nError on line " << lineNumber << ": The value of properties must be surrounded in double quotes.\n";
+			cout << "Error on line " << lineNumber << ": The value of properties must be surrounded in double quotes.\n";
 		}
 		//Must be in properties
 		//trim off the '"' from the start/finish of partTwo
@@ -263,7 +263,7 @@ ParticleData * ParticleData::Parser::ReadParticle(string vpartText) {
 					//Only one part completed, check for header
 					
 					if (partOne[partOne.size()-1] != ':') {
-						cout << "\nError on line " << lineNumber << ": Syntax error, missing '=' or ':'\n";
+						cout << "Error on line " << lineNumber << ": Syntax error, missing '=' or ':'\n";
 						return NULL;
 					}
 					//Parse the header, or return NULL on failure
@@ -289,11 +289,11 @@ ParticleData * ParticleData::Parser::ReadParticle(string vpartText) {
 			}
 			else if (c == '=') {
 				if (partOne.size() <= 0) {
-					cout << "\nError on line " << lineNumber << ": rule/property is missing name before '='\n";
+					cout << "Error on line " << lineNumber << ": rule/property is missing name before '='\n";
 					return NULL;
 				}
 				if (partOneComplete) {
-					cout << "\nError on line " << lineNumber << ": unexpected '=' after initial '='\n";
+					cout << "Error on line " << lineNumber << ": unexpected '=' after initial '='\n";
 					return NULL;
 				}
 				partOneComplete = true;
@@ -304,7 +304,7 @@ ParticleData * ParticleData::Parser::ReadParticle(string vpartText) {
 				//If the character starts a property/list, mark that its started
 				if ((c == '{') || (c == '"')) {
 					if (insideChar != '\0') {
-						cout << "\nError on line " << lineNumber << ": found block character inside of block. (No nesting blocks)\n";
+						cout << "Error on line " << lineNumber << ": found block character inside of block. (No nesting blocks)\n";
 						return NULL;
 					}
 					if (c == '{')
@@ -323,15 +323,15 @@ ParticleData * ParticleData::Parser::ReadParticle(string vpartText) {
 	return inProgress;
 }
 
-ParticleData * ParticleData::LoadParticleData(string filename) {
+ParticleData ParticleData::LoadParticleData(string filename) {
 	SDL_RWops *file = SDL_RWFromFile(filename.c_str(), "r"); 
 	long size;
 	
-	cout << "Parsing particle file \"" << filename << "\":";
+	//cout << "Parsing particle file \"" << filename << "\":";
 
 	if(!file) {
-		cout << "\nFailed to open particle data file \"" << filename << "\"\n";
-		return NULL;
+		//cout << "Failed to open particle data file \"" << filename << "\"";
+		return ParticleData();
 	}
 
 	//Use the SDL system to read the file
@@ -347,7 +347,12 @@ ParticleData * ParticleData::LoadParticleData(string filename) {
 	static Parser parseSystem;
 	ParticleData * data = parseSystem.ReadParticle(string(fileData,size));
 	//If no error occurred print out that you finished
-	if (data)
-		cout << "done\n";
-	return data;
+	if (data == NULL)
+		return ParticleData();
+
+	//Hacky, copy to a less temporary storage
+	ParticleData temp = *data;
+	delete data;
+
+	return temp;
 }

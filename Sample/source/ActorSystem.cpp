@@ -64,6 +64,27 @@ ActorAids * ActorSystem::Aids() {
 	return aids;
 }
 
+//Do AOE damage
+//to actors
+//also flings actors
+void ActorSystem::DoAOEDamage(vec3 at, float radius, float damage, PhysicsActor * damager) {
+	for (auto actor : allActors) {
+		PhysicsActor * damagableActor = dynamic_cast<PhysicsActor*>(actor);
+		if (damagableActor == NULL)
+			continue;
+		//Now check distance
+		float dist = glm::distance(at,damagableActor->position);
+		if (dist > radius)
+			continue;
+		//Scale damage
+		float actorDamage = ((1.0f - dist/radius)*.5f+.5f)*damage;
+		damagableActor->Damage(damager,actorDamage);
+		//And fling the actor some amount
+		float fling = damage*.05;
+		damagableActor->velocity += glm::normalize(damagableActor->position - at)*fling;
+	}
+}
+
 //Draw all the actors
 void ActorSystem::Draw(ShaderGroup * shaders) {
 

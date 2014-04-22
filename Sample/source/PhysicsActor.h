@@ -27,6 +27,8 @@ class PhysicsActor : public Actor {
 
 	//The physics system has direct access to position/velocity/acceleration
 	friend class PhysicsSystem;
+	//This is a little hacky, but so does the ActorSystem
+	friend class ActorSystem;
 protected:
 	//Get/Set the properties of this physics actor
 	vec3 & Velocity;
