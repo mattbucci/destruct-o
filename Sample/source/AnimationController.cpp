@@ -171,7 +171,7 @@ void AnimationController::Update(double delta, double now)
     if(!layerQueue.empty())
     {
         // Blend the layers (layers with lower number are considered more important)
-#warning Implement multilayer blending only the highest priority layer is currently selected masking should be used
+//#warning Implement multilayer blending only the highest priority layer is currently selected masking should be used
     
         // Copy the relavent bones to the local skeleton
         for(Node::flattreemap::const_iterator it = layerQueue.top()->Bones().begin(); it != layerQueue.top()->Bones().end(); it++)
