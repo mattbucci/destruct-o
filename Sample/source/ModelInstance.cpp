@@ -28,8 +28,8 @@ ModelInstance::ModelInstance(Model *_model)
     // Create a flattened node tree of the local skeleton
     skeleton->GetFlatNodeTree(nodes);
     
-    // Bind the skeleton
-    //controller.Bind(skeleton);
+    // Bind the animation controller
+    //controller.Bind(_model->Skeleton());
 }
 
 /**
@@ -41,7 +41,6 @@ ModelInstance::ModelInstance(const ModelInstance& instance)
 {
     // Create a flattened node tree of the local skeleton
     skeleton->GetFlatNodeTree(nodes);
-    
 }
 
 /**
