@@ -113,22 +113,12 @@ Node* AnimationSource::Skeleton()
 }
 
 /**
- * Get a pointer to a named bone of the local skeleton
- * @return pointer to the named bone of the local skeleton
+ * Get a reference to the local skeleton bone lookup map
+ * @return reference to the local skeleton bone lookup map
  */
-Node* AnimationSource::Bone(const std::string& bone)
+Node::flattreemap& AnimationSource::Bones()
 {
-    // Attempt to find this bone
-    Node::flattreemap::iterator b = skeletonTable.find(bone);
-    
-    // If we found the bone, return it
-    if(b != skeletonTable.end())
-    {
-        return b->second;
-    }
-    
-    // Otherwise return null for not found
-    return NULL;
+    return skeletonTable;
 }
 
 /**
@@ -141,22 +131,12 @@ const Node* AnimationSource::Skeleton() const
 }
 
 /**
- * Get a const pointer to a named bone of the local skeleton
- * @return const pointer to the named bone of the local skeleton
+ * Get a const reference to the local skeleton bone lookup map
+ * @return const reference to the local skeleton bone lookup map
  */
-const Node* AnimationSource::Bone(const std::string& bone) const
+const Node::flattreemap& AnimationSource::Bones() const
 {
-    // Attempt to find this bone
-    Node::flattreemap::const_iterator b = skeletonTable.find(bone);
-    
-    // If we found the bone, return it
-    if(b != skeletonTable.end())
-    {
-        return b->second;
-    }
-    
-    // Otherwise return null for not found
-    return NULL;
+    return skeletonTable;
 }
 
 /**
@@ -169,20 +149,10 @@ const Node* AnimationSource::InitialSkeleton() const
 }
 
 /**
- * Get a const pointer to a named bone of the local skeleton
- * @return const pointer to the named bone of the local skeleton
+ * Get a const reference to the initial skeleton bone lookup map
+ * @return const reference to the initial skeleton bone lookup map
  */
-const Node* AnimationSource::InitialBone(const std::string& bone) const
+const Node::const_flattreemap& AnimationSource::InitialBones() const
 {
-    // Attempt to find this bone
-    Node::const_flattreemap::const_iterator b = initialSkeletonTable.find(bone);
-    
-    // If we found the bone, return it
-    if(b != initialSkeletonTable.end())
-    {
-        return b->second;
-    }
-    
-    // Otherwise return null for not found
-    return NULL;
+    return initialSkeletonTable;
 }

@@ -21,11 +21,9 @@
 #include "Transform.h"
 #include "Node.h"
 #include "AnimationSource.h"
+#include "AnimationLayer.h"
 
 #include <json/json.h>
-
-// Forward declaration of necessary components
-class AnimationLayer;
 
 // AnimationController handles the animation control subsystem.
 class AnimationController : public AnimationSource
@@ -74,8 +72,10 @@ public:
     
     // Layer storage types
     typedef std::map<std::string, AnimationLayer *> layer_store;
+    typedef std::vector<AnimationLayer *>           layer_vector;
     typedef layer_store::iterator                   layer_iterator;
     typedef layer_store::const_iterator             layer_const_iterator;
+    typedef std::priority_queue<AnimationLayer *, layer_vector, AnimationLayer::PriorityComparator> layer_queue;
     
 private:
     /**
@@ -87,6 +87,11 @@ private:
      * The layer storage.  The state of the system is affected by them
      */
     layer_store layers;
+    
+    /**
+     * A sorted list of layers by priority
+     */
+    layer_queue layerQueue;
     
 public:
     /**

@@ -15,7 +15,6 @@
  */
 
 #include "stdafx.h"
-#include "AnimationLayer.h"
 #include "AnimationController.h"
 
 // Unique parameter type count
@@ -34,12 +33,14 @@ const static std::string ParameterTypeKeys[] =
  * @param skeleton Root node of the skeleton of the transform tree to animation
  */
 AnimationController::AnimationController(const AnimationController& controller)
-    : AnimationSource(controller), parameters(controller.parameters), layers(AnimationController::layer_store())
+    : AnimationSource(controller), parameters(controller.parameters), layers(AnimationController::layer_store()), layerQueue(AnimationController::layer_queue())
 {
     // Duplicate the layers of the animation controller
     for(layer_const_iterator it = controller.layers.begin(); it != controller.layers.end(); it++)
     {
-        layers[it->first] = new AnimationLayer(*(it->second));
+        AnimationLayer *layer = new AnimationLayer(*(it->second));
+        layers[it->first] = layer;
+        layerQueue.push(layer);
     }
 }
 
@@ -77,6 +78,9 @@ AnimationController::AnimationController(const Json::Value& value)
         
         // Store the layer
         layers[layer->Id()] = layer;
+        
+        // Put the layer on the priority queue
+        layerQueue.push(layer);
     }
 }
 
@@ -107,6 +111,12 @@ AnimationController::~AnimationController()
  */
 AnimationController& AnimationController::operator= (const AnimationController& controller)
 {
+    // Purge the old animation layers
+    for(layer_iterator it = layers.begin(); it != layers.end(); it++)
+    {
+        delete it->second;
+    }
+    
     // Defer to the operator for assignment of the base class
     AnimationSource::operator=(controller);
     
@@ -115,10 +125,12 @@ AnimationController& AnimationController::operator= (const AnimationController& 
     
     // Duplicate the layers of the animation controller
     layers = layer_store();
+    layerQueue = layer_queue();
     for(layer_const_iterator it = controller.layers.begin(); it != controller.layers.end(); it++)
     {
-        AnimationLayer *layerCopy = new AnimationLayer(*(it->second), *this);
-        layers[it->first] = layerCopy;
+        AnimationLayer *layer = new AnimationLayer(*(it->second), *this);
+        layers[it->first] = layer;
+        layerQueue.push(layer);
     }
     
     // Return a this pointer
@@ -155,7 +167,21 @@ void AnimationController::Update(double delta, double now)
         it->second->Update(delta, now);
     }
     
-    // Blend the layers
+    // If there are layers to blend, do so
+    if(!layerQueue.empty())
+    {
+        // Blend the layers (layers with lower number are considered more important)
+#warning Implement multilayer blending only the highest priority layer is currently selected masking should be used
+    
+        // Copy the relavent bones to the local skeleton
+        for(Node::flattreemap::const_iterator it = layerQueue.top()->Bones().begin(); it != layerQueue.top()->Bones().end(); it++)
+        {
+            skeletonTable[it->first]->LocalTransform() = it->second->LocalTransform();
+        }
+    }
+    
+    // Recalculate the skeleton
+    skeleton->Recalculate();
 }
 
 // Generic constructor to initialize the parameter

@@ -16,6 +16,7 @@
 #include <list>
 #include <string>
 #include <array>
+#include <queue>
 
 //Other utilities
 #include <algorithm>

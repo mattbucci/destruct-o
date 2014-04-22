@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "AnimationLayer.h"
+#include "AnimationController.h"
 
 /**
  * Empty constructor.  Builds an empty animation layer bound to an animation
@@ -23,7 +24,7 @@
  * @param _controller The animation controller to bind this layer to
  */
 AnimationLayer::AnimationLayer(AnimationController& _controller)
-    : AnimationSource() , controller(_controller), name("null")
+    : AnimationSource() , controller(_controller), name("null"), priority(0)
 {
     // Bind this source to the initial skeleton of the animation controller
     Bind(_controller.InitialSkeleton());
@@ -35,9 +36,10 @@ AnimationLayer::AnimationLayer(AnimationController& _controller)
  * @param _controller The animation controller to bind this layer to
  */
 AnimationLayer::AnimationLayer(AnimationLayer& layer, AnimationController& _controller)
-    : AnimationSource(), controller(_controller), name(layer.name)
+    : AnimationSource(), controller(_controller), name(layer.name), priority(layer.priority)
 {
-    // Duplicate other important stuff
+    // Duplicate other important stuff (like states)
+    
     
     // Bind this source to the initial skeleton of the animation controller
     Bind(_controller.InitialSkeleton());
@@ -58,8 +60,11 @@ AnimationLayer::AnimationLayer(const Json::Value& value, AnimationController& _c
         throw std::runtime_error("AnimationLayer::AnimationLayer(const Json::Value& value, AnimationController& _controller) - value must be a object");
     }
     
-    // Get the name of the parameter
+    // Get the name of the layer
     name = value["name"].asString();
+    
+    // Get the priority of the layer
+    priority = value["priority"].asInt();
     
     // Bind this source to the initial skeleton of the animation controller
     Bind(_controller.InitialSkeleton());
@@ -82,6 +87,15 @@ void AnimationLayer::Update(double delta, double now)
 const std::string& AnimationLayer::Id() const
 {
     return name;
+}
+
+/**
+ * Get the priority of this animation layer
+ * @return Const reference to the name of the layer
+ */
+const int& AnimationLayer::Priority() const
+{
+    return priority;
 }
 
 /**

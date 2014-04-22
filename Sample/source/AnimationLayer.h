@@ -17,14 +17,31 @@
 #ifndef __ANIMATION_LAYER_H__
 #define __ANIMATION_LAYER_H__
 
-#include "AnimationController.h"
+#include "stdafx.h"
+#include "AnimationSource.h"
 #include "AnimationState.h"
+
+// Forward declaration of the animation controller object
+class AnimationController;
 
 // AnimationLayer is a finite state machine dedicated to controlling the
 // animation of a model's skeleton.  It holds a collection of
 // AnimationState objects which do the actual work of animating.
 class AnimationLayer : public AnimationSource
 {
+public:
+    /**
+     * Comparison operator to sort layers for priority
+     */
+    struct PriorityComparator
+    {
+        bool operator()(AnimationLayer *a, AnimationLayer *b)
+        {
+            return (a->Priority() > b->Priority());
+        }
+    };
+    
+protected:
     /**
      * AnimationLayer depends on components provides by the animation controller
      * and requires a reference to it
@@ -35,6 +52,11 @@ class AnimationLayer : public AnimationSource
      * The name of the animation layer
      */
     std::string name;
+    
+    /**
+     * The priority of this layer
+     */
+    int priority;
     
 public:
     /**
@@ -71,6 +93,12 @@ public:
      * @return Const reference to the name of the layer
      */
     const std::string& Id() const;
+    
+    /**
+     * Get the priority of this animation layer
+     * @return Const reference to the name of the layer
+     */
+    const int& Priority() const;
     
     /**
      * Accessor for the animation controller of this layer 
