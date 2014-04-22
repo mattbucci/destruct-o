@@ -35,8 +35,18 @@ public:
 	Weapon(Actor * weaponOwner, float & chargePool);
 	virtual ~Weapon();
 
+    enum HandAnimations {
+        ANIMATION_MODELNAME = 0,
+        ANIMATION_AIM,
+        ANIMATION_FIRE,
+        ANIMATION_RELOAD,
+        ANIMATION_RUN,
+        ANIMATION_JUMP,
+        ANIMATION_GRENADE,
+    };
+
 	//Weapon firing animation
-	virtual string FiringAnimation() = 0;
+    virtual string LookupAnimation(HandAnimations animation) = 0;
 
 	//Whether or not the user is holding the trigger
 	//returns whether or not the firing animation should play
