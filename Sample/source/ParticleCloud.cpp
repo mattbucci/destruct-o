@@ -24,7 +24,7 @@ void ParticleCloud::LoadParticles() {
 	for (auto file : root) {
 		string fileName = file.asString();
 		cout << "Loading: " << fileName << "\n";
-		loadedParticleData[fileName] = ParticleData::LoadParticleData(fileName);
+		loadedParticleData[fileName] = ParticleData::LoadParticleData(string("particles/") + fileName);
 	}
 	cout << "Done particles\n";
 }
