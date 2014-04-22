@@ -29,7 +29,7 @@ ModelInstance::ModelInstance(Model *_model)
     skeleton->GetFlatNodeTree(nodes);
     
     // Bind the animation controller
-    //controller.Bind(_model->Skeleton());
+    controller.Bind(_model->Skeleton());
 }
 
 /**

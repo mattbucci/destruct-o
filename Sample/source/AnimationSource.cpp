@@ -21,7 +21,7 @@
  * Empty Constructor, initializes everything to a default state
  */
 AnimationSource::AnimationSource()
-    : skeleton(NULL), skeletonTable(Node::flattreemap()), initialSkeleton(NULL), initialSkeletonTable(Node::const_flattreemap())
+    : skeleton(new Node()), skeletonTable(Node::flattreemap()), initialSkeleton(new Node()), initialSkeletonTable(Node::const_flattreemap())
 {
     
 }
@@ -50,10 +50,7 @@ AnimationSource::AnimationSource(const AnimationSource& source)
 AnimationSource::~AnimationSource()
 {
     // Cleanup the skeleton
-    if(skeleton)
-    {
-        delete skeleton;
-    }
+    delete skeleton;
 }
 
 /**
@@ -68,7 +65,7 @@ AnimationSource& AnimationSource::operator= (const AnimationSource& source)
     skeletonTable = Node::flattreemap();
     
     // Purge previous state
-    if(skeleton) delete skeleton;
+    delete skeleton;
     
     // If we have a new skeleton, duplicate it
     if(source.skeleton)
@@ -93,7 +90,7 @@ void AnimationSource::Bind(const Node* root)
     // Purge previous state
     initialSkeletonTable = Node::const_flattreemap();
     skeletonTable = Node::flattreemap();
-    if(skeleton) delete skeleton;
+    delete skeleton;
     
     // Store the initial skeleton
     initialSkeleton = root;
