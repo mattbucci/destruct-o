@@ -5,6 +5,34 @@
 #include "GLParticleProgram.h"
 #include "GL3DProgram.h"
 #include "BaseFrame.h"
+#include "lodepng.h"
+#include "ParticleData.h"
+
+//Load particle systems
+//call once per build
+void ParticleCloud::LoadParticles() {
+	//Load the particle manifest
+	cout << "Loading particles:\n";
+	//First load the file
+	vector<unsigned char> fileData;
+	lodepng::load_file(fileData,"particles/particlemanifest.json");
+	//Parse json
+	Json::Value root;
+	Json::Reader reader;
+	reader.parse(string((char*)fileData.data(),fileData.size()),root,false);
+	//Load all the particle files listed
+	for (auto file : root) {
+		string fileName = file.asString();
+		cout << "Loading: " << fileName << "\n";
+		loadedParticleData[fileName] = ParticleData::LoadParticleData(fileName);
+	}
+	cout << "Done particles\n";
+}
+
+ParticleData ParticleCloud::GetParticleData(string systemFileName) {
+	_ASSERTE(loadedParticleData.find(systemFileName) != loadedParticleData.end());
+	return loadedParticleData[systemFileName];
+}
 
 //Updates the contents of the particle cloud automatically
 void ParticleCloud::UpdateCloud() {

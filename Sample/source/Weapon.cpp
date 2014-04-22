@@ -17,8 +17,9 @@ void Weapon::Fire() {
 	//Mark the gun as fired
 	lastWeaponFire = Game()->Now();
 	//Run the weapon fired event
-	Game()->Actors.ActorFiredWeapon.Fire([this](function<void(Actor*,Weapon*)> observer) {
-		observer(weaponOwner,this);
+	//NOTE: Weapon hit position is BROKEN right now
+	Game()->Actors.ActorFiredWeapon.Fire([this](function<void(Actor*,Weapon*,vec3)> observer) {
+		observer(weaponOwner,this,vec3());
 	});
 }
 

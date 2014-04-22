@@ -115,4 +115,6 @@ void Universal::Concuss(vec3 at, float radius, float damage, PhysicsActor * dama
 		if (Utilities::random(0.0f,1.0f) >= (1-chanceVoxelInstantlyDisintegrates)) 
 			vox->DeathAt = 1.0;
 	}
+	//Do aoe damage to actors
+	Game()->Actors.DoAOEDamage(at,radius,damage,damagingActor);
 }

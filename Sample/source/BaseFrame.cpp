@@ -155,6 +155,9 @@ void BaseFrame::Build()
     cout << "Loading models\n";
     models = new ModelGroup("meshes/manifest.json", Textures);
     
+	//Attempt to load particles
+	Particles.LoadParticles();
+
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
 	audio->PlayerInit(Actors.Player());

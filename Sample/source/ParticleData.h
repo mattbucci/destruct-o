@@ -117,7 +117,7 @@ class ParticleData {
 	};
 public:
 	//Now supports loading from a file
-	static ParticleData * LoadParticleData(string filename);
+	static ParticleData LoadParticleData(string filename);
 
 	//These properties use the emitter's life factor as the time
 	//That is, the input is normalized from 0 to 1, starting at 0

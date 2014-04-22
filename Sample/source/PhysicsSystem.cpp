@@ -25,8 +25,6 @@ PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	voxelSystem = system;
 	section.autoredeuce(false);
 
-	//For now stick this particle stuff here
-	physicsVoxelErase = ParticleData::LoadParticleData("particles/physicsDisintegrate.vpart");
 }
 PhysicsSystem::~PhysicsSystem() {
 	//cleanup all the voxels
@@ -375,11 +373,12 @@ void PhysicsSystem::Update() {
 		PhysicsVoxel * voxel = *it;
 		voxel->Acceleration = vec3();
 		if ((voxel->DeathAt > 0) && (voxel->DeathAt < Game()->Now())) {
+			ParticleData particlePuff = Game()->Particles.GetParticleData("particles/physicsDisintegrate.vpart");
 			//disintegrate voxel
 			//this is temporary. will be replaced by an event soon
-			physicsVoxelErase->Color.ClearValues();
-			physicsVoxelErase->Color.AddValue(0,materialColors[voxel->MaterialId]);
-			ParticleSystem * testSystem = ((BaseFrame*)CurrentSystem)->Particles.BuildParticleSystem(*physicsVoxelErase, .3);
+			particlePuff.Color.ClearValues();
+			particlePuff.Color.AddValue(0,materialColors[voxel->MaterialId]);
+			ParticleSystem * testSystem = ((BaseFrame*)CurrentSystem)->Particles.BuildParticleSystem(particlePuff, .3);
 			testSystem->Position = voxel->Position;
 			//Notify any other systems that the voxel is being destroyed
 			VoxelDisintegrating.Fire([voxel](function<void(PhysicsVoxel*)> subscriber) {

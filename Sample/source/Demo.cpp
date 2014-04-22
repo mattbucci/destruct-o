@@ -172,7 +172,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				const float initialDisplacement = 2.0f;
 				vec3 hit;
 				if (Universal::Trace(playerPos + vec3(0, 0, 2.5), playerFacing, &hit)) {
-
+					/*
 					ParticleData * rules;
 					rules = ParticleData::LoadParticleData("particles/explosion.vpart");
 					if (rules == NULL)
@@ -187,6 +187,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 					rules = ParticleData::LoadParticleData("particles/smoke.vpart");	
 					if (rules == NULL)
 						return;
+						
 					testSystem = game->Particles.BuildParticleSystem(*rules, .1);
 					testSystem->Position = hit - vec3(0, 0, 1);
                     
@@ -207,7 +208,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 						//and some energy (velocity)
 						ph->Velocity = vec3(Utilities::random(-initialEnergy, initialEnergy), Utilities::random(-initialEnergy, initialEnergy), Utilities::random(-initialEnergy, initialEnergy));
 					}
-                    
+                    */
 				}
 			}
 			else if (eve.Key == 't') {
@@ -249,12 +250,12 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				ParticleData * rules;
                 vec3 hit;
                 if (Universal::Trace(playerPos + vec3(0, 0, 2.5), playerFacing, &hit)) {
-                    rules = ParticleData::LoadParticleData("particles/fire.vpart");
+                    /*rules = ParticleData::LoadParticleData("particles/fire.vpart");
                     if (rules == NULL)
                         return;
 
                     ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules, 5);
-                    testSystem->Position = hit;
+                    testSystem->Position = hit;*/
                 }
 
 			}
@@ -266,12 +267,12 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
                 ParticleData * rules;
                 vec3 hit;
                 if (Universal::Trace(playerPos + vec3(0, 0, 2.5), playerFacing, &hit)) {
-                    rules = ParticleData::LoadParticleData("particles/exampleAnimated.vpart");
+                   /* rules = ParticleData::LoadParticleData("particles/exampleAnimated.vpart");
                     if (rules == NULL)
                         return;
 
                     ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules, 10);
-                    testSystem->Position = hit;
+                    testSystem->Position = hit;*/
                 }
 
             }
@@ -281,7 +282,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 				//Yes you leak a particle data every time you do this
 				//should be fixed
 				ParticleData * rules;
-
+				/*
 				rules = ParticleData::LoadParticleData("particles/explosion.vpart");
 				if (rules == NULL)
 					return;
@@ -305,8 +306,10 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
                 CraterCalled.Fire([testSystem](function<void(vec3)> subscriber) {
                     subscriber(testSystem->Position);
                 });
+				*/
 			}
 			else if (eve.Key == '7') {
+				/*
 				vec3 cubePos = playerPos+playerFacing*5.0f;
 
 				//Yes you leak a particle data every time you do this
@@ -319,6 +322,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 
 				ParticleSystem * testSystem = game->Particles.BuildParticleSystem(*rules,.1);
 				testSystem->Position = cubePos;
+				*/
 			}
 			else if (eve.Key == 'r') {
 				game->Load("reset_save.json.compressed");

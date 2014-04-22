@@ -49,8 +49,6 @@ class PhysicsSystem : public Savable {
 	//A tie to the voxel system used to lookup the terrain height at various points
 	VoxelSystem * voxelSystem;
 
-	//Temporary particle data
-	ParticleData * physicsVoxelErase;
 public:
 	PhysicsSystem(VoxelSystem * system);
 	~PhysicsSystem();
