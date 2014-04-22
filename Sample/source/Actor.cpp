@@ -29,7 +29,12 @@ bool Actor::Update() {
 //model will still be NULL
 void Actor::setModel(const string & modelName) {
 	this->modelName = modelName;
+    //Delete the old model
+    delete model;
 	model = Game()->Models()->NewInstance(modelName);
+    //Clear the current animation
+    lastPlayedAnimation = "";
+    lastAnimationEndTime = Game()->Now();
 }
 
 //Play an animation
@@ -61,7 +66,7 @@ void Actor::setAnimation(const string & animationName) {
 //true if the animation is running
 //false if the animation has looped
 bool Actor::animationRunning() {
-	return Game()->Now() >= lastAnimationEndTime;
+	return Game()->Now() < lastAnimationEndTime;
 }
 
 //Draw this actor

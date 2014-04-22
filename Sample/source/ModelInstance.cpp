@@ -23,13 +23,13 @@
  * @param _model Model to provide an instance of
  */
 ModelInstance::ModelInstance(Model *_model)
-    : model(_model), skeleton(new Node(*(_model->Skeleton()))), transform(Transform()), controller(AnimationController()), animation(NULL), nodes(Node::flattreemap()), animationStartTime(0.0)
+    : model(_model), transform(Transform()), controller(AnimationController()), animation(NULL)
 {
-    // Create a flattened node tree of the local skeleton
-    skeleton->GetFlatNodeTree(nodes);
-    
     // Bind the animation controller
     controller.Bind(_model->Skeleton());
+    
+    // Bind the animator
+    animation.Bind(_model->Skeleton());
 }
 
 /**
@@ -37,10 +37,9 @@ ModelInstance::ModelInstance(Model *_model)
  * @param instance ModelInstance to duplicate (does not duplicate model)
  */
 ModelInstance::ModelInstance(const ModelInstance& instance)
-: model(instance.model), skeleton(new Node(*(instance.skeleton))), transform(instance.transform), controller(instance.controller), animation(instance.animation), nodes(Node::flattreemap()), animationStartTime(instance.animationStartTime)
+    : model(instance.model), transform(instance.transform), controller(instance.controller), animation(instance.animation)
 {
-    // Create a flattened node tree of the local skeleton
-    skeleton->GetFlatNodeTree(nodes);
+
 }
 
 /**
@@ -53,103 +52,11 @@ void ModelInstance::Update(double delta, double now)
     // Make sure our model is uploaded
     model->Update(delta, now);
     
-    // Update the skeleton of the model
-    if(animation)
-    {
-        // Calculate the current animation time
-        float animationTime = std::fmod(OS::Now() - animationStartTime, animation->Length());
-        
-        // Iterate through all the bones in the animation
-        for (Animation::const_iterator bone = animation->begin(); bone != animation->end(); bone++)
-        {
-            // Lookup the node for this bone
-            Node *node = nodes[bone->first];
-            const Node *iNode = model->FastNodeLookup(bone->first);
-            
-            if(!node || !iNode)
-            {
-                cout << "WTF: could not find bone -> " << bone->first << endl;
-                continue;
-            }
-            
-            // Iterate through the keyframes to select the bone
-            for(std::vector<Animation::Keyframe *>::const_iterator keyframe = bone->second.begin(); keyframe != bone->second.end(); keyframe++)
-            {
-                // Get the next iterator
-                std::vector<Animation::Keyframe *>::const_iterator nextKeyframe = keyframe + 1;
-                
-                // Is the animation time within the bounds of this frame
-                if(nextKeyframe != bone->second.end())
-                {
-                    if(animationTime < (*nextKeyframe)->keytime)
-                    {
-                        // Calculate position between the two keyframes
-                        const float t = (animationTime - (*keyframe)->keytime) / ((*nextKeyframe)->keytime - (*keyframe)->keytime);
-                        
-                        // Get the two translations to lerp between (they default to the initial pose)
-                        glm::vec3 tA = iNode->LocalTransform().Translation();
-                        glm::vec3 tB = tA;
-                        Animation::Keyframe::iterator itA = (*keyframe)->transforms.find(Animation::Keyframe::kTransformTypeTranslation);
-                        Animation::Keyframe::iterator itB = (*nextKeyframe)->transforms.find(Animation::Keyframe::kTransformTypeTranslation);
-                        if(itA != (*keyframe)->transforms.end())
-                        {
-                            tA = itA->second.Translation();
-                        }
-                        if(itB != (*nextKeyframe)->transforms.end())
-                        {
-                            tB = itB->second.Translation();
-                        }
-                        
-                        // Get the two scales to lerp between (they default to the initial pose)
-                        glm::vec3 sA = iNode->LocalTransform().Scale();
-                        glm::vec3 sB = sA;
-                        Animation::Keyframe::iterator isA = (*keyframe)->transforms.find(Animation::Keyframe::kTransformTypeScale);
-                        Animation::Keyframe::iterator isB = (*nextKeyframe)->transforms.find(Animation::Keyframe::kTransformTypeScale);
-                        if(isA != (*keyframe)->transforms.end())
-                        {
-                            sA = isA->second.Scale();
-                        }
-                        if(isB != (*nextKeyframe)->transforms.end())
-                        {
-                            sB = isB->second.Scale();
-                        }
-                        
-                        // Get the two rotations to slerp between (they default to the initial pose)
-                        glm::quat rA = iNode->LocalTransform().Rotation();
-                        glm::quat rB = rA;
-                        Animation::Keyframe::iterator irA = (*keyframe)->transforms.find(Animation::Keyframe::kTransformTypeRotation);
-                        Animation::Keyframe::iterator irB = (*nextKeyframe)->transforms.find(Animation::Keyframe::kTransformTypeRotation);
-                        if(irA != (*keyframe)->transforms.end())
-                        {
-                            rA = irA->second.Rotation();
-                        }
-                        if(irB != (*nextKeyframe)->transforms.end())
-                        {
-                            rB = irB->second.Rotation();
-                        }
-                        
-                        // Set the skeleton node properly
-                        node->LocalTransform().Translation() = glm::mix(tA, tB, t);
-                        node->LocalTransform().Scale() = glm::mix(sA, sB, t);
-                        node->LocalTransform().Rotation() = glm::slerp(rA, rB, t);
-                        break;
-                    }
-                }
-                
-                /*else
-                {
-                    node->LocalTransform() = (*keyframe)->transform;
-                    break;
-                }*/
-            }
-        }
-        
-        // Recalculate the nodes
-        skeleton->Recalculate();
-    }
-    
     // Update the animation controller
     controller.Update(delta, now);
+    
+    // Update the animation test
+    animation.Update(delta, now);
 }
 
 /**
@@ -164,37 +71,11 @@ void ModelInstance::Draw(MaterialProgram *program)
     program->Model.Apply();
     
     // Draw the model
-    model->Draw(program, *skeleton);
     //model->Draw(program, *(controller.Skeleton()));
+    model->Draw(program, *(animation.Skeleton()));
     
     // Remove the translation
     program->Model.PopMatrix();
-}
-
-/**
- * Play an animation in this model by name
- * @param name the name of the animation to play
- * @return false if the animation did not exist, true if the animation is now playing
- */
-bool ModelInstance::PlayAnimation(const std::string name)
-{
-    // Get an iterator to the animation we want to play
-    Model::animation_const_iterator anim = model->Animations().find(name);
-    
-    // If the iterator is invalid, this failed, so escape
-    if(anim == model->Animations().end())
-    {
-        return false;
-    }
-    
-    // Store the animation object
-    animation = anim->second;
-    
-    // Store the starting time of the animation
-    animationStartTime = OS::Now();
-    
-    // Return success
-    return true;
 }
 
 /**
@@ -215,21 +96,14 @@ const Model* ModelInstance::GetModel() const
     return model.get();
 }
 
-Node* ModelInstance::Skeleton()
-{
-    return skeleton;
-}
-
-const Node* ModelInstance::Skeleton() const
-{
-    return skeleton;
-}
-
+/**
+ * Get a reference to the animation controller of this model instance
+ * @return Reference to the animation controller of this model instance
+ */
 AnimationController& ModelInstance::Controller()
 {
     return controller;
 }
-
 
 /**
  * Static method to construct a model instance from a manifest file
@@ -274,9 +148,38 @@ ModelInstance* ModelInstance::LoadManifestEntry(const Json::Value& model, Textur
     {
         // Forcibly load the controller
         instance->controller = AnimationController(controller);
-        instance->controller.Bind(instance->skeleton);
+        instance->controller.Bind(instance->model->Skeleton());
     }
     
     // Return the created instance
     return instance;
+}
+
+
+
+// TEST TEST TEST
+bool ModelInstance::PlayAnimation(const std::string name)
+{
+    // Get an iterator to the animation we want to play
+    Model::animation_const_iterator anim = model->Animations().find(name);
+    
+    // If the iterator is invalid, this failed, so escape
+    if(anim == model->Animations().end())
+    {
+        return false;
+    }
+    
+    // Play this animation
+    animation.SetAnimation(anim->second);
+    
+    // Play the animation
+    animation.Play(true, OS::Now());
+    
+    // Return success
+    return true;
+}
+
+const Node* ModelInstance::Skeleton() const
+{
+    return animation.Skeleton();
 }

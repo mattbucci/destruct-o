@@ -17,24 +17,62 @@
 #ifndef __ANIMATION_LAYER_H__
 #define __ANIMATION_LAYER_H__
 
-#include "AnimationController.h"
+#include "stdafx.h"
+#include "AnimationSource.h"
 #include "AnimationState.h"
 
-// AnimationLayer is a finite state machine dedicated to controlling the
-// animation of a model's skeleton.  It holds a collection of
-// AnimationState objects which do the actual work of animating.
+// Forward declaration of the animation controller object
+class AnimationController;
+
+/** 
+ * AnimationLayer is a finite state machine dedicated to controlling the animation 
+ * of a model's skeleton.  It holds a collection of AnimationState objects which 
+ * do the actual work of animating.
+ */
 class AnimationLayer : public AnimationSource
 {
+public:
+    /**
+     * Comparison operator to sort layers for priority
+     */
+    struct PriorityComparator
+    {
+        bool operator()(AnimationLayer *a, AnimationLayer *b)
+        {
+            return (a->Priority() > b->Priority());
+        }
+    };
+    
+    /** State storage types */
+    typedef std::map<std::string, AnimationState *> state_store;
+    
+protected:
     /**
      * AnimationLayer depends on components provides by the animation controller
      * and requires a reference to it
      */
     AnimationController& controller;
     
-    /**
-     * The name of the animation layer
-     */
+    /** The name of the animation layer */
     std::string name;
+    
+    /** The priority of this layer */
+    int priority;
+    
+    /** The states that exist in this layer */
+    state_store states;
+    
+    /** The current active state */
+    AnimationState *activeState;
+    
+    /** The state being transitioned from */
+    AnimationState *transitionState;
+    
+    /** The time at which the transition began */
+    double          transitionStartTime;
+    
+    /** The length of the transition */
+    double          transitionLength;
     
 public:
     /**
@@ -47,8 +85,9 @@ public:
     /**
      * Copy constructor.  Duplicates the animation layer
      * @param layer The animation layer to duplicate
+     * @param _controller The animation controller to bind this layer to
      */
-    AnimationLayer(AnimationLayer& layer, AnimationController& _controller);
+    AnimationLayer(const AnimationLayer& layer, AnimationController& _controller);
     
     /**
      * Deserialization constructor.  Builds an animation layer bound to an animation
@@ -59,6 +98,17 @@ public:
     AnimationLayer(const Json::Value& value, AnimationController& _controller);
     
     /**
+     * Standard deconstructor.  Releases heap memory
+     */
+    ~AnimationLayer();
+    
+    /**
+     * Binds the animation layer to a skeleton
+     * @param root the root node of the transform tree to bind to
+     */
+    void Bind(const Node* root) override;
+    
+    /**
      * Update the state of the model layer
      * @param delta time since last frame in seconds
      * @param now the current time
@@ -66,10 +116,22 @@ public:
     void Update(double delta, double now);
     
     /**
+     * Cause the animation controller to transition to a state
+     * @param state the state to transition to
+     */
+    void Transition(const std::string& state);
+    
+    /**
      * Get the name of this animation layer
      * @return Const reference to the name of the layer
      */
     const std::string& Id() const;
+    
+    /**
+     * Get the priority of this animation layer
+     * @return Const reference to the name of the layer
+     */
+    const int& Priority() const;
     
     /**
      * Accessor for the animation controller of this layer 

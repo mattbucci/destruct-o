@@ -22,11 +22,6 @@ class Actor : public Savable {
 	//The last animation being played
 	string lastPlayedAnimation;
 
-	//Direct access to the model is unavailable
-	//this is temporary
-	//when the animation system is replaced
-	//we can reallow direct access
-	ModelInstance * model;
 	//This is a hack while modelinstance is private
 	friend class PhysicsActor;
 protected:
@@ -61,6 +56,9 @@ protected:
 
 	//Just a shortcut to the actors
 	ActorSystem & Actors();
+
+    //Direct access to the model is available if necessary
+    ModelInstance * model;
 public:
 	//Automatically registers this actor
 	Actor();

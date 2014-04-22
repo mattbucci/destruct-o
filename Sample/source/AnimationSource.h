@@ -82,10 +82,10 @@ public:
     Node* Skeleton();
     
     /**
-     * Get a pointer to a named bone of the local skeleton
-     * @return pointer to the named bone of the local skeleton
+     * Get a reference to the local skeleton bone lookup map
+     * @return reference to the local skeleton bone lookup map
      */
-    Node* Bone(const std::string& bone);
+    Node::flattreemap& Bones();
     
     /**
      * Get a const pointer to the local skeleton
@@ -94,10 +94,10 @@ public:
     const Node* Skeleton() const;
     
     /**
-     * Get a const pointer to a named bone of the local skeleton
-     * @return const pointer to the named bone of the local skeleton
+     * Get a const reference to the local skeleton bone lookup map
+     * @return const reference to the local skeleton bone lookup map
      */
-    const Node* Bone(const std::string& bone) const;
+    const Node::flattreemap& Bones() const;
     
     /**
      * Get a const pointer to the initial skeleton
@@ -106,10 +106,10 @@ public:
     const Node* InitialSkeleton() const;
     
     /**
-     * Get a const pointer to a named bone of the initial skeleton
-     * @return const pointer to the named bone of the initial skeleton
+     * Get a const reference to the initial skeleton bone lookup map
+     * @return const reference to the initial skeleton bone lookup map
      */
-    const Node* InitialBone(const std::string& bone) const;
+    const Node::const_flattreemap& InitialBones() const;
 };
 
 #endif

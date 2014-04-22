@@ -34,8 +34,24 @@ void WeaponStarter::Fire() {
 	Weapon::Fire();
 }
 //Weapon firing animation
-string WeaponStarter::FiringAnimation() {
-	return "fire";
+string WeaponStarter::LookupAnimation(Weapon::HandAnimations animation) {
+    static const string animations[10] = {
+        //ANIMATION_MODELNAME,
+        "player_weapon",
+        //ANIMATION_AIM,
+        "Idle",
+        //ANIMATION_FIRE,
+        "Fire1shot",
+        //ANIMATION_RELOAD,
+        "Reload",
+        //ANIMATION_RUN,
+        "Run",
+        //ANIMATION_JUMP,
+        "Idle",
+        //ANIMATION_GRENADE,
+        "Granade"
+    };
+    return animations[animation];
 }
 
 //Update the state of the weapon

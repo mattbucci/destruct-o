@@ -13,11 +13,13 @@ static const float groundThreshold = .05f;
 static const float movementSpeed = 6.0f;
 static const float gravity = -9.8f;
 static const float jumpVelocity = 20.0f;
+//Other player specific constants
+static const float energyPerSecond = 5.0f;
 
 // Construct an actor player.  Weapon camera is setup for optimal weapon size
 ActorPlayer::ActorPlayer()
     : PhysicsActor(vec3(2,2,6),500, GameFactions::FACTION_PLAYER),
-	weapon(NULL), weaponCamera(GameCamera(40.0f)),
+    weaponCamera(GameCamera(40.0f)),
 	testWeapon(this,energyPool) {
 	//Start the player off in abouts the center
 	Position = (vec3(34,40,0));
@@ -27,23 +29,34 @@ ActorPlayer::ActorPlayer()
     weaponCamera.SetCameraView(vec3(0,0,0), glm::vec3(0,-1,0));
 	//Start the user with full charge
 	energyPool = 100;
+
+    weaponFired = false;
 	
 }
 ActorPlayer::~ActorPlayer()
 {
-    // Make sure we delete the weapon model instance
-    delete weapon;
+}
+
+float ActorPlayer::GetCharge() {
+    return energyPool;
 }
 
 // Create anything related to the actor
-void ActorPlayer::Build()
-{
-    // Construct the weapon model instance
-    weapon = Game()->Models()->NewInstance("player_weapon");
-    weapon->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, 0.0));
-    weapon->GetTransform().Translation() = glm::vec3(0, -0.3, -1.95);
-    weapon->PlayAnimation("Idle");
+void ActorPlayer::Build() {
+    setWeapon(&testWeapon);
 }
+
+void ActorPlayer::setWeapon(Weapon * weapon) {
+    // Construct the weapon model instance
+    setModel(weapon->LookupAnimation(Weapon::ANIMATION_MODELNAME));
+    model->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, 0.0));
+    model->GetTransform().Translation() = glm::vec3(0, -0.3, -1.95);
+    setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
+
+    //Save weapon
+    this->currentWeapon = weapon;
+}
+
 
 //Update the position based off the most recent movement and direction vectors
 bool ActorPlayer::Update() {
@@ -55,6 +68,32 @@ bool ActorPlayer::Update() {
 	//isn't that handy
 	Velocity.x = playerMotion.x;
 	Velocity.y = playerMotion.y;
+
+
+    //Handle appropriate animation here
+    if (weaponFired && animationRunning()) {
+        setAnimation(currentWeapon->LookupAnimation(Weapon::ANIMATION_FIRE));
+    }
+    else {
+        double now = Game()->Now();
+        //All done shooting
+        weaponFired = false;
+        if (OnGround()) {
+            //Play the appropriate move animation
+            if (glm::length(playerMotion) > 0)
+                //Play walking
+                setAnimation(currentWeapon->LookupAnimation(Weapon::ANIMATION_RUN));
+            else
+                //Stand around
+                setAnimation(currentWeapon->LookupAnimation(Weapon::ANIMATION_AIM));
+        }
+        else {
+            //Jump
+            setAnimation(currentWeapon->LookupAnimation(Weapon::ANIMATION_JUMP));
+        }
+    }
+
+
 
 	facingDirection = atan2(moveVector.y,moveVector.x);
 	
@@ -116,16 +155,32 @@ bool ActorPlayer::Update() {
 	//Fire always
 	
 	testWeapon.Update(Game()->FirstPerson->GetLookVector(),weaponPos);
-	if (weaponPos != vec3())
-		testWeapon.HoldingTrigger(Game()->FirstPerson->GetTriggerPulled());
+    if (weaponPos != vec3()) {
+        if (testWeapon.HoldingTrigger(Game()->FirstPerson->GetTriggerPulled())) {
+            setAnimation(currentWeapon->LookupAnimation(Weapon::ANIMATION_FIRE));
+            weaponFired = true;
+        }
+           
+    }
+		
+
+
+    //Add energy to the energy pool
+    energyPool += energyPerSecond * (float)SIMULATION_DELTA;
+    if (energyPool > 100.0f)
+        energyPool = 100.0f;
 
 	return PhysicsActor::Update();
+}
+
+void ActorPlayer::Draw(MaterialProgram * materialShader) {
+
 }
 
 // Draw the weapon of the actor player
 void ActorPlayer::DrawWeapon(MaterialProgram *materialShader)
 {
-    if(weapon != NULL)
+    if (model != NULL)
     {
 		//testWeapon.Update(Game()->FirstPerson->GetLookVector(),Position);
 
@@ -133,12 +188,12 @@ void ActorPlayer::DrawWeapon(MaterialProgram *materialShader)
         weaponCamera.Apply(materialShader);
         
         // Draw the model
-        weapon->Update(SIMULATION_DELTA,Game()->Now());
-		weapon->Draw(materialShader);
+        model->Update(SIMULATION_DELTA, Game()->Now());
+        model->Draw(materialShader);
 
 		//Find bone
-		Node * n = weapon->Skeleton()->FindNode("b_muzzle");
-		mat4 globalTransform = weapon->GetTransform().TransformMatrix() * n->TransformMatrix();
+        const Node * n = model->Skeleton()->FindNode("b_muzzle");
+        mat4 globalTransform = model->GetTransform().TransformMatrix() * n->TransformMatrix();
 
 		vec3 fVector(.15,0,0);
 		//Calculate the position along the muzzle

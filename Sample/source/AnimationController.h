@@ -21,11 +21,9 @@
 #include "Transform.h"
 #include "Node.h"
 #include "AnimationSource.h"
+#include "AnimationLayer.h"
 
 #include <json/json.h>
-
-// Forward declaration of necessary components
-class AnimationLayer;
 
 // AnimationController handles the animation control subsystem.
 class AnimationController : public AnimationSource
@@ -74,8 +72,10 @@ public:
     
     // Layer storage types
     typedef std::map<std::string, AnimationLayer *> layer_store;
+    typedef std::vector<AnimationLayer *>           layer_vector;
     typedef layer_store::iterator                   layer_iterator;
     typedef layer_store::const_iterator             layer_const_iterator;
+    typedef std::priority_queue<AnimationLayer *, layer_vector, AnimationLayer::PriorityComparator> layer_queue;
     
 private:
     /**
@@ -88,7 +88,17 @@ private:
      */
     layer_store layers;
     
+    /**
+     * A sorted list of layers by priority
+     */
+    layer_queue layerQueue;
+    
 public:
+    /**
+     * Do nothing constructor - just to handle meshes which don't have controllers
+     */
+    AnimationController();
+    
     /**
      * Create an animation controller as a copy of another animation controller
      * @param value Json value to deserialize this animation controller from
@@ -105,10 +115,21 @@ public:
     AnimationController(const Json::Value& value);
     
     /**
+     * Destroy an animation controller and any heap allocated memory associated
+     */
+    virtual ~AnimationController();
+    
+    /**
      * Assignment operator.  Animation controller assumes the state of the other
      * @param controller Controller to set this controller to
      */
     AnimationController& operator= (const AnimationController& controller);
+    
+    /**
+     * Binds the animation controller to a skeleton
+     * @param root the root node of the transform tree to bind to
+     */
+    void Bind(const Node* root) override;
     
     /**
      * Update the animation controller.  Performs animation calculations and updates the skeleton
@@ -116,16 +137,6 @@ public:
      * @param now the current time
      */
     void Update(double delta, double now) override;
-    
-    /**
-     * Do nothing constructor - just to handle meshes which don't have controllers
-     */
-    AnimationController();
-    
-    /**
-     * Destroy an animation controller and any heap allocated memory associated
-     */
-    virtual ~AnimationController();
 };
 
 #endif

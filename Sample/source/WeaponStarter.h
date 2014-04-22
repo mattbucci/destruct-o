@@ -25,7 +25,7 @@ public:
 	WeaponStarter(Actor * weaponOwner, float & chargePool);
 
 	//Weapon firing animation
-	virtual string FiringAnimation() override;
+    virtual string LookupAnimation(HandAnimations animation) override;
 
 	//Update the state of the weapon
 	virtual void Update(vec3 firingVector, vec3 firingPosition) override;

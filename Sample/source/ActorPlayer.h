@@ -8,16 +8,25 @@
 
 class ActorPlayer : public PhysicsActor
 {	
+    //Change the current weapon to this weapon
+    //Right now happens instantly
+    void setWeapon(Weapon * weapon);
+
 	//delta since last walk fired
 	double deltaPosition;
     
     // Weapon
-    ModelInstance *weapon;
     GameCamera     weaponCamera;
 	WeaponStarter testWeapon;
+    Weapon * currentWeapon;
+    //If the player fired the gun
+    bool weaponFired;
+
 
 	//Energy pool
 	float energyPool;
+    
+    
 
 	//Weapon position
 	//position of the weapon bone
@@ -29,6 +38,8 @@ class ActorPlayer : public PhysicsActor
 public:
 	ActorPlayer();
 	~ActorPlayer();
+
+    float GetCharge();
 
 	//The player is the only actor which consumes input events
 	//void ReadInput(const vector<InputEvent> & events);
@@ -43,6 +54,12 @@ public:
     
     // Draw the weapon
     void DrawWeapon(MaterialProgram * materialShader);
+
+    //Override the normal draw
+    //and do nothing
+    //this prevents the Actor from trying to draw the model
+    //in a way that it shouldn't
+    void Draw(MaterialProgram * materialShader) override;
 
 	//Draw the effects of said weapon
 	void Draw(GLEffectProgram * shader);
