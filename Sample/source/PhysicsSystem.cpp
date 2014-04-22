@@ -373,7 +373,7 @@ void PhysicsSystem::Update() {
 		PhysicsVoxel * voxel = *it;
 		voxel->Acceleration = vec3();
 		if ((voxel->DeathAt > 0) && (voxel->DeathAt < Game()->Now())) {
-			ParticleData particlePuff = Game()->Particles.GetParticleData("particles/physicsDisintegrate.vpart");
+			ParticleData particlePuff = Game()->Particles.GetParticleData("physicsDisintegrate.vpart");
 			//disintegrate voxel
 			//this is temporary. will be replaced by an event soon
 			particlePuff.Color.ClearValues();
