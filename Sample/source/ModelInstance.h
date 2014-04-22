@@ -21,25 +21,27 @@
 #include "Model.h"
 #include "AnimationController.h"
 
+#include <memory>
+
 class ModelInstance
 {
     /** Model we are providing an instance of */
-    Model     *model;
+    std::shared_ptr<Model>    model;
     
     /** A clone of the skeleton of the model */
-    Node      *skeleton;
+    Node                     *skeleton;
     
     /** The transform to render the model at */
-    Transform  transform;
+    Transform                 transform;
     
     /** The animation controller of this instance */
-    AnimationController controller;
+    AnimationController       controller;
     
     /** The currently playing animation */
-    const Animation *animation;
+    const Animation          *animation;
 
 	// flattened node list of the model
-	std::map<std::string, Node *> nodes;
+    Node::flattreemap         nodes;
     
     /** The time at which the animation was started */
     float animationStartTime;
@@ -49,6 +51,12 @@ public:
      * @param _model Model to provide an instance of
      */
     ModelInstance(Model *_model);
+    
+    /** 
+     * Copy constructor
+     * @param instance ModelInstance to duplicate (does not duplicate model)
+     */
+    ModelInstance(const ModelInstance& instance);
     
     /**
      * Update the state of this model instance
@@ -69,12 +77,6 @@ public:
      * @return false if the animation did not exist, true if the animation is now playing
      */
     bool PlayAnimation(const std::string name);
-    
-    /**
-     * Assign an animation controller to this model instance
-     * @param controller the animation controller to copy and bind to the model
-     */
-    void SetController(AnimationController& controller);
     
     /**
      * Get a reference to the transform of the model
@@ -102,6 +104,13 @@ public:
      * Get a reference to the animation controller of this model instance
      */
     AnimationController& Controller();
+    
+    /**
+     * Static method to construct a model instance from a manifest file
+     * @param value The Json serialized value to build this model instance from
+     * @return Pointer to a model instance encapsulating the entry
+     */
+    static ModelInstance* LoadManifestEntry(const Json::Value& model, TextureCache& textureCache);
 };
 
 #endif

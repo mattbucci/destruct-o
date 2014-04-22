@@ -50,7 +50,9 @@ Mesh::Mesh(const Json::Value& value)
     // If this mesh contains a vertices entry (there could be some empty cases, for instance, an empty mesh was created, then serialized)
     if(vertices != Json::Value::null && vertices.isArray())
     {
+        // Reserve the needed space for the vertices
 		data.reserve(vertices.size());
+        
         // Pull in all the vertices from the Json blob
         for(Json::Value::iterator vIt = vertices.begin(); vIt != vertices.end(); vIt++)
         {

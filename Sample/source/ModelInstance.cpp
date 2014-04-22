@@ -23,9 +23,21 @@
  * @param _model Model to provide an instance of
  */
 ModelInstance::ModelInstance(Model *_model)
-    : model(_model), skeleton(new Node(*(_model->Skeleton()))), transform(Transform()), animation(NULL), nodes(skeleton->AllNodes()), animationStartTime(0.0)
+    : model(_model), skeleton(new Node(*(_model->Skeleton()))), transform(Transform()), animation(NULL), nodes(Node::flattreemap()), animationStartTime(0.0)
 {
-    
+    // Create a flattened node tree of the local skeleton
+    skeleton->GetFlatNodeTree(nodes);
+}
+
+/**
+ * Copy constructor
+ * @param instance ModelInstance to duplicate (does not duplicate model)
+ */
+ModelInstance::ModelInstance(const ModelInstance& instance)
+: model(instance.model), skeleton(new Node(*(instance.skeleton))), transform(instance.transform), controller(instance.controller), animation(instance.animation), nodes(Node::flattreemap()), animationStartTime(instance.animationStartTime)
+{
+    // Create a flattened node tree of the local skeleton
+    skeleton->GetFlatNodeTree(nodes);
 }
 
 /**
@@ -132,6 +144,9 @@ void ModelInstance::Update(double delta, double now)
         // Recalculate the nodes
         skeleton->Recalculate();
     }
+    
+    // Update the animation controller
+    controller.Update(delta, now);
 }
 
 /**
@@ -182,14 +197,14 @@ bool ModelInstance::PlayAnimation(const std::string name)
  * Assign an animation controller to this model instance
  * @param controller the animation controller to copy and bind to the model
  */
-void ModelInstance::SetController(AnimationController& controller)
+/*void ModelInstance::SetController(AnimationController& controller)
 {
     // Store the new controller
-    this->controller = AnimationController(controller);
+    this->controller = controller;
     
     // Bind this controller to the new skeleton
     this->controller.Bind(skeleton);
-}
+}*/
 
 /**
  * Get a reference to the transform of the model
@@ -202,7 +217,7 @@ Transform& ModelInstance::GetTransform()
 
 const Model* ModelInstance::GetModel() const
 {
-    return model;
+    return model.get();
 }
 
 Node* ModelInstance::Skeleton()
@@ -220,3 +235,52 @@ AnimationController& ModelInstance::Controller()
     return controller;
 }
 
+
+/**
+ * Static method to construct a model instance from a manifest file
+ * @param value The Json serialized value to build this model instance from
+ * @return Pointer to a model instance encapsulating the entry
+ */
+ModelInstance* ModelInstance::LoadManifestEntry(const Json::Value& model, TextureCache& textureCache)
+{
+    // Get the model information
+    std::string name = (model)["name"].asString();
+    std::string path = (model)["path"].asString();
+    std::string directory = (model)["directory"].asString();
+    bool compressed = (model)["compressed"].asBool();
+    
+    // The offset transform
+    Transform transform;
+    
+    // Search for an offset transform
+    const Json::Value& offset = (model)["offset"];
+    
+    // If an offset was specified in the manifest
+    if(offset != Json::Value::null && offset.isObject())
+    {
+        transform = Transform(offset);
+    }
+    
+    // Load the model from json or compressed json
+    ModelInstance *instance = NULL;
+    if(compressed)
+    {
+        instance = new ModelInstance(Model::LoadFromCompressedJsonFile(directory, path, transform, textureCache));
+    } else
+    {
+        instance = new ModelInstance(Model::LoadFromJsonFile(directory, path, transform, textureCache));
+    }
+    
+    // Search for an animation controller
+    const Json::Value& controller = (model)["controller"];
+    
+    // If an animation controller was defined, load it
+    if(controller != Json::Value::null && controller.isObject())
+    {
+        // Forcibly load the controller
+        instance->controller = AnimationController(controller);
+    }
+    
+    // Return the created instance
+    return instance;
+}

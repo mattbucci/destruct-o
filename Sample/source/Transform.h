@@ -61,6 +61,9 @@ public:
     
     // Get a combined transformation matrix
     const glm::mat4& TransformMatrix() const;
+    
+    // Interpolate between two transforms
+    static Transform Interpolate(const Transform& a, const Transform&  b, const float t);
 };
 
 #endif

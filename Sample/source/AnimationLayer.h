@@ -25,7 +25,57 @@
 // AnimationState objects which do the actual work of animating.
 class AnimationLayer
 {
+    /**
+     * AnimationLayer depends on components provides by the animation controller
+     * and requires a reference to it
+     */
+    AnimationController& controller;
     
+    /**
+     * The name of the animation layer
+     */
+    std::string name;
+    
+public:
+    /**
+     * Empty constructor.  Builds an empty animation layer bound to an animation
+     * controller.
+     * @param _controller The animation controller to bind this layer to
+     */
+    AnimationLayer(AnimationController& _controller);
+    
+    /**
+     * Copy constructor.  Duplicates the animation layer
+     * @param layer The animation layer to duplicate
+     */
+    AnimationLayer(AnimationLayer& layer, AnimationController& _controller);
+    
+    /**
+     * Deserialization constructor.  Builds an animation layer bound to an animation
+     * controller from a serialized Json blob
+     * @param value The Json object to deserialize from
+     * @param _controller The animation controller to bind this layer to
+     */
+    AnimationLayer(const Json::Value& value, AnimationController& _controller);
+    
+    /**
+     * Update the state of the model layer
+     * @param delta time since last frame in seconds
+     * @param now the current time
+     */
+    void Update(double delta, double now);
+    
+    /**
+     * Get the name of this animation layer
+     * @return Const reference to the name of the layer
+     */
+    const std::string& Id() const;
+    
+    /**
+     * Accessor for the animation controller of this layer 
+     * @return Reference to the animation controller of the layer
+     */
+    const AnimationController& Controller() const;
 };
 
 #endif

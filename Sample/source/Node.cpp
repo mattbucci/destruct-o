@@ -210,19 +210,30 @@ const std::vector<Node *>& Node::Children() const
     return children;
 }
 
-
-//Add all nodes (including the current one) to the given map
-void Node::addAllNodes(std::map<std::string,Node *> & addTo) {
-	addTo[id] = this;
-	for (auto child : children)
-		child->addAllNodes(addTo);
+// Construct a flattened map of all nodes (including this one) in the node tree
+void Node::GetFlatNodeTree(Node::flattreemap& table)
+{
+    // Add this node to the tree
+    table[id] = this;
+    
+    // Iterate through the children and add them to the table
+    for(std::vector<Node *>::iterator child = children.begin(); child != children.end(); child++)
+    {
+        // Flatten the child
+        (*child)->GetFlatNodeTree(table);
+    }
 }
 
-
- // Construct a flattened map of all nodes (including this one) in the node tree
-std::map<std::string,Node *> Node::AllNodes()
+// Construct a flattened map of all nodes (including this one) in the node tree (const pointers)
+void Node::GetFlatNodeTree(Node::const_flattreemap& table) const
 {
-	std::map<std::string,Node *> nodes;
-	addAllNodes(nodes);
-	return nodes;
+    // Add this node to the tree
+    table[id] = this;
+    
+    // Iterate through the children and add them to the table
+    for(std::vector<Node *>::const_iterator child = children.begin(); child != children.end(); child++)
+    {
+        // Flatten the child
+        (*child)->GetFlatNodeTree(table);
+    }
 }

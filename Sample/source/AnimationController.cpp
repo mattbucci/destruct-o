@@ -15,6 +15,7 @@
  */
 
 #include "stdafx.h"
+#include "AnimationLayer.h"
 #include "AnimationController.h"
 
 // Unique parameter type count
@@ -33,18 +34,30 @@ const static std::string ParameterTypeKeys[] =
  * @param skeleton Root node of the skeleton of the transform tree to animation
  */
 AnimationController::AnimationController(const AnimationController& controller)
-    : parameters(controller.parameters)
+    : AnimationSource(), parameters(controller.parameters), layers(AnimationController::layer_store())
 {
+    // Duplicate the skeletal model
+    if(controller.initialSkeleton && controller.skeleton)
+    {
+        initialSkeleton = controller.initialSkeleton;
+        skeleton = new Node(*(controller.skeleton));
+    }
     
+    // Duplicate the layers of the animation controller
+    for(layer_const_iterator it = controller.layers.begin(); it != controller.layers.end(); it++)
+    {
+        layers[it->first] = new AnimationLayer(*(it->second));
+    }
 }
 
 // Deserialize an animation controller
-AnimationController::AnimationController(const Json::Value& value, const Node *skeleton)
+AnimationController::AnimationController(const Json::Value& value)
+    : AnimationSource(), parameters(AnimationController::parameter_store()), layers(AnimationController::layer_store())
 {
     // We first need to validate that this a Json object
     if(!value.isObject())
     {
-        throw std::runtime_error("AnimationController::AnimationController(const Json::Value& value, const Node* skeleton) - value must be a object");
+        throw std::runtime_error("AnimationController::AnimationController(const Json::Value& value) - value must be a object");
     }
     
     // We need to get all the parameters associated with this animation controller
@@ -59,27 +72,87 @@ AnimationController::AnimationController(const Json::Value& value, const Node *s
         // Store this parameter
         parameters[param.name] = param;
     }
-}
-
-// Deserialize an animation controller
-AnimationController::AnimationController()
-{
     
+    // We need to get all the parameters associated with this animation controller
+    const Json::Value& serializedLayers = value["layers"];
+    
+    // Iterate through the parameters and store them
+    for(Json::Value::iterator layerIt = serializedLayers.begin(); layerIt != serializedLayers.end(); layerIt++)
+    {
+        // Deserialize a parameter
+        AnimationLayer *layer = new AnimationLayer(*layerIt, *this);
+        
+        // Store the layer
+        layers[layer->Id()] = layer;
+    }
 }
 
-// Destroy an animation controller (sadness)
-AnimationController::~AnimationController()
+/**
+ * Do nothing constructor - just to handle meshes which don't have controllers
+ */
+AnimationController::AnimationController()
+    : AnimationSource(), parameters(AnimationController::parameter_store()), layers(AnimationController::layer_store())
 {
     
 }
 
 /**
- * Bind a new skeleton to the animation controller
- * @param skeleton the root node of the skeleton to bind to the animation controller
+ * Destroy an animation controller and any heap allocated memory associated
  */
-void AnimationController::Bind(Node *root)
+AnimationController::~AnimationController()
 {
+    // Iterate through the animation layers and DELETE them (mwhahah)
+    for(layer_iterator it = layers.begin(); it != layers.end(); it++)
+    {
+        delete it->second;
+    }
     
+    // Call the parent deconstructor
+    AnimationSource::~AnimationSource();
+}
+
+/**
+ * Assignment operator.  Animation controller assumes the state of the other
+ * @param controller Controller to set this controller to
+ */
+AnimationController& AnimationController::operator= (const AnimationController& controller)
+{
+    // Copy the static resources
+    parameters = controller.parameters;
+    layers = layer_store();
+    
+    // Duplicate the skeletal model
+    if(controller.initialSkeleton && controller.skeleton)
+    {
+        initialSkeleton = controller.initialSkeleton;
+        skeleton = new Node(*(controller.skeleton));
+    }
+    
+    // Duplicate the layers of the animation controller
+    for(layer_const_iterator it = controller.layers.begin(); it != controller.layers.end(); it++)
+    {
+        AnimationLayer *layerCopy = new AnimationLayer(*(it->second), *this);
+        layers[it->first] = layerCopy;
+    }
+    
+    // Return a this pointer
+    return *this;
+}
+
+/**
+ * Update the animation controller.  Performs animation calculations and updates the skeleton
+ * @param delta time since last frame in seconds
+ * @param now the current time
+ */
+void AnimationController::Update(double delta, double now)
+{
+    // Update all the layers of animation
+    for(layer_iterator it = layers.begin(); it != layers.end(); it++)
+    {
+        it->second->Update(delta, now);
+    }
+    
+    // Blend the layers
 }
 
 // Generic constructor to initialize the parameter

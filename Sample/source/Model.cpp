@@ -18,6 +18,7 @@
 #include "Model.h"
 #include "OS.h"
 #include "lodepng.h"
+#include "Utilities.h"
 
 // Create an empty model for population manually
 Model::Model(TextureCache &_textureCache)
@@ -171,7 +172,9 @@ void Model::loadSkeleton(const Json::Value &root)
             skeleton->AddChild(child, false);
         }
 
-		this->nodes = skeleton->AllNodes();
+		// Flatten the skeleton into a singular node map
+        this->nodes = std::map<std::string, Node *>();
+        skeleton->GetFlatNodeTree(this->nodes);
     }
 }
 
@@ -514,7 +517,7 @@ Model::MeshPartRenderData::~MeshPartRenderData()
 
 
 // Load a model from a Json file
-Model* Model::LoadFromJsonFile(const std::string &directory, const std::string &name, TextureCache &_textureCache)
+Model* Model::LoadFromJsonFile(const std::string &directory, const std::string &name, const Transform& offset, TextureCache &_textureCache)
 {
     // Compute filename
     std::string filename = directory + "/" + name;
@@ -543,14 +546,19 @@ Model* Model::LoadFromJsonFile(const std::string &directory, const std::string &
         throw new std::runtime_error("Model* Model::LoadFromJsonFile() - Parsing failed for: " + filename);
     }
     
+    // Create the model object
+    Model *model = new Model(root, directory, _textureCache);
+    
+    // Adjust the root transform of the skeleton to coorespond with the offset
+    model->skeleton->LocalTransform() = offset;
+    model->skeleton->Recalculate();
+    
     // Return an allocated model
-    return new Model(root, directory, _textureCache);
+    return model;
 }
 
-#include "Utilities.h"
-
 // Load a model from a compressed Json file
-Model* Model::LoadFromCompressedJsonFile(const std::string &directory, const std::string &name, TextureCache &_textureCache)
+Model* Model::LoadFromCompressedJsonFile(const std::string &directory, const std::string &name, const Transform& offset, TextureCache &_textureCache)
 {
     // Compute filename
     std::string filename = directory + "/" + name;
@@ -592,6 +600,10 @@ Model* Model::LoadFromCompressedJsonFile(const std::string &directory, const std
     
     // Create the model object
     Model *model = new Model(root, directory, _textureCache);
+    
+    // Adjust the root transform of the skeleton to coorespond with the offset
+    model->skeleton->LocalTransform() = offset;
+    model->skeleton->Recalculate();
     
     // Release the zlib decompression buffer
     free(buffer);

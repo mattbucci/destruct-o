@@ -136,3 +136,17 @@ const glm::mat4& Transform::TransformMatrix() const
     return transformMatrix;
 }
 
+// Interpolate between two transforms
+Transform Transform::Interpolate(const Transform& a, const Transform&  b, const float t)
+{
+    // Final transform
+    Transform f;
+    
+    // Compute the interpolated transformation
+    f.Translation() = glm::mix(a.Translation(), b.Translation(), t);
+    f.Scale() = glm::mix(a.Scale(), b.Scale(), t);
+    f.Rotation() = glm::slerp(a.Rotation(), b.Rotation(), t);
+    
+    // Return the interpolated transform
+    return f;
+}
