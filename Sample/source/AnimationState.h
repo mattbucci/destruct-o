@@ -73,6 +73,13 @@ public:
     ~AnimationState();
     
     /**
+     * Binds the animation state to a skeleton (the state itself is not bound,
+     * but rather its children)
+     * @param root the root node of the transform tree to bind to
+     */
+    void Bind(const Node* root);
+    
+    /**
      * Update the state of the model layer
      * @param delta time since last frame in seconds
      * @param now the current time

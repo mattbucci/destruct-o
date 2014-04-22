@@ -62,6 +62,18 @@ protected:
     /** The states that exist in this layer */
     state_store states;
     
+    /** The current active state */
+    AnimationState *activeState;
+    
+    /** The state being transitioned from */
+    AnimationState *transitionState;
+    
+    /** The time at which the transition began */
+    double          transitionStartTime;
+    
+    /** The length of the transition */
+    double          transitionLength;
+    
 public:
     /**
      * Empty constructor.  Builds an empty animation layer bound to an animation
@@ -91,11 +103,23 @@ public:
     ~AnimationLayer();
     
     /**
+     * Binds the animation layer to a skeleton
+     * @param root the root node of the transform tree to bind to
+     */
+    void Bind(const Node* root) override;
+    
+    /**
      * Update the state of the model layer
      * @param delta time since last frame in seconds
      * @param now the current time
      */
     void Update(double delta, double now);
+    
+    /**
+     * Cause the animation controller to transition to a state
+     * @param state the state to transition to
+     */
+    void Transition(const std::string& state);
     
     /**
      * Get the name of this animation layer
