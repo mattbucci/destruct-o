@@ -33,7 +33,10 @@ class AnimationClip : public AnimationSource
     Animation *animation;
     
     /** The time at which the animation began playing */
-    double animationStartTime;
+    float animationStartTime;
+    
+    /** The time multiplier of the animation */
+    float speed;
     
     /** Flag indicating whether the animation is playing */
     bool playing;
@@ -61,9 +64,15 @@ public:
     
     /**
      * Setter method for the animation
-     * @param _animation the animation to play
+     * @param animation the animation to play
      */
-    void SetAnimation(Animation *_animation);
+    void SetAnimation(Animation *animation);
+    
+    /**
+     * Setter method for the animation playback speed
+     * @param playback speed of the animation (1.0 for normal)
+     */
+    void SetPlaybackSpeed(float speed);
     
     /**
      * Begin playing the animation

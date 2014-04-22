@@ -21,7 +21,7 @@
  * Standard constructor.  Initializes everything and stores the animation
  */
 AnimationClip::AnimationClip(Animation *_animation)
-    : AnimationSource(), animation(_animation), animationStartTime(0.0), playing(false), loop(false)
+    : AnimationSource(), animation(_animation), animationStartTime(0.0f), speed(1.0f), playing(false), loop(false)
 {
     
 }
@@ -31,7 +31,7 @@ AnimationClip::AnimationClip(Animation *_animation)
  * @param animationClip the animation clip to duplicate
  */
 AnimationClip::AnimationClip(const AnimationClip& animationClip)
-    : AnimationSource(animationClip), animation(animationClip.animation), animationStartTime(animationClip.animationStartTime), playing(animationClip.playing), loop(animationClip.loop)
+    : AnimationSource(animationClip), animation(animationClip.animation), animationStartTime(animationClip.animationStartTime), speed(animationClip.speed), playing(animationClip.playing), loop(animationClip.loop)
 {
     
 }
@@ -43,6 +43,15 @@ AnimationClip::AnimationClip(const AnimationClip& animationClip)
 void AnimationClip::SetAnimation(Animation *_animation)
 {
     animation = _animation;
+}
+
+/**
+ * Setter method for the animation playback speed
+ * @param playback speed of the animation (1.0 for normal)
+ */
+void AnimationClip::SetPlaybackSpeed(float _speed)
+{
+    speed = _speed;
 }
 
 /**
@@ -95,10 +104,30 @@ bool AnimationClip::IsLooping()
 void AnimationClip::Update(double delta, double now)
 {
     // Update the skeleton of the model
-    if(animation)
+    if(animation && playing)
     {
         // Calculate the current animation time
-        float animationTime = std::fmod(now - animationStartTime, animation->Length());
+        float animationTime = (now - animationStartTime) * speed;
+        
+        // Make sure its not negative
+        if(animationTime < 0)
+        {
+            animationStartTime = now;
+            animationTime = 0.0;
+        }
+        
+        // If the animation time is greater than the length of the animation and we are not looping
+        else if(animationTime >= animation->Length() && !loop)
+        {
+            playing = false;
+            return;
+        }
+        
+        // Otherwise just wrap the animation time
+        else
+        {
+            animationTime = std::fmod(animationTime, animation->Length());
+        }
         
         // Iterate through all the bones in the animation
         for (Animation::const_iterator bone = animation->begin(); bone != animation->end(); bone++)

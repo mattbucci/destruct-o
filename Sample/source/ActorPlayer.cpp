@@ -137,7 +137,7 @@ void ActorPlayer::DrawWeapon(MaterialProgram *materialShader)
 		weapon->Draw(materialShader);
 
 		//Find bone
-		Node * n = weapon->Skeleton()->FindNode("b_muzzle");
+		const Node * n = weapon->Skeleton()->FindNode("b_muzzle");
 		mat4 globalTransform = weapon->GetTransform().TransformMatrix() * n->TransformMatrix();
 
 		vec3 fVector(.15,0,0);
