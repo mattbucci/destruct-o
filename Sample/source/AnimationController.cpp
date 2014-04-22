@@ -100,8 +100,6 @@ AnimationController::~AnimationController()
         delete it->second;
     }
     
-    // Call the parent deconstructor
-    AnimationSource::~AnimationSource();
 }
 
 /**

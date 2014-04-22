@@ -125,7 +125,7 @@ public:
     /**
      * Destroy an animation controller and any heap allocated memory associated
      */
-    ~AnimationController();
+    virtual ~AnimationController();
 };
 
 #endif
