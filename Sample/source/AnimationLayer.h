@@ -47,6 +47,7 @@ public:
     /**
      * Copy constructor.  Duplicates the animation layer
      * @param layer The animation layer to duplicate
+     * @param _controller The animation controller to bind this layer to
      */
     AnimationLayer(AnimationLayer& layer, AnimationController& _controller);
     

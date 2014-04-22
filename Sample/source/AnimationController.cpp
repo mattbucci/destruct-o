@@ -99,7 +99,6 @@ AnimationController::~AnimationController()
     {
         delete it->second;
     }
-    
 }
 
 /**
@@ -124,6 +123,23 @@ AnimationController& AnimationController::operator= (const AnimationController& 
     
     // Return a this pointer
     return *this;
+}
+
+/**
+ * Binds the animation controller to a skeleton
+ * @param root the root node of the transform tree to bind to
+ */
+void AnimationController::Bind(const Node* root)
+{
+    // Call the bind function of the parent class
+    AnimationSource::Bind(root);
+    
+    // Iterate through the animation layers and rebind them
+    for(layer_iterator it = layers.begin(); it != layers.end(); it++)
+    {
+        // Rebind this layer
+        it->second->Bind(root);
+    }
 }
 
 /**

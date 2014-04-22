@@ -16,3 +16,171 @@
 
 #include "stdafx.h"
 #include "AnimationClip.h"
+
+/**
+ * Standard constructor.  Initializes everything and stores the animation
+ */
+AnimationClip::AnimationClip(Animation *_animation)
+    : AnimationSource(), animation(_animation), animationStartTime(0.0), playing(false), loop(false)
+{
+    
+}
+
+/**
+ * Copy constructor - duplicate another animation clip
+ * @param animationClip the animation clip to duplicate
+ */
+AnimationClip::AnimationClip(const AnimationClip& animationClip)
+    : AnimationSource(animationClip), animation(animationClip.animation), animationStartTime(animationClip.animationStartTime), playing(animationClip.playing), loop(animationClip.loop)
+{
+    
+}
+
+/**
+ * Setter method for the animation
+ * @param _animation the animation to play
+ */
+void AnimationClip::SetAnimation(Animation *_animation)
+{
+    animation = _animation;
+}
+
+/**
+ * Begin playing the animation
+ * @param _loop should the animation play on a loop versus one shot
+ * @param now the current simulated game time
+ */
+void AnimationClip::Play(bool _loop, double now)
+{
+    // Start playing
+    playing = true;
+    loop = _loop;
+    
+    // Store the starting time
+    animationStartTime = now;
+}
+
+/**
+ * Stop the animation
+ */
+void AnimationClip::Stop()
+{
+    // Stop playback
+    playing = false;
+}
+
+/**
+ * Accessor method for the playing flag
+ * @return true if the animation is playing
+ */
+bool AnimationClip::IsPlaying()
+{
+    return playing;
+}
+
+/**
+ * Accessor method for the loop flag
+ * @return true if the animation is playing on a loop
+ */
+bool AnimationClip::IsLooping()
+{
+    return loop;
+}
+
+/**
+ * Update the animation clip
+ * @param delta time since last frame in seconds
+ * @param now the current time
+ */
+void AnimationClip::Update(double delta, double now)
+{
+    // Update the skeleton of the model
+    if(animation)
+    {
+        // Calculate the current animation time
+        float animationTime = std::fmod(now - animationStartTime, animation->Length());
+        
+        // Iterate through all the bones in the animation
+        for (Animation::const_iterator bone = animation->begin(); bone != animation->end(); bone++)
+        {
+            // Lookup the node for this bone
+            Node *node = skeletonTable[bone->first];
+            const Node *iNode = initialSkeletonTable[bone->first];
+            
+            // Error if we could not find the bones (skip bone)
+            if(!node || !iNode)
+            {
+                cout << "WTF: could not find bone -> " << bone->first << endl;
+                continue;
+            }
+            
+            // Iterate through the keyframes to select the bone
+            for(std::vector<Animation::Keyframe *>::const_iterator keyframe = bone->second.begin(); keyframe != bone->second.end(); keyframe++)
+            {
+                // Get the next iterator
+                std::vector<Animation::Keyframe *>::const_iterator nextKeyframe = keyframe + 1;
+                
+                // Is the animation time within the bounds of this frame
+                if(nextKeyframe != bone->second.end())
+                {
+                    if(animationTime < (*nextKeyframe)->keytime)
+                    {
+                        // Calculate position between the two keyframes
+                        const float t = (animationTime - (*keyframe)->keytime) / ((*nextKeyframe)->keytime - (*keyframe)->keytime);
+                        
+                        // Get the two translations to lerp between (they default to the initial pose)
+                        glm::vec3 tA = iNode->LocalTransform().Translation();
+                        glm::vec3 tB = tA;
+                        Animation::Keyframe::iterator itA = (*keyframe)->transforms.find(Animation::Keyframe::kTransformTypeTranslation);
+                        Animation::Keyframe::iterator itB = (*nextKeyframe)->transforms.find(Animation::Keyframe::kTransformTypeTranslation);
+                        if(itA != (*keyframe)->transforms.end())
+                        {
+                            tA = itA->second.Translation();
+                        }
+                        if(itB != (*nextKeyframe)->transforms.end())
+                        {
+                            tB = itB->second.Translation();
+                        }
+                        
+                        // Get the two scales to lerp between (they default to the initial pose)
+                        glm::vec3 sA = iNode->LocalTransform().Scale();
+                        glm::vec3 sB = sA;
+                        Animation::Keyframe::iterator isA = (*keyframe)->transforms.find(Animation::Keyframe::kTransformTypeScale);
+                        Animation::Keyframe::iterator isB = (*nextKeyframe)->transforms.find(Animation::Keyframe::kTransformTypeScale);
+                        if(isA != (*keyframe)->transforms.end())
+                        {
+                            sA = isA->second.Scale();
+                        }
+                        if(isB != (*nextKeyframe)->transforms.end())
+                        {
+                            sB = isB->second.Scale();
+                        }
+                        
+                        // Get the two rotations to slerp between (they default to the initial pose)
+                        glm::quat rA = iNode->LocalTransform().Rotation();
+                        glm::quat rB = rA;
+                        Animation::Keyframe::iterator irA = (*keyframe)->transforms.find(Animation::Keyframe::kTransformTypeRotation);
+                        Animation::Keyframe::iterator irB = (*nextKeyframe)->transforms.find(Animation::Keyframe::kTransformTypeRotation);
+                        if(irA != (*keyframe)->transforms.end())
+                        {
+                            rA = irA->second.Rotation();
+                        }
+                        if(irB != (*nextKeyframe)->transforms.end())
+                        {
+                            rB = irB->second.Rotation();
+                        }
+                        
+                        // Set the skeleton node properly
+                        node->LocalTransform().Translation() = glm::mix(tA, tB, t);
+                        node->LocalTransform().Scale() = glm::mix(sA, sB, t);
+                        node->LocalTransform().Rotation() = glm::slerp(rA, rB, t);
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Recalculate the nodes
+        skeleton->Recalculate();
+    }
+}

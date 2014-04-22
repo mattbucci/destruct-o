@@ -90,6 +90,11 @@ private:
     
 public:
     /**
+     * Do nothing constructor - just to handle meshes which don't have controllers
+     */
+    AnimationController();
+    
+    /**
      * Create an animation controller as a copy of another animation controller
      * @param value Json value to deserialize this animation controller from
      * @param skeleton Root node of the skeleton of the transform tree to animation
@@ -105,10 +110,21 @@ public:
     AnimationController(const Json::Value& value);
     
     /**
+     * Destroy an animation controller and any heap allocated memory associated
+     */
+    virtual ~AnimationController();
+    
+    /**
      * Assignment operator.  Animation controller assumes the state of the other
      * @param controller Controller to set this controller to
      */
     AnimationController& operator= (const AnimationController& controller);
+    
+    /**
+     * Binds the animation controller to a skeleton
+     * @param root the root node of the transform tree to bind to
+     */
+    void Bind(const Node* root) override;
     
     /**
      * Update the animation controller.  Performs animation calculations and updates the skeleton
@@ -116,16 +132,6 @@ public:
      * @param now the current time
      */
     void Update(double delta, double now) override;
-    
-    /**
-     * Do nothing constructor - just to handle meshes which don't have controllers
-     */
-    AnimationController();
-    
-    /**
-     * Destroy an animation controller and any heap allocated memory associated
-     */
-    virtual ~AnimationController();
 };
 
 #endif

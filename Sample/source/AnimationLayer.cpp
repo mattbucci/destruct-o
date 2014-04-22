@@ -23,20 +23,24 @@
  * @param _controller The animation controller to bind this layer to
  */
 AnimationLayer::AnimationLayer(AnimationController& _controller)
-    : AnimationSource(), controller(_controller), name("null")
+    : AnimationSource() , controller(_controller), name("null")
 {
-    
+    // Bind this source to the initial skeleton of the animation controller
+    Bind(_controller.InitialSkeleton());
 }
 
 /**
  * Copy constructor.  Duplicates the animation layer
  * @param layer The animation layer to duplicate
+ * @param _controller The animation controller to bind this layer to
  */
 AnimationLayer::AnimationLayer(AnimationLayer& layer, AnimationController& _controller)
     : AnimationSource(), controller(_controller), name(layer.name)
 {
     // Duplicate other important stuff
     
+    // Bind this source to the initial skeleton of the animation controller
+    Bind(_controller.InitialSkeleton());
 }
 
 /**
@@ -56,6 +60,9 @@ AnimationLayer::AnimationLayer(const Json::Value& value, AnimationController& _c
     
     // Get the name of the parameter
     name = value["name"].asString();
+    
+    // Bind this source to the initial skeleton of the animation controller
+    Bind(_controller.InitialSkeleton());
 }
 
 /**
