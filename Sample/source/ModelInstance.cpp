@@ -23,10 +23,13 @@
  * @param _model Model to provide an instance of
  */
 ModelInstance::ModelInstance(Model *_model)
-    : model(_model), skeleton(new Node(*(_model->Skeleton()))), transform(Transform()), animation(NULL), nodes(Node::flattreemap()), animationStartTime(0.0)
+    : model(_model), skeleton(new Node(*(_model->Skeleton()))), transform(Transform()), controller(AnimationController()), animation(NULL), nodes(Node::flattreemap()), animationStartTime(0.0)
 {
     // Create a flattened node tree of the local skeleton
     skeleton->GetFlatNodeTree(nodes);
+    
+    // Bind the skeleton
+    //controller.Bind(skeleton);
 }
 
 /**
@@ -38,6 +41,7 @@ ModelInstance::ModelInstance(const ModelInstance& instance)
 {
     // Create a flattened node tree of the local skeleton
     skeleton->GetFlatNodeTree(nodes);
+    
 }
 
 /**
@@ -162,6 +166,7 @@ void ModelInstance::Draw(MaterialProgram *program)
     
     // Draw the model
     model->Draw(program, *skeleton);
+    //model->Draw(program, *(controller.Skeleton()));
     
     // Remove the translation
     program->Model.PopMatrix();
@@ -194,20 +199,7 @@ bool ModelInstance::PlayAnimation(const std::string name)
 }
 
 /**
- * Assign an animation controller to this model instance
- * @param controller the animation controller to copy and bind to the model
- */
-/*void ModelInstance::SetController(AnimationController& controller)
-{
-    // Store the new controller
-    this->controller = controller;
-    
-    // Bind this controller to the new skeleton
-    this->controller.Bind(skeleton);
-}*/
-
-/**
- * Get a reference to the transform of the model
+ * Get a reference to the transform of the instance
  * @return reference to transform
  */
 Transform& ModelInstance::GetTransform()
@@ -215,6 +207,10 @@ Transform& ModelInstance::GetTransform()
     return transform;
 }
 
+/**
+ * Get a const pointer to the model object of the instance
+ * @return const pointer to model
+ */
 const Model* ModelInstance::GetModel() const
 {
     return model.get();
@@ -279,6 +275,7 @@ ModelInstance* ModelInstance::LoadManifestEntry(const Json::Value& model, Textur
     {
         // Forcibly load the controller
         instance->controller = AnimationController(controller);
+        instance->controller.Bind(instance->skeleton);
     }
     
     // Return the created instance

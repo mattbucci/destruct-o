@@ -45,10 +45,22 @@ public:
      */
     AnimationSource();
     
+    /**
+     * Base copy constructor.  Copies the skeleton
+     * @param source AnimationSource to duplicate
+     */
+    AnimationSource(const AnimationSource& source);
+    
     /** 
      * Base destructor, cleans up the local skeleton storage
      */
     virtual ~AnimationSource();
+    
+    /**
+     * Base assignment operator.  Animation source assumes the state of the other
+     * @param controller Source to set this source to
+     */
+    AnimationSource& operator= (const AnimationSource& source);
     
     /**
      * Binds the animation source to a skeleton

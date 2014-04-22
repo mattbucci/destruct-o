@@ -28,7 +28,7 @@ Node::Node()
 // Construct a node as a copy of another node (will not be in the heirarchy)
 Node::Node(const Node& node, Node *_parent)
     : id(node.id), globalTransformMatrix(node.TransformMatrix()), transform(node.transform), children(0, NULL), parent(_parent)
-{
+{    
     // Iterate through the children of this node and add them as new nodes
     for(std::vector<Node *>::const_iterator it = node.Children().begin(); it != node.Children().end(); it++)
     {

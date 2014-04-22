@@ -23,7 +23,7 @@
  * @param _controller The animation controller to bind this layer to
  */
 AnimationLayer::AnimationLayer(AnimationController& _controller)
-    : controller(_controller), name("null")
+    : AnimationSource(), controller(_controller), name("null")
 {
     
 }
@@ -33,7 +33,7 @@ AnimationLayer::AnimationLayer(AnimationController& _controller)
  * @param layer The animation layer to duplicate
  */
 AnimationLayer::AnimationLayer(AnimationLayer& layer, AnimationController& _controller)
-    : controller(_controller), name(layer.name)
+    : AnimationSource(), controller(_controller), name(layer.name)
 {
     // Duplicate other important stuff
     
@@ -46,7 +46,7 @@ AnimationLayer::AnimationLayer(AnimationLayer& layer, AnimationController& _cont
  * @param _controller The animation controller to bind this layer to
  */
 AnimationLayer::AnimationLayer(const Json::Value& value, AnimationController& _controller)
-    : controller(_controller)
+    : AnimationSource(), controller(_controller)
 {
     // We first need to validate that this a Json object
     if(!value.isObject())

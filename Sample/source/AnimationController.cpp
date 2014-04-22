@@ -34,15 +34,8 @@ const static std::string ParameterTypeKeys[] =
  * @param skeleton Root node of the skeleton of the transform tree to animation
  */
 AnimationController::AnimationController(const AnimationController& controller)
-    : AnimationSource(), parameters(controller.parameters), layers(AnimationController::layer_store())
+    : AnimationSource(controller), parameters(controller.parameters), layers(AnimationController::layer_store())
 {
-    // Duplicate the skeletal model
-    if(controller.initialSkeleton && controller.skeleton)
-    {
-        initialSkeleton = controller.initialSkeleton;
-        skeleton = new Node(*(controller.skeleton));
-    }
-    
     // Duplicate the layers of the animation controller
     for(layer_const_iterator it = controller.layers.begin(); it != controller.layers.end(); it++)
     {
@@ -117,18 +110,14 @@ AnimationController::~AnimationController()
  */
 AnimationController& AnimationController::operator= (const AnimationController& controller)
 {
+    // Defer to the operator for assignment of the base class
+    AnimationSource::operator=(controller);
+    
     // Copy the static resources
     parameters = controller.parameters;
-    layers = layer_store();
-    
-    // Duplicate the skeletal model
-    if(controller.initialSkeleton && controller.skeleton)
-    {
-        initialSkeleton = controller.initialSkeleton;
-        skeleton = new Node(*(controller.skeleton));
-    }
     
     // Duplicate the layers of the animation controller
+    layers = layer_store();
     for(layer_const_iterator it = controller.layers.begin(); it != controller.layers.end(); it++)
     {
         AnimationLayer *layerCopy = new AnimationLayer(*(it->second), *this);

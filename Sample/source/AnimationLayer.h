@@ -23,7 +23,7 @@
 // AnimationLayer is a finite state machine dedicated to controlling the
 // animation of a model's skeleton.  It holds a collection of
 // AnimationState objects which do the actual work of animating.
-class AnimationLayer
+class AnimationLayer : public AnimationSource
 {
     /**
      * AnimationLayer depends on components provides by the animation controller

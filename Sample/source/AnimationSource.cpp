@@ -27,6 +27,24 @@ AnimationSource::AnimationSource()
 }
 
 /**
+ * Base copy constructor.  Copies the skeleton
+ * @param source AnimationSource to duplicate
+ */
+AnimationSource::AnimationSource(const AnimationSource& source)
+    : skeletonTable(Node::flattreemap()), initialSkeleton(source.initialSkeleton), initialSkeletonTable(source.initialSkeletonTable)
+{
+    // If there is a skeleton to duplicate
+    if(source.skeleton)
+    {
+        // Duplicate the existing skeleton
+        skeleton = new Node(*(source.skeleton));
+    
+        // Build the lookup table
+        skeleton->GetFlatNodeTree(skeletonTable);
+    }
+}
+
+/**
  * Base destructor, cleans up the local skeleton storage
  */
 AnimationSource::~AnimationSource()
@@ -39,11 +57,44 @@ AnimationSource::~AnimationSource()
 }
 
 /**
+ * Base assignment operator.  Animation source assumes the state of the other
+ * @param controller Source to set this source to
+ */
+AnimationSource& AnimationSource::operator= (const AnimationSource& source)
+{
+    // Store the initial skeleton and store the lookup map
+    initialSkeleton = source.initialSkeleton;
+    initialSkeletonTable = source.initialSkeletonTable;
+    skeletonTable = Node::flattreemap();
+    
+    // Purge previous state
+    if(skeleton) delete skeleton;
+    
+    // If we have a new skeleton, duplicate it
+    if(source.skeleton)
+    {
+        // Create the local skeleton (a copy)
+        skeleton = new Node(*(source.skeleton));
+    
+        // Generate the quick lookup tables of the skeletal components
+        skeleton->GetFlatNodeTree(skeletonTable);
+    }
+    
+    // Return a this pointer
+    return *this;
+}
+
+/**
  * Binds the animation source to a skeleton
  * @param root the root node of the transform tree of the skeleton
  */
 void AnimationSource::Bind(const Node* root)
 {
+    // Purge previous state
+    initialSkeletonTable = Node::const_flattreemap();
+    skeletonTable = Node::flattreemap();
+    if(skeleton) delete skeleton;
+    
     // Store the initial skeleton
     initialSkeleton = root;
     

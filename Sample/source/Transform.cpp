@@ -21,14 +21,16 @@
 Transform::Transform ()
     : translation(glm::vec3(0, 0, 0)), rotation(glm::quat(1.0, 0.0, 0.0, 0.0)), scale(glm::vec3(1.0, 1.0, 1.0)), dirty(true)
 {
-    
+    // Calculate the transform
+    TransformMatrix();
 }
 
 // Copy another transformation
 Transform::Transform (const Transform& transform)
     : translation(transform.translation), rotation(transform.rotation), scale(transform.scale), dirty(true)
 {
-    
+    // Calculate the transform
+    TransformMatrix();
 }
 
 // Construct the transformation from a Json blob
@@ -54,6 +56,9 @@ Transform::Transform (const Json::Value& value)
     {
         rotation = glm::quat(value["rotation"][3].asFloat(), value["rotation"][0].asFloat(), value["rotation"][1].asFloat(), value["rotation"][2].asFloat());
     }
+    
+    // Calculate the transform
+    TransformMatrix();
 }
 
 // Assignment operator (copy the contents of the other transform)
@@ -66,6 +71,9 @@ Transform& Transform::operator=(const Transform &transform)
     
     // Contents are now dirty
     dirty = true;
+    
+    // Calculate the transform
+    TransformMatrix();
     
     // Return a reference to ourself
     return *this;
