@@ -57,7 +57,7 @@ class BaseFrame : public GameSystem {
 		shader->Acid.SetCurrentTime(Game()->Now());
 		//Acid factor currently managed by the demo system
 		//this will be moved to a more powerful game logic system in the future
-		shader->Acid.SetAcidFactor(demo->CurrentAcidStrength);
+		shader->Acid.SetAcidFactor(0);
 	}
 protected:
 	//Overload to tell the save system about handles created in the system
