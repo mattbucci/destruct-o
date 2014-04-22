@@ -24,9 +24,11 @@
 // Forward declaration of the animation controller object
 class AnimationController;
 
-// AnimationLayer is a finite state machine dedicated to controlling the
-// animation of a model's skeleton.  It holds a collection of
-// AnimationState objects which do the actual work of animating.
+/** 
+ * AnimationLayer is a finite state machine dedicated to controlling the animation 
+ * of a model's skeleton.  It holds a collection of AnimationState objects which 
+ * do the actual work of animating.
+ */
 class AnimationLayer : public AnimationSource
 {
 public:
@@ -41,6 +43,9 @@ public:
         }
     };
     
+    /** State storage types */
+    typedef std::map<std::string, AnimationState *> state_store;
+    
 protected:
     /**
      * AnimationLayer depends on components provides by the animation controller
@@ -48,15 +53,14 @@ protected:
      */
     AnimationController& controller;
     
-    /**
-     * The name of the animation layer
-     */
+    /** The name of the animation layer */
     std::string name;
     
-    /**
-     * The priority of this layer
-     */
+    /** The priority of this layer */
     int priority;
+    
+    /** The states that exist in this layer */
+    state_store states;
     
 public:
     /**
@@ -71,7 +75,7 @@ public:
      * @param layer The animation layer to duplicate
      * @param _controller The animation controller to bind this layer to
      */
-    AnimationLayer(AnimationLayer& layer, AnimationController& _controller);
+    AnimationLayer(const AnimationLayer& layer, AnimationController& _controller);
     
     /**
      * Deserialization constructor.  Builds an animation layer bound to an animation
@@ -80,6 +84,11 @@ public:
      * @param _controller The animation controller to bind this layer to
      */
     AnimationLayer(const Json::Value& value, AnimationController& _controller);
+    
+    /**
+     * Standard deconstructor.  Releases heap memory
+     */
+    ~AnimationLayer();
     
     /**
      * Update the state of the model layer
