@@ -5,7 +5,7 @@
 #include "Universal.h"
 #include "BaseFrame.h"
 
-#define TWO_PI (M_PI*2.0f)
+#define TWO_PI ((float)(M_PI*2.0f))
 
 CLASS_SAVE_CONSTRUCTOR(ActorAI);
 
@@ -256,7 +256,7 @@ float ActorAI::sightDistance() {
 
 //How many radians per second this actor can rotate
 float ActorAI::turnSpeed() {
-	return M_PI/2.0;
+	return (float)(M_PI/2.0);
 }
 
 //Change the allegiance of this AI

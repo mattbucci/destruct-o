@@ -82,9 +82,8 @@ public:
 	// First person mode will either be desktop or mobile variant, so use a pointer
 	FirstPersonMode *FirstPerson;
 	PhysicsSystem Physics;
-	ParticleCloud Particles;
-
 	ActorSystem Actors;
+	ParticleCloud Particles;
 
 	//Private objects which must be initialized after everything else
 	//goes here

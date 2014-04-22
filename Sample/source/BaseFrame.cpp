@@ -29,6 +29,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
     : GameSystem(shaders), 
 	Physics(&Voxels), 
 	Actors(&Physics),
+	Particles(&Actors,&Physics),
 	achievements(&notification,this),
 	hud(this)
 {
