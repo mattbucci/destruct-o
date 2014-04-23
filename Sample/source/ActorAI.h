@@ -31,8 +31,6 @@ protected:
 		//The AI is rotting now
 		AI_ROTTING,
 	};
-	//Tell other people you're dead the moment you run otu of health
-	bool Dead() override;
 
 	//Ai state
 	aiStates state;
@@ -119,6 +117,11 @@ public:
 	//Change the allegiance of this AI
 	virtual void SetFaction(FactionId newFaction);
 
+	//Cause the actor to have a heart attack and die on the spot
+	void Kill();
+
+	//Tell other people you're dead the moment you run otu of health
+	bool Dead() override;
 
 	//When a path is granted from AIDS
 	//save it

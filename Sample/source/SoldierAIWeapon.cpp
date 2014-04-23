@@ -22,6 +22,11 @@ float SoldierAIWeapon::WeaponCooldownTime() {
 	return 2;
 }
 
+//The amount of jitter in the weapon
+float SoldierAIWeapon::JitterAmount() {
+	return .06;
+}
+
 //Simulate a gun shot (or laser pulse or whatever)
 void SoldierAIWeapon::Fire() {
 	if (!Universal::Trace(firePointA,fireVector,&hitPos))

@@ -47,12 +47,13 @@ public:
 	
 	//Construct a new actor
 	template<class T>
-	T * BuildActor() {
+	T * BuildActor(vec3 position = vec3()) {
 		T * actor = new T();
 		allActors.push_back(actor);
 		if (dynamic_cast<PhysicsActor*>(actor) != NULL)
 			physics->RegisterPhysicsActor((PhysicsActor*)actor);
 
+		actor->position = position;
 		return actor;	
 	}
 
@@ -97,9 +98,10 @@ public:
 	//FactionId is the killing faction
 	GameEvent<void(Actor*,Actor*,FactionId)> ActorKilled;
 	//Weapon related things
-	//The actor, the weapon fired, the location hit
-	//location hit is broken right now
-	GameEvent<void(Actor*,Weapon*,vec3)> ActorFiredWeapon;
+	//The actor, the weapon fired
+	GameEvent<void(Actor*,Weapon*)> ActorFiredWeapon;
+	//The actor, the weapon fired, the impact location
+	GameEvent<void(Actor*,Weapon*,vec3)> ActorWeaponImpact;
 	//Happens with the player tries to fire without enough energy
 	//(the player is the only one stupid enough to try this)
 	GameEvent<void(Actor*,Weapon*)> ActorFiredWhileEmpty;

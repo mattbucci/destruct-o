@@ -4,7 +4,7 @@
 #include "GameEvent.h"
 #include "GameCamera.h"
 #include "Weapon.h"
-#include "WeaponStarter.h"
+#include "WeaponPulseLaser.h"
 
 class ActorPlayer : public PhysicsActor
 {	
@@ -17,7 +17,7 @@ class ActorPlayer : public PhysicsActor
     
     // Weapon
     GameCamera     weaponCamera;
-	WeaponStarter testWeapon;
+	WeaponPulseLaser testWeapon;
     Weapon * currentWeapon;
     //If the player fired the gun
     bool weaponFired;

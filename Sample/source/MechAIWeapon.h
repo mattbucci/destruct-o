@@ -18,9 +18,14 @@ protected:
 	//Simulate a gun shot (or laser pulse or whatever)
 	virtual void Fire() override;
 
+	//The amount of jitter in the weapon
+	virtual float JitterAmount() override;
+
 	//What you shoot
-	EffectLaser laser;
-	vec3 hitPos;
+	EffectLaser laserA;
+	EffectLaser laserB;
+	vec3 hitPosA;
+	vec3 hitPosB;
 public:
 	MechAIWeapon(Actor * weaponOwner, float & chargePool);
 

@@ -3,8 +3,9 @@
 #include "Universal.h"
 #include "BaseFrame.h"
 
-MechAIWeapon::MechAIWeapon(Actor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool), laser(vec4(1,.5,.1,1),.1f) {
-	laser.SetTiming(.05f,1.0f,true);
+MechAIWeapon::MechAIWeapon(Actor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool), laserA(vec4(1,.5,.1,1),.1f),laserB(vec4(1,.5,.1,1),.1f)  {
+	laserA.SetTiming(.05f,2.2f,true);
+	laserB.SetTiming(.05f,2.2f,true);
 }
 
 //Whether or not the weapon should repeat firing automatically
@@ -22,16 +23,37 @@ float MechAIWeapon::WeaponCooldownTime() {
 	return 2;
 }
 
+//The amount of jitter in the weapon
+float MechAIWeapon::JitterAmount() {
+	return .08;
+}
+
 //Simulate a gun shot (or laser pulse or whatever)
 void MechAIWeapon::Fire() {
-	if (!Universal::Trace(firePointA,fireVector,&hitPos))
-		hitPos = firePointA+fireVector*100.0f;
-	
- 	Universal::Concuss(hitPos,3,20,(PhysicsActor*)this->weaponOwner);
-	laser.StartFiring();
-	laser.Move(firePointA,hitPos);
-
+	//Fire appropriate events and calculate jitter
 	Weapon::Fire();
+	//Apply jitter
+	Weapon::updateFinalFireVectors();
+
+	//Do first fire point
+	if (!Universal::TraceIgnoreActor(firePointA,finalFireVectorA,(PhysicsActor*)weaponOwner,&hitPosA))
+		hitPosA = firePointA+finalFireVectorA*100.0f;
+	
+	weaponImpact(hitPosA);
+ 	Universal::Concuss(hitPosA,3,20,(PhysicsActor*)this->weaponOwner);
+	//Do second fire point
+	if (!Universal::TraceIgnoreActor(firePointB,finalFireVectorB,(PhysicsActor*)weaponOwner,&hitPosB))
+		hitPosB = firePointB+finalFireVectorB*100.0f;
+	
+	weaponImpact(hitPosB);
+ 	Universal::Concuss(hitPosB,3,20,(PhysicsActor*)this->weaponOwner);
+
+
+	laserA.StartFiring();
+	laserA.Move(firePointB,hitPosB);
+
+	laserB.StartFiring();
+	laserB.Move(firePointB,hitPosB);
 }
 
 
@@ -64,12 +86,14 @@ void MechAIWeapon::Update(vec3 firingVector, vec3 firePointA, vec3 FirePointB) {
 }
 
 //Draw any effects the weapon may own
-void MechAIWeapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 FirePointB) {
+void MechAIWeapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) {
 	//That's right I'm calling raytrace druing draw for the most up-to-date stuff possible
-	if (!Universal::Trace(firePointA,fireVector,&hitPos))
-		hitPos = firePointA+fireVector*100.0f;
+	//if (!Universal::Trace(firePointB,fireVector,&hitPosB))
+	//	hitPosB = firePointB+fireVector*100.0f;
 
 	//Now move the laser to its new position and draw
-	//laser.Move(firePoint,hitPos);
-	laser.Draw(shader);
+	laserA.Move(firePointA,hitPosA);
+	laserA.Draw(shader);
+	laserB.Move(firePointB,hitPosB);
+	laserB.Draw(shader);
 }

@@ -53,14 +53,20 @@ void ActorAIMech::findMuzzlePosition() {
 	//Find bone
 	Node::const_flattreemap flatmap;
 	model->Skeleton()->GetFlatNodeTree(flatmap);
-	const Node * n = model->Skeleton()->FindNode("rt_shoulder");
-	mat4 globalTransform = model->GetTransform().TransformMatrix() * n->TransformMatrix();
+	const Node * nA = model->Skeleton()->FindNode("rt_shoulder");
+	mat4 globalTransformA = model->GetTransform().TransformMatrix() * nA->TransformMatrix();
+
+	const Node * nB = model->Skeleton()->FindNode("lf_shoulder");
+	mat4 globalTransformB = model->GetTransform().TransformMatrix() * nB->TransformMatrix();
 
 		
-
-	vec3 mVector(0,.75,.25);
+	//These look mediocre at best
+	//if someone wants to fix them that would be awesome
+	vec3 aVector(.2,-.25,-.8);
+	vec3 bVector(-.2,-.3,1.6);
 	//Calculate the position along the muzzle
-	muzzlePositionA = vec3(globalTransform * vec4(mVector,1.0));
+	muzzlePositionA = vec3(globalTransformA * vec4(aVector,1.0));
+	muzzlePositionB = vec3(globalTransformB * vec4(bVector,1.0));
 }
 
 

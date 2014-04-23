@@ -18,8 +18,18 @@ protected:
 	//Cooldown length for the weapon
 	virtual float WeaponCooldownTime() = 0;
 
+	//The amount of jitter in the weapon
+	virtual float JitterAmount() = 0;
+
 	//Simulate a gun shot (or laser pulse or whatever)
+	//also sets the jitter offsets for this pull
 	virtual void Fire();
+
+	//Mixes jitter into the fireVector producing finalFireVectorA/B
+	void updateFinalFireVectors();
+
+	//Run the weapon impact event with the given hit position
+	void weaponImpact(vec3 hitAt);
 
 	//Last time the weapon was fire
 	double lastWeaponFire;
@@ -32,6 +42,13 @@ protected:
 	vec3 fireVector;
 	vec3 firePointA;
 	vec3 firePointB;
+	//The final fire vector (initial vector + jitter offset) for each fire
+	//updated during updateFinalFireVectors()
+	vec3 finalFireVectorA;
+	vec3 finalFireVectorB;
+	//weapon jitter offsets
+	vec3 weaponJitterA;
+	vec3 weaponJitterB;
 public:
 	Weapon(Actor * weaponOwner, float & chargePool);
 	virtual ~Weapon();

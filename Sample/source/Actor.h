@@ -25,10 +25,14 @@ class Actor : public Savable {
 	//Actors now own position
 	vec3 position;
 
+	//This class' encapsulation is leaky
+	//This could be fixed if we have more time
 	//The physics system has direct access to position/velocity/acceleration
 	friend class PhysicsSystem;
 	//So does the physics actor
 	friend class PhysicsActor;
+	//So does the actor system
+	friend class ActorSystem;
 protected:
 	//When an actor is loaded
 	//handles rebuilding the model instance

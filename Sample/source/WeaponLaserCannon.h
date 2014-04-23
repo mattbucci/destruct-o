@@ -4,7 +4,7 @@
 #include "Weapon.h"
 #include "EffectLaser.h"
 
-class WeaponStarter : public Weapon {
+class WeaponLaserCannon : public Weapon {
 protected:
 	//Whether or not the weapon should repeat firing automatically
 	virtual bool RepeatFireAutomatically() override;
@@ -15,6 +15,9 @@ protected:
 	//Cooldown length for the weapon
 	virtual float WeaponCooldownTime() override;
 
+	//The amount of jitter in the weapon
+	virtual float JitterAmount() override;
+
 	//Simulate a gun shot (or laser pulse or whatever)
 	virtual void Fire() override;
 
@@ -22,7 +25,7 @@ protected:
 	EffectLaser laser;
 	vec3 hitPos;
 public:
-	WeaponStarter(Actor * weaponOwner, float & chargePool);
+	WeaponLaserCannon(Actor * weaponOwner, float & chargePool);
 
 	//Weapon firing animation
     virtual string LookupAnimation(HandAnimations animation) override;

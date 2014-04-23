@@ -368,3 +368,9 @@ void ActorAI::Draw(GLEffectProgram * effectShader)  {
 	if (targetEnemy != NULL)
 		weapon->DrawWeapon(effectShader,getFireVector(),muzzlePositionA,muzzlePositionB);
 }
+
+
+//Cause the actor to have a heart attack and die on the spot
+void ActorAI::Kill() {
+	life = 0;
+}

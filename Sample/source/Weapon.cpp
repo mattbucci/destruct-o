@@ -17,10 +17,26 @@ void Weapon::Fire() {
 	//Mark the gun as fired
 	lastWeaponFire = Game()->Now();
 	//Run the weapon fired event
-	//NOTE: Weapon hit position is BROKEN right now
-	Game()->Actors.ActorFiredWeapon.Fire([this](function<void(Actor*,Weapon*,vec3)> observer) {
-		observer(weaponOwner,this,vec3());
+	Game()->Actors.ActorFiredWeapon.Fire([this](function<void(Actor*,Weapon*)> observer) {
+		observer(weaponOwner,this);
 	});
+	//Create weapon jitter for this shot
+	float min = -JitterAmount();
+	float max = JitterAmount();
+	weaponJitterA = vec3(Utilities::random(min,max),Utilities::random(min,max),Utilities::random(min,max));
+	weaponJitterB = vec3(Utilities::random(min,max),Utilities::random(min,max),Utilities::random(min,max));
+}
+
+//Run the weapon impact event with the given hit position
+void Weapon::weaponImpact(vec3 hitAt) {
+	Game()->Actors.ActorWeaponImpact.Fire([this,hitAt](function<void(Actor*,Weapon*,vec3)> observer) {
+		observer(weaponOwner,this,hitAt);
+	});
+}
+
+void Weapon::updateFinalFireVectors() {
+	finalFireVectorA = glm::normalize(fireVector+weaponJitterA);
+	finalFireVectorB = glm::normalize(fireVector+weaponJitterB);
 }
 
 //Whether or not the user is holding the trigger
