@@ -51,13 +51,27 @@ protected:
 	vec2 goal;
 	//This AI's charge pool
 	float energyPool;
+	//The gun's dangerous end
+	vec3 muzzlePosition;
+
 
 
 	//Attempt to find a close nearby enemy you can see right now
 	virtual PhysicsActor * sightNearbyEnemy();
 
+	//Get the direction between you and the enemy
+	vec3 getFireVector();
+
 	//Turn to face that direction in the fastest possible manner
 	void applyFacingDirection(float desiredFacingDirection);
+
+
+	//If the current enemy is still valid returns true
+	//otherwise returns false
+	bool checkEnemyValid();
+
+	//Face the current valid enemy
+	void faceEnemy();
 
 	//AI settings
 	//override these functions
