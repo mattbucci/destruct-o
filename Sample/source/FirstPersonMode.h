@@ -48,6 +48,9 @@ public:
 	bool GetDebug();
 	float GetDebugHeight();
 	void SetDebugHeight(int height);
+    
+    // Get the movement speed
+    const float& GetMovementSpeed();
 
 	//Enable or disable first person mode on platforms which require this
 	void Enable(bool enableFirstPerson);
@@ -57,8 +60,8 @@ public:
 
 	//In the future this will be used to draw the virtual joysticks on mobile
 	virtual void Draw(double width, double height, GL2DProgram * shader);
-
-
+    
+    
 	CLASS_DECLARATION(FirstPersonMode)
 		CLASS_MEMBER(lookVector,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(moveVector,ReflectionData::SAVE_VEC2)

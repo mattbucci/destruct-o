@@ -85,7 +85,7 @@ bool ActorPlayer::Update() {
             {
                 //Play walking
                 setAnimation(currentWeapon->LookupAnimation(Weapon::ANIMATION_RUN));
-                model->Controller()->SetFloat("speed", 1.0f);
+                model->Controller()->SetFloat("speed", Game()->FirstPerson->GetMovementSpeed());
             }
             else
             {

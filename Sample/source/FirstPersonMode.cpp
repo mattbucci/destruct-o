@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "FirstPersonMode.h"
 
-int movement_speed = 1;
+float movement_speed = 1.0f;
 
 FirstPersonMode::FirstPersonMode()
 {
@@ -64,6 +64,10 @@ void FirstPersonMode::SetDebugHeight(int height)
 	this->debug_target_height = (float)height;
 }
 
+const float& FirstPersonMode::GetMovementSpeed()
+{
+    return movement_speed;
+}
 
 //Enable or disable first person mode 
 void FirstPersonMode::Enable(bool enableFirstPerson) {
@@ -84,15 +88,21 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 	moveVector = vec2(0, 0);
 
 	if (pressedKeys.find('w') != pressedKeys.end())
-		moveVector.x = 1.0f * movement_speed;
+		moveVector.x = 1.0f;
 	else if (pressedKeys.find('s') != pressedKeys.end())
-		moveVector.x = -1.0f * movement_speed;
+		moveVector.x = -1.0f;
 
 	if (pressedKeys.find('a') != pressedKeys.end())
-		moveVector.y = 1.0f * movement_speed;
+		moveVector.y = 1.0f;
 	else if (pressedKeys.find('d') != pressedKeys.end())
-		moveVector.y = -1.0f * movement_speed;
-
+		moveVector.y = -1.0f;
+    
+    // Normalize the movement vector (uncomment for a huge cluster fuck)
+    //moveVector = glm::normalize(moveVector);
+    
+    // Multiple the movement vector by the movement speed
+    moveVector *= movement_speed;
+    
 	
 
 	static bool firedOnce = false;
@@ -145,13 +155,13 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 		}
 		else if (e.Event == InputEvent::KeyboardUp) {
 			if (e.Key == SDLK_LSHIFT) {
-				movement_speed = 1;
+				movement_speed = 1.0f;
 			}
 		}
 		else if (e.Event == InputEvent::KeyboardDown) {
 			if (e.Key == SDLK_LSHIFT) {
-				if(!debug) movement_speed = 2;
-				else movement_speed = 5;
+				if(!debug) movement_speed = 2.0f;
+				else movement_speed = 5.0f;
 			}
 
 		}

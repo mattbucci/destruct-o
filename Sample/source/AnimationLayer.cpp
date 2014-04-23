@@ -213,15 +213,40 @@ void AnimationLayer::Transition(const std::string& state, double now)
         throw std::runtime_error("void AnimationLayer::Transition(const std::string& state) - reference state does not exist");
     }
     
+    // Special transition case, we are currently transitioning from a state and we've been requested to transition back
+    if(transitionState == stateIt->second)
+    {
+        // Reverse the current transition time (moving back to old state)
+        double transitionTime = 1.0 - ((now - transitionStartTime) / transitionLength);
+        
+        // Calculate a fudged transition start time
+        transitionStartTime = now - (transitionTime * transitionLength);
+        
+        // Store the new transition state
+        transitionState = activeState;
+        
+        // Active state is now the old state
+        activeState = stateIt->second;
+        
+        // Get out
+        return;
+    }
+    
+    // If we have a transition state and the transition is for the most part not complete
+    else if(transitionState && ((now - transitionStartTime) / transitionLength) < 0.5)
+    {
+
+    }
+    
     // Transition to the state (if we currently are currently active)
-    if(activeState)
+    else if(activeState)
     {
         // The new transiton state is the old active state
         transitionState = activeState;
         
         // Store some transition information
         transitionStartTime = now;
-        transitionLength = 0.125;
+        transitionLength = 0.25;
     }
     
     // Store the new active state
