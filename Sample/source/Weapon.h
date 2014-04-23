@@ -30,7 +30,8 @@ protected:
 
 	//the world information about the weapon position
 	vec3 fireVector;
-	vec3 firePoint;
+	vec3 firePointA;
+	vec3 firePointB;
 public:
 	Weapon(Actor * weaponOwner, float & chargePool);
 	virtual ~Weapon();
@@ -55,8 +56,8 @@ public:
 	
 
 	//Update the state of the weapon
-	virtual void Update(vec3 fireVector, vec3 firePoint);
+	virtual void Update(vec3 fireVector, vec3 firePointA, vec3 FirePointB = vec3());
 
 	//Draw any effects the weapon may own
-	virtual void DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePoint);
+	virtual void DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 FirePointB = vec3());
 };

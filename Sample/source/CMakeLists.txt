@@ -392,10 +392,7 @@ source_group(Effects FILES ${EffectFiles})
 
 FILE(GLOB WeaponFiles
 	"Weapon*"
-	BasicAIWeapon.h
-	BasicAIWeapon.cpp
-	MechAIWeapon.h
-	MechAIWeapon.cpp
+	"*AIWeapon*"
 )
 source_group(Weapons FILES ${WeaponFiles})
 

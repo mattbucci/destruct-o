@@ -4,16 +4,16 @@
 #include "ActorAids.h"
 #include "Universal.h"
 #include "BaseFrame.h"
-#include "Weapon.h"
+#include "weapon.h"
 
 #define TWO_PI ((float)(M_PI*2.0f))
 
-CLASS_SAVE_CONSTRUCTOR(ActorAI);
-
-ActorAI::ActorAI() : PhysicsActor(vec3(1.5,1.5,4),100, GameFactions::FACTION_ENEMY), __weapon(this,energyPool) {
+ActorAI::ActorAI(Weapon * actorWeapon) : 
+	PhysicsActor(vec3(1.5,1.5,4),100, GameFactions::FACTION_ENEMY),
+	weapon(actorWeapon) {
 	//Use a default weapon for now
-	setModel(weapon().LookupAnimation(Weapon::ANIMATION_MODELNAME));
-	playAnimation(weapon().LookupAnimation(Weapon::ANIMATION_AIM));
+	setModel(weapon->LookupAnimation(Weapon::ANIMATION_MODELNAME));
+	playAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
 	//AI starts with nothing
 	state = AI_SCANNING;
 	//Max out the energy pool
@@ -26,6 +26,8 @@ ActorAI::~ActorAI() {
 	//If you had any requests with AIDS
 	//cancel them
 	Actors().Aids()->CancelRequests(this);
+
+	delete weapon;
 }
 
 //Attempt to find a close nearby enemy you can see right now
@@ -123,50 +125,9 @@ bool ActorAI::faceEnemy() {
 	return true;
 }
 
-//Attempts to snap the user's spine to face the enemy
-//returns true if successful
-//Check if your spine can face the enemy right now
-bool ActorAI::checkSpineLimits() {
-	//Since you can move vertically pretty well
-	//just check if the horizontal is very close to 0
-	vec2 diff = vec2(targetEnemy->GetPosition()) - vec2(Position);
-			
-	float desired = atan2f(diff.y,diff.x);
-	float horizontalDiff = abs(fmodf(desired - facingDirection,M_PI));
-	//Check against a tight angle check
-	return horizontalDiff < M_PI/90.0f;
-}
-
-float lastFloat;
-int iteration = 0;
-
-//Snap the model's skeleton to face the enemy
-void ActorAI::snapSpineToEnemy() {
-	//Take a guess at the correction in 2d only
-	float distance = glm::length(targetEnemy->GetPosition() - Position);
-	vec3 correctVector = glm::normalize(vec3(0,distance,targetEnemy->GetPosition().z - 1.5f - Position.z));
-	//Get angle between them
-	float angle = atan2(-correctVector.z,correctVector.y);
-	lastFloat = angle;
-
-	
-
-	vec3 axis = vec3(1,0,0);//glm::normalize(glm::cross(desiredFace,facing));
-	//float angle = fmod(OS::Now()/2,M_PI) - .5f*M_PI;
-	
-	quat rotation = glm::quat(glm::rotate(angle,axis));
-	//Apply to the spine
-	Node * spineNode = model->Animation().Skeleton()->FindNode("Bind_Spine1");
-
-
-	spineNode->LocalTransform().Rotation() = glm::rotate(spineNode->LocalTransform().Rotation(),angle/M_PI*180.0f,axis);
-
-	spineNode->Recalculate();
-}
-
 
 vec3 ActorAI::getFireVector() {
-	return glm::normalize((targetEnemy->GetPosition()-vec3(0,0,.6f))-muzzlePosition);
+	return glm::normalize((targetEnemy->GetPosition()-vec3(0,0,.6f))-muzzlePositionA);
 }
 
 bool ActorAI::Update() {
@@ -226,11 +187,11 @@ bool ActorAI::Update() {
 			bool touchingGround = false;
 			if (OnGround() && Velocity.z < .2) {
 				touchingGround = true;
-				setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_RUN));
+				setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_RUN));
 				
 			}
 			else if (!animationRunning())
-				setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_AIM));
+				setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
 				
 
 			
@@ -254,7 +215,7 @@ bool ActorAI::Update() {
 							//Playing some kind of jump animation would be A+
 							Velocity.z += min(15*(upcomingHeight-feetHeight),20.0f);
 							//jump!
-							setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_JUMP));
+							setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_JUMP));
 						}
 				
 					}
@@ -274,7 +235,7 @@ bool ActorAI::Update() {
 		break;
 	case AI_SCANNING:
 		//Don't move while you look around
-		setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_AIM));
+		setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
 		if (baseMovementSpeed() < 0) {
 			//Turret
 			//not implemented yet
@@ -307,7 +268,7 @@ bool ActorAI::Update() {
 		}
 
 		//Hang out and wait
-		setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_AIM));
+		setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
 		
 		
 		break;
@@ -324,13 +285,13 @@ bool ActorAI::Update() {
 
 		//Pull the trigger
 		pullingTrigger = true;
-		weapon().Update(getFireVector(),muzzlePosition);
-		if (weapon().HoldingTrigger(true))
+		weapon->Update(getFireVector(),muzzlePositionA,muzzlePositionB);
+		if (weapon->HoldingTrigger(true))
 			//If the weapon fired, play the fired animation
-			setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_FIRE));
+			setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_FIRE));
 		else if (!animationRunning())
 			//Otherwise aim at the target
-			setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_AIM));
+			setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
 
 		break;
 	case AI_DYING:
@@ -352,7 +313,7 @@ bool ActorAI::Update() {
 		energyPool = 100;
 
 	if (!pullingTrigger)
-		weapon().HoldingTrigger(false);
+		weapon->HoldingTrigger(false);
 
 	return PhysicsActor::Update();
 }
@@ -363,19 +324,7 @@ void ActorAI::Draw(MaterialProgram * materialShader){
 		model->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, facingDirection + 0.5 * M_PI));
 		//Update the weapon muzzle position
 
-		//Find bone
-		Node::const_flattreemap flatmap;
-		model->Skeleton()->GetFlatNodeTree(flatmap);
-		const Node * n = model->Skeleton()->FindNode("Bind_RightHand");
-		mat4 globalTransform = model->GetTransform().TransformMatrix() * n->TransformMatrix();
-
-		
-
-		vec3 bVector(0,.5,.25);
-		vec3 mVector(0,.75,.25);
-		//Calculate the position along the muzzle
-		beforeMuzzlePosition = vec3(globalTransform * vec4(bVector,1.0));
-		muzzlePosition = vec3(globalTransform * vec4(mVector,1.0));
+		findMuzzlePosition();
 		 
 
 		//Only recalculate if rotting isn't true
@@ -397,7 +346,7 @@ void ActorAI::onDeath() {
 	//Are you still alive?
 	if ((state != AI_DYING) && (state != AI_ROTTING)) {
 		state = AI_DYING;
-		setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_DEATH));
+		setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_DEATH));
 	}
 }
 
@@ -410,33 +359,6 @@ void ActorAI::PathingReady(vector<vec2> path) {
 
 
 
-//DEFAULTS:
-//Current weapon
-Weapon & ActorAI::weapon() {
-	return __weapon;
-}
-
-//The time it takes to target after finding the enemy
-double ActorAI::targetTime() {
-	return 1.0;
-}
-
-//The movement speed of this enemy
-//should be tuned to walk animation speed
-float ActorAI::baseMovementSpeed() {
-	return 6;
-}
-
-//How far can enemies spot each other
-float ActorAI::sightDistance() {
-	return 20;
-}
-
-//How many radians per second this actor can rotate
-float ActorAI::turnSpeed() {
-	return (float)(M_PI/2.5);
-}
-
 //Change the allegiance of this AI
 void ActorAI::SetFaction(FactionId newFaction) {
 	faction = newFaction;
@@ -444,5 +366,5 @@ void ActorAI::SetFaction(FactionId newFaction) {
 
 void ActorAI::Draw(GLEffectProgram * effectShader)  {
 	if (targetEnemy != NULL)
-		weapon().DrawWeapon(effectShader,getFireVector(),muzzlePosition);
+		weapon->DrawWeapon(effectShader,getFireVector(),muzzlePositionA,muzzlePositionB);
 }

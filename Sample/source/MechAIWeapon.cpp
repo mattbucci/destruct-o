@@ -24,66 +24,50 @@ float MechAIWeapon::WeaponCooldownTime() {
 
 //Simulate a gun shot (or laser pulse or whatever)
 void MechAIWeapon::Fire() {
-	if (!Universal::Trace(firePoint,fireVector,&hitPos))
-		hitPos = firePoint+fireVector*100.0f;
+	if (!Universal::Trace(firePointA,fireVector,&hitPos))
+		hitPos = firePointA+fireVector*100.0f;
 	
  	Universal::Concuss(hitPos,3,20,(PhysicsActor*)this->weaponOwner);
 	laser.StartFiring();
-	laser.Move(firePoint,hitPos);
+	laser.Move(firePointA,hitPos);
 
 	Weapon::Fire();
 }
 
-/*
-	static const string table[6] = {
-		//ANIMATION_IDLE
-		"idleWgun",
-		//ANIMATION_AIM
-		"",
-		//ANIMATION_WALK
-		"run",
-		//ANIMATION_JUMP
-		"jump",
-		//ANIMATION_DEATH
-		"death",
-		//ANIMATION_INAIR
-		"idleWgun"
-	};
-	*/
 
 //Weapon firing animation
 string MechAIWeapon::LookupAnimation(Weapon::HandAnimations animation) {
     static const string animations[10] = {
         //ANIMATION_MODELNAME,
-        "soldier01",
+        "robot02",
         //ANIMATION_AIM,
-        "idleWgun",
+        "move_frozen",
         //ANIMATION_FIRE,
-        "Fire1shot",
+        "short_gun_burst",
         //ANIMATION_RELOAD,
-        "Reload",
+        "move_frozen",
         //ANIMATION_RUN,
-        "run",
+        "running",
         //ANIMATION_JUMP,
         "jump",
         //ANIMATION_GRENADE,
         "",
 		//ANIMATION_DEATH
-		"death"
+		"destroyed"
     };
     return animations[animation];
 }
 
 //Update the state of the weapon
-void MechAIWeapon::Update(vec3 firingVector, vec3 firingPosition) {
-	Weapon::Update(firingVector,firingPosition);
+void MechAIWeapon::Update(vec3 firingVector, vec3 firePointA, vec3 FirePointB) {
+	Weapon::Update(firingVector, firePointA, FirePointB);
 }
 
 //Draw any effects the weapon may own
-void MechAIWeapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePoint) {
+void MechAIWeapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 FirePointB) {
 	//That's right I'm calling raytrace druing draw for the most up-to-date stuff possible
-	if (!Universal::Trace(firePoint,fireVector,&hitPos))
-		hitPos = firePoint+fireVector*100.0f;
+	if (!Universal::Trace(firePointA,fireVector,&hitPos))
+		hitPos = firePointA+fireVector*100.0f;
 
 	//Now move the laser to its new position and draw
 	//laser.Move(firePoint,hitPos);

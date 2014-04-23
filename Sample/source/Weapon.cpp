@@ -58,12 +58,13 @@ bool Weapon::HoldingTrigger(bool trigger) {
 }
 
 //Update the state of the weapon
-void Weapon::Update(vec3 fireVector, vec3 firePoint) {
-	this->firePoint = firePoint;
+void Weapon::Update(vec3 fireVector, vec3 firePointA, vec3 firePointB) {
+	this->firePointA = firePointA;
+	this->firePointB = firePointB;
 	this->fireVector = fireVector;
 }
 
 //Draw any effects the weapon may own
-void Weapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePoint) {
+void Weapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) {
 
 }

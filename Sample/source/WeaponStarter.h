@@ -28,8 +28,8 @@ public:
     virtual string LookupAnimation(HandAnimations animation) override;
 
 	//Update the state of the weapon
-	virtual void Update(vec3 firingVector, vec3 firingPosition) override;
+	virtual void Update(vec3 firingVector, vec3 firePointA, vec3 firePointB = vec3()) override;
 
 	//Draw any effects the weapon may own
-	virtual void DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePoint) override;
+	virtual void DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB = vec3()) override;
 };

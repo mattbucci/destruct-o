@@ -24,12 +24,12 @@ float WeaponStarter::WeaponCooldownTime() {
 
 //Simulate a gun shot (or laser pulse or whatever)
 void WeaponStarter::Fire() {
-	if (!Universal::Trace(firePoint,fireVector,&hitPos))
-		hitPos = firePoint+fireVector*100.0f;
+	if (!Universal::Trace(firePointA,fireVector,&hitPos))
+		hitPos = firePointA+fireVector*100.0f;
 	
  	Universal::Concuss(hitPos,3,20,(PhysicsActor*)this->weaponOwner);
 	laser.StartFiring();
-	laser.Move(firePoint,hitPos);
+	laser.Move(firePointA,hitPos);
 
 	Weapon::Fire();
 }
@@ -57,15 +57,15 @@ string WeaponStarter::LookupAnimation(Weapon::HandAnimations animation) {
 }
 
 //Update the state of the weapon
-void WeaponStarter::Update(vec3 firingVector, vec3 firingPosition) {
-	Weapon::Update(firingVector,firingPosition);
+void WeaponStarter::Update(vec3 firingVector, vec3 firePointA, vec3 firePointB) {
+	Weapon::Update(firingVector, firePointA, firePointB);
 }
 
 //Draw any effects the weapon may own
-void WeaponStarter::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePoint) {
+void WeaponStarter::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) {
 	//That's right I'm calling raytrace druing draw for the most up-to-date stuff possible
-	if (!Universal::Trace(firePoint,fireVector,&hitPos))
-		hitPos = firePoint+fireVector*100.0f;
+	if (!Universal::Trace(firePointA,fireVector,&hitPos))
+		hitPos = firePointA+fireVector*100.0f;
 
 	//Now move the laser to its new position and draw
 	//laser.Move(firePoint,hitPos);

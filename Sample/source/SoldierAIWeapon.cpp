@@ -1,35 +1,35 @@
 #include "stdafx.h"
-#include "BasicAIWeapon.h"
+#include "SoldierAIWeapon.h"
 #include "Universal.h"
 #include "BaseFrame.h"
 
-BasicAIWeapon::BasicAIWeapon(Actor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool), laser(vec4(1,.5,.1,1),.1f) {
+SoldierAIWeapon::SoldierAIWeapon(Actor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool), laser(vec4(1,.5,.1,1),.1f) {
 	laser.SetTiming(.05f,1.0f,true);
 }
 
 //Whether or not the weapon should repeat firing automatically
-bool BasicAIWeapon::RepeatFireAutomatically() {
+bool SoldierAIWeapon::RepeatFireAutomatically() {
 	return true;
 }
 
 //The amount of charge it takes to fire the weapon
-float BasicAIWeapon::WeaponChargeRequired() {
+float SoldierAIWeapon::WeaponChargeRequired() {
 	return 0;
 }
 
 //Cooldown length for the weapon
-float BasicAIWeapon::WeaponCooldownTime() {
+float SoldierAIWeapon::WeaponCooldownTime() {
 	return 2;
 }
 
 //Simulate a gun shot (or laser pulse or whatever)
-void BasicAIWeapon::Fire() {
-	if (!Universal::Trace(firePoint,fireVector,&hitPos))
-		hitPos = firePoint+fireVector*100.0f;
+void SoldierAIWeapon::Fire() {
+	if (!Universal::Trace(firePointA,fireVector,&hitPos))
+		hitPos = firePointA+fireVector*100.0f;
 	
  	Universal::Concuss(hitPos,3,20,(PhysicsActor*)this->weaponOwner);
 	laser.StartFiring();
-	laser.Move(firePoint,hitPos);
+	laser.Move(firePointA,hitPos);
 
 	Weapon::Fire();
 }
@@ -53,7 +53,7 @@ void BasicAIWeapon::Fire() {
 
 
 //Weapon firing animation
-string BasicAIWeapon::LookupAnimation(Weapon::HandAnimations animation) {
+string SoldierAIWeapon::LookupAnimation(Weapon::HandAnimations animation) {
     static const string animations[10] = {
         //ANIMATION_MODELNAME,
         "soldier01",
@@ -76,15 +76,15 @@ string BasicAIWeapon::LookupAnimation(Weapon::HandAnimations animation) {
 }
 
 //Update the state of the weapon
-void BasicAIWeapon::Update(vec3 firingVector, vec3 firingPosition) {
-	Weapon::Update(firingVector,firingPosition);
+void SoldierAIWeapon::Update(vec3 firingVector, vec3 firePointA, vec3 firePointB) {
+	Weapon::Update(firingVector, firePointA, firePointB);
 }
 
 //Draw any effects the weapon may own
-void BasicAIWeapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePoint) {
+void SoldierAIWeapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) {
 	//That's right I'm calling raytrace druing draw for the most up-to-date stuff possible
-	if (!Universal::Trace(firePoint,fireVector,&hitPos))
-		hitPos = firePoint+fireVector*100.0f;
+	if (!Universal::Trace(firePointA,fireVector,&hitPos))
+		hitPos = firePointA+fireVector*100.0f;
 
 	//Now move the laser to its new position and draw
 	//laser.Move(firePoint,hitPos);

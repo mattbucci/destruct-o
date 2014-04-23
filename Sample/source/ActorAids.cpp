@@ -2,7 +2,10 @@
 #include "ActorAids.h"
 #include "ActorSystem.h"
 #include "BaseFrame.h"
-#include "ActorAI.h"
+
+//All AI spawnables
+#include "ActorAISoldier.h"
+#include "ActorAIMech.h"
 
 CLASS_SAVE_CONSTRUCTOR(ActorAids)
 
@@ -14,7 +17,7 @@ ActorAids::ActorAids() {
 bool ActorAids::Update() {
 	//Currently AIDS is pretty stupid (but won't be later)
 	if (!spawnedNasties) {
-		Game()->Actors.BuildActor<ActorAI>();
+		Game()->Actors.BuildActor<ActorAIMech>();
 		//Game()->Actors.BuildActor<ActorAI>();
 		spawnedNasties = true;
 	}

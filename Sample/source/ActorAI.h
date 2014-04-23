@@ -2,7 +2,6 @@
 
 #include "PhysicsActor.h"
 #include "EffectLaser.h"
-#include "BasicAIWeapon.h"
 
 //How long before the body disappears after death
 #define AI_ROT_TIME 10
@@ -10,8 +9,8 @@
 class Weapon;
 
 class ActorAI : public PhysicsActor {
-	//Temporary weapon
-	BasicAIWeapon __weapon;
+	//The weapon which characterizes this AI
+	Weapon * weapon;
 protected:
 
 	enum aiStates {
@@ -51,13 +50,16 @@ protected:
 	vec2 goal;
 	//This AI's charge pool
 	float energyPool;
-	//A part of the gun a little further up the barrel
-	//a striaght line from this peice to the muzzlePosition should be the barrel
-	vec3 beforeMuzzlePosition;
 	//The gun's dangerous end
-	vec3 muzzlePosition;
+	vec3 muzzlePositionA;
+	//If the gun has two dangerous ends
+	vec3 muzzlePositionB;
 
 
+	//Retrieve the muzzle position after a draw calculate
+	//and save in muzzlePositionA
+	//and in muzzlePositionB if appropriate
+	virtual void findMuzzlePosition() = 0;
 
 	//Attempt to find a close nearby enemy you can see right now
 	virtual PhysicsActor * sightNearbyEnemy();
@@ -80,10 +82,10 @@ protected:
 	bool faceEnemy();
 
 	//Check if your spine can face the enemy right now
-	virtual bool checkSpineLimits();
+	virtual bool checkSpineLimits() = 0;
 
 	//Snap the model's skeleton to face the enemy
-	virtual void snapSpineToEnemy();
+	virtual void snapSpineToEnemy() = 0;
 
 
 
@@ -91,27 +93,25 @@ protected:
 	//override these functions
 	//to customize the AI
 
-	//The weapon which characterizes this AI
-	virtual Weapon & weapon();
-
 	//The time it takes to target after finding the enemy
-	virtual double targetTime();
+	virtual double targetTime() = 0;
 
 	//The movement speed of this enemy
 	//should be tuned to walk animation speed
-	virtual float baseMovementSpeed();
+	virtual float baseMovementSpeed() = 0;
 
 	//How far can enemies spot each other
-	virtual float sightDistance();
+	virtual float sightDistance() = 0;
 
 	//How many radians per second this actor can rotate
-	virtual float turnSpeed();
+	virtual float turnSpeed() = 0;
 
 	//Overrode to prevent immediate death
 	virtual void onDeath() override;
 public:
-	ActorAI();
-	~ActorAI();
+	//Takes ownership of the weapon automatically
+	ActorAI(Weapon * actorWeapon);
+	virtual ~ActorAI();
 
 	//Update the state of this AI
 	virtual bool Update() override;
