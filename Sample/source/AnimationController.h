@@ -149,6 +149,13 @@ public:
      * @return Const pointer to the model this controller will animate
      */
     const Model* GetModel() const;
+    
+    // parameter functions
+    parameter_const_iterator GetParameter(const std::string& key) const;
+    const bool GetBoolean(const std::string& key, bool fallback = false) const;
+    const float GetFloat(const std::string& key, float fallback = 0.0f) const;
+    void SetBoolean(const std::string& key, bool value);
+    void SetFloat(const std::string& key, float value);
 };
 
 #endif

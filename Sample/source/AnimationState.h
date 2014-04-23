@@ -33,12 +33,55 @@ class AnimationLayer;
  */
 class AnimationState
 {
+public:
+    /**
+     * Utility class to manager the transition data
+     */
+    struct Transition
+    {
+        // Possible comparison functions
+        typedef enum : unsigned char
+        {
+            // The exit fun
+            kComparisonFunctionExit = 0,
+            kComparisonFunctionEquals = 1,
+            kComparisonFunctionLess = 2,
+            kComparisonFunctionGreater = 3,
+        } ComparisonFunction;
+        
+        // The target state
+        std::string target;
+        
+        // The input parameter
+        std::string parameter;
+        
+        // Comparison function
+        ComparisonFunction function;
+        
+        // The value
+        union
+        {
+            bool  boolean;
+            float number;
+        } value;
+        
+        // Create the transition object
+        Transition();
+        
+        // Deserialize
+        Transition(const Json::Value& value);
+    };
+    
+    // Storage type for the transitions
+    typedef std::vector<Transition> transition_vector;
+    
+protected:
     /**
      * AnimationState depends on functionality from the animation layers.  Namely,
      * this is the ability to load animation clips, transition to other states,
      * and interpret parameters.  We therefore need a reference to our parent layer
      */
-    AnimationLayer& layer;
+    AnimationLayer *layer;
     
     /** The name of the animation layer */
     std::string name;
@@ -46,12 +89,15 @@ class AnimationState
     /** The animation source that this state encapsulates */
     AnimationSource *source;
     
+    /** The transitions this state uses */
+    transition_vector transitions;
+    
 public:
     /**
      * Standard constructor.  Create an empty anmation state
      * @param layer The animation layer this state will reside on
      */
-    AnimationState(AnimationLayer& layer);
+    AnimationState(AnimationLayer *layer);
     
     /**
      * Copy constructor.  Create an animation state as a duplicate and reparent
@@ -59,7 +105,7 @@ public:
      * @param state The animation state to duplicate
      * @param layer The animation layer this state will reside on
      */
-    AnimationState(const AnimationState& state, AnimationLayer& layer);
+    AnimationState(const AnimationState& state, AnimationLayer *layer);
     
     /**
      * Deserialization constructor.  Create an animation state from the serialized
@@ -67,7 +113,7 @@ public:
      * @param value The serialized animation state to load
      * @param layer The animation layer this state will reside on
      */
-    AnimationState(const Json::Value& value, AnimationLayer& layer);
+    AnimationState(const Json::Value& value, AnimationLayer *layer);
     
     /**
      * Standard deconstructor.  Cleans up any created animation clips
@@ -87,7 +133,7 @@ public:
      * @param delta time since last frame in seconds
      * @param now the current time
      */
-    void Update(double delta, double now);
+    void Update(double delta, double now, bool comparison = true);
     
     /**
      * Event to signal that the animation is transitioning to this state

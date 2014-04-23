@@ -34,7 +34,7 @@ class ModelInstance
     Transform                 transform;
     
     /** The animation controller of this instance */
-    AnimationController       controller;
+    AnimationController      *controller;
     
     /** SUPER DUPER TESTING MODE SHIT */
     AnimationClip             animation;
@@ -85,7 +85,7 @@ public:
      * Get a reference to the animation controller of this model instance
      * @return Reference to the animation controller of this model instance
      */
-    AnimationController& Controller();
+    AnimationController* Controller();
     
     /**
      * Static method to construct a model instance from a manifest file

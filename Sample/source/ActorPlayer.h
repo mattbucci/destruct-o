@@ -25,6 +25,7 @@ class ActorPlayer : public PhysicsActor
 
 	//Energy pool
 	float energyPool;
+	float maxEnergyPool;
     
 	//Protect the player from actually dying
 	virtual void onDeath() override;
@@ -43,6 +44,7 @@ public:
 
 	//Retrieve's the players charge pool
     float GetCharge();
+	float GetMaxCharge();
 
 	//The player is the only actor which consumes input events
 	//void ReadInput(const vector<InputEvent> & events);

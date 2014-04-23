@@ -23,11 +23,11 @@
  * controller.
  * @param _controller The animation controller to bind this layer to
  */
-AnimationLayer::AnimationLayer(AnimationController& _controller)
+AnimationLayer::AnimationLayer(AnimationController *_controller)
     : AnimationSource() , controller(_controller), name("null"), priority(0), states(state_store()), activeState(NULL), transitionState(NULL), transitionStartTime(0.0), transitionLength(0.0)
 {
     // Bind this source to the initial skeleton of the animation controller
-    Bind(_controller.InitialSkeleton());
+    Bind(_controller->InitialSkeleton());
 }
 
 /**
@@ -35,14 +35,14 @@ AnimationLayer::AnimationLayer(AnimationController& _controller)
  * @param layer The animation layer to duplicate
  * @param _controller The animation controller to bind this layer to
  */
-AnimationLayer::AnimationLayer(const AnimationLayer& layer, AnimationController& _controller)
+AnimationLayer::AnimationLayer(const AnimationLayer& layer, AnimationController *_controller)
     : AnimationSource(), controller(_controller), name(layer.name), priority(layer.priority), states(state_store()), activeState(NULL), transitionState(NULL), transitionStartTime(layer.transitionStartTime), transitionLength(layer.transitionLength)
 {
     // Duplicate other important stuff (like states)
     for(state_store::const_iterator it = layer.states.begin(); it != layer.states.end(); it++)
     {
         // Allocate a state
-        AnimationState *state = new AnimationState(*(it->second), *this);
+        AnimationState *state = new AnimationState(*(it->second), this);
         
         // Store the state
         states[state->Id()] = state;
@@ -59,7 +59,7 @@ AnimationLayer::AnimationLayer(const AnimationLayer& layer, AnimationController&
     }
     
     // Bind this source to the initial skeleton of the animation controller
-    Bind(_controller.InitialSkeleton());
+    Bind(_controller->InitialSkeleton());
 }
 
 /**
@@ -68,7 +68,7 @@ AnimationLayer::AnimationLayer(const AnimationLayer& layer, AnimationController&
  * @param value The Json object to deserialize from
  * @param _controller The animation controller to bind this layer to
  */
-AnimationLayer::AnimationLayer(const Json::Value& value, AnimationController& _controller)
+AnimationLayer::AnimationLayer(const Json::Value& value, AnimationController *_controller)
     : AnimationSource(), controller(_controller), states(state_store()), activeState(NULL), transitionState(NULL), transitionStartTime(0.0), transitionLength(0.0)
 {
     // We first need to validate that this a Json object
@@ -93,7 +93,7 @@ AnimationLayer::AnimationLayer(const Json::Value& value, AnimationController& _c
         for(Json::Value::const_iterator it = serializedStates.begin(); it != serializedStates.end(); it++)
         {
             // Allocate the state
-            AnimationState *state = new AnimationState(*it, *this);
+            AnimationState *state = new AnimationState(*it, this);
             
             // Store this state
             states[state->Id()] = state;
@@ -101,7 +101,7 @@ AnimationLayer::AnimationLayer(const Json::Value& value, AnimationController& _c
     }
     
     // Bind this source to the initial skeleton of the animation controller
-    Bind(_controller.InitialSkeleton());
+    Bind(_controller->InitialSkeleton());
     
     // Transition to the default state of the layer
     Transition(value["default"].asString(), 0);
@@ -168,7 +168,7 @@ void AnimationLayer::Update(double delta, double now)
         else
         {
             // Update the transition state's content
-            transitionState->Update(delta, now);
+            transitionState->Update(delta, now, false);
             
             // Set the skeleton as a blend between the two
             for(Node::flattreemap::iterator it = skeletonTable.begin(); it != skeletonTable.end(); it++)
@@ -213,15 +213,40 @@ void AnimationLayer::Transition(const std::string& state, double now)
         throw std::runtime_error("void AnimationLayer::Transition(const std::string& state) - reference state does not exist");
     }
     
+    // Special transition case, we are currently transitioning from a state and we've been requested to transition back
+    if(transitionState == stateIt->second)
+    {
+        // Reverse the current transition time (moving back to old state)
+        double transitionTime = 1.0 - ((now - transitionStartTime) / transitionLength);
+        
+        // Calculate a fudged transition start time
+        transitionStartTime = now - (transitionTime * transitionLength);
+        
+        // Store the new transition state
+        transitionState = activeState;
+        
+        // Active state is now the old state
+        activeState = stateIt->second;
+        
+        // Get out
+        return;
+    }
+    
+    // If we have a transition state and the transition is for the most part not complete
+    else if(transitionState && ((now - transitionStartTime) / transitionLength) < 0.5)
+    {
+
+    }
+    
     // Transition to the state (if we currently are currently active)
-    if(activeState)
+    else if(activeState)
     {
         // The new transiton state is the old active state
         transitionState = activeState;
         
         // Store some transition information
         transitionStartTime = now;
-        transitionLength = 0.33;
+        transitionLength = 0.25;
     }
     
     // Store the new active state
@@ -253,7 +278,7 @@ const int& AnimationLayer::Priority() const
  * Accessor for the animation controller of this layer
  * @return Reference to the animation controller of the layer
  */
-const AnimationController& AnimationLayer::Controller() const
+const AnimationController* AnimationLayer::Controller() const
 {
     return controller;
 }

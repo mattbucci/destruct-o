@@ -51,7 +51,7 @@ protected:
      * AnimationLayer depends on components provides by the animation controller
      * and requires a reference to it
      */
-    AnimationController& controller;
+    AnimationController *controller;
     
     /** The name of the animation layer */
     std::string name;
@@ -80,14 +80,14 @@ public:
      * controller.
      * @param _controller The animation controller to bind this layer to
      */
-    AnimationLayer(AnimationController& _controller);
+    AnimationLayer(AnimationController *_controller);
     
     /**
      * Copy constructor.  Duplicates the animation layer
      * @param layer The animation layer to duplicate
      * @param _controller The animation controller to bind this layer to
      */
-    AnimationLayer(const AnimationLayer& layer, AnimationController& _controller);
+    AnimationLayer(const AnimationLayer& layer, AnimationController *_controller);
     
     /**
      * Deserialization constructor.  Builds an animation layer bound to an animation
@@ -95,7 +95,7 @@ public:
      * @param value The Json object to deserialize from
      * @param _controller The animation controller to bind this layer to
      */
-    AnimationLayer(const Json::Value& value, AnimationController& _controller);
+    AnimationLayer(const Json::Value& value, AnimationController *_controller);
     
     /**
      * Standard deconstructor.  Releases heap memory
@@ -138,7 +138,7 @@ public:
      * Accessor for the animation controller of this layer 
      * @return Reference to the animation controller of the layer
      */
-    const AnimationController& Controller() const;
+    const AnimationController* Controller() const;
 };
 
 #endif
