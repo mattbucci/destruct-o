@@ -79,7 +79,7 @@ AnimationController::AnimationController(const Json::Value& value, const Model* 
     for(Json::Value::iterator layerIt = serializedLayers.begin(); layerIt != serializedLayers.end(); layerIt++)
     {
         // Deserialize a parameter
-        AnimationLayer *layer = new AnimationLayer(*layerIt, *this);
+        AnimationLayer *layer = new AnimationLayer(*layerIt, this);
         
         // Store the layer
         layers[layer->Id()] = layer;
@@ -139,7 +139,7 @@ AnimationController& AnimationController::operator= (const AnimationController& 
     layerQueue = layer_queue();
     for(layer_const_iterator it = controller.layers.begin(); it != controller.layers.end(); it++)
     {
-        AnimationLayer *layer = new AnimationLayer(*(it->second), *this);
+        AnimationLayer *layer = new AnimationLayer(*(it->second), this);
         layers[it->first] = layer;
         layerQueue.push(layer);
     }
@@ -249,4 +249,66 @@ AnimationController::Parameter::Parameter(const Json::Value& value)
 const Model* AnimationController::GetModel() const
 {
     return model;
+}
+
+
+
+// parameter functions
+AnimationController::parameter_const_iterator AnimationController::GetParameter(const std::string& key) const
+{
+    return parameters.find(key);
+}
+
+const bool AnimationController::GetBoolean(const std::string& key, bool fallback) const
+{
+    // Get the boolean
+    AnimationController::parameter_const_iterator param = parameters.find(key);
+    
+    // If we found it return it
+    if(param != parameters.end())
+    {
+        return param->second.value.boolean;
+    }
+    
+    // Return the fallback
+    return fallback;
+}
+
+const float AnimationController::GetFloat(const std::string& key, float fallback) const
+{
+    // Get the float
+    AnimationController::parameter_const_iterator param = parameters.find(key);
+    
+    // If we found it return it
+    if(param != parameters.end())
+    {
+        return param->second.value.number;
+    }
+    
+    // Return the fallback
+    return fallback;
+}
+
+void AnimationController::SetBoolean(const std::string& key, bool value)
+{
+    // Get the float
+    AnimationController::parameter_iterator param = parameters.find(key);
+    
+    // If we found it return it
+    if(param != parameters.end())
+    {
+        param->second.value.boolean = value;
+    }
+}
+
+void AnimationController::SetFloat(const std::string& key, float value)
+{
+    // Get the float
+    AnimationController::parameter_iterator param = parameters.find(key);
+    
+    // If we found it return it
+    if(param != parameters.end())
+    {
+        param->second.value.number = value;
+    }
 }

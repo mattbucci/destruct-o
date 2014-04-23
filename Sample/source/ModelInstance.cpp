@@ -23,10 +23,10 @@
  * @param _model Model to provide an instance of
  */
 ModelInstance::ModelInstance(Model *_model)
-    : model(_model), transform(Transform()), controller(AnimationController()), animation(NULL)
+    : model(_model), transform(Transform()), controller(new AnimationController()), animation(NULL)
 {
     // Bind the animation controller
-    controller.Bind(_model->Skeleton());
+    controller->Bind(_model->Skeleton());
     
     // Bind the animator
     animation.Bind(_model->Skeleton());
@@ -53,7 +53,7 @@ void ModelInstance::Update(double delta, double now)
     model->Update(delta, now);
     
     // Update the animation controller
-    controller.Update(delta, now);
+    controller->Update(delta, now);
     
     // Update the animation test
     animation.Update(delta, now);
@@ -71,7 +71,7 @@ void ModelInstance::Draw(MaterialProgram *program)
     program->Model.Apply();
     
     // Draw the model
-    //model->Draw(program, *(controller.Skeleton()));
+    //model->Draw(program, *(controller->Skeleton()));
     model->Draw(program, *(animation.Skeleton()));
     
     // Remove the translation
@@ -100,7 +100,7 @@ const Model* ModelInstance::GetModel() const
  * Get a reference to the animation controller of this model instance
  * @return Reference to the animation controller of this model instance
  */
-AnimationController& ModelInstance::Controller()
+AnimationController* ModelInstance::Controller()
 {
     return controller;
 }
@@ -147,7 +147,8 @@ ModelInstance* ModelInstance::LoadManifestEntry(const Json::Value& model, Textur
     if(controller != Json::Value::null && controller.isObject())
     {
         // Forcibly load the controller
-        instance->controller = AnimationController(controller, instance->model.get());
+        delete instance->controller;
+        instance->controller = new AnimationController(controller, instance->model.get());
     }
     
     // Return the created instance

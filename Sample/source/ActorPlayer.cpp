@@ -52,7 +52,8 @@ void ActorPlayer::setWeapon(Weapon * weapon) {
     model->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, 0.0));
     model->GetTransform().Translation() = glm::vec3(0, -0.3, -1.95);
     setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
-
+    model->Controller()->SetFloat("speed", 0.0f);
+    
     //Save weapon
     this->currentWeapon = weapon;
 }
@@ -63,7 +64,7 @@ bool ActorPlayer::Update() {
 	//Your movement speed is the multiplier right now
 	vec2 moveVector = Game()->FirstPerson->GetMoveVector();
 	vec2 playerMotion = moveVector*movementSpeed;
-	
+    
 	//The side ways velocity is not effected by momentum
 	//isn't that handy
 	Velocity.x = playerMotion.x;
@@ -81,15 +82,22 @@ bool ActorPlayer::Update() {
         if (OnGround()) {
             //Play the appropriate move animation
             if (glm::length(playerMotion) > 0)
+            {
                 //Play walking
                 setAnimation(currentWeapon->LookupAnimation(Weapon::ANIMATION_RUN));
+                model->Controller()->SetFloat("speed", 1.0f);
+            }
             else
+            {
                 //Stand around
                 setAnimation(currentWeapon->LookupAnimation(Weapon::ANIMATION_AIM));
+                model->Controller()->SetFloat("speed", 0.0f);
+            }
         }
         else {
             //Jump
             setAnimation(currentWeapon->LookupAnimation(Weapon::ANIMATION_JUMP));
+            model->Controller()->SetFloat("speed", 0.0f);
         }
     }
 
@@ -192,7 +200,8 @@ void ActorPlayer::DrawWeapon(MaterialProgram *materialShader)
         model->Draw(materialShader);
 
 		//Find bone
-        const Node * n = model->Skeleton()->FindNode("b_muzzle");
+        //const Node * n = model->Skeleton()->FindNode("b_muzzle");
+        const Node * n = model->Controller()->Bones()["b_muzzle"];
         mat4 globalTransform = model->GetTransform().TransformMatrix() * n->TransformMatrix();
 
 		vec3 fVector(.15,0,0);
