@@ -60,7 +60,7 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	shader->Model.PushMatrix();
 
 	//DEBUG: Set fill based on Time for now
-	float fill = Game()->Now() - (long int)(Game()->Now());
+	float fill = player->GetCharge() / player->GetMaxCharge();
 	Rect a(0,0,10,180.0f * fill);
 	Rect b(0,1-fill,1,1);
 	chargeBar.SetColor(vec4(1, 1, 1, hudOpaque));
