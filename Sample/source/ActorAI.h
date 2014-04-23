@@ -108,7 +108,7 @@ protected:
 	virtual void onDeath() override;
 public:
 	//Takes ownership of the weapon automatically
-	ActorAI(Weapon * actorWeapon);
+	ActorAI(Weapon * actorWeapon, float maxLife);
 	virtual ~ActorAI();
 
 	//Update the state of this AI

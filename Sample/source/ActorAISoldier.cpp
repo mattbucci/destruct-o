@@ -3,7 +3,7 @@
 #include "ModelInstance.h"
 #include "SoldierAIWeapon.h"
 
-ActorAISoldier::ActorAISoldier() : ActorAI(new SoldierAIWeapon(this,energyPool))  {
+ActorAISoldier::ActorAISoldier() : ActorAI(new SoldierAIWeapon(this,energyPool),100)  {
 
 }
 ActorAISoldier::~ActorAISoldier() {
