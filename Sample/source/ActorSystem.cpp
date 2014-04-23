@@ -84,7 +84,7 @@ void ActorSystem::DoAOEDamage(vec3 at, float radius, float damage, PhysicsActor 
 		if (damagableActor == NULL)
 			continue;
 		//Now check distance
-		float dist = glm::distance(at,damagableActor->position);
+		float dist = glm::distance(at,damagableActor->GetPosition());
 		if (dist > radius)
 			continue;
 		//Scale damage
@@ -92,7 +92,7 @@ void ActorSystem::DoAOEDamage(vec3 at, float radius, float damage, PhysicsActor 
 		damagableActor->Damage(damager,actorDamage);
 		//And fling the actor some amount
 		float fling = damage*.05;
-		damagableActor->velocity += glm::normalize(damagableActor->position - at)*fling;
+		damagableActor->velocity += glm::normalize(damagableActor->GetPosition() - at)*fling;
 	}
 }
 

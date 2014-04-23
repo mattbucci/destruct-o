@@ -114,6 +114,9 @@ bool ActorAI::Update() {
 				targetEnemy = seenEnemy;
 				state = AI_TARGETING_ENEMY;
 				targetAcquiredAt = Game()->Now();
+				Game()->Actors.AITargetAcquired.Fire([this](function<void(Actor *, Actor *)> observer) {
+					observer(this,targetEnemy);
+				});
 				break;
 			}
 		

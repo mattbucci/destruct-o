@@ -89,6 +89,12 @@ void Actor::Draw(GLEffectProgram * effectShader) {
 
 }
 
+//Get the position of this physics actor
+vec3 Actor::GetPosition() {
+	return position;
+}
+
+
 //When an actor is loaded
 //handles rebuilding the model instance
 void Actor::Load(Json::Value & parentValue, LoadData & loadData) {

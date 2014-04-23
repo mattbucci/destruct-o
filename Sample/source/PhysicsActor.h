@@ -18,7 +18,6 @@ class PhysicsActor : public Actor {
 
 	//Actors should not use these methods to enact changes (except maybe position)
 	//position of the physics proxy is the center
-	vec3 position;
 	vec3 velocity;
 	vec3 acceleration;
 
@@ -59,9 +58,6 @@ public:
 	PhysicsActor(vec3 size, float maxLife, FactionId faction);
 	~PhysicsActor();
 
-	//Anyone can know the position
-	vec3 GetPosition();
-
 	//Get the current life of this actor
 	float GetLife();
 
@@ -82,7 +78,6 @@ public:
 
 	CLASS_DECLARATION(PhysicsActor)
 		INHERITS_FROM(Actor)
-		CLASS_MEMBER(position,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(velocity,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(acceleration,ReflectionData::SAVE_VEC3)
 	END_DECLARATION

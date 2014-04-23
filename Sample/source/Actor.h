@@ -22,7 +22,12 @@ class Actor : public Savable {
 	//The last animation being played
 	string lastPlayedAnimation;
 
-	//This is a hack while modelinstance is private
+	//Actors now own position
+	vec3 position;
+
+	//The physics system has direct access to position/velocity/acceleration
+	friend class PhysicsSystem;
+	//So does the physics actor
 	friend class PhysicsActor;
 protected:
 	//When an actor is loaded
@@ -73,6 +78,9 @@ public:
 	//this returns true
 	bool Dead();
 
+	//Anyone can know the position
+	vec3 GetPosition();
+
 	//Draw this actor
 	//And any associated model
 	virtual void Draw(MaterialProgram * materialShader);
@@ -81,6 +89,7 @@ public:
 	virtual void Draw(GLEffectProgram * effectShader);
 
 	CLASS_DECLARATION(Actor)
+		CLASS_MEMBER(position,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(valid,ReflectionData::SAVE_BOOL)
 		CLASS_MEMBER(facingDirection,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(lastAnimationEndTime,ReflectionData::SAVE_DOUBLE)
