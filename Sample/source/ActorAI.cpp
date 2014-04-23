@@ -328,7 +328,7 @@ void ActorAI::Draw(MaterialProgram * materialShader){
 		 
 
 		//Only recalculate if rotting isn't true
-		if ((state != AI_ROTTING) || (state != AI_ENGAGING_ENEMY)) {
+		if (state != AI_ROTTING) {
 			model->Update(SIMULATION_DELTA,Game()->Now());
 			//If you're facing an enemy, snap spine as best as you can
 			if (targetEnemy != NULL)

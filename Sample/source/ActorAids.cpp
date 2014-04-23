@@ -17,7 +17,7 @@ ActorAids::ActorAids() {
 bool ActorAids::Update() {
 	//Currently AIDS is pretty stupid (but won't be later)
 	if (!spawnedNasties) {
-		Game()->Actors.BuildActor<ActorAIMech>();
+		Game()->Actors.BuildActor<ActorAISoldier>();
 		//Game()->Actors.BuildActor<ActorAI>();
 		spawnedNasties = true;
 	}
