@@ -14,7 +14,7 @@ GameTile::GameTile() {
 	Cells = new TileCell[TILE_SIZE*TILE_SIZE];
 	chunks = new TerrainChunk*[CHUNK_COUNT];
 	memset(chunks,0,CHUNK_COUNT*sizeof(TerrainChunk*));
-	UseByDate = Game()->Now()+1000;
+	UseByDate = numeric_limits<double>::max();
 }
 
 GameTile::~GameTile() {
