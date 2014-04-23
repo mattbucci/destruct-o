@@ -18,6 +18,12 @@ class ActorSystem : public Savable {
 	//All actors are updated and drawn
 	ContiguousList<Actor*> allActors;
 
+	//All actors scheduled for destruction
+	ContiguousList<Actor*> deadActors1;
+	ContiguousList<Actor*> deadActors2;
+	//Flip these back and forth like double buffers
+	bool useDeadActors1;
+
 	//The player gets special treatment
 	//that lucky bastard
 	ActorPlayer * player;
@@ -105,7 +111,10 @@ public:
 	//Actor system is essentially a list of actors
 	CLASS_DECLARATION(ActorSystem)
 		CLASS_CONTAINER_MEMBER(allActors,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
-		CLASS_MEMBER(player,ReflectionData::SAVE_HANDLE);
-		CLASS_MEMBER(Factions,ReflectionData::SAVE_INSTANCE);
+		CLASS_CONTAINER_MEMBER(deadActors1,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
+		CLASS_CONTAINER_MEMBER(deadActors2,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
+		CLASS_MEMBER(useDeadActors1,ReflectionData::SAVE_BOOL)
+		CLASS_MEMBER(player,ReflectionData::SAVE_HANDLE)
+		CLASS_MEMBER(Factions,ReflectionData::SAVE_INSTANCE)
 	END_DECLARATION
 };

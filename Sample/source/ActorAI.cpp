@@ -4,18 +4,20 @@
 #include "ActorAids.h"
 #include "Universal.h"
 #include "BaseFrame.h"
+#include "Weapon.h"
 
 #define TWO_PI ((float)(M_PI*2.0f))
 
 CLASS_SAVE_CONSTRUCTOR(ActorAI);
 
-ActorAI::ActorAI() : PhysicsActor(vec3(1.5,1.5,4),100, GameFactions::FACTION_ENEMY), laser(vec4(1,.25,0,1)) {
-	//setModel("soldier02");
-	//playAnimation("Standing_Aim_Idle");
-    setModel("soldier01");
-    playAnimation("idleWgun");
+ActorAI::ActorAI() : PhysicsActor(vec3(1.5,1.5,4),100, GameFactions::FACTION_ENEMY), __weapon(this,energyPool) {
+	//Use a default weapon for now
+    setModel(weapon().LookupAnimation(Weapon::ANIMATION_MODELNAME));
+    playAnimation(weapon().LookupAnimation(Weapon::ANIMATION_AIM));
 	//AI starts with nothing
 	state = AI_SCANNING;
+	//Max out the energy pool
+	energyPool = 100;
 }
 
 
@@ -86,6 +88,12 @@ void ActorAI::applyFacingDirection(float desiredFacingDirection) {
 
 
 bool ActorAI::Update() {
+	//Check if the target enemy is still alive
+	//If their actor is about to be destroyed
+	//erase the reference
+	if (targetEnemy->Dead())
+		targetEnemy = NULL;
+
 	//AI is a state machine
 	switch (state) {
 	case AI_WAITINGFORPATH:
@@ -127,11 +135,11 @@ bool ActorAI::Update() {
 			bool touchingGround = false;
 			if (OnGround() && Velocity.z < .2) {
 				touchingGround = true;
-				setAnimation(lookupAnim(ANIMATION_WALK));
+				setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_RUN));
 				
 			}
 			else if (!animationRunning())
-				setAnimation(lookupAnim(ANIMATION_INAIR));
+				setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_AIM));
 				
 
 			
@@ -153,9 +161,9 @@ bool ActorAI::Update() {
 						if (touchingGround) {
 							//Ok lets jump up
 							//Playing some kind of jump animation would be A+
-							Velocity.z += 15*(upcomingHeight-feetHeight);
+							Velocity.z += min(15*(upcomingHeight-feetHeight),20.0f);
 							//jump!
-							setAnimation(lookupAnim(ANIMATION_JUMP));
+							setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_JUMP));
 						}
 				
 					}
@@ -173,7 +181,6 @@ bool ActorAI::Update() {
 
 		}
 
-		laser.StopFiring();
 		break;
 	case AI_SCANNING:
 		if (baseMovementSpeed() < 0) {
@@ -198,14 +205,17 @@ bool ActorAI::Update() {
 		if (Game()->Now() - 5 > targetAcquiredAt) {
 			state = AI_SCANNING;
 		}
-		laser.Move(Position,targetEnemy->GetPosition());
-		laser.StartFiring();
 		
 		
 		break;
 	case AI_ENGAGING_ENEMY:
 		break;
 	}
+
+	//Restore some energy to your energy pool
+	energyPool += SIMULATION_DELTA*100;
+	if (energyPool > 100)
+		energyPool = 100;
 
 	return PhysicsActor::Update();
 }
@@ -217,26 +227,13 @@ void ActorAI::PathingReady(vector<vec2> path) {
 }
 
 
-//DEFAULTS:
-//Animation table
-const string & ActorAI::lookupAnim(animation animationId) {
-	static const string table[6] = {
-		//ANIMATION_IDLE
-		"idleWgun",
-		//ANIMATION_AIM
-		"",
-		//ANIMATION_WALK
-		"run",
-		//ANIMATION_JUMP
-		"jump",
-		//ANIMATION_DEATH
-		"death",
-		//ANIMATION_INAIR
-		"idleWgun"
-	};
-	return table[(int)animationId];
-}
 
+
+//DEFAULTS:
+//Current weapon
+Weapon & ActorAI::weapon() {
+	return __weapon;
+}
 
 //The time it takes to target after finding the enemy
 double ActorAI::targetTime() {
@@ -265,5 +262,5 @@ void ActorAI::SetFaction(FactionId newFaction) {
 }
 
 void ActorAI::Draw(GLEffectProgram * effectShader)  {
-	laser.Draw(effectShader);
+	
 }

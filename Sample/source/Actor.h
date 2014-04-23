@@ -69,6 +69,10 @@ public:
 	//otherwise return false
 	virtual bool Update();
 
+	//If this object is about to be erased
+	//this returns true
+	bool Dead();
+
 	//Draw this actor
 	//And any associated model
 	virtual void Draw(MaterialProgram * materialShader);

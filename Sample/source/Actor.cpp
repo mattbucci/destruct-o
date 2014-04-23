@@ -24,6 +24,10 @@ bool Actor::Update() {
 	return !valid;
 }
 
+bool Actor::Dead() {
+	return !valid;
+}
+
 //Set the current model
 //if modelName is invalid
 //model will still be NULL

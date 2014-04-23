@@ -2,20 +2,14 @@
 
 #include "PhysicsActor.h"
 #include "EffectLaser.h"
+#include "BasicAIWeapon.h"
+
+class Weapon;
 
 class ActorAI : public PhysicsActor {
-	EffectLaser laser;
+	//Temporary weapon
+	BasicAIWeapon __weapon;
 protected:
-
-	enum animation {
-		ANIMATION_IDLE,
-		ANIMATION_AIM,
-		ANIMATION_WALK,
-		ANIMATION_JUMP,
-		ANIMATION_DEATH,
-		ANIMATION_INAIR,
-	};
-
 
 	enum aiStates {
 		//Moving towards an enemy
@@ -44,7 +38,9 @@ protected:
 	//current goal on the path
 	int pathIndex;
 	vec2 goal;
-	
+	//This AI's charge pool
+	float energyPool;
+
 
 	//Attempt to find a close nearby enemy you can see right now
 	virtual PhysicsActor * sightNearbyEnemy();
@@ -56,9 +52,8 @@ protected:
 	//override these functions
 	//to customize the AI
 
-	//Lookup the animation name based off the constant
-	//in the future this will be full virtual
-	virtual const string & lookupAnim(animation animationId);
+	//The weapon which characterizes this AI
+	Weapon & weapon();
 
 	//The time it takes to target after finding the enemy
 	virtual double targetTime();
