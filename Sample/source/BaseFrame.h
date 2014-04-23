@@ -100,6 +100,7 @@ public:
 
 	//Build basic entities (such as the player)
 	void OnFrameFocus() override;
+	void OnFrameLeave() override;
 
 	//Toggle Escape Menu
 	void ToggleMenu();

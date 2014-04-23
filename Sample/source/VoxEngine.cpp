@@ -213,6 +213,8 @@ void VoxEngine::Start() {
 		}
 	}
 
+	Frames::SetSystem(Frames::FRAME_MAINMENU);
+	Frames::UpdateAliveFrame();
 
 	//Start up game
 	continueGameLoop = true;
@@ -229,7 +231,6 @@ void VoxEngine::Start() {
 	
 	//The game loop begins
 	while (continueGameLoop) {
-
 		//Jump ahead detection, if the simulation loop
 		//is behind more than 2 seconds, assume the application
 		//was paused for some reason (break point)

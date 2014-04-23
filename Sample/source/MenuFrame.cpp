@@ -82,7 +82,6 @@ bool MenuFrame::Update(vector<InputEvent> inputEvents) {
 
 void MenuFrame::Draw(double width, double height)
 {
-
 	//Call the parent draw to draw interface
 	GameSystem::Draw(width, height);
 }

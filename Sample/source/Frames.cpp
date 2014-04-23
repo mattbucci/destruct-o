@@ -25,7 +25,7 @@ void Frames::BuildSystemList() {
 	cout << "Building systems list...";
 
 	//Build each frame
-	//systems[FRAME_MAINMENU] = new MenuFrame(shaders);
+	systems[FRAME_MAINMENU] = new MenuFrame(shaders);
 	
 	//Set initial frame  
 	//SetSystem(FRAME_MAINMENU);
