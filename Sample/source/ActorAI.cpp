@@ -18,6 +18,7 @@ ActorAI::ActorAI() : PhysicsActor(vec3(1.5,1.5,4),100, GameFactions::FACTION_ENE
 	state = AI_SCANNING;
 	//Max out the energy pool
 	energyPool = 100;
+	targetEnemy = NULL;
 }
 
 
@@ -91,7 +92,7 @@ bool ActorAI::Update() {
 	//Check if the target enemy is still alive
 	//If their actor is about to be destroyed
 	//erase the reference
-	if (targetEnemy->Dead())
+	if ((targetEnemy != NULL) && targetEnemy->Dead())
 		targetEnemy = NULL;
 
 	//AI is a state machine
