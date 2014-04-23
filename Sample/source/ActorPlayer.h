@@ -25,6 +25,7 @@ class ActorPlayer : public PhysicsActor
 
 	//Energy pool
 	float energyPool;
+	float maxEnergyPool;
     
     
 
@@ -40,6 +41,7 @@ public:
 	~ActorPlayer();
 
     float GetCharge();
+	float GetMaxCharge();
 
 	//The player is the only actor which consumes input events
 	//void ReadInput(const vector<InputEvent> & events);

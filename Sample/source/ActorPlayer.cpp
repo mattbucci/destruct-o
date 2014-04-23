@@ -29,6 +29,7 @@ ActorPlayer::ActorPlayer()
     weaponCamera.SetCameraView(vec3(0,0,0), glm::vec3(0,-1,0));
 	//Start the user with full charge
 	energyPool = 100;
+	maxEnergyPool = 100;
 
     weaponFired = false;
 	
@@ -39,6 +40,10 @@ ActorPlayer::~ActorPlayer()
 
 float ActorPlayer::GetCharge() {
     return energyPool;
+}
+
+float ActorPlayer::GetMaxCharge() {
+	return maxEnergyPool;
 }
 
 // Create anything related to the actor
