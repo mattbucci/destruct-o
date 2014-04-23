@@ -251,6 +251,14 @@ const Model* AnimationController::GetModel() const
     return model;
 }
 
+/**
+ * Get a reference to the layers of this animation controller
+ * @return Reference to the layer storage
+ */
+AnimationController::layer_store& AnimationController::Layers()
+{
+    return layers;
+}
 
 
 // parameter functions

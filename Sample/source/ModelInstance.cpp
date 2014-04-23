@@ -77,9 +77,18 @@ void ModelInstance::Draw(MaterialProgram *program)
     program->Model.SetMatrix(transform.TransformMatrix());
     program->Model.Apply();
     
-    // Draw the model
-    //model->Draw(program, *(controller->Skeleton()));
-    model->Draw(program, *(animation.Skeleton()));
+    // DUCT TAPE SOLUTON WARNING
+    if(controller->Layers().size())
+    {
+        // Draw the model (If we have animation layers
+        model->Draw(program, *(controller->Skeleton()));
+    }
+    
+    // otherwise fallback on the older system
+    else
+    {
+        model->Draw(program, *(animation.Skeleton()));
+    }
     
     // Remove the translation
     program->Model.PopMatrix();
@@ -156,6 +165,12 @@ ModelInstance* ModelInstance::LoadManifestEntry(const Json::Value& model, Textur
         // Forcibly load the controller
         delete instance->controller;
         instance->controller = new AnimationController(controller, instance->model.get());
+    }
+    
+    // Print out the animations
+    for(Model::animation_const_iterator it = instance->model->Animations().begin(); it != instance->model->Animations().end(); it++)
+    {
+        cout << "Animation: " << it->first << " is " << it->second->Length() << " seconds" << endl;
     }
     
     // Return the created instance

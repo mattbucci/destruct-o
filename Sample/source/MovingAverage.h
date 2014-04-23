@@ -3,7 +3,7 @@
 
 template <class T>
 inline T determineZero() {
-	return value();
+	return T();
 }
 //For primitives
 template <>

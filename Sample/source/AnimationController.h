@@ -150,6 +150,12 @@ public:
      */
     const Model* GetModel() const;
     
+    /**
+     * Get a reference to the layers of this animation controller
+     * @return Reference to the layer storage
+     */
+    layer_store& Layers();
+    
     // parameter functions
     parameter_const_iterator GetParameter(const std::string& key) const;
     const bool GetBoolean(const std::string& key, bool fallback = false) const;

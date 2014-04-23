@@ -228,6 +228,9 @@ void AnimationLayer::Transition(const std::string& state, double now)
         // Active state is now the old state
         activeState = stateIt->second;
         
+        // Print out the current state transition information
+        cout << "Transition Occurring: " << transitionState->Id() << " => " << activeState->Id() << endl;
+        
         // Get out
         return;
     }
@@ -254,6 +257,12 @@ void AnimationLayer::Transition(const std::string& state, double now)
     
     // Cause the active state to enter the transitional phase
     activeState->WillTransition(now);
+    
+    // Print out the current state transition
+    if(transitionState)
+    {
+        cout << "Transition Occurring: " << transitionState->Id() << " => " << activeState->Id() << endl;
+    }
 }
 
 /**

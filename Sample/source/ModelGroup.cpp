@@ -142,7 +142,7 @@ ModelGroup::ModelGroup(const std::string& manifestPath, TextureCache& _textureCa
 void ModelGroup::AddCompressedModel(std::string& directory, std::string& path, std::string& name)
 {
     // Add this model to the model list
-    /*double s = OS::Now();
+    double s = OS::Now();
 	Model *loadedModel  = Model::LoadFromCompressedJsonFile(directory, path, textureCache);
 	modelGroupMutex.lock();
 	models[name] = loadedModel;

@@ -69,7 +69,7 @@ bool ActorAids::Update() {
 	//right now this done stupidly
 	//by randomly selecting an action
 	auto randomAction = actionList.begin();
-	unsigned int randChoice = Utilities::random(0u,actionList.size());
+    unsigned int randChoice = Utilities::random((unsigned int) 0, (unsigned int) actionList.size());
 	if (randChoice >= actionList.size())
 		randChoice = actionList.size()-1;
 	advance(randomAction,randChoice);
