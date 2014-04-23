@@ -104,6 +104,28 @@ void AnimationSource::Bind(const Node* root)
 }
 
 /**
+ * Performs an update of the animation source
+ * @param delta the elapsed time since the previous frame
+ * @param now the current simulated time
+ */
+void AnimationSource::Update(double delta, double now)
+{
+    
+}
+
+/**
+ * Sets the local skeleton's transforms back to the initial pose
+ */
+void AnimationSource::Reset()
+{
+    // Copy the initial pose bones back into the local skeleton
+    for(Node::const_flattreemap::const_iterator it = InitialBones().begin(); it != InitialBones().end(); it++)
+    {
+        skeletonTable[it->first]->LocalTransform() = it->second->LocalTransform();
+    }
+}
+
+/**
  * Get a pointer to the local skeleton
  * @return pointer to the local skeleton
  */

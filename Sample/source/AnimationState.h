@@ -43,6 +43,9 @@ class AnimationState
     /** The name of the animation layer */
     std::string name;
     
+    /** The animation source that this state encapsulates */
+    AnimationSource *source;
+    
 public:
     /**
      * Standard constructor.  Create an empty anmation state
@@ -87,10 +90,28 @@ public:
     void Update(double delta, double now);
     
     /**
+     * Event to signal that the animation is transitioning to this state
+     * @param now the current simulated time
+     */
+    void WillTransition(double now);
+    
+    /**
      * Get the name of this animation state
      * @return Const reference to the name of the state
      */
     const std::string& Id() const;
+    
+    /**
+     * Get a const pointer to the local skeleton
+     * @return const pointer to the local skeleton
+     */
+    const Node* Skeleton() const;
+    
+    /**
+     * Get a const reference to the local skeleton bone lookup map
+     * @return const reference to the local skeleton bone lookup map
+     */
+    const Node::flattreemap& Bones() const;
 };
 
 #endif

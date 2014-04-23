@@ -16,3 +16,10 @@
 
 #include "stdafx.h"
 #include "AnimationBlendGroup.h"
+
+AnimationBlendGroup::AnimationBlendGroup()
+{
+    
+}
+
+

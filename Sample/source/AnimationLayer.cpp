@@ -102,6 +102,9 @@ AnimationLayer::AnimationLayer(const Json::Value& value, AnimationController& _c
     
     // Bind this source to the initial skeleton of the animation controller
     Bind(_controller.InitialSkeleton());
+    
+    // Transition to the default state of the layer
+    Transition(value["default"].asString(), 0);
 }
 
 /**
@@ -126,7 +129,10 @@ void AnimationLayer::Bind(const Node* root)
     AnimationSource::Bind(root);
     
     // Update all the states with the new skeleton
-    
+    for(state_store::iterator it = states.begin(); it != states.end(); it++)
+    {
+        it->second->Bind(root);
+    }
 }
 
 /**
@@ -136,11 +142,93 @@ void AnimationLayer::Bind(const Node* root)
  */
 void AnimationLayer::Update(double delta, double now)
 {
-    // Update all the layers
-    for(state_store::iterator it = states.begin(); it != states.end(); it++)
+    // If we don't have an active state, there is nothing to do
+    if(!activeState)
     {
-        it->second->Update(delta, now);
+        return;
     }
+    
+    // Update the active state
+    activeState->Update(delta, now);
+    
+    // If we have a transition occuring
+    if(transitionState)
+    {
+        // Calculate whether the transition state should end
+        double progress = (now - transitionStartTime) / transitionLength;
+        
+        // If we are complete in our transition, end it
+        if(progress >= 1.0)
+        {
+            // Kill the transition state
+            transitionState = NULL;
+        }
+        
+        // If we are not complete in the transition, blend
+        else
+        {
+            // Update the transition state's content
+            transitionState->Update(delta, now);
+            
+            // Set the skeleton as a blend between the two
+            for(Node::flattreemap::iterator it = skeletonTable.begin(); it != skeletonTable.end(); it++)
+            {
+                // Get the local transform of the cooresponding bone in the transition layer
+                const Transform& a = transitionState->Bones().find(it->first)->second->LocalTransform();
+                
+                // Get the local transform of the cooresponding bone in the active layer
+                const Transform& b = activeState->Bones().find(it->first)->second->LocalTransform();
+                
+                // Store the interpolated transform
+                it->second->LocalTransform() = Transform::Interpolate(a, b, progress);
+            }
+            
+            // Return from the update method
+            return;
+        }
+    }
+    
+    // Copy the active state's skeleton into the local skeleton
+    for(Node::flattreemap::iterator it = skeletonTable.begin(); it != skeletonTable.end(); it++)
+    {
+        // Get the local transform of the cooresponding bone in the active layer
+        it->second->LocalTransform() = activeState->Bones().find(it->first)->second->LocalTransform();
+    }
+}
+
+/**
+ * Cause the animation controller to transition to a state
+ * @param state the state to transition to
+ * @param now the current simulated time
+ */
+void AnimationLayer::Transition(const std::string& state, double now)
+{
+    // Perform a lookup of the state
+    state_store::iterator stateIt = states.find(state);
+    
+    // If the iterator is invalid, complain
+    if(stateIt == states.end())
+    {
+        // Throw an exception
+        throw std::runtime_error("void AnimationLayer::Transition(const std::string& state) - reference state does not exist");
+    }
+    
+    // Transition to the state (if we currently are currently active)
+    if(activeState)
+    {
+        // The new transiton state is the old active state
+        transitionState = activeState;
+        
+        // Store some transition information
+        transitionStartTime = now;
+        transitionLength = 0.33;
+    }
+    
+    // Store the new active state
+    activeState = stateIt->second;
+    
+    // Cause the active state to enter the transitional phase
+    activeState->WillTransition(now);
 }
 
 /**

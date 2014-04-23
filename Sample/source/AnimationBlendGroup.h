@@ -17,4 +17,16 @@
 #ifndef __ANIMATION_BLENDGROUP_H__
 #define __ANIMATION_BLENDGROUP_H__
 
+#include "stdafx.h"
+
+#include "AnimationController.h"
+#include "AnimationSource.h"
+#include "AnimationClip.h"
+
+class AnimationBlendGroup
+{
+public:
+    AnimationBlendGroup();
+};
+
 #endif

@@ -147,8 +147,7 @@ ModelInstance* ModelInstance::LoadManifestEntry(const Json::Value& model, Textur
     if(controller != Json::Value::null && controller.isObject())
     {
         // Forcibly load the controller
-        instance->controller = AnimationController(controller);
-        instance->controller.Bind(instance->model->Skeleton());
+        instance->controller = AnimationController(controller, instance->model.get());
     }
     
     // Return the created instance

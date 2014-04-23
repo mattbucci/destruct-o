@@ -33,7 +33,7 @@ const static std::string ParameterTypeKeys[] =
  * @param skeleton Root node of the skeleton of the transform tree to animation
  */
 AnimationController::AnimationController(const AnimationController& controller)
-    : AnimationSource(controller), parameters(controller.parameters), layers(AnimationController::layer_store()), layerQueue(AnimationController::layer_queue())
+    : AnimationSource(controller), parameters(controller.parameters), layers(AnimationController::layer_store()), layerQueue(AnimationController::layer_queue()), model(controller.model)
 {
     // Duplicate the layers of the animation controller
     for(layer_const_iterator it = controller.layers.begin(); it != controller.layers.end(); it++)
@@ -44,9 +44,14 @@ AnimationController::AnimationController(const AnimationController& controller)
     }
 }
 
-// Deserialize an animation controller
-AnimationController::AnimationController(const Json::Value& value)
-    : AnimationSource(), parameters(AnimationController::parameter_store()), layers(AnimationController::layer_store())
+/**
+ * Create an animation controller from a serialized Json source (yeah, no manual creation
+ * yet).
+ * @param value Json value to deserialize this animation controller from
+ * @param model Model to bind to this animation controller
+ */
+AnimationController::AnimationController(const Json::Value& value, const Model* _model)
+    : AnimationSource(), parameters(AnimationController::parameter_store()), layers(AnimationController::layer_store()), model(_model)
 {
     // We first need to validate that this a Json object
     if(!value.isObject())
@@ -82,6 +87,9 @@ AnimationController::AnimationController(const Json::Value& value)
         // Put the layer on the priority queue
         layerQueue.push(layer);
     }
+    
+    // Bind the shit to the shit
+    Bind(model->Skeleton());
 }
 
 /**
@@ -123,6 +131,9 @@ AnimationController& AnimationController::operator= (const AnimationController& 
     // Copy the static resources
     parameters = controller.parameters;
     
+    // Copy the model
+    model = controller.model;
+    
     // Duplicate the layers of the animation controller
     layers = layer_store();
     layerQueue = layer_queue();
@@ -139,18 +150,18 @@ AnimationController& AnimationController::operator= (const AnimationController& 
 
 /**
  * Binds the animation controller to a skeleton
- * @param root the root node of the transform tree to bind to
+ * @param root the root node of the transform tree to bind as a skeleton
  */
-void AnimationController::Bind(const Node* root)
+void AnimationController::Bind(const Node *_root)
 {
-    // Call the bind function of the parent class
-    AnimationSource::Bind(root);
+    // Call the bind function of the parent class on the model's skeleton
+    AnimationSource::Bind(_root);
     
     // Iterate through the animation layers and rebind them
     for(layer_iterator it = layers.begin(); it != layers.end(); it++)
     {
         // Rebind this layer
-        it->second->Bind(root);
+        it->second->Bind(_root);
     }
 }
 
@@ -229,4 +240,13 @@ AnimationController::Parameter::Parameter(const Json::Value& value)
             throw std::runtime_error("AnimationController::Parameter::Parameter(const Json::Value& value) - unrecognized parameter type");
             break;
     };
+}
+
+/**
+ * Get the model this animation controller is associated with
+ * @return Const pointer to the model this controller will animate
+ */
+const Model* AnimationController::GetModel() const
+{
+    return model;
 }

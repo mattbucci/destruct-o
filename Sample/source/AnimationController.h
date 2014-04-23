@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include "Transform.h"
 #include "Node.h"
+#include "Model.h"
 #include "AnimationSource.h"
 #include "AnimationLayer.h"
 
@@ -93,6 +94,11 @@ private:
      */
     layer_queue layerQueue;
     
+    /**
+     * The model this animation controller is controlling
+     */
+    const Model* model;
+    
 public:
     /**
      * Do nothing constructor - just to handle meshes which don't have controllers
@@ -108,11 +114,11 @@ public:
     
     /**
      * Create an animation controller from a serialized Json source (yeah, no manual creation
-     * yet).  
+     * yet).
      * @param value Json value to deserialize this animation controller from
-     * @param skeleton Root node of the skeleton of the transform tree to animation
+     * @param model Model to bind to this animation controller
      */
-    AnimationController(const Json::Value& value);
+    AnimationController(const Json::Value& value, const Model *model);
     
     /**
      * Destroy an animation controller and any heap allocated memory associated
@@ -127,9 +133,9 @@ public:
     
     /**
      * Binds the animation controller to a skeleton
-     * @param root the root node of the transform tree to bind to
+     * @param root the root node of the transform tree to bind as a skeleton
      */
-    void Bind(const Node* root) override;
+    void Bind(const Node *root) override;
     
     /**
      * Update the animation controller.  Performs animation calculations and updates the skeleton
@@ -137,6 +143,12 @@ public:
      * @param now the current time
      */
     void Update(double delta, double now) override;
+    
+    /**
+     * Get the model this animation controller is associated with
+     * @return Const pointer to the model this controller will animate
+     */
+    const Model* GetModel() const;
 };
 
 #endif

@@ -17,13 +17,17 @@
 #include "stdafx.h"
 #include "AnimationState.h"
 #include "AnimationLayer.h"
+#include "AnimationController.h"
+
+#include "AnimationClip.h"
+#include "AnimationBlendGroup.h"
 
 /**
  * Standard constructor.  Create an empty anmation state
  * @param layer The animation layer this state will reside on
  */
 AnimationState::AnimationState(AnimationLayer& _layer)
-: layer(_layer), name("")
+    : layer(_layer), name(""), source(new AnimationSource())
 {
     
 }
@@ -35,9 +39,23 @@ AnimationState::AnimationState(AnimationLayer& _layer)
  * @param layer The animation layer this state will reside on
  */
 AnimationState::AnimationState(const AnimationState& state, AnimationLayer& _layer)
-    : layer(_layer), name(state.name)
+    : layer(_layer), name(state.name), source(NULL)
 {
+    // Duplicate the transition information
     
+    
+    // Duplicate the animation source
+    AnimationClip *animation = dynamic_cast<AnimationClip *>(state.source);
+    
+    // If we are an animation clip
+    if(animation)
+    {
+        source = new AnimationClip(*animation);
+        return;
+    }
+    
+    // unsupported animation source
+    throw new std::runtime_error("AnimationState::AnimationState(const AnimationState& state, AnimationLayer& _layer) - can not duplicate unsupported animation source");
 }
 
 /**
@@ -47,7 +65,7 @@ AnimationState::AnimationState(const AnimationState& state, AnimationLayer& _lay
  * @param layer The animation layer this state will reside on
  */
 AnimationState::AnimationState(const Json::Value& value, AnimationLayer& _layer)
-    : layer(_layer), name("")
+    : layer(_layer), name(""), source(new AnimationSource())
 {
     // We first need to validate that this a Json object
     if(!value.isObject())
@@ -57,6 +75,47 @@ AnimationState::AnimationState(const Json::Value& value, AnimationLayer& _layer)
     
     // Get the name of the layer
     name = value["name"].asString();
+    
+    // Load the transitions
+    
+    // Load the animation source
+    const Json::Value& animationSource = value["source"];
+    
+    // If we have a serialized animation source
+    if(animationSource.isObject())
+    {
+        // Get the type
+        const std::string type = animationSource["type"].asString();
+        
+        // If this is an animation clip, load it
+        if(type == "AnimationClip")
+        {
+            // Get the name of the animation
+            const std::string animationName = animationSource["value"].asString();
+            
+            // Get an iterator to the animation
+            Model::animation_const_iterator animationIt = layer.Controller().GetModel()->Animations().find(animationName);
+            
+            // If we found the animation
+            if(animationIt != layer.Controller().GetModel()->Animations().end())
+            {
+                // Create a new AnimationClip based on the input animation
+                source = new AnimationClip(animationIt->second);
+            }
+            
+            // Otherwise throw an exception
+            else
+            {
+                throw std::runtime_error("AnimationState::AnimationState(const Json::Value& value, AnimationLayer& _layer) - unrecognized animation clip requested");
+            }
+        }
+        
+        // If this is a blend group, load it
+        else if(type == "AnimationBlendGroup")
+        {
+            
+        }
+    }
 }
 
 /**
@@ -65,7 +124,18 @@ AnimationState::AnimationState(const Json::Value& value, AnimationLayer& _layer)
  */
 AnimationState::~AnimationState()
 {
-    
+    delete source;
+}
+
+/**
+ * Binds the animation state to a skeleton (the state itself is not bound,
+ * but rather its children)
+ * @param root the root node of the transform tree to bind to
+ */
+void AnimationState::Bind(const Node* root)
+{
+    // Bind the skeleton to the source
+    source->Bind(root);
 }
 
 /**
@@ -75,7 +145,34 @@ AnimationState::~AnimationState()
  */
 void AnimationState::Update(double delta, double now)
 {
+    // Update the target source object
+    source->Update(delta, now);
     
+    // Figure out if we should transition
+    
+}
+
+/**
+ * Event to signal that the animation is transitioning to this state
+ * @param now the current simulated time
+ */
+void AnimationState::WillTransition(double now)
+{
+    // Is the source an animation clip
+    AnimationClip *animation = dynamic_cast<AnimationClip *>(source);
+    
+    // If we are an animation clip
+    if(animation)
+    {
+        // Cause the animation to begin playing (also resets the pose)
+        animation->Play(true, now);
+        
+        // Get out
+        return;
+    }
+    
+    // If we don't recognize the source type, just reset the source to initial pose
+    source->Reset();
 }
 
 /**
@@ -85,4 +182,22 @@ void AnimationState::Update(double delta, double now)
 const std::string& AnimationState::Id() const
 {
     return name;
+}
+
+/**
+ * Get a const pointer to the local skeleton
+ * @return const pointer to the local skeleton
+ */
+const Node* AnimationState::Skeleton() const
+{
+    return source->Skeleton();
+}
+
+/**
+ * Get a const reference to the local skeleton bone lookup map
+ * @return const reference to the local skeleton bone lookup map
+ */
+const Node::flattreemap& AnimationState::Bones() const
+{
+    return source->Bones();
 }

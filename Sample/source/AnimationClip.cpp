@@ -20,7 +20,7 @@
 /**
  * Standard constructor.  Initializes everything and stores the animation
  */
-AnimationClip::AnimationClip(Animation *_animation)
+AnimationClip::AnimationClip(const Animation *_animation)
     : AnimationSource(), animation(_animation), animationStartTime(0.0f), speed(1.0f), playing(false), loop(false)
 {
     
@@ -40,7 +40,7 @@ AnimationClip::AnimationClip(const AnimationClip& animationClip)
  * Setter method for the animation
  * @param _animation the animation to play
  */
-void AnimationClip::SetAnimation(Animation *_animation)
+void AnimationClip::SetAnimation(const Animation *_animation)
 {
     animation = _animation;
 }
@@ -61,6 +61,9 @@ void AnimationClip::SetPlaybackSpeed(float _speed)
  */
 void AnimationClip::Play(bool _loop, double now)
 {
+    // Reset the pose to the initial pose
+    Reset();
+    
     // Start playing
     playing = true;
     loop = _loop;
