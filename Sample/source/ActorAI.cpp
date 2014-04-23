@@ -8,8 +8,8 @@
 
 #define TWO_PI ((float)(M_PI*2.0f))
 
-ActorAI::ActorAI(Weapon * actorWeapon) : 
-	PhysicsActor(vec3(1.5,1.5,4),100, GameFactions::FACTION_ENEMY),
+ActorAI::ActorAI(Weapon * actorWeapon, float maxLife) : 
+	PhysicsActor(vec3(1.5,1.5,4),maxLife, GameFactions::FACTION_ENEMY),
 	weapon(actorWeapon) {
 	//Use a default weapon for now
 	setModel(weapon->LookupAnimation(Weapon::ANIMATION_MODELNAME));

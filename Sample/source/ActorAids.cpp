@@ -12,7 +12,7 @@ static const int intensityAveragePeriod = 500;
 //The highest target value for intensity
 static const float MaxTargetIntensity = 200.0f;
 //The fastest the intensity can grow per second
-static const float MaxIntensityGrowRate = 20.0f;
+static const float MaxIntensityGrowRate = 5.0f;
 //The amount of time in seconds the player gets a break for in the start of the game
 //The intensity slowly ramps up during this time period
 static const float StartGameBreakLength = 100.0f;
@@ -61,6 +61,15 @@ bool ActorAids::Update() {
 	//If the current intensity is higher than the target
 	//nothing to do
 	if (currentIntensity > targetIntensity) {
+		intensityAdded.AddSample(0);
+		return Actor::Update();
+	}
+
+	//Enforce target intensity
+	float targetIntensityRate = intensityAdded.GetAverage()/(SIMULATION_DELTA*intensityAveragePeriod);
+
+	//If your intensity grew too fast, wait for it to slow down
+	if (targetIntensityRate > MaxIntensityGrowRate) {
 		intensityAdded.AddSample(0);
 		return Actor::Update();
 	}

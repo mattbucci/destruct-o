@@ -1,19 +1,19 @@
 #include "stdafx.h"
-#include "ActorAIMech.h"
+#include "ActorAISmallMech.h"
 #include "ModelInstance.h"
-#include "MechAIWeapon.h"
+#include "SmallMechAIWeapon.h"
 
-ActorAIMech::ActorAIMech() : ActorAI(new MechAIWeapon(this,energyPool),200)  {
+ActorAISmallMech::ActorAISmallMech() : ActorAI(new SmallMechAIWeapon(this,energyPool),100)  {
 
 }
-ActorAIMech::~ActorAIMech() {
+ActorAISmallMech::~ActorAISmallMech() {
 
 }
 
 //Attempts to snap the user's spine to face the enemy
 //returns true if successful
 //Check if your spine can face the enemy right now
-bool ActorAIMech::checkSpineLimits() {
+bool ActorAISmallMech::checkSpineLimits() {
 	//Since you can move vertically pretty well
 	//just check if the horizontal is very close to 0
 	vec2 diff = vec2(targetEnemy->GetPosition()) - vec2(Position);
@@ -25,7 +25,7 @@ bool ActorAIMech::checkSpineLimits() {
 }
 
 //Snap the model's skeleton to face the enemy
-void ActorAIMech::snapSpineToEnemy() {
+void ActorAISmallMech::snapSpineToEnemy() {
 	//Right now don't even try
 	return;
 
@@ -49,7 +49,7 @@ void ActorAIMech::snapSpineToEnemy() {
 	spineNode->Recalculate();
 }
 
-void ActorAIMech::findMuzzlePosition() {
+void ActorAISmallMech::findMuzzlePosition() {
 	//Find bone
 	Node::const_flattreemap flatmap;
 	model->Skeleton()->GetFlatNodeTree(flatmap);
@@ -72,22 +72,22 @@ void ActorAIMech::findMuzzlePosition() {
 
 //DEFAULTS:
 //The time it takes to target after finding the enemy
-double ActorAIMech::targetTime() {
+double ActorAISmallMech::targetTime() {
 	return 3.0;
 }
 
 //The movement speed of this enemy
 //should be tuned to walk animation speed
-float ActorAIMech::baseMovementSpeed() {
+float ActorAISmallMech::baseMovementSpeed() {
 	return 6;
 }
 
 //How far can enemies spot each other
-float ActorAIMech::sightDistance() {
+float ActorAISmallMech::sightDistance() {
 	return 30;
 }
 
 //How many radians per second this actor can rotate
-float ActorAIMech::turnSpeed() {
+float ActorAISmallMech::turnSpeed() {
 	return (float)(M_PI/2.5);
 }
