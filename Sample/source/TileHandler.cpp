@@ -70,6 +70,7 @@ void TileHandler::handlerLoop() {
 			for(int i = 0; i < s; i++) {
 				if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y) {
 					delete worldSet[i];
+					tile->UseByDate = Game()->Now() + TILE_LIFETIME;
 					worldSet[i] = tile;
 					break;
 				}
@@ -96,6 +97,7 @@ void TileHandler::handlerLoop() {
 		double now = Game()->Now();
 		for (auto it = worldSet.begin(); it != worldSet.end();) {
 			if (now >= (*it)->UseByDate) {
+				_ASSERTE((*it)->Cells != NULL);
 				vec2 tilePos = vec2((*it)->tile_x,(*it)->tile_y);
 				//Cache to disk
 				(*it)->SaveTile(saveDirectory() + tileName(tilePos));
@@ -231,6 +233,8 @@ GameTile * TileHandler::getTile(vec2 pos) {
 		tile = NULL;
 		//While tile not Ready
 		while(tile == NULL) {
+			//Ensure Generator is Running (We aren't waiting for nothing!)
+			genCv.notify_all();
 			//Wait for World Update
 			worldCv.wait(worldLck);
 
