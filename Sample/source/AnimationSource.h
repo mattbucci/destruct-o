@@ -73,7 +73,12 @@ public:
      * @param delta the elapsed time since the previous frame
      * @param now the current simulated time
      */
-    virtual void Update(double delta, double now) = 0;
+    virtual void Update(double delta, double now);
+    
+    /**
+     * Sets the local skeleton's transforms back to the initial pose
+     */
+    void Reset();
     
     /**
      * Get a pointer to the local skeleton

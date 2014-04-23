@@ -118,8 +118,9 @@ public:
     /**
      * Cause the animation controller to transition to a state
      * @param state the state to transition to
+     * @param now the current simulated time
      */
-    void Transition(const std::string& state);
+    void Transition(const std::string& state, double now);
     
     /**
      * Get the name of this animation layer

@@ -30,7 +30,7 @@
 class AnimationClip : public AnimationSource
 {
     /** The keyframe animation that drives the animation clip */
-    Animation *animation;
+    const Animation *animation;
     
     /** The time at which the animation began playing */
     float animationStartTime;
@@ -47,7 +47,7 @@ public:
     /**
      * Standard constructor.  Initializes everything and stores the animation
      */
-    AnimationClip(Animation *animation = NULL);
+    AnimationClip(const Animation *animation = NULL);
     
     /**
      * Copy constructor - duplicate another animation clip
@@ -66,7 +66,7 @@ public:
      * Setter method for the animation
      * @param animation the animation to play
      */
-    void SetAnimation(Animation *animation);
+    void SetAnimation(const Animation *animation);
     
     /**
      * Setter method for the animation playback speed
