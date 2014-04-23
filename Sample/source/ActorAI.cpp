@@ -112,22 +112,29 @@ bool ActorAI::checkEnemyValid() {
 }
 
 bool ActorAI::faceEnemy() {
-	//Face the enemy you're moving to
-	vec2 diff = vec2(targetEnemy->GetPosition()) - vec2(Position);
+	//Check if you can move the spine
+	if (!checkSpineLimits()) {
+		//Face the enemy you're moving to
+		vec2 diff = vec2(targetEnemy->GetPosition()) - vec2(Position);
 			
-	return applyFacingDirection(atan2f(diff.y,diff.x));
+		return applyFacingDirection(atan2f(diff.y,diff.x));
+	}
+	//Else you can move the spine and don't have to manually face the enemy
+	return true;
 }
 
 //Attempts to snap the user's spine to face the enemy
 //returns true if successful
 //Check if your spine can face the enemy right now
 bool ActorAI::checkSpineLimits() {
-	vec3 desiredFace = getFireVector();
-	//Find desired angles
-	//float verticalAngle = 
-
-	//Everything is allowed
-	return true;
+	//Since you can move vertically pretty well
+	//just check if the horizontal is very close to 0
+	vec2 diff = vec2(targetEnemy->GetPosition()) - vec2(Position);
+			
+	float desired = atan2f(diff.y,diff.x);
+	float horizontalDiff = abs(fmodf(desired - facingDirection,M_PI));
+	//Check against a tight angle check
+	return horizontalDiff < M_PI/90.0f;
 }
 
 float lastFloat;
@@ -168,6 +175,8 @@ bool ActorAI::Update() {
 	//erase the reference
 	if ((targetEnemy != NULL) && targetEnemy->Dead())
 		targetEnemy = NULL;
+
+	bool pullingTrigger = false;
 
 	//AI is a state machine
 	switch (state) {
@@ -308,10 +317,13 @@ bool ActorAI::Update() {
 			break;
 		
 		//Face the enemy you're engaging
-		faceEnemy();
+		if (!faceEnemy())
+			//If you're not facing the enemy, you can't pull the trigger
+			break;
 
 
 		//Pull the trigger
+		pullingTrigger = true;
 		weapon().Update(getFireVector(),muzzlePosition);
 		if (weapon().HoldingTrigger(true))
 			//If the weapon fired, play the fired animation
@@ -338,6 +350,9 @@ bool ActorAI::Update() {
 	energyPool += SIMULATION_DELTA*100;
 	if (energyPool > 100)
 		energyPool = 100;
+
+	if (!pullingTrigger)
+		weapon().HoldingTrigger(false);
 
 	return PhysicsActor::Update();
 }
@@ -367,7 +382,7 @@ void ActorAI::Draw(MaterialProgram * materialShader){
 		if ((state != AI_ROTTING) || (state != AI_ENGAGING_ENEMY)) {
 			model->Update(SIMULATION_DELTA,Game()->Now());
 			//If you're facing an enemy, snap spine as best as you can
-			if ((targetEnemy != NULL) && checkSpineLimits())
+			if (targetEnemy != NULL)
 				snapSpineToEnemy();
 		}
 
@@ -420,16 +435,6 @@ float ActorAI::sightDistance() {
 //How many radians per second this actor can rotate
 float ActorAI::turnSpeed() {
 	return (float)(M_PI/2.5);
-}
-
-//The angle the spine can most tilt vertically to
-float ActorAI::spineVerticalAngleLimits() {
-	return M_PI;
-}
-
-//The angle the spine can most tilt horizontally to
-float ActorAI::spineHorizontalAngleLimits() {
-	return M_PI;
 }
 
 //Change the allegiance of this AI

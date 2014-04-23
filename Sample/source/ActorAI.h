@@ -78,8 +78,10 @@ protected:
 	//using face direction only
 	//returns true when you're facing the enemy
 	bool faceEnemy();
+
 	//Check if your spine can face the enemy right now
-	bool checkSpineLimits();
+	virtual bool checkSpineLimits();
+
 	//Snap the model's skeleton to face the enemy
 	virtual void snapSpineToEnemy();
 
@@ -104,12 +106,6 @@ protected:
 
 	//How many radians per second this actor can rotate
 	virtual float turnSpeed();
-
-	//The angle the spine can most tilt vertically to
-	virtual float spineVerticalAngleLimits();
-
-	//The angle the spine can most tilt horizontally to
-	virtual float spineHorizontalAngleLimits();
 
 	//Overrode to prevent immediate death
 	virtual void onDeath() override;
