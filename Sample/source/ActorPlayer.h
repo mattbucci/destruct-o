@@ -39,6 +39,7 @@ public:
 	ActorPlayer();
 	~ActorPlayer();
 
+	//Retrieve's the players charge pool
     float GetCharge();
 
 	//The player is the only actor which consumes input events

@@ -58,6 +58,11 @@ public:
      */
     void Update(double delta, double now);
     
+	/*
+	* Modify the animation directly, cause we be crazy man
+	*/
+	AnimationClip & Animation();
+
     /**
      * Draw this model instance with a particular shader
      * @param program the shader to draw this model with

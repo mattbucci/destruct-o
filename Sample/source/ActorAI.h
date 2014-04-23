@@ -51,6 +51,9 @@ protected:
 	vec2 goal;
 	//This AI's charge pool
 	float energyPool;
+	//A part of the gun a little further up the barrel
+	//a striaght line from this peice to the muzzlePosition should be the barrel
+	vec3 beforeMuzzlePosition;
 	//The gun's dangerous end
 	vec3 muzzlePosition;
 
@@ -63,7 +66,8 @@ protected:
 	vec3 getFireVector();
 
 	//Turn to face that direction in the fastest possible manner
-	void applyFacingDirection(float desiredFacingDirection);
+	//returns true when you're facing that direction
+	bool applyFacingDirection(float desiredFacingDirection);
 
 
 	//If the current enemy is still valid returns true
@@ -71,14 +75,22 @@ protected:
 	bool checkEnemyValid();
 
 	//Face the current valid enemy
-	void faceEnemy();
+	//using face direction only
+	//returns true when you're facing the enemy
+	bool faceEnemy();
+	//Check if your spine can face the enemy right now
+	bool checkSpineLimits();
+	//Snap the model's skeleton to face the enemy
+	virtual void snapSpineToEnemy();
+
+
 
 	//AI settings
 	//override these functions
 	//to customize the AI
 
 	//The weapon which characterizes this AI
-	Weapon & weapon();
+	virtual Weapon & weapon();
 
 	//The time it takes to target after finding the enemy
 	virtual double targetTime();
@@ -92,6 +104,12 @@ protected:
 
 	//How many radians per second this actor can rotate
 	virtual float turnSpeed();
+
+	//The angle the spine can most tilt vertically to
+	virtual float spineVerticalAngleLimits();
+
+	//The angle the spine can most tilt horizontally to
+	virtual float spineHorizontalAngleLimits();
 
 	//Overrode to prevent immediate death
 	virtual void onDeath() override;

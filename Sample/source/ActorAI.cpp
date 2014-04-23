@@ -12,8 +12,8 @@ CLASS_SAVE_CONSTRUCTOR(ActorAI);
 
 ActorAI::ActorAI() : PhysicsActor(vec3(1.5,1.5,4),100, GameFactions::FACTION_ENEMY), __weapon(this,energyPool) {
 	//Use a default weapon for now
-    setModel(weapon().LookupAnimation(Weapon::ANIMATION_MODELNAME));
-    playAnimation(weapon().LookupAnimation(Weapon::ANIMATION_AIM));
+	setModel(weapon().LookupAnimation(Weapon::ANIMATION_MODELNAME));
+	playAnimation(weapon().LookupAnimation(Weapon::ANIMATION_AIM));
 	//AI starts with nothing
 	state = AI_SCANNING;
 	//Max out the energy pool
@@ -45,36 +45,34 @@ PhysicsActor * ActorAI::sightNearbyEnemy() {
 }
 
 //Turn to face that direction in the fastest possible manner
-void ActorAI::applyFacingDirection(float desiredFacingDirection) {
+bool ActorAI::applyFacingDirection(float desiredFacingDirection) {
 	while (desiredFacingDirection > TWO_PI)
 		desiredFacingDirection -= TWO_PI;
 	while (desiredFacingDirection < 0)
 		desiredFacingDirection += TWO_PI;
-
+	
 	//First determine how close you already are to that facing direction
 	float differenceA = facingDirection - desiredFacingDirection;
-	float differenceB = (TWO_PI+facingDirection) - desiredFacingDirection;
 	float absDifferenceA = abs(differenceA);
-	float absDifferenceB = abs(differenceB);
 
 	//Check that error is greater than one update cycle
-	if (min(absDifferenceA,absDifferenceB) < (SIMULATION_DELTA*turnSpeed())) {
+	if (absDifferenceA < (SIMULATION_DELTA*turnSpeed())) {
 		facingDirection = desiredFacingDirection;
-		return;
+		return true;
 	}
 		
 
 	//Determine which turn direction is faster
-	if (absDifferenceA < absDifferenceB) {
+	if (differenceA > 0) {
 		//Determine turn direction
-		if (differenceA > 0)
-			facingDirection -= SIMULATION_DELTA*turnSpeed();
-		else
+		if (absDifferenceA > M_PI)
 			facingDirection += SIMULATION_DELTA*turnSpeed();
+		else
+			facingDirection -= SIMULATION_DELTA*turnSpeed();
 	}
 	else {
 		//Determine turn direction
-		if (differenceB > 0)
+		if (absDifferenceA > M_PI)
 			facingDirection -= SIMULATION_DELTA*turnSpeed();
 		else
 			facingDirection += SIMULATION_DELTA*turnSpeed();
@@ -85,6 +83,8 @@ void ActorAI::applyFacingDirection(float desiredFacingDirection) {
 		facingDirection += TWO_PI;
 	if (facingDirection > TWO_PI)
 		facingDirection -= TWO_PI;
+
+	return false;
 }
 
 bool ActorAI::Dead() {
@@ -111,12 +111,52 @@ bool ActorAI::checkEnemyValid() {
 	return true;
 }
 
-void ActorAI::faceEnemy() {
+bool ActorAI::faceEnemy() {
 	//Face the enemy you're moving to
 	vec2 diff = vec2(targetEnemy->GetPosition()) - vec2(Position);
 			
-	applyFacingDirection(atan2f(diff.y,diff.x));
+	return applyFacingDirection(atan2f(diff.y,diff.x));
 }
+
+//Attempts to snap the user's spine to face the enemy
+//returns true if successful
+//Check if your spine can face the enemy right now
+bool ActorAI::checkSpineLimits() {
+	vec3 desiredFace = getFireVector();
+	//Find desired angles
+	//float verticalAngle = 
+
+	//Everything is allowed
+	return true;
+}
+
+float lastFloat;
+int iteration = 0;
+
+//Snap the model's skeleton to face the enemy
+void ActorAI::snapSpineToEnemy() {
+	//Take a guess at the correction in 2d only
+	float distance = glm::length(targetEnemy->GetPosition() - Position);
+	vec3 correctVector = glm::normalize(vec3(0,distance,targetEnemy->GetPosition().z - 1.5f - Position.z));
+	//Get angle between them
+	float angle = atan2(-correctVector.z,correctVector.y);
+	lastFloat = angle;
+
+	
+
+	vec3 axis = vec3(1,0,0);//glm::normalize(glm::cross(desiredFace,facing));
+	//float angle = fmod(OS::Now()/2,M_PI) - .5f*M_PI;
+	
+	quat rotation = glm::quat(glm::rotate(angle,axis));
+	//Apply to the spine
+	Node * spineNode = model->Animation().Skeleton()->FindNode("Bind_Spine1");
+
+
+	spineNode->LocalTransform().Rotation() = glm::rotate(spineNode->LocalTransform().Rotation(),angle/M_PI*180.0f,axis);
+
+	spineNode->Recalculate();
+}
+
 
 vec3 ActorAI::getFireVector() {
 	return glm::normalize((targetEnemy->GetPosition()-vec3(0,0,.6f))-muzzlePosition);
@@ -270,12 +310,15 @@ bool ActorAI::Update() {
 		//Face the enemy you're engaging
 		faceEnemy();
 
-		//Aim at the face
-		setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_AIM));
 
 		//Pull the trigger
 		weapon().Update(getFireVector(),muzzlePosition);
-		weapon().HoldingTrigger(true);
+		if (weapon().HoldingTrigger(true))
+			//If the weapon fired, play the fired animation
+			setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_FIRE));
+		else if (!animationRunning())
+			//Otherwise aim at the target
+			setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_AIM));
 
 		break;
 	case AI_DYING:
@@ -308,17 +351,27 @@ void ActorAI::Draw(MaterialProgram * materialShader){
 		//Find bone
 		Node::const_flattreemap flatmap;
 		model->Skeleton()->GetFlatNodeTree(flatmap);
-        const Node * n = model->Skeleton()->FindNode("gun");
-        mat4 globalTransform = model->GetTransform().TransformMatrix() * n->TransformMatrix();
+		const Node * n = model->Skeleton()->FindNode("Bind_RightHand");
+		mat4 globalTransform = model->GetTransform().TransformMatrix() * n->TransformMatrix();
 
-		vec3 fVector(.15,0,0);
+		
+
+		vec3 bVector(0,.5,.25);
+		vec3 mVector(0,.75,.25);
 		//Calculate the position along the muzzle
-		muzzlePosition = vec3(globalTransform * vec4(fVector,1.0));
+		beforeMuzzlePosition = vec3(globalTransform * vec4(bVector,1.0));
+		muzzlePosition = vec3(globalTransform * vec4(mVector,1.0));
 		 
 
 		//Only recalculate if rotting isn't true
-		if (state != AI_ROTTING)
+		if ((state != AI_ROTTING) || (state != AI_ENGAGING_ENEMY)) {
 			model->Update(SIMULATION_DELTA,Game()->Now());
+			//If you're facing an enemy, snap spine as best as you can
+			if ((targetEnemy != NULL) && checkSpineLimits())
+				snapSpineToEnemy();
+		}
+
+		//model->Skeleton()->
 		model->Draw(materialShader);
 
 	}
@@ -366,7 +419,17 @@ float ActorAI::sightDistance() {
 
 //How many radians per second this actor can rotate
 float ActorAI::turnSpeed() {
-	return (float)(M_PI/2.0);
+	return (float)(M_PI/2.5);
+}
+
+//The angle the spine can most tilt vertically to
+float ActorAI::spineVerticalAngleLimits() {
+	return M_PI;
+}
+
+//The angle the spine can most tilt horizontally to
+float ActorAI::spineHorizontalAngleLimits() {
+	return M_PI;
 }
 
 //Change the allegiance of this AI

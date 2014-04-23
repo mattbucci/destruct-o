@@ -59,6 +59,13 @@ void ModelInstance::Update(double delta, double now)
     animation.Update(delta, now);
 }
 
+/*
+* Modify the animation directly, cause we be crazy man
+*/
+AnimationClip & ModelInstance::Animation() {
+	return animation;
+}
+
 /**
  * Draw this model instance with a particular shader
  * @param program the shader to draw this model with
