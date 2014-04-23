@@ -357,29 +357,12 @@ void PhysicsSystem::collideActorsToActors() {
 
 //Update the actors, called by base frame
 void PhysicsSystem::Update() {
-	static const vec4 materialColors[16] = {
-		vec4(.39,.761,.254,1),
-		vec4(.43,.304,.214,1),
-		vec4(80.0f/255.0f,205.0f/255.0f,210.0f/255.0f,1),
-		//No colors set for anything else, make them all brown
-		vec4(.43,.304,.214,1),
-		vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),
-		vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),
-		vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),
-	};
 	//Set all voxels to have no forces
 	//And check if any voxels should expire
 	for (auto it = allVoxels.begin(); it != allVoxels.end();){
 		PhysicsVoxel * voxel = *it;
 		voxel->Acceleration = vec3();
 		if ((voxel->DeathAt > 0) && (voxel->DeathAt < Game()->Now())) {
-			ParticleData particlePuff = Game()->Particles.GetParticleData("physicsDisintegrate.vpart");
-			//disintegrate voxel
-			//this is temporary. will be replaced by an event soon
-			particlePuff.Color.ClearValues();
-			particlePuff.Color.AddValue(0,materialColors[voxel->MaterialId]);
-			ParticleSystem * testSystem = ((BaseFrame*)CurrentSystem)->Particles.BuildParticleSystem(particlePuff, .3);
-			testSystem->Position = voxel->Position;
 			//Notify any other systems that the voxel is being destroyed
 			VoxelDisintegrating.Fire([voxel](function<void(PhysicsVoxel*)> subscriber) {
 				subscriber(voxel);

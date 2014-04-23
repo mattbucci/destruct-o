@@ -29,6 +29,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
     : GameSystem(shaders), 
 	Physics(&Voxels), 
 	Actors(&Physics),
+	Particles(&Actors,&Physics),
 	achievements(&notification,this),
 	hud(this)
 {
@@ -55,6 +56,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
 	//Not a unique save. Should be altered in the future
 	SaveName = "Default_Save";
     
+	demo = NULL;
 	cout << "\t Finished base frame\n";
 }
 
@@ -133,9 +135,12 @@ void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
 #include "ActorAI.h"
 
 void BaseFrame::OnFrameFocus() {
+	// Enable the first person controller
+	FirstPerson->Enable(true);
 
 	//Physics.BuildVoxel(vec3(40,42,80));
-
+	/*
+	
 	//The physics demo
 	//we won't have this forever
 	demo = new Demo();
@@ -145,6 +150,7 @@ void BaseFrame::OnFrameFocus() {
 #endif
 
 	demo->DoInitialSave();
+	*/
 }
 
 void BaseFrame::Build()
@@ -161,7 +167,7 @@ void BaseFrame::Build()
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
 	audio->PlayerInit(Actors.Player());
-    audio->DemoInit(demo);
+    //audio->DemoInit(demo);
     Actors.Player()->Build();
 }
 
@@ -187,8 +193,8 @@ bool BaseFrame::Update(vector<InputEvent> inputEvents) {
 	//Update actors
 	Actors.Update();
 
-	demo->OnInput(inputEvents,Actors.Player()->GetPosition(),FirstPerson->GetLookVector());
-	demo->Update();
+	//demo->OnInput(inputEvents,Actors.Player()->GetPosition(),FirstPerson->GetLookVector());
+	//demo->Update();
 
 	//Update physics/Particles
 	Physics.Update();
@@ -197,7 +203,7 @@ bool BaseFrame::Update(vector<InputEvent> inputEvents) {
 		//testSystem->UpdateEmitter(now);
 
 	//Update demo
-	demo->CheckTouchInput(Actors.Player()->GetPosition(),FirstPerson->GetLookVector());
+	//demo->CheckTouchInput(Actors.Player()->GetPosition(),FirstPerson->GetLookVector());
 	return true;
 }
 

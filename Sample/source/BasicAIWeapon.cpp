@@ -1,29 +1,29 @@
 #include "stdafx.h"
-#include "WeaponStarter.h"
+#include "BasicAIWeapon.h"
 #include "Universal.h"
 #include "BaseFrame.h"
 
-WeaponStarter::WeaponStarter(Actor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool), laser(vec4(1,.5,.1,1),.1f) {
+BasicAIWeapon::BasicAIWeapon(Actor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool), laser(vec4(1,.5,.1,1),.1f) {
 	laser.SetTiming(.05f,1.0f,true);
 }
 
 //Whether or not the weapon should repeat firing automatically
-bool WeaponStarter::RepeatFireAutomatically() {
+bool BasicAIWeapon::RepeatFireAutomatically() {
 	return false;
 }
 
 //The amount of charge it takes to fire the weapon
-float WeaponStarter::WeaponChargeRequired() {
+float BasicAIWeapon::WeaponChargeRequired() {
 	return 0;
 }
 
 //Cooldown length for the weapon
-float WeaponStarter::WeaponCooldownTime() {
+float BasicAIWeapon::WeaponCooldownTime() {
 	return 2;
 }
 
 //Simulate a gun shot (or laser pulse or whatever)
-void WeaponStarter::Fire() {
+void BasicAIWeapon::Fire() {
 	if (!Universal::Trace(firePoint,fireVector,&hitPos))
 		hitPos = firePoint+fireVector*100.0f;
 	
@@ -33,36 +33,54 @@ void WeaponStarter::Fire() {
 
 	Weapon::Fire();
 }
+
+/*
+	static const string table[6] = {
+		//ANIMATION_IDLE
+		"idleWgun",
+		//ANIMATION_AIM
+		"",
+		//ANIMATION_WALK
+		"run",
+		//ANIMATION_JUMP
+		"jump",
+		//ANIMATION_DEATH
+		"death",
+		//ANIMATION_INAIR
+		"idleWgun"
+	};
+	*/
+
 //Weapon firing animation
-string WeaponStarter::LookupAnimation(Weapon::HandAnimations animation) {
+string BasicAIWeapon::LookupAnimation(Weapon::HandAnimations animation) {
     static const string animations[10] = {
         //ANIMATION_MODELNAME,
-        "player_weapon",
+        "soldier01",
         //ANIMATION_AIM,
-        "Idle",
+        "idleWgun",
         //ANIMATION_FIRE,
         "Fire1shot",
         //ANIMATION_RELOAD,
         "Reload",
         //ANIMATION_RUN,
-        "Run",
+        "run",
         //ANIMATION_JUMP,
-        "Idle",
+        "jump",
         //ANIMATION_GRENADE,
-        "Granade",
+        "",
 		//ANIMATION_DEATH
-		"Death"
+		"death"
     };
     return animations[animation];
 }
 
 //Update the state of the weapon
-void WeaponStarter::Update(vec3 firingVector, vec3 firingPosition) {
+void BasicAIWeapon::Update(vec3 firingVector, vec3 firingPosition) {
 	Weapon::Update(firingVector,firingPosition);
 }
 
 //Draw any effects the weapon may own
-void WeaponStarter::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePoint) {
+void BasicAIWeapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePoint) {
 	//That's right I'm calling raytrace druing draw for the most up-to-date stuff possible
 	if (!Universal::Trace(firePoint,fireVector,&hitPos))
 		hitPos = firePoint+fireVector*100.0f;

@@ -65,11 +65,11 @@ GameTile * GameTile::LoadTileFromDisk(string tileImagePath) {
 //Patch edge heights to be realistic values
 void GameTile::PatchStackEdges(TileCell * cellList, int cellWidth) {
 	//Patch edge stack heights to be 2 (3 height) to cover most holes
-	for (unsigned int i = 0; i < cellWidth; i++) {
+	for (int i = 0; i < cellWidth; i++) {
 		cellList[i].stackHeight = 1;
 		cellList[i+(cellWidth-1)*cellWidth].stackHeight = 1;
 	}
-	for (unsigned int i = 0; i < cellWidth; i++) {
+	for (int i = 0; i < cellWidth; i++) {
 		cellList[i*cellWidth + 0].stackHeight = 1;
 		cellList[i*cellWidth + cellWidth - 1].stackHeight = 1;
 	}

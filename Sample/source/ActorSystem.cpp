@@ -39,6 +39,12 @@ void ActorSystem::Load(Json::Value & parentValue, LoadData & loadData) {
 	
 //Update the actors, called by base frame
 void ActorSystem::Update() {
+	//Swap these like a double buffer
+	useDeadActors1 = !useDeadActors1;
+	//The previously died list is the previous recentlyDead list
+	//and the previous previously died list is reused as the new recentlyDead list
+	ContiguousList<Actor*> & recentlyDied = useDeadActors1 ? deadActors1 : deadActors2;
+	ContiguousList<Actor*> & previouslyDied = useDeadActors1 ? deadActors2 : deadActors1;
 
 	//Update all the actors
 	for (auto it = allActors.begin(); it != allActors.end(); ) 
@@ -46,13 +52,18 @@ void ActorSystem::Update() {
 			//Unregister physics actors
 			if (dynamic_cast<PhysicsActor*>(*it) != NULL)
 				physics->UnregisterPhysicsActor((PhysicsActor*)*it);
-			//Cleanup memory
-			delete *it;
+			//Add it to the recently died list
+			recentlyDied.push_back(*it);
 			//erase from list
 			it = allActors.erase(it);
 		}
 		else
 			it++;
+
+	//Delete anything that previously died
+	for (auto dead : previouslyDied)
+		delete dead;
+	previouslyDied.clear();
 }
 
 ActorPlayer * ActorSystem::Player() {
@@ -73,7 +84,7 @@ void ActorSystem::DoAOEDamage(vec3 at, float radius, float damage, PhysicsActor 
 		if (damagableActor == NULL)
 			continue;
 		//Now check distance
-		float dist = glm::distance(at,damagableActor->position);
+		float dist = glm::distance(at,damagableActor->GetPosition());
 		if (dist > radius)
 			continue;
 		//Scale damage
@@ -81,7 +92,7 @@ void ActorSystem::DoAOEDamage(vec3 at, float radius, float damage, PhysicsActor 
 		damagableActor->Damage(damager,actorDamage);
 		//And fling the actor some amount
 		float fling = damage*.05;
-		damagableActor->velocity += glm::normalize(damagableActor->position - at)*fling;
+		damagableActor->velocity += glm::normalize(damagableActor->GetPosition() - at)*fling;
 	}
 }
 

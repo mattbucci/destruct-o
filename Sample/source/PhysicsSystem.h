@@ -81,6 +81,8 @@ public:
 
 	//Called right before a physics voxel is destroyed
 	GameEvent<void(PhysicsVoxel*)> VoxelDisintegrating;
+
+	//Physics save data
 	CLASS_DECLARATION(PhysicsSystem)
 		CLASS_CONTAINER_MEMBER(allVoxels,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
 		CLASS_CONTAINER_MEMBER(actors,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_HANDLE)

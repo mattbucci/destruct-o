@@ -172,7 +172,7 @@ ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 #Code should be organized
 #opengl files are really easy to organize
-FILE(GLOB GLFiles "GL*" "IOSGL.h" "AndroidGLEW.h" "AndroidGLEW.cpp" "MaxDistanceFog.h" "MaxDistanceFog.cpp" "ShaderGroup.h" "ShaderGroup.cpp" "TextureCache.h" "TextureCache.cpp")
+FILE(GLOB GLFiles "GL*" "IOSGL.h" "AndroidGLEW.h" "AndroidGLEW.cpp" "MaxDistanceFog.h" "MaxDistanceFog.cpp" "ShaderGroup.h" "ShaderGroup.cpp" "TextureCache.h" "TextureCache.cpp" "TexturedRect.h" "TexturedRect.cpp" )
 source_group(OpenGL FILES ${GLFiles})
 
 #actors
@@ -227,6 +227,7 @@ FILE(GLOB InterfaceFiles
 	Shape.cpp
 	Notification.h
 	Notification.cpp
+	Slider.h
 )
 source_group(Interface FILES ${InterfaceFiles})
 
@@ -257,6 +258,10 @@ FILE(GLOB PhysicsFiles
 	PhysicsSystem.cpp
 	PhysicsProxy.h
 	PhysicsProxy.cpp
+	PhysicsActor.h
+	PhysicsActor.cpp
+	PhysicsUtilities.h
+	PhysicsUtilities.cpp
 	Tracer.h
 	Tracer.cpp
 )
@@ -268,7 +273,10 @@ FILE(GLOB LibraryFiles
 	jsoncpp.cpp
 	noiseutils.h
 	noiseutils.cpp	
+	base64.h
+	base64.cpp
 )
+source_group(Libraries FILES ${LibraryFiles})
 
 FILE(GLOB GameplayFiles
 	Achievements.h
@@ -278,7 +286,7 @@ FILE(GLOB GameplayFiles
 )
 source_group(Achievements FILES ${GameplayFiles})
 
-source_group(Libraries FILES ${LibraryFiles})
+
 
 FILE(GLOB SaveFiles
 	ReflectionData.h
@@ -363,6 +371,8 @@ FILE(GLOB CoreFiles
 	MenuFrame.cpp
 	stdafx.h
 	stdafx.cpp
+	Universal.h
+	Universal.cpp
 )
 source_group(Core FILES ${CoreFiles})
 
@@ -373,6 +383,17 @@ FILE(GLOB GenFiles
 	CityGen.cpp
 )
 source_group(Procedural FILES ${GenFiles})
+
+FILE(GLOB EffectFiles
+	EffectLaser.h
+	EffectLaser.cpp
+)
+source_group(Effects FILES ${EffectFiles})
+
+FILE(GLOB WeaponFiles
+	"Weapon*"
+)
+source_group(Weapons FILES ${WeaponFiles})
 
 FILE(GLOB ControlFiles
 	FirstPersonMode.h

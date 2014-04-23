@@ -23,10 +23,6 @@ PhysicsActor::~PhysicsActor() {
 	
 }
 
-//Get the position of this physics actor
-vec3 PhysicsActor::GetPosition() {
-	return position;
-}
 
 //Override to prevent immediate death
 void PhysicsActor::onDeath() {

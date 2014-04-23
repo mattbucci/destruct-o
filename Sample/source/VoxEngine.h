@@ -7,7 +7,7 @@
 #include "Options.h"
 
 
-#define SIMULATION_DELTA .01
+#define SIMULATION_DELTA .01f
 
 class VoxEngine {
 	//Entry point for the game engine

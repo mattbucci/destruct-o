@@ -57,7 +57,7 @@ class BaseFrame : public GameSystem {
 		shader->Acid.SetCurrentTime(Game()->Now());
 		//Acid factor currently managed by the demo system
 		//this will be moved to a more powerful game logic system in the future
-		shader->Acid.SetAcidFactor(demo->CurrentAcidStrength);
+		shader->Acid.SetAcidFactor(0);
 	}
 protected:
 	//Overload to tell the save system about handles created in the system
@@ -82,9 +82,8 @@ public:
 	// First person mode will either be desktop or mobile variant, so use a pointer
 	FirstPersonMode *FirstPerson;
 	PhysicsSystem Physics;
-	ParticleCloud Particles;
-
 	ActorSystem Actors;
+	ParticleCloud Particles;
 
 	//Private objects which must be initialized after everything else
 	//goes here

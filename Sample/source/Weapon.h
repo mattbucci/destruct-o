@@ -43,6 +43,7 @@ public:
         ANIMATION_RUN,
         ANIMATION_JUMP,
         ANIMATION_GRENADE,
+		ANIMATION_DEATH,
     };
 
 	//Weapon firing animation

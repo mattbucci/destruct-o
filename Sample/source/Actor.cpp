@@ -24,6 +24,10 @@ bool Actor::Update() {
 	return !valid;
 }
 
+bool Actor::Dead() {
+	return !valid;
+}
+
 //Set the current model
 //if modelName is invalid
 //model will still be NULL
@@ -84,6 +88,12 @@ void Actor::Draw(MaterialProgram * materialShader) {
 void Actor::Draw(GLEffectProgram * effectShader) {
 
 }
+
+//Get the position of this physics actor
+vec3 Actor::GetPosition() {
+	return position;
+}
+
 
 //When an actor is loaded
 //handles rebuilding the model instance
