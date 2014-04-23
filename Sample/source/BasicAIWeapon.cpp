@@ -58,9 +58,9 @@ string BasicAIWeapon::LookupAnimation(Weapon::HandAnimations animation) {
         //ANIMATION_MODELNAME,
         "soldier01",
         //ANIMATION_AIM,
-        "shooting", //idleWgun
+        "idleWgun",
         //ANIMATION_FIRE,
-        "Fire1shot",
+        "shooting",
         //ANIMATION_RELOAD,
         "Reload",
         //ANIMATION_RUN,
