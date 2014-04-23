@@ -26,6 +26,8 @@ class ActorPlayer : public PhysicsActor
 	//Energy pool
 	float energyPool;
     
+	//Protect the player from actually dying
+	virtual void onDeath() override;
     
 
 	//Weapon position

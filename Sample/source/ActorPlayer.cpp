@@ -57,6 +57,11 @@ void ActorPlayer::setWeapon(Weapon * weapon) {
     this->currentWeapon = weapon;
 }
 
+void ActorPlayer::onDeath() {
+	vulnerable	 = false;
+	cout << "THE PLAYER HAS DIED!\n";
+}
+
 
 //Update the position based off the most recent movement and direction vectors
 bool ActorPlayer::Update() {
