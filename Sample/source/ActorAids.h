@@ -3,8 +3,10 @@
 
 #include "Actor.h"
 #include "ContiguousList.h"
+#include "MovingAverage.h"
 
 class ActorAI;
+class AidsAction;
 
 //The great and powerful Artificial Intelligence Director System
 class ActorAids : public Actor {
@@ -13,6 +15,18 @@ class ActorAids : public Actor {
 	//Requested pathing solutions
 	ContiguousList<ActorAI*> pathingRequestors;
 	ContiguousList<vec2> pathingRequests;
+	//Intensity information
+	float targetIntensity;
+	float currentIntensity;
+	//Current intensity delta
+	MovingAverage<float> intensityAdded;
+	//A list of actions that can be taken by AIDS
+	map<float,function<AidsAction*(vec3)>> actionList;
+	//Original intensity offset
+	//used during generation of the targetIntensity
+	float intensityCalculationOffset;
+	//All currently executing actions
+	ContiguousList<AidsAction*> actions;
 public:
 	ActorAids();
 

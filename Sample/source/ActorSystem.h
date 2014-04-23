@@ -21,6 +21,8 @@ class ActorSystem : public Savable {
 	//All actors scheduled for destruction
 	ContiguousList<Actor*> deadActors1;
 	ContiguousList<Actor*> deadActors2;
+	//Newly born actors waiting to be added to the actor list
+	ContiguousList<Actor*> newlyBornActors;
 	//Flip these back and forth like double buffers
 	bool useDeadActors1;
 
@@ -46,10 +48,13 @@ public:
 	~ActorSystem();
 	
 	//Construct a new actor
+	//do not call during physics events (sorry)
 	template<class T>
 	T * BuildActor(vec3 position = vec3()) {
 		T * actor = new T();
-		allActors.push_back(actor);
+		newlyBornActors.push_back(actor);
+		//Note: if BuildActor is called during a physics event
+		//shit goes bad
 		if (dynamic_cast<PhysicsActor*>(actor) != NULL)
 			physics->RegisterPhysicsActor((PhysicsActor*)actor);
 

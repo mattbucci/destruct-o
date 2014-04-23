@@ -8,15 +8,17 @@ vec3 AidsAction::findHiddenLocation(vec3 startLocation, float desiredAltitude) {
 	//Only tries 10 locations
 	//don't want to do too many ray traces 
 	const static float distancePart = 5;
+	float distanceOffset = Utilities::random(20,30);
+	float angleOffset = Utilities::random(-M_PI,M_PI);
 
 	vec3 lastPos;
 	ActorPlayer * player = Game()->Actors.Player();
 
 	for (int i = 0; i < 10; i++) {
 		float angle = i*anglePart;
-		float distance = pow((float)i,1.3f)*distancePart;
+		float distance = pow((float)i,1.3f)*distancePart+distanceOffset;
 		//Calculate the guess
-		vec2 twoDGuess = vec2(cos(angle)*distance,sin(angle)*distance);
+		vec2 twoDGuess = vec2(cos(angle+angleOffset)*distance,sin(angle+angleOffset)*distance);
 		lastPos = vec3(twoDGuess,Game()->Voxels.GetPositionHeight(twoDGuess)+desiredAltitude);
 		
 		//Check if you're obscured by fog

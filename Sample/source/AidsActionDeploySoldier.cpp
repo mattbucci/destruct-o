@@ -14,7 +14,7 @@ AidsActionDeploySoldier::AidsActionDeploySoldier(vec3 actionLocation) : AidsActi
 
 //Every subclass should have a static member GetIntensityValue()
 float AidsActionDeploySoldier::GetIntensityValue() {
-	return 10.0f;
+	return 20.0f;
 }
 
 
@@ -28,4 +28,5 @@ bool AidsActionDeploySoldier::Update() {
 	if (glm::distance(deployed->GetPosition(),Game()->Actors.Player()->GetPosition()) > 300) {
 		deployed->Kill();
 	}
+	return false;
 }

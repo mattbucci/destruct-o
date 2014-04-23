@@ -46,8 +46,16 @@ void ActorSystem::Update() {
 	ContiguousList<Actor*> & recentlyDied = useDeadActors1 ? deadActors1 : deadActors2;
 	ContiguousList<Actor*> & previouslyDied = useDeadActors1 ? deadActors2 : deadActors1;
 
+	//Place newly born actors in the actor array
+	for (auto newActor : newlyBornActors) 
+		allActors.push_back(newActor);
+	newlyBornActors.clear();
+
 	//Update all the actors
-	for (auto it = allActors.begin(); it != allActors.end(); ) 
+	Actor * previous = NULL;
+	for (auto it = allActors.begin(); it != allActors.end(); ) {
+		_ASSERTE((unsigned int)*it != 0xFEEEFEEE);
+		previous = *it;
 		if ((*it)->Update()) {
 			//Unregister physics actors
 			if (dynamic_cast<PhysicsActor*>(*it) != NULL)
@@ -56,9 +64,11 @@ void ActorSystem::Update() {
 			recentlyDied.push_back(*it);
 			//erase from list
 			it = allActors.erase(it);
+			cout << "AI ended action\n";
 		}
 		else
 			it++;
+	}
 
 	//Delete anything that previously died
 	for (auto dead : previouslyDied)
