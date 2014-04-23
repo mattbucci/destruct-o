@@ -9,7 +9,7 @@ BasicAIWeapon::BasicAIWeapon(Actor * weaponOwner, float & chargePool) : Weapon(w
 
 //Whether or not the weapon should repeat firing automatically
 bool BasicAIWeapon::RepeatFireAutomatically() {
-	return false;
+	return true;
 }
 
 //The amount of charge it takes to fire the weapon

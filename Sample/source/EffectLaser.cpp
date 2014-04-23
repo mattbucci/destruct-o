@@ -41,7 +41,8 @@ void EffectLaser::StopFiring() {
 //Set firing position
 void EffectLaser::Move(vec3 startingPos, vec3 endingPos) {
 	float anglePart = 180/9.0f;
-
+	if (endingPos == startingPos)
+		endingPos+=.05;
 	vec3 direction = glm::normalize(endingPos-startingPos);
 	vec3 directonAlongPlane;
 	//Start with the assumption that

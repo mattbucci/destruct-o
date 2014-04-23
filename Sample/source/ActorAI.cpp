@@ -91,6 +91,37 @@ bool ActorAI::Dead() {
 	return PhysicsActor::Dead() || (life < 0);
 }
 
+bool ActorAI::checkEnemyValid() {
+	//Check you can still see the enemy
+	if (!targetEnemy) {
+		state = AI_SCANNING;
+		return false;
+	}
+		
+	//Check if you can see the enemy
+	PhysicsActor * hit;
+	if (Universal::Trace(Position,glm::normalize(targetEnemy->GetPosition()-Position),NULL,&hit)) {
+		if (hit != targetEnemy) {
+			//Can't see that enemy any more
+			state = AI_SCANNING;
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void ActorAI::faceEnemy() {
+	//Face the enemy you're moving to
+	vec2 diff = vec2(targetEnemy->GetPosition()) - vec2(Position);
+			
+	applyFacingDirection(atan2f(diff.y,diff.x));
+}
+
+vec3 ActorAI::getFireVector() {
+	return glm::normalize((targetEnemy->GetPosition()-vec3(0,0,.6f))-muzzlePosition);
+}
+
 bool ActorAI::Update() {
 	//Check if the target enemy is still alive
 	//If their actor is about to be destroyed
@@ -120,6 +151,8 @@ bool ActorAI::Update() {
 				Game()->Actors.AITargetAcquired.Fire([this](function<void(Actor *, Actor *)> observer) {
 					observer(this,targetEnemy);
 				});
+				//Clear movement velocity
+				Velocity = vec3(vec2(),Velocity.z);
 				break;
 			}
 		
@@ -129,6 +162,8 @@ bool ActorAI::Update() {
 				//Well you're hear and there's no enemy
 				//back to the drawing board
 				state = AI_SCANNING;
+				//Clear movement velocity
+				Velocity = vec3(vec2(),Velocity.z);
 				break;
 			}
 
@@ -189,6 +224,8 @@ bool ActorAI::Update() {
 
 		break;
 	case AI_SCANNING:
+		//Don't move while you look around
+		setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_AIM));
 		if (baseMovementSpeed() < 0) {
 			//Turret
 			//not implemented yet
@@ -207,26 +244,39 @@ bool ActorAI::Update() {
 
 		break;
 	case AI_TARGETING_ENEMY:
-		//Check you can still see the enemy
-		if (!targetEnemy) {
-			state = AI_SCANNING;
+		//Check you still have an enemy to target
+		if (!checkEnemyValid())
+			return false;
+
+		//Face the enemy you're targeting
+		faceEnemy();
+
+		//Check if you're done looking
+		if ((targetAcquiredAt+targetTime()) < Game()->Now()) {
+			state = AI_ENGAGING_ENEMY;
 			break;
 		}
 
-		
-		//Check if you can see the enemy
-		PhysicsActor * hit;
-		if (Universal::Trace(Position,glm::normalize(targetEnemy->GetPosition()-Position),NULL,&hit)) {
-			if (hit != targetEnemy) {
-				//Can't see that enemy any more
-				state = AI_SCANNING;
-				break;
-			}
-		}
+		//Hang out and wait
+		setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_AIM));
 		
 		
 		break;
 	case AI_ENGAGING_ENEMY:
+		//Check you still have an enemy to engage
+		if (!checkEnemyValid())
+			break;
+		
+		//Face the enemy you're engaging
+		faceEnemy();
+
+		//Aim at the face
+		setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_AIM));
+
+		//Pull the trigger
+		weapon().Update(getFireVector(),muzzlePosition);
+		weapon().HoldingTrigger(true);
+
 		break;
 	case AI_DYING:
 		if (!animationRunning()) {
@@ -251,14 +301,26 @@ bool ActorAI::Update() {
 
 void ActorAI::Draw(MaterialProgram * materialShader){
 	if (model != NULL) {
-		
 		model->GetTransform().Translation() = vec3(Position.x,Position.y,Position.z-Size.z/2.0);
 		model->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, facingDirection + 0.5 * M_PI));
+		//Update the weapon muzzle position
+
+		//Find bone
+		Node::const_flattreemap flatmap;
+		model->Skeleton()->GetFlatNodeTree(flatmap);
+        const Node * n = model->Skeleton()->FindNode("gun");
+        mat4 globalTransform = model->GetTransform().TransformMatrix() * n->TransformMatrix();
+
+		vec3 fVector(.15,0,0);
+		//Calculate the position along the muzzle
+		muzzlePosition = vec3(globalTransform * vec4(fVector,1.0));
+		 
+
 		//Only recalculate if rotting isn't true
 		if (state != AI_ROTTING)
 			model->Update(SIMULATION_DELTA,Game()->Now());
 		model->Draw(materialShader);
-		
+
 	}
 }
 
@@ -294,12 +356,12 @@ double ActorAI::targetTime() {
 //The movement speed of this enemy
 //should be tuned to walk animation speed
 float ActorAI::baseMovementSpeed() {
-	return 5;
+	return 6;
 }
 
 //How far can enemies spot each other
 float ActorAI::sightDistance() {
-	return 5;
+	return 20;
 }
 
 //How many radians per second this actor can rotate
@@ -313,5 +375,6 @@ void ActorAI::SetFaction(FactionId newFaction) {
 }
 
 void ActorAI::Draw(GLEffectProgram * effectShader)  {
-	
+	if (targetEnemy != NULL)
+		weapon().DrawWeapon(effectShader,getFireVector(),muzzlePosition);
 }
