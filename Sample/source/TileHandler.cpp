@@ -231,6 +231,8 @@ GameTile * TileHandler::getTile(vec2 pos) {
 		tile = NULL;
 		//While tile not Ready
 		while(tile == NULL) {
+			//Ensure Generator is Running (We aren't waiting for nothing!)
+			genCv.notify_all();
 			//Wait for World Update
 			worldCv.wait(worldLck);
 
