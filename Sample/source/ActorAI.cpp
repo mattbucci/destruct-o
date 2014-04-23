@@ -87,6 +87,9 @@ void ActorAI::applyFacingDirection(float desiredFacingDirection) {
 		facingDirection -= TWO_PI;
 }
 
+bool ActorAI::Dead() {
+	return PhysicsActor::Dead() || (life < 0);
+}
 
 bool ActorAI::Update() {
 	//Check if the target enemy is still alive
@@ -182,7 +185,6 @@ bool ActorAI::Update() {
 			//Apply some velocity in the direction you want to move
 			vec2 moveVelocity = glm::normalize(diff)*baseMovementSpeed();
 			Velocity = vec3(moveVelocity,Velocity.z);
-
 		}
 
 		break;
@@ -205,14 +207,37 @@ bool ActorAI::Update() {
 
 		break;
 	case AI_TARGETING_ENEMY:
-		//BROKEN
-		if (Game()->Now() - 5 > targetAcquiredAt) {
+		//Check you can still see the enemy
+		if (!targetEnemy) {
 			state = AI_SCANNING;
+			break;
+		}
+
+		
+		//Check if you can see the enemy
+		PhysicsActor * hit;
+		if (Universal::Trace(Position,glm::normalize(targetEnemy->GetPosition()-Position),NULL,&hit)) {
+			if (hit != targetEnemy) {
+				//Can't see that enemy any more
+				state = AI_SCANNING;
+				break;
+			}
 		}
 		
 		
 		break;
 	case AI_ENGAGING_ENEMY:
+		break;
+	case AI_DYING:
+		if (!animationRunning()) {
+			state = AI_ROTTING;
+			finishRotting = Game()->Now()+AI_ROT_TIME;
+		}
+		break;
+	case AI_ROTTING:
+		if (Game()->Now() > finishRotting) {
+			Destroy();
+		}
 		break;
 	}
 
@@ -222,6 +247,28 @@ bool ActorAI::Update() {
 		energyPool = 100;
 
 	return PhysicsActor::Update();
+}
+
+void ActorAI::Draw(MaterialProgram * materialShader){
+	if (model != NULL) {
+		
+		model->GetTransform().Translation() = vec3(Position.x,Position.y,Position.z-Size.z/2.0);
+		model->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, facingDirection + 0.5 * M_PI));
+		//Only recalculate if rotting isn't true
+		if (state != AI_ROTTING)
+			model->Update(SIMULATION_DELTA,Game()->Now());
+		model->Draw(materialShader);
+		
+	}
+}
+
+//Overrode to prevent immediate death
+void ActorAI::onDeath() {
+	//Are you still alive?
+	if ((state != AI_DYING) && (state != AI_ROTTING)) {
+		state = AI_DYING;
+		setAnimation(weapon().LookupAnimation(Weapon::ANIMATION_DEATH));
+	}
 }
 
 void ActorAI::PathingReady(vector<vec2> path) {

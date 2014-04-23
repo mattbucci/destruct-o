@@ -76,7 +76,7 @@ public:
 
 	//If this object is about to be erased
 	//this returns true
-	bool Dead();
+	virtual bool Dead();
 
 	//Anyone can know the position
 	vec3 GetPosition();

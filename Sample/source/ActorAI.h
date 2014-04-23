@@ -4,6 +4,9 @@
 #include "EffectLaser.h"
 #include "BasicAIWeapon.h"
 
+//How long before the body disappears after death
+#define AI_ROT_TIME 10
+
 class Weapon;
 
 class ActorAI : public PhysicsActor {
@@ -24,7 +27,13 @@ protected:
 		AI_TARGETING_ENEMY,
 		//When you're done targeting, kill'm
 		AI_ENGAGING_ENEMY,
+		//The AI is dying dead
+		AI_DYING,
+		//The AI is rotting now
+		AI_ROTTING,
 	};
+	//Tell other people you're dead the moment you run otu of health
+	bool Dead() override;
 
 	//Ai state
 	aiStates state;
@@ -33,6 +42,8 @@ protected:
 	double targetAcquiredAt;
 	//How long since you saw that enemy
 	double sawEnemyLast;
+	//When the enemy should finish rotting
+	double finishRotting;
 	//current path
 	vector<vec2> path;
 	//current goal on the path
@@ -68,6 +79,8 @@ protected:
 	//How many radians per second this actor can rotate
 	virtual float turnSpeed();
 
+	//Overrode to prevent immediate death
+	virtual void onDeath() override;
 public:
 	ActorAI();
 	~ActorAI();
@@ -82,6 +95,9 @@ public:
 	//When a path is granted from AIDS
 	//save it
 	virtual void PathingReady(vector<vec2> path);
+
+	//override draw to prevent model from animating during STATE_ROTTING
+	virtual void Draw(MaterialProgram * materialShader) override;
 	
 	//Draw any associated effects
 	//for now draw your laser, this will be delegated in the short future
