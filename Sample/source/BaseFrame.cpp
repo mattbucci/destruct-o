@@ -53,7 +53,6 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
 	//Not a unique save. Should be altered in the future
 	SaveName = "Default_Save";
     
-	demo = NULL;
 	cout << "\t Finished base frame\n";
 }
 
@@ -110,9 +109,9 @@ bool BaseFrame::Load(string saveFile) {
 	//Deserialize the data
 	Savable::Deserialize(fileData,this);
     
-    
-    // Build player stuff
+	// Build player stuff
     Actors.Player()->Build();
+    
 	return true;
     GameLoaded.Fire([this](function<void(BaseFrame*)> subscriber) {
         subscriber(this);
@@ -137,22 +136,20 @@ void BaseFrame::OnFrameFocus() {
 	// Enable the first person controller
 	FirstPerson->Enable(true);
 
-	//Physics.BuildVoxel(vec3(40,42,80));
-	
-	//The physics demo
-	//we won't have this forever
-	demo = new Demo();
-#ifdef __MOBILE__
-	demoWindow = new DemoWindow(demo);
-	Controls.AddWindow(demoWindow);
-#endif
-
-	demo->DoInitialSave();
 	
 }
 
 void BaseFrame::OnFrameLeave() {
 	FirstPerson->Enable(false);
+}
+
+void BaseFrame::NewWorld() {
+	//Load the reset save
+	Savable::Deserialize(resetSave,this);
+	//Build a brave new world or some shit
+	Voxels.NewWorld(rand());
+	// Build player stuff
+    Actors.Player()->Build();
 }
 
 void BaseFrame::Build()
@@ -170,14 +167,12 @@ void BaseFrame::Build()
     GameStarted.Fire([this](function<void(BaseFrame*)> subscriber) {
         subscriber(this);
     });
+
+	//Build the reset save
+	resetSave = Savable::Serialize(this);
 }
 
 bool BaseFrame::Update(vector<InputEvent> inputEvents) {
-    // Update the model instances
-    for(std::vector<ModelInstance *>::iterator it = modelInstances.begin(); it != modelInstances.end(); ++it)
-    {
-        (*it)->Update(SIMULATION_DELTA, Now());
-    }
     
     //Issue events to dialog
 	//Run the dialog system and monitor pressed keys
@@ -194,19 +189,12 @@ bool BaseFrame::Update(vector<InputEvent> inputEvents) {
 	//Update actors
 	Actors.Update();
 
-	demo->OnInput(inputEvents,Actors.Player()->GetPosition(),FirstPerson->GetLookVector());
-	demo->Update();
-    
     audio->Update();
 
 	//Update physics/Particles
 	Physics.Update();
 	Particles.UpdateCloud();
-	//if (testSystem != NULL)
-		//testSystem->UpdateEmitter(now);
 
-	//Update demo
-	demo->CheckTouchInput(Actors.Player()->GetPosition(),FirstPerson->GetLookVector());
 	return true;
 }
 
@@ -270,14 +258,7 @@ void BaseFrame::Draw(double width, double height)
     // Setup the mesh shader boneless
     MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
     modelShader->UseProgram();
-    
-    // Draw the meshes
-    for(std::vector<ModelInstance *>::iterator it = modelInstances.begin(); it != modelInstances.end(); ++it)
-    {
-        // Draw the model instance
-        (*it)->Draw(modelShader);
-    }
-    
+
     // Draw the actors
 	Actors.Draw(shaders);
 

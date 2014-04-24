@@ -317,3 +317,10 @@ bool VoxelSystem::RaytraceToTerrain(vec3 from, vec3 direction, float & rayLength
 	//No collision found
 	return false;
 }
+
+
+void VoxelSystem::NewWorld(int seed) {
+	tiles.setSeed(seed);
+	//Build at least the tile will be standing on
+	tiles.getTile(vec2());
+}

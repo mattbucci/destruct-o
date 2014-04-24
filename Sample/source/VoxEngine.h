@@ -5,7 +5,7 @@
 
 #include "InputEvent.h"
 #include "Options.h"
-
+#include "AsyncTask.h"
 
 #define SIMULATION_DELTA .01f
 
@@ -43,8 +43,16 @@ class VoxEngine {
 	//The scaling applied to the mouse positions
 	static vec2 scaleFactor;
 
+	//An async operation to execute before the next frame
+	static AsyncTask * task;
+
 	friend int main(int argc, char** argv);
 public:
+	//Run an async task before the next frame switch
+	static void SetAsyncTask(AsyncTask * task);
+
 	//Account Options
 	static Options AccountOptions;
+
+
 };

@@ -42,6 +42,9 @@ vec2 VoxEngine::scaledSize;
 //The scaling applied to the mouse positions
 vec2 VoxEngine::scaleFactor;
 
+//An async operation to execute before the next frame
+AsyncTask * VoxEngine::task = NULL;
+
 Options VoxEngine::AccountOptions;
 
 /*
@@ -196,16 +199,22 @@ void VoxEngine::Start() {
 	gameEventDelta = globalTime-OS::Now();
 	globalTime = -SIMULATION_DELTA;
 	
+	//First task is to build the game
+	VoxEngine::task = new AsyncTask([]() {Game()->Build();});
+
 	//The game loop begins
 	while (continueGameLoop) {
-		if(!CurrentSystem->IsReady()) {
+		if(VoxEngine::task != NULL) {
+			//Start the task
+			VoxEngine::task->Start();
+
 			LoadingScreen load;
 			//Assume one of the frames constructed the 2d shader
 			GL2DProgram * shader = (GL2DProgram*)Frames::shaders->GetShader("2d");
 
 			glActiveTexture(GL_TEXTURE0);
 
-			while(!CurrentSystem->IsReady()) {
+			while(!VoxEngine::task->IsDone()) {
 				//Run the frame draw
 				glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 				//Pump events even though we ignore them
@@ -221,6 +230,9 @@ void VoxEngine::Start() {
 				//Sleep softly and use no cpu power
 				OS::SleepTime(.15);
 			}
+			//Cleanup the task
+			delete VoxEngine::task;
+			VoxEngine::task = NULL;
 		}
 		//Jump ahead detection, if the simulation loop
 		//is behind more than 2 seconds, assume the application
@@ -451,9 +463,13 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 	return displayWindow;
 }
 
-#ifdef malloc
-#undef malloc
-#endif
-void *  __secret(size_t size) {
-	return malloc(size);
+//Run an async task before the next frame switch
+void VoxEngine::SetAsyncTask(AsyncTask * task) {
+	//If you already have a task ignore the given task
+	if (VoxEngine::task != NULL) {
+		delete task;
+		return;
+	}
+	//Otherwise set it to your new task
+	VoxEngine::task = task;
 }

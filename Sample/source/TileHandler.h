@@ -64,6 +64,9 @@ class TileHandler : public Savable
 
 	//Retrieve the name of a tile file given its position
 	string tileName(vec2 pos);
+
+	//The seed of this world
+	int worldSeed;
 protected:
 	//Package all tiles in save
 	virtual void Save(Json::Value & parentValue);
@@ -80,6 +83,7 @@ public:
 
 	//Save relevant information
 	CLASS_DECLARATION(TileHandler)
+		CLASS_MEMBER(worldSeed,ReflectionData::SAVE_INT32)
 		CLASS_CONTAINER_MEMBER(cachedTiles,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_VEC2)
 		CLASS_CONTAINER_MEMBER(listOfGeneratedTiles,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_VEC2);
 	END_DECLARATION

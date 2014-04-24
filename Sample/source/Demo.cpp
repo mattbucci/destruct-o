@@ -339,7 +339,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
                 instance->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, 0.0));
                 
                 // Store this instance for rendering
-                game->modelInstances.push_back(instance);
+                //game->modelInstances.push_back(instance);
                 
             } else if (eve.Key == '\\') {
 				vec3 hit, norm;

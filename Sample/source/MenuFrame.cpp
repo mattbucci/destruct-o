@@ -3,7 +3,7 @@
 #include "GL2DProgram.h"
 #include "GL3DProgram.h"
 #include "Frames.h"
-
+#include "BaseFrame.h"
 #include "OS.h"
 
 
@@ -37,6 +37,8 @@ MenuFrame::MenuFrame(ShaderGroup * shaders)
 
 	//Subscribe Main Menu Buttons to Actions
 	Subscribe<void(Button*)>(&playButton.EventClicked, [this](Button * b) {
+		//Tell the engine to load a new game
+		VoxEngine::SetAsyncTask(new AsyncTask([]() {Game()->NewWorld();}));
 		Frames::SetSystem(Frames::FRAME_GAME);
 	});
 
@@ -69,13 +71,7 @@ bool MenuFrame::Load(string saveFile) {
 void MenuFrame::OnFrameFocus() {
 }
 
-void MenuFrame::Build()
-{    //Build the sample dialog 
-	//Build a window that says "On Top"
 
-	isReady = true;
-
-}
 
 bool MenuFrame::Update(vector<InputEvent> inputEvents) {
 	//Pass Update to GameSystem to Handle Control Input

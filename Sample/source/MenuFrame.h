@@ -22,9 +22,6 @@ public:
 	~MenuFrame();
 
 
-	//for notes on Build() see GameSystem::Build()
-	void Build() override;
-
 	//Build basic entities (such as the player)
 	void OnFrameFocus() override;
 

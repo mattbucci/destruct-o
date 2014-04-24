@@ -17,10 +17,6 @@ GameSystem::~GameSystem() {
 
 }
 
-void GameSystem::Build() {
-
-}
-
 void GameSystem::passEventsToControl(vector<InputEvent> & inputEvents) {
 	//Build a new list of events not used by the dialog system
 	vector<InputEvent> nonDialogInputs;
