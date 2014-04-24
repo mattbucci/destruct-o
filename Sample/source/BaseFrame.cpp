@@ -49,9 +49,6 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
 
 	Controls.AddWindow(pauseWindow);
 	Controls.AddWindow(&notification);
-	
-	// Enable the first person controller
-	FirstPerson->Enable(true);
 
 	//Not a unique save. Should be altered in the future
 	SaveName = "Default_Save";

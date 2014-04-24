@@ -8,6 +8,7 @@
 #include "OS.h"
 #include "VoxEngine.h"
 #include "LoadingScreen.h"
+#include "BaseFrame.h"
 
 SDL_Renderer* displayRenderer;
 
@@ -136,10 +137,6 @@ void VoxEngine::Start() {
 
 	//Attempt to enable vsync (fails on mobile)
 	SDL_GL_SetSwapInterval(1);
-	if(SDL_SetRelativeMouseMode(SDL_TRUE) < 0)
-	{
-	    cout << "No mouse relative mode" << endl;
-	}
 	
 	/* Print information about attached joysticks (actually works on iOS WOOHOO)*/
 	printf("There are %d joystick(s) attached\n", SDL_NumJoysticks());
@@ -195,7 +192,10 @@ void VoxEngine::Start() {
 
 		glActiveTexture(GL_TEXTURE0);
 
-		while (!Frames::loadingComplete) {
+		//Hide Loading Screen for Now... This will need to
+		//appear when the user clicks play but the game has
+		//not fully loaded in the background
+		/*while (!Frames::loadingComplete) {
 			//Run the frame draw
 			glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 			//Pump events even though we ignore them
@@ -210,7 +210,7 @@ void VoxEngine::Start() {
 
 			//Sleep softly and use no cpu power
 			OS::SleepTime(.15);
-		}
+		}*/
 	}
 
 	//Start up game
