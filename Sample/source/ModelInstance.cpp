@@ -88,6 +88,7 @@ void ModelInstance::Draw(MaterialProgram *program)
     // otherwise fallback on the older system
     else
     {
+        animation.Skeleton()->Recalculate();
         model->Draw(program, *(animation.Skeleton()));
     }
     
