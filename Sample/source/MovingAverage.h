@@ -25,14 +25,25 @@ class MovingAverage {
 	bool arrayFilled;
 	int curSample;
 	T lastAverage;
-	
+	unsigned int sampleId;
+	int sampleSkip;
 public:
-	MovingAverage(int size) : samples(size) {
+	MovingAverage(int size, int sampleSkip = 0) : samples(size/((sampleSkip <= 0) ? 1 : sampleSkip)) {
 		curSample = 0;
+		sampleId = 0;
+		this->sampleSkip = sampleSkip;
 		arrayFilled = false;
 	}
 
 	void AddSample(T sample) {
+		//Skip a certain number of samples if sampleSkip is selected
+		if (sampleSkip > 0) {
+			sampleId++;
+			if ((sampleId % sampleSkip) != 0)
+				return;
+		}
+
+		//Add the sample
 		samples[curSample] = sample;
 		curSample = (curSample + 1) % (int)samples.size();
 		//Check if you looped over
@@ -47,6 +58,21 @@ public:
 			total /= samples.size();
 			lastAverage = total;
 		}
+		else {
+
+			T total = determineZero<T>();
+			for (auto sample : samples)
+				total += sample;
+
+			if (curSample > 0)
+				total /= curSample;
+			lastAverage = total;
+		}
+	}
+
+	void Clear() {
+		arrayFilled = false;
+		curSample = 0;
 	}
 
 	T GetAverage() {

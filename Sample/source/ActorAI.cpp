@@ -10,7 +10,8 @@
 
 ActorAI::ActorAI(Weapon * actorWeapon, float maxLife) : 
 	PhysicsActor(vec3(1.5,1.5,4),maxLife, GameFactions::FACTION_ENEMY),
-	weapon(actorWeapon) {
+	weapon(actorWeapon),
+	enemyPosition(100,5) {
 	//Use a default weapon for now
 	setModel(weapon->LookupAnimation(Weapon::ANIMATION_MODELNAME));
 	playAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
@@ -117,7 +118,7 @@ bool ActorAI::faceEnemy() {
 	//Check if you can move the spine
 	if (!checkSpineLimits()) {
 		//Face the enemy you're moving to
-		vec2 diff = vec2(targetEnemy->GetPosition()) - vec2(Position);
+		vec2 diff = vec2(enemyPosition.GetAverage()) - vec2(Position);
 			
 		return applyFacingDirection(atan2f(diff.y,diff.x));
 	}
@@ -127,10 +128,16 @@ bool ActorAI::faceEnemy() {
 
 
 vec3 ActorAI::getFireVector() {
-	return glm::normalize((targetEnemy->GetPosition()-vec3(0,0,.6f))-muzzlePositionA);
+	return glm::normalize((enemyPosition.GetAverage()-vec3(0,0,.6f))-muzzlePositionA);
 }
 
 bool ActorAI::Update() {
+	//Update what you know of the enemies position
+	if (targetEnemy != NULL)
+		enemyPosition.AddSample(targetEnemy->GetPosition());
+	else
+		enemyPosition.Clear();
+
 	//Check if the target enemy is still alive
 	//If their actor is about to be destroyed
 	//erase the reference
@@ -157,7 +164,7 @@ bool ActorAI::Update() {
 		//While waiting for a path, if you have an enemy, go straight for them
 		if (targetEnemy != NULL)
 			//Set the goal
-			goal = vec2(targetEnemy->GetPosition());
+			goal = vec2(enemyPosition.GetAverage());
 			//Don't break!
 		else
 			break;
@@ -260,7 +267,7 @@ bool ActorAI::Update() {
 				break;
 			//Request a pathing solution to their current position
 			state = AI_WAITINGFORPATH;
-			Actors().Aids()->PathingSolutionRequest(this,vec2(targetEnemy->GetPosition()));
+			Actors().Aids()->PathingSolutionRequest(this,vec2(enemyPosition.GetAverage()));
 			pathIndex = -1;
 		}
 

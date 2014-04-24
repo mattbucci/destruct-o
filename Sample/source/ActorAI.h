@@ -2,6 +2,7 @@
 
 #include "PhysicsActor.h"
 #include "EffectLaser.h"
+#include "MovingAverage.h"
 
 //How long before the body disappears after death
 #define AI_ROT_TIME 10
@@ -52,6 +53,8 @@ protected:
 	vec3 muzzlePositionA;
 	//If the gun has two dangerous ends
 	vec3 muzzlePositionB;
+	//The player position
+	MovingAverage<vec3> enemyPosition;
 
 	//Retrieve the muzzle position after a draw calculate
 	//and save in muzzlePositionA

@@ -29,9 +29,16 @@ float SoldierAIWeapon::JitterAmount() {
 
 //Simulate a gun shot (or laser pulse or whatever)
 void SoldierAIWeapon::Fire() {
-	if (!Universal::Trace(firePointA,fireVector,&hitPos))
-		hitPos = firePointA+fireVector*100.0f;
+	//Fire appropriate events and calculate jitter
+	Weapon::Fire();
+	//Apply jitter
+	Weapon::updateFinalFireVectors();
+
+	if (!Universal::Trace(firePointA,finalFireVectorA,&hitPos))
+		hitPos = firePointA+finalFireVectorA*100.0f;
 	
+	weaponImpact(hitPos);
+
  	Universal::Concuss(hitPos,3,20,(PhysicsActor*)this->weaponOwner);
 	laser.StartFiring();
 	laser.Move(firePointA,hitPos);
