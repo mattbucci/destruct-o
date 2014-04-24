@@ -113,7 +113,6 @@ bool BaseFrame::Load(string saveFile) {
 	//Deserialize the data
 	Savable::Deserialize(fileData,this);
     
-    audio->PlayerInit(Actors.Player());
     
     // Build player stuff
     Actors.Player()->Build();
@@ -169,8 +168,6 @@ void BaseFrame::Build()
 
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
-	audio->PlayerInit(Actors.Player());
-    audio->DemoInit(demo);
     Actors.Player()->Build();
     GameStarted.Fire([this](function<void(BaseFrame*)> subscriber) {
         subscriber(this);
