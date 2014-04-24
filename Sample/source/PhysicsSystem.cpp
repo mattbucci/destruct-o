@@ -19,6 +19,9 @@
 #include "GameSystem.h"
 #include "BaseFrame.h"
 
+//This will limit the number of voxels-to-voxel collision which are calculated on a section by section basis
+const static unsigned int MaxSectionSize = 30;
+
 PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	//Build a voxel renderer
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
@@ -198,6 +201,8 @@ void PhysicsSystem::updatePhysicsVoxels() {
 	}
 }
 void PhysicsSystem::collideVoxelsToVoxels() {
+	unsigned int largestSection = 0;
+
 	allVoxels.sort([](PhysicsVoxel * a, PhysicsVoxel * b) -> bool {
 		return a->Position.x < b->Position.x;
 	});
@@ -215,12 +220,14 @@ void PhysicsSystem::collideVoxelsToVoxels() {
 				it++;
 		}
 		section.push_back(allVoxels[s]);
-		if (section.size() > 50)
-			cout << "";
+		largestSection = max(section.size(),largestSection);
+
+		//Limit individual sections 
+		int sectionSize = min(MaxSectionSize,section.size());
 
 		//Now do the O(n^2) which checks for collisions
-		for (unsigned int a = 0; a < section.size(); a++) {
-			for (unsigned int b = a+1; b < section.size(); b++) {
+		for (unsigned int a = 0; a < sectionSize; a++) {
+			for (unsigned int b = a+1; b < sectionSize; b++) {
 				//Do AABB before you do full physics check... or things will be slow
 				if (section[a]->AabColiding(section[b]->Position)) {
 					Intersection intr = PhysicsUtilities::CalculateIntersection(section[a]->Position,section[b]->Position);
@@ -256,6 +263,7 @@ void PhysicsSystem::collideVoxelsToVoxels() {
 			}
 		}
 	}
+
 }
 
 
