@@ -43,6 +43,11 @@ MenuFrame::MenuFrame(ShaderGroup * shaders)
 	});
 
 	Subscribe<void(Button*)>(&loadButton.EventClicked, [this](Button * b) {
+		//Tell the engine to load the only save
+		//if the only save doesn't exist, something terrible happens
+		VoxEngine::SetAsyncTask(new AsyncTask([]() {Game()->Load(Game()->GetSaveLocation() + "data.json.compressed");}));
+		Frames::SetSystem(Frames::FRAME_GAME);
+		
 	});
 
 	Subscribe<void(Button*)>(&optionsButton.EventClicked, [this](Button * b) {

@@ -114,6 +114,9 @@ void EffectLaser::Draw(GLEffectProgram * program) {
 	if (laserPower <= 0)
 		return;
 
+	//Reset texture unit 0 to the active texture unit
+	glActiveTexture(GL_TEXTURE0);
+
 	//Make pretty laser blending
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
