@@ -1,41 +1,42 @@
 #include "stdafx.h"
-#include "MechAIWeapon.h"
+#include "TurretAIWeapon.h"
 #include "Universal.h"
 #include "BaseFrame.h"
 
-CLASS_SAVE_CONSTRUCTOR(MechAIWeapon);
+CLASS_SAVE_CONSTRUCTOR(TurretAIWeapon);
 
-MechAIWeapon::MechAIWeapon() : Weapon(), laserA(vec4(1,.5,.1,1),.1f),laserB(vec4(1,.5,.1,1),.1f)  {
-
+TurretAIWeapon::TurretAIWeapon() : Weapon(), laserA(vec4(1,.5,.1,1),.1f),laserB(vec4(1,.5,.1,1),.1f)  {
+	laserA.SetTiming(.05f,2.2f,true);
+	laserB.SetTiming(.05f,2.2f,true);
 }
 
-MechAIWeapon::MechAIWeapon(PhysicsActor * weaponOwner) : Weapon(weaponOwner), laserA(vec4(1,.5,.1,1),.1f),laserB(vec4(1,.5,.1,1),.1f)  {
+TurretAIWeapon::TurretAIWeapon(PhysicsActor * weaponOwner) : Weapon(weaponOwner), laserA(vec4(1,.5,.1,1),.1f),laserB(vec4(1,.5,.1,1),.1f)  {
 	laserA.SetTiming(.05f,2.2f,true);
 	laserB.SetTiming(.05f,2.2f,true);
 }
 
 //Whether or not the weapon should repeat firing automatically
-bool MechAIWeapon::RepeatFireAutomatically() {
+bool TurretAIWeapon::RepeatFireAutomatically() {
 	return true;
 }
 
 //The amount of charge it takes to fire the weapon
-float MechAIWeapon::WeaponChargeRequired() {
+float TurretAIWeapon::WeaponChargeRequired() {
 	return 0;
 }
 
 //Cooldown length for the weapon
-float MechAIWeapon::WeaponCooldownTime() {
+float TurretAIWeapon::WeaponCooldownTime() {
 	return 2;
 }
 
 //The amount of jitter in the weapon
-float MechAIWeapon::JitterAmount() {
+float TurretAIWeapon::JitterAmount() {
 	return .08;
 }
 
 //Simulate a gun shot (or laser pulse or whatever)
-void MechAIWeapon::Fire() {
+void TurretAIWeapon::Fire() {
 	//Fire appropriate events and calculate jitter
 	Weapon::Fire();
 	//Apply jitter
@@ -64,35 +65,35 @@ void MechAIWeapon::Fire() {
 
 
 //Weapon firing animation
-string MechAIWeapon::LookupAnimation(Weapon::HandAnimations animation) {
+string TurretAIWeapon::LookupAnimation(Weapon::HandAnimations animation) {
     static const string animations[10] = {
         //ANIMATION_MODELNAME,
-        "robot02",
+        "turret1",
         //ANIMATION_AIM,
-        "move_frozen",
+        "",
         //ANIMATION_FIRE,
-        "short_gun_burst",
+        "",
         //ANIMATION_RELOAD,
-        "move_frozen",
+        "",
         //ANIMATION_RUN,
-        "running",
+        "",
         //ANIMATION_JUMP,
-        "jump",
+        "",
         //ANIMATION_GRENADE,
         "",
 		//ANIMATION_DEATH
-		"destroyed"
+		""
     };
     return animations[animation];
 }
 
 //Update the state of the weapon
-void MechAIWeapon::Update(vec3 firingVector, vec3 firePointA, vec3 FirePointB) {
+void TurretAIWeapon::Update(vec3 firingVector, vec3 firePointA, vec3 FirePointB) {
 	Weapon::Update(firingVector, firePointA, FirePointB);
 }
 
 //Draw any effects the weapon may own
-void MechAIWeapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) {
+void TurretAIWeapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) {
 	//That's right I'm calling raytrace druing draw for the most up-to-date stuff possible
 	//if (!Universal::Trace(firePointB,fireVector,&hitPosB))
 	//	hitPosB = firePointB+fireVector*100.0f;

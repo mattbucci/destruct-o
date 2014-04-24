@@ -3,12 +3,9 @@
 #include "ActorAI.h"
 #include "EffectLaser.h"
 
-//How long before the body disappears after death
-#define AI_ROT_TIME 10
-
 class Weapon;
 
-class ActorAISmallMech : public ActorAI {
+class ActorAITurret : public ActorAI {
 protected:
 
 	//Check if your spine can face the enemy right now
@@ -39,10 +36,10 @@ protected:
 	virtual float turnSpeed() override;
 
 public:
-	ActorAISmallMech();
-	~ActorAISmallMech();
+	ActorAITurret();
+	~ActorAITurret();
 
-	CLASS_DECLARATION(ActorAISmallMech)
+	CLASS_DECLARATION(ActorAITurret)
 		INHERITS_FROM(ActorAI)
 	END_DECLARATION
 };

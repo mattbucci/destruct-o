@@ -3,14 +3,14 @@
 
 class ActorAI;
 
-class AidsActionDeploySoldier : public AidsAction{
+class AidsActionBomberRun : public AidsAction{
 	ActorAI * deployed;
 public:
 	//This constructor is /only/ called by the loader
-	AidsActionDeploySoldier();
+	AidsActionBomberRun();
 
 	//Constructing the action should start it
-	AidsActionDeploySoldier(vec3 actionLocation);
+	AidsActionBomberRun(vec3 actionLocation);
 
 	//Every subclass should have a static member GetIntensityValue()
 	//Intensity values in intensity units
@@ -22,7 +22,8 @@ public:
 	//If this returns true clean up the action
 	//the action has ended
 	bool Update() override;
-	CLASS_DECLARATION(AidsActionDeploySoldier)
+
+	CLASS_DECLARATION(AidsActionBomberRun)
 		INHERITS_FROM(AidsAction)
 		CLASS_MEMBER(deployed,ReflectionData::SAVE_HANDLE)
 	END_DECLARATION

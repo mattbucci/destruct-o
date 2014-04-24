@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-class AidsAction {
+class AidsAction : public Savable {
 	float actionCost;
 protected:
 	vec3 actionLocation;
@@ -23,4 +23,9 @@ public:
 	//If this returns true clean up the action
 	//the action has ended
 	virtual bool Update() = 0;
+
+	CLASS_DECLARATION(AidsAction)
+		CLASS_MEMBER(actionLocation,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(actionCost,ReflectionData::SAVE_FLOAT)
+	END_DECLARATION
 };

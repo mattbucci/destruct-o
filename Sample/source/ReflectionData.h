@@ -74,6 +74,37 @@ namespace ReflectionData {
 		string memberName;
 	};
 
+	template <class T>
+	inline SaveType findReflectionType() {
+		_ASSERTE(false);
+		return SAVE_NOTHING;
+	}
+	//For primitives
+	template <>
+	inline SaveType findReflectionType<float>() {
+		return SAVE_FLOAT;
+	}
+	template <>
+	inline SaveType findReflectionType<double>() {
+		return SAVE_DOUBLE;
+	}
+	template <>
+	inline SaveType findReflectionType<int>() {
+		return SAVE_INT32;
+	}
+	template <>
+	inline SaveType findReflectionType<vec2>() {
+		return SAVE_VEC2;
+	}
+	template <>
+	inline SaveType findReflectionType<vec3>() {
+		return SAVE_VEC3;
+	}
+	template <>
+	inline SaveType findReflectionType<vec4>() {
+		return SAVE_VEC4;
+	}
+
 };
 
 

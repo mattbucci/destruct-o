@@ -6,6 +6,9 @@ class ActorAI;
 class AidsActionDeployMosquito : public AidsAction{
 	ActorAI * deployed;
 public:
+	//This constructor is /only/ called by the loader
+	AidsActionDeployMosquito();
+
 	//Constructing the action should start it
 	AidsActionDeployMosquito(vec3 actionLocation);
 
@@ -19,4 +22,8 @@ public:
 	//If this returns true clean up the action
 	//the action has ended
 	bool Update() override;
+	CLASS_DECLARATION(AidsActionDeployMosquito)
+		INHERITS_FROM(AidsAction)
+		CLASS_MEMBER(deployed,ReflectionData::SAVE_HANDLE)
+	END_DECLARATION
 };

@@ -3,7 +3,13 @@
 #include "Universal.h"
 #include "BaseFrame.h"
 
-MosquitoAIWeapon::MosquitoAIWeapon(Actor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool) {
+CLASS_SAVE_CONSTRUCTOR(MosquitoAIWeapon);
+
+MosquitoAIWeapon::MosquitoAIWeapon() : Weapon() {
+
+}
+
+MosquitoAIWeapon::MosquitoAIWeapon(PhysicsActor * weaponOwner) : Weapon(weaponOwner) {
 }
 
 //Whether or not the weapon should repeat firing automatically

@@ -3,7 +3,9 @@
 #include "ModelInstance.h"
 #include "MosquitoAIWeapon.h"
 
-ActorAIMosquito::ActorAIMosquito() : ActorAI(new MosquitoAIWeapon(this,energyPool),200,vec3(3,3,2))  {
+CLASS_SAVE_CONSTRUCTOR(ActorAIMosquito);
+
+ActorAIMosquito::ActorAIMosquito() : ActorAI(new MosquitoAIWeapon(this),200,vec3(3,3,2))  {
 	flying = true;
 }
 ActorAIMosquito::~ActorAIMosquito() {

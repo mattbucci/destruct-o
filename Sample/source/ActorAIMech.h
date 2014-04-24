@@ -3,8 +3,7 @@
 #include "ActorAI.h"
 #include "EffectLaser.h"
 
-//How long before the body disappears after death
-#define AI_ROT_TIME 10
+
 
 class Weapon;
 

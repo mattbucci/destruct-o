@@ -4,7 +4,7 @@
 #include "Weapon.h"
 #include "EffectLaser.h"
 
-class SoldierAIWeapon : public Weapon {
+class BombExplodeEffectWeapon : public Weapon {
 protected:
 	//Whether or not the weapon should repeat firing automatically
 	virtual bool RepeatFireAutomatically() override;
@@ -22,14 +22,11 @@ protected:
 	virtual void Fire() override;
 
 	//What you shoot
-	EffectLaser laser;
 	vec3 hitPos;
 public:
-	//DO NOT CALL
-	SoldierAIWeapon();
+	BombExplodeEffectWeapon();
 
-	//Call me
-	SoldierAIWeapon(PhysicsActor * weaponOwner);
+	BombExplodeEffectWeapon(PhysicsActor * weaponOwner);
 
 	//Weapon firing animation
 	virtual string LookupAnimation(HandAnimations animation) override;
@@ -39,9 +36,4 @@ public:
 
 	//Draw any effects the weapon may own
 	virtual void DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) override;
-
-	CLASS_DECLARATION(SoldierAIWeapon)
-		INHERITS_FROM(Weapon)
-		CLASS_MEMBER(hitPos, ReflectionData::SAVE_VEC3)
-	END_DECLARATION
 };

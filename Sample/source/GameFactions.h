@@ -41,6 +41,6 @@ public:
 	void SetEnemies(FactionId a, FactionId b);
 
 	//GameFactions list must be saved manually since its a special data type (set of pairs)
-	CLASS_DECLARATION(ActorSystem)
+	CLASS_DECLARATION(GameFactions)
 	END_DECLARATION
 };

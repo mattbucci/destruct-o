@@ -27,6 +27,7 @@ void ActorSystem::cleanActorList() {
 	//Cleanup player and aids now
 	delete player;
 	delete aids;
+	allActors.clear();
 }
 
 void ActorSystem::Load(Json::Value & parentValue, LoadData & loadData) {
@@ -63,7 +64,6 @@ void ActorSystem::Update() {
 			recentlyDied.push_back(*it);
 			//erase from list
 			it = allActors.erase(it);
-			cout << "AI ended action\n";
 		}
 		else
 			it++;
@@ -101,7 +101,13 @@ void ActorSystem::DoAOEDamage(vec3 at, float radius, float damage, PhysicsActor 
 		damagableActor->Damage(damager,actorDamage);
 		//And fling the actor some amount
 		float fling = damage*.05;
-		damagableActor->velocity += glm::normalize(damagableActor->GetPosition() - at)*fling;
+		//Check if the actor is at the epicenter
+		vec3 damageDirection;
+		if (damagableActor->GetPosition() == at)
+			damageDirection = vec3(0,0,1);
+		else
+			damageDirection = glm::normalize(damagableActor->GetPosition() - at);
+		damagableActor->velocity += damageDirection*fling;
 	}
 }
 

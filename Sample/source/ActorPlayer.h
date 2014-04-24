@@ -23,8 +23,6 @@ class ActorPlayer : public PhysicsActor
     bool weaponFired;
 
 
-	//Energy pool
-	float energyPool;
 	float maxEnergyPool;
     
 	//Protect the player from actually dying
@@ -77,5 +75,11 @@ public:
 		CLASS_MEMBER(debug,ReflectionData::SAVE_BOOL);
 		CLASS_MEMBER(deltaPosition,ReflectionData::SAVE_DOUBLE)
 		CLASS_MEMBER(debug_target_height,ReflectionData::SAVE_FLOAT);
+
+		//Weapon data pending
+		//weapon position information
+		//is regenerated each time
+		CLASS_MEMBER(weaponFired,ReflectionData::SAVE_BOOL);
+		CLASS_MEMBER(maxEnergyPool,ReflectionData::SAVE_FLOAT);
 	END_DECLARATION
 };

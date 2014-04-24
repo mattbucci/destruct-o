@@ -110,7 +110,8 @@ public:
 	//Happens with the player tries to fire without enough energy
 	//(the player is the only one stupid enough to try this)
 	GameEvent<void(Actor*,Weapon*)> ActorFiredWhileEmpty;
-
+	//If an air unit crashes this event fires
+	GameEvent<void(Actor*)> ActorVehicleCrash;
 
 	//Actor Accessor
 	ContiguousList<Actor*>* GetActors();
@@ -120,8 +121,11 @@ public:
 		CLASS_CONTAINER_MEMBER(allActors,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
 		CLASS_CONTAINER_MEMBER(deadActors1,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
 		CLASS_CONTAINER_MEMBER(deadActors2,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
+		CLASS_CONTAINER_MEMBER(newlyBornActors,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
 		CLASS_MEMBER(useDeadActors1,ReflectionData::SAVE_BOOL)
 		CLASS_MEMBER(player,ReflectionData::SAVE_HANDLE)
+		CLASS_MEMBER(aids,ReflectionData::SAVE_HANDLE)
+		CLASS_MEMBER(physics,ReflectionData::SAVE_HANDLE)
 		CLASS_MEMBER(Factions,ReflectionData::SAVE_INSTANCE)
 	END_DECLARATION
 };

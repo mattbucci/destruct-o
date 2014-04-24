@@ -19,8 +19,10 @@ inline int determineZero<int>() {
 	return 0.0;
 }
 
+#include "Savable.h"
+
 template <class T>
-class MovingAverage {
+class MovingAverage : public Savable {
 	vector<T> samples;
 	bool arrayFilled;
 	int curSample;
@@ -78,4 +80,12 @@ public:
 	T GetAverage() {
 		return lastAverage;
 	}
+	CLASS_DECLARATION(MovingAverage<T>)
+		CLASS_CONTAINER_MEMBER(samples,ReflectionData::SAVE_VECTOR,ReflectionData::findReflectionType<T>())
+		CLASS_MEMBER(curSample,ReflectionData::SAVE_INT32)
+		CLASS_MEMBER(lastAverage,ReflectionData::findReflectionType<T>())
+		CLASS_MEMBER(sampleId,ReflectionData::SAVE_UINT32)
+		CLASS_MEMBER(sampleSkip,ReflectionData::SAVE_INT32)
+	END_DECLARATION
+
 };

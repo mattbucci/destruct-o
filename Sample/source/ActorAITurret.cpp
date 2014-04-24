@@ -1,19 +1,21 @@
 #include "stdafx.h"
-#include "ActorAISmallMech.h"
+#include "ActorAITurret.h"
 #include "ModelInstance.h"
-#include "SmallMechAIWeapon.h"
+#include "TurretAIWeapon.h"
 
-ActorAISmallMech::ActorAISmallMech() : ActorAI(new SmallMechAIWeapon(this,energyPool),100,vec3(1.5,1.5,4))  {
+CLASS_SAVE_CONSTRUCTOR(ActorAITurret);
+
+ActorAITurret::ActorAITurret() : ActorAI(new TurretAIWeapon(this),100,vec3(3,3,2.5))  {
 
 }
-ActorAISmallMech::~ActorAISmallMech() {
+ActorAITurret::~ActorAITurret() {
 
 }
 
 //Attempts to snap the user's spine to face the enemy
 //returns true if successful
 //Check if your spine can face the enemy right now
-bool ActorAISmallMech::checkSpineLimits() {
+bool ActorAITurret::checkSpineLimits() {
 	//Since you can move vertically pretty well
 	//just check if the horizontal is very close to 0
 	vec2 diff = vec2(targetEnemy->GetPosition()) - vec2(Position);
@@ -25,10 +27,7 @@ bool ActorAISmallMech::checkSpineLimits() {
 }
 
 //Snap the model's skeleton to face the enemy
-void ActorAISmallMech::snapSpineToEnemy() {
-	//Right now don't even try
-	return;
-
+void ActorAITurret::snapSpineToEnemy() {
 	//Take a guess at the correction in 2d only
 	float distance = glm::length(targetEnemy->GetPosition() - Position);
 	vec3 correctVector = glm::normalize(vec3(0,distance,targetEnemy->GetPosition().z - 1.5f - Position.z));
@@ -41,51 +40,47 @@ void ActorAISmallMech::snapSpineToEnemy() {
 	
 	quat rotation = glm::quat(glm::rotate(angle,axis));
 	//Apply to the spine
-	Node * spineNode = model->Animation().Skeleton()->FindNode("Bind_Spine1");
+	Node * spineNode = model->Animation().Skeleton()->FindNode("Hig_Poly_Guns");
 
+	angle -= M_PI/2.0;
 
-	spineNode->LocalTransform().Rotation() = glm::rotate(spineNode->LocalTransform().Rotation(),angle/M_PI*180.0f,axis);
+	spineNode->LocalTransform().Rotation() = glm::rotate(quat(),angle/M_PI*180.0f,axis);
 
 	spineNode->Recalculate();
 }
 
-void ActorAISmallMech::findMuzzlePosition() {
+void ActorAITurret::findMuzzlePosition() {
+	Node::const_flattreemap flatMap;
+	model->Skeleton()->GetFlatNodeTree(flatMap);
 	//Find bone
-	const Node * nA = model->Skeleton()->FindNode("rt_shoulder");
-	mat4 globalTransformA = model->GetTransform().TransformMatrix() * nA->TransformMatrix();
-
-	const Node * nB = model->Skeleton()->FindNode("lf_shoulder");
-	mat4 globalTransformB = model->GetTransform().TransformMatrix() * nB->TransformMatrix();
-
-		
-	//These look mediocre at best
-	//if someone wants to fix them that would be awesome
-	vec3 aVector(.2,-.25,-.8);
-	vec3 bVector(-.2,-.3,1.6);
+	const Node * n = model->Skeleton()->FindNode("Hig_Poly_Guns");
+	mat4 globalTransform = model->GetTransform().TransformMatrix() * n->TransformMatrix();
+	vec3 aVector(1.3,-2.4,0);
+	vec3 bVector(-1.3,-2.4,0);
 	//Calculate the position along the muzzle
-	muzzlePositionA = vec3(globalTransformA * vec4(aVector,1.0));
-	muzzlePositionB = vec3(globalTransformB * vec4(bVector,1.0));
+	muzzlePositionA =  vec3(globalTransform * vec4(aVector,1.0));
+	muzzlePositionB =  vec3(globalTransform * vec4(bVector,1.0));
 }
 
 
 //DEFAULTS:
 //The time it takes to target after finding the enemy
-double ActorAISmallMech::targetTime() {
+double ActorAITurret::targetTime() {
 	return 3.0;
 }
 
 //The movement speed of this enemy
 //should be tuned to walk animation speed
-float ActorAISmallMech::baseMovementSpeed() {
-	return 6;
+float ActorAITurret::baseMovementSpeed() {
+	return 0;
 }
 
 //How far can enemies spot each other
-float ActorAISmallMech::sightDistance() {
+float ActorAITurret::sightDistance() {
 	return 30;
 }
 
 //How many radians per second this actor can rotate
-float ActorAISmallMech::turnSpeed() {
+float ActorAITurret::turnSpeed() {
 	return (float)(M_PI/2.5);
 }

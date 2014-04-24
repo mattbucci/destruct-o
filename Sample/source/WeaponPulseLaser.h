@@ -25,7 +25,11 @@ protected:
 	EffectLaser laser;
 	vec3 hitPos;
 public:
-	WeaponPulseLaser(Actor * weaponOwner, float & chargePool);
+	//DO NOT CALL
+	WeaponPulseLaser();
+
+	//Call me
+	WeaponPulseLaser(PhysicsActor * weaponOwner);
 
 	//Weapon firing animation
     virtual string LookupAnimation(HandAnimations animation) override;
@@ -35,4 +39,9 @@ public:
 
 	//Draw any effects the weapon may own
 	virtual void DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB = vec3()) override;
+
+	CLASS_DECLARATION(WeaponPulseLaser)
+		INHERITS_FROM(Weapon)
+		CLASS_MEMBER(hitPos, ReflectionData::SAVE_VEC3)
+	END_DECLARATION
 };

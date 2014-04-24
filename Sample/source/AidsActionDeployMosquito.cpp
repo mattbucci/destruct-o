@@ -4,6 +4,14 @@
 
 #include "ActorAIMosquito.h"
 
+CLASS_SAVE_CONSTRUCTOR(AidsActionDeployMosquito);
+
+//This constructor is /only/ called by the loader
+AidsActionDeployMosquito::AidsActionDeployMosquito() : AidsAction(vec3(),0) {
+	//Loader runs directly after this
+}
+
+
 //Constructing the action should start it
 AidsActionDeployMosquito::AidsActionDeployMosquito(vec3 actionLocation) : AidsAction(actionLocation,GetIntensityValue()) {
 	//Find a hidden location
