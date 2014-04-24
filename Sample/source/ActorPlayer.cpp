@@ -80,31 +80,31 @@ bool ActorPlayer::Update() {
 	Velocity.x = playerMotion.x;
 	Velocity.y = playerMotion.y;
 
-
     //Handle appropriate animation here
     if (weaponFired && animationRunning()) {
         setAnimation(currentWeapon->LookupAnimation(Weapon::ANIMATION_FIRE));
     }
-    else {
-        double now = Game()->Now();
+    
+    //
+    else
+    {
+        //double now = Game()->Now();
         //All done shooting
         weaponFired = false;
-        if (OnGround()) {
-            //Play the appropriate move animation
-            if (glm::length(playerMotion) > 0)
-            {
-                //Play walking
-                setAnimation(currentWeapon->LookupAnimation(Weapon::ANIMATION_RUN));
-                model->Controller()->SetFloat("speed", Game()->FirstPerson->GetMovementSpeed());
-            }
-            else
-            {
-                //Stand around
-                setAnimation(currentWeapon->LookupAnimation(Weapon::ANIMATION_AIM));
-                model->Controller()->SetFloat("speed", 0.0f);
-            }
+        
+        // If we are on the ground, perform normally
+        if (OnGround())
+        {
+            // Get the magnitude of the player's motion
+            float magnitude = glm::length(moveVector);
+            
+            // Forward the movement speed to the player's weapon controller
+            model->Controller()->SetFloat("speed", magnitude);
         }
-        else {
+        
+        // Set the system specifically for being airbone
+        else
+        {
             //Jump
             setAnimation(currentWeapon->LookupAnimation(Weapon::ANIMATION_JUMP));
             model->Controller()->SetFloat("speed", 0.0f);

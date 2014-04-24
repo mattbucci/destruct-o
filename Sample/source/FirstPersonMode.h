@@ -10,6 +10,7 @@ class FirstPersonMode : public Savable {
 protected:
 	vec3 lookVector;
 	vec2 moveVector;
+
 	//the x,y angles making up the lookVector currently
 	vec2 aggregateMouseVector;
 	bool firstPersonEnabled;
