@@ -113,11 +113,13 @@ bool BaseFrame::Load(string saveFile) {
 	//Deserialize the data
 	Savable::Deserialize(fileData,this);
     
-    audio->PlayerInit(Actors.Player());
     
     // Build player stuff
     Actors.Player()->Build();
 	return true;
+    GameLoaded.Fire([this](function<void(BaseFrame*)> subscriber) {
+        subscriber(this);
+    });
 }
 
 void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
@@ -166,9 +168,10 @@ void BaseFrame::Build()
 
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
-	audio->PlayerInit(Actors.Player());
-    audio->DemoInit(demo);
     Actors.Player()->Build();
+    GameStarted.Fire([this](function<void(BaseFrame*)> subscriber) {
+        subscriber(this);
+    });
 }
 
 bool BaseFrame::Update(vector<InputEvent> inputEvents) {
@@ -195,6 +198,8 @@ bool BaseFrame::Update(vector<InputEvent> inputEvents) {
 
 	demo->OnInput(inputEvents,Actors.Player()->GetPosition(),FirstPerson->GetLookVector());
 	demo->Update();
+    
+    audio->Update();
 
 	//Update physics/Particles
 	Physics.Update();
@@ -239,8 +244,6 @@ void BaseFrame::Draw(double width, double height)
 	Camera.Apply((GL3DProgram*)shaders->GetShader("3d"));
     SetupShader<MaterialProgram>("model", fogDistance);
     Camera.Apply((MaterialProgram*)shaders->GetShader("model"));
-    SetupShader<MaterialProgram>("model_skinned", fogDistance);
-    Camera.Apply((MaterialProgram*)shaders->GetShader("model_skinned"));
     SetupShader<GLEffectProgram>("effects", fogDistance);
     Camera.Apply((GLEffectProgram*)shaders->GetShader("effects"));
     
@@ -276,14 +279,11 @@ void BaseFrame::Draw(double width, double height)
         // Draw the model instance
         (*it)->Draw(modelShader);
     }
-
-    // Setup the mesh shader boneless
-    modelShader = (MaterialProgram *) shaders->GetShader("model_skinned");
-    modelShader->UseProgram();
     
+    // Draw the actors
 	Actors.Draw(shaders);
 
-    // Herp a derp
+    // Draw the player weapon
     modelShader->UseProgram();
     Actors.Player()->DrawWeapon(modelShader);
     

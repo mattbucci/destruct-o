@@ -109,7 +109,7 @@ void ActorSystem::DoAOEDamage(vec3 at, float radius, float damage, PhysicsActor 
 void ActorSystem::Draw(ShaderGroup * shaders) {
 
 	// Setup the mesh shader
-	MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model_skinned");
+	MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
 	modelShader->UseProgram();
 
 	for (unsigned int i = 0; i < allActors.size(); i++) 

@@ -24,16 +24,21 @@ private:
     //general music for bossfights, menus, etc
     map<string,track> tracks;
     //music played randomly, scrambled on generation and repeat, played sequentially
-    vector<track> ambient_tracks;
+    vector< vector<track> > ambient_tracks;
+    vector<int> track_numbers;
     
     void play_track(string song);
+    void play_track(track song);
     bool load_tracks();
+    bool shouldbeplaying;
     void start_playback();
+    
     Mix_Music *music;
 public:
     Music();
     ~Music();
     void SetVolume(uint8_t volume);
+    void Update();
     void Pause();
     void Resume();
 };

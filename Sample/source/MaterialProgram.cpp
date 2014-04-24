@@ -41,6 +41,8 @@ MaterialProgram::MaterialProgram(GLCommonShaderFile * commonShader, string verte
         uniformBones[i] = glGetUniformLocation(programId, b.str().c_str());
     }
     
+    uniformSkinned = glGetUniformLocation(programId, "skinned");
+    
     /*cout << "---- Material Program Init Log ----" << endl;
     cout << "Attribute Vertex: " << AttributeVertex() << endl;
     cout << "Attribute Normal: " << AttributeNormal() << endl;
@@ -75,4 +77,9 @@ const GLint MaterialProgram::UniformBones(int idx)
 const GLint MaterialProgram::UniformTexture(Material::TextureType idx)
 {
     return uniformTextures[idx];
+}
+
+const GLint MaterialProgram::UniformSkinned()
+{
+    return uniformSkinned;
 }

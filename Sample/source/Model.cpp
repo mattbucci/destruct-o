@@ -442,7 +442,7 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         glUniform2f(glGetUniformLocation(program->GetId(), "material_reflectivity"), specular.x, specular.y);
         
         // Set all the bones according to the skeleton
-        int boneIdx = 0;
+        GLint boneIdx = 0;
         for(std::vector<Model::Bone *>::iterator bone = (*renderable)->bones.begin(); bone != (*renderable)->bones.end(); bone++, boneIdx++)
         {
             // Get the node which cooresponds to our bone
@@ -454,6 +454,9 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
             // Upload the bone to the shader
             glUniformMatrix4fv(program->UniformBones(boneIdx), 1, GL_FALSE, (const GLfloat *) &finalTransform);
         }
+        
+        // Pass the bone count through (well, anything more than zero means skinned
+        glUniform1i(program->UniformSkinned(), boneIdx);
         
         // Finally, we can draw the god damn mesh
         glDrawElements(GL_TRIANGLES, (GLsizei) (*renderable)->meshpart->indices.size(), GL_UNSIGNED_SHORT, NULL);

@@ -34,6 +34,9 @@ class MaterialProgram : public GL3DProgram
     // The texture maps
     GLint uniformTextures[4];
     
+    // The uniform for whether or not the model is skinned
+    GLint uniformSkinned;
+    
 public:
 	MaterialProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath);
     
@@ -48,6 +51,9 @@ public:
     
     // Get the uniform for the texture samplers
     const GLint UniformTexture(Material::TextureType idx);
+    
+    // Get the uniform for the skinning flag
+    const GLint UniformSkinned();
 };
 
 #endif

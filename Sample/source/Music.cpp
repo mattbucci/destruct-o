@@ -13,9 +13,20 @@
 Music::Music() {
     Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
 	Mix_VolumeMusic(MIX_MAX_VOLUME/4);
+    
     cout << "Loading music" << endl;
+    sceneintensity = 0;
+    shouldbeplaying = false;
+    
+    ambient_tracks.resize(10);
+    track_numbers.resize(10);
+    
+    for(int i = 0; i < track_numbers.size(); i++){
+        track_numbers[i] = 0;
+    }
+    
     load_tracks();
-    play_track("");
+    start_playback();
 }
 
 Music::~Music() {
@@ -25,8 +36,10 @@ Music::~Music() {
     }
 }
 
+
 void Music::start_playback() {
-    
+    shouldbeplaying = true;
+    play_track(ambient_tracks[sceneintensity][track_numbers[sceneintensity]]);
 }
 bool Music::load_tracks() {
 	//Load the effects
@@ -61,7 +74,7 @@ bool Music::load_tracks() {
 		//ignore comment lines
 		if (params.size() == 3 && params[0].substr(0, 2) != "//") {
 			//special tracks marked with intensity 0
-			if (params[1] == "0")
+			if (params[1] == "-1")
 			{
 				track special;
 				cout << "Loaded: " << params[0] << endl;
@@ -77,7 +90,7 @@ bool Music::load_tracks() {
 				ambient.intensity = atoi(params[0].c_str());
 				ambient.trackname = params[0];
 				ambient.filename = params[2];
-				ambient_tracks.push_back(ambient);
+				ambient_tracks[ambient.intensity].push_back(ambient);
 			}
 		}
 		params.clear();
@@ -90,6 +103,7 @@ bool Music::load_tracks() {
 
 
 void Music::play_track(std::string song) {
+    //for playback of special tracks
 	if (song != "") {
 		//finds whether or not the track exists without instantiating it like [] would
 		map<std::string, track>::iterator it = tracks.find(song);
@@ -104,14 +118,24 @@ void Music::play_track(std::string song) {
 
 		}
 	}
-	 else {
-		 music = Mix_LoadMUS(ambient_tracks[0].filename.c_str());
-		 if (music) {
-			 Mix_PlayMusic(music, 1);
-		 }
-	 }
 }
+
+void Music::play_track(track song) {
+    //for playback of ambient tracks
+    music = Mix_LoadMUS(song.filename.c_str());
+    if (music) {
+        Mix_PlayMusic(music, 1);
+    }
+}
+
 void Music::SetVolume(uint8_t volume) {
     this->volume = volume;
     Mix_VolumeMusic(volume);
+}
+
+void Music::Update(){
+    if(!Mix_PlayingMusic() && shouldbeplaying) {
+        track_numbers[sceneintensity]++;
+        play_track(ambient_tracks[sceneintensity][track_numbers[sceneintensity]]);
+    }
 }
