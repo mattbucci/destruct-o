@@ -254,7 +254,7 @@ void BaseFrame::Draw(double width, double height)
 	shaders3d->Model.Apply();
 	//Setup sun here for now
 	//translate it to follow world coordinates
-	shaders3d->Lights.Off();
+	shaders3d->Lights.On();
 	shaders3d->Lights.Apply();
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
@@ -272,6 +272,8 @@ void BaseFrame::Draw(double width, double height)
     // Setup the mesh shader boneless
     MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
     modelShader->UseProgram();
+    modelShader->Lights.Enable(1);
+    modelShader->Lights.Apply();
     
     // Draw the meshes
     for(std::vector<ModelInstance *>::iterator it = modelInstances.begin(); it != modelInstances.end(); ++it)
@@ -285,6 +287,8 @@ void BaseFrame::Draw(double width, double height)
 
     // Draw the player weapon
     modelShader->UseProgram();
+    modelShader->Lights.Apply();
+    
     Actors.Player()->DrawWeapon(modelShader);
     
 	//The particle system will use a different shader entirely soon

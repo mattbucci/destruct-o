@@ -38,7 +38,7 @@ Material::Material()
 
 // Deserialization constructor - load from a Json serialized blob
 Material::Material(const Json::Value& value, const std::string directory)
-    : id(""), textures(Material::texture_store()), colorDiffuse(glm::vec3(1.0, 1.0, 1.0)), colorAmbient(glm::vec3(1.0, 1.0, 1.0))
+    : id(""), textures(Material::texture_store())
 {
     // We first need to validate that this a Json object
     if(!value.isObject())
@@ -53,7 +53,7 @@ Material::Material(const Json::Value& value, const std::string directory)
     const Json::Value& bitmaps = value["textures"];
     
     // If this mesh contains a vertices entry (there could be some empty cases, for instance, an empty mesh was created, then serialized)
-    if(bitmaps.isArray())
+    if(!bitmaps.isNull() && bitmaps.isArray())
     {
         // Read in all the textures
         for(Json::Value::iterator tIt = bitmaps.begin(); tIt != bitmaps.end(); tIt++)
@@ -70,24 +70,37 @@ Material::Material(const Json::Value& value, const std::string directory)
     }
     
     // Search for the diffuse color type
-    const Json::Value& diffuse_color = value["diffuse"];
+    const Json::Value& diffuse_color = value.get("diffuse", Json::Value::null);
     
     // Do we have a diffuse color
-    if(diffuse_color.isArray())
+    if(!diffuse_color.isNull() && diffuse_color.isArray())
     {
         // Create a color storage vector and cache it
         colorDiffuse = glm::vec3(diffuse_color[0].asFloat(), diffuse_color[1].asFloat(), diffuse_color[2].asFloat());
+    } else
+    {
+        colorDiffuse = glm::vec3(1.0, 1.0, 1.0);
+        //cout << " << loaded default ambient color >> " << endl;
     }
     
     // Search for particular color types
-    const Json::Value& ambient_color = value["ambient"];
+    const Json::Value& ambient_color = value.get("ambient", Json::Value::null);
     
     // Do we have a diffuse color
-    if(ambient_color.isArray())
+    if(!ambient_color.isNull() && ambient_color.isArray())
     {
         // Create a color storage vector and cache it
         colorAmbient = glm::vec3(ambient_color[0].asFloat(), ambient_color[1].asFloat(), ambient_color[2].asFloat());
+    } else
+    {
+        colorAmbient = colorDiffuse;
+        //cout << " << loaded default ambient color >> " << endl;
     }
+    
+    /*cout << "Loaded Material (" << id << "): ";
+    cout << "Ambient => {" << colorAmbient.r << " " << colorAmbient.g << " " << colorAmbient.b << "} ";
+    cout << "Diffuse => {"  << colorDiffuse.r << " " << colorDiffuse.g << " " << colorDiffuse.b << "} ";
+    cout << "Textures (" << textures.size() << ")" << endl;*/
 }
 
 // Get the name of the material

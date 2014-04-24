@@ -62,7 +62,7 @@ void AnimationClip::SetPlaybackSpeed(float _speed)
 void AnimationClip::Play(bool _loop, double now)
 {
     // Reset the pose to the initial pose
-    Reset();
+    //Reset();
     
     // Start playing
     playing = true;
@@ -70,6 +70,9 @@ void AnimationClip::Play(bool _loop, double now)
     
     // Store the starting time
     animationStartTime = now;
+    
+    // Set to animation
+    Update(0.01, now);
 }
 
 /**

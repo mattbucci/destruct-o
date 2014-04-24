@@ -78,7 +78,7 @@ public:
     /**
      * Sets the local skeleton's transforms back to the initial pose
      */
-    void Reset();
+    virtual void Reset();
     
     /**
      * Get a pointer to the local skeleton

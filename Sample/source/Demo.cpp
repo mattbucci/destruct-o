@@ -330,7 +330,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
             else if (eve.Key == '0')
             {
                 // Create a model instance from this model
-                ModelInstance *instance = game->Models()->NewInstance("helicopter");
+                ModelInstance *instance = game->Models()->NewInstance("soldier01");
                 
                 // Set the location of this instance
                 instance->GetTransform().Translation() = playerPos + playerFacing * 5.0f;

@@ -24,7 +24,7 @@
  * @param _controller The animation controller to bind this layer to
  */
 AnimationLayer::AnimationLayer(AnimationController *_controller)
-    : AnimationSource() , controller(_controller), name("null"), priority(0), states(state_store()), activeState(NULL), transitionState(NULL), transitionStartTime(0.0), transitionLength(0.0)
+    : AnimationSource() , controller(_controller), name("null"), priority(0), states(state_store()), activeState(NULL), transitionState(NULL), transitionStateOnDeck(NULL), transitionStartTime(0.0), transitionLength(0.0)
 {
     // Bind this source to the initial skeleton of the animation controller
     Bind(_controller->InitialSkeleton());
@@ -36,7 +36,7 @@ AnimationLayer::AnimationLayer(AnimationController *_controller)
  * @param _controller The animation controller to bind this layer to
  */
 AnimationLayer::AnimationLayer(const AnimationLayer& layer, AnimationController *_controller)
-    : AnimationSource(), controller(_controller), name(layer.name), priority(layer.priority), states(state_store()), activeState(NULL), transitionState(NULL), transitionStartTime(layer.transitionStartTime), transitionLength(layer.transitionLength)
+    : AnimationSource(), controller(_controller), name(layer.name), priority(layer.priority), states(state_store()), activeState(NULL), transitionState(NULL), transitionStateOnDeck(NULL), transitionStartTime(layer.transitionStartTime), transitionLength(layer.transitionLength)
 {
     // Duplicate other important stuff (like states)
     for(state_store::const_iterator it = layer.states.begin(); it != layer.states.end(); it++)
@@ -57,6 +57,10 @@ AnimationLayer::AnimationLayer(const AnimationLayer& layer, AnimationController 
     {
         activeState = states[layer.activeState->Id()];
     }
+    if(layer.transitionStateOnDeck)
+    {
+        transitionStateOnDeck = states[layer.transitionStateOnDeck->Id()];
+    }
     
     // Bind this source to the initial skeleton of the animation controller
     Bind(_controller->InitialSkeleton());
@@ -69,7 +73,7 @@ AnimationLayer::AnimationLayer(const AnimationLayer& layer, AnimationController 
  * @param _controller The animation controller to bind this layer to
  */
 AnimationLayer::AnimationLayer(const Json::Value& value, AnimationController *_controller)
-    : AnimationSource(), controller(_controller), states(state_store()), activeState(NULL), transitionState(NULL), transitionStartTime(0.0), transitionLength(0.0)
+    : AnimationSource(), controller(_controller), states(state_store()), activeState(NULL), transitionState(NULL), transitionStateOnDeck(NULL), transitionStartTime(0.0), transitionLength(0.0)
 {
     // We first need to validate that this a Json object
     if(!value.isObject())
@@ -148,51 +152,98 @@ void AnimationLayer::Update(double delta, double now)
         return;
     }
     
-    // Update the active state
-    activeState->Update(delta, now);
+    // Update the active state if we are not in a case 4 state transition
+    activeState->Update(delta, now, (transitionStateOnDeck == NULL));
     
-    // If we have a transition occuring
-    if(transitionState)
+    // If we are in a case 4 animation transition, update the state on deck
+    if(transitionStateOnDeck != NULL)
     {
-        // Calculate whether the transition state should end
-        double progress = (now - transitionStartTime) / transitionLength;
-        
-        // If we are complete in our transition, end it
-        if(progress >= 1.0)
-        {
-            // Kill the transition state
-            transitionState = NULL;
-        }
-        
-        // If we are not complete in the transition, blend
-        else
-        {
-            // Update the transition state's content
-            transitionState->Update(delta, now, false);
-            
-            // Set the skeleton as a blend between the two
-            for(Node::flattreemap::iterator it = skeletonTable.begin(); it != skeletonTable.end(); it++)
-            {
-                // Get the local transform of the cooresponding bone in the transition layer
-                const Transform& a = transitionState->Bones().find(it->first)->second->LocalTransform();
-                
-                // Get the local transform of the cooresponding bone in the active layer
-                const Transform& b = activeState->Bones().find(it->first)->second->LocalTransform();
-                
-                // Store the interpolated transform
-                it->second->LocalTransform() = Transform::Interpolate(a, b, progress);
-            }
-            
-            // Return from the update method
-            return;
-        }
+        // Update the state on deck
+        transitionStateOnDeck->Update(delta, now);
     }
     
-    // Copy the active state's skeleton into the local skeleton
-    for(Node::flattreemap::iterator it = skeletonTable.begin(); it != skeletonTable.end(); it++)
+    // If we have a state transition occuring
+    if(transitionState)
     {
-        // Get the local transform of the cooresponding bone in the active layer
-        it->second->LocalTransform() = activeState->Bones().find(it->first)->second->LocalTransform();
+        // Calculate the current progress of the transitional phase
+        double progress = (now - transitionStartTime) / transitionLength;
+        
+        // If we have completed the current transitional phase
+        if(progress >= 1.0)
+        {
+            // If we are currently in a case 4 transition (there is a state on deck)
+            if(transitionStateOnDeck != NULL)
+            {
+                // The transitional state is now replaced by the active state
+                transitionState = activeState;
+                
+                // The active state is now the on deck transition state
+                activeState = transitionStateOnDeck;
+                
+                // Disable the on deck state (clear case 4)
+                transitionStateOnDeck = NULL;
+                
+                // The desired transition length is set
+                transitionLength = 0.25;
+                
+                // The transition start time is stored
+                transitionStartTime = now;
+                
+                // Alert the state that is will come on deck (good for those one shot animations)
+                activeState->WillTransition(now);
+                progress = 0.0;
+                
+                // Log
+                cout << "Transition Case 4 ==> On Deck State Now Active" << endl;
+            }
+            
+            // If it was a normal transition
+            else
+            {
+                // Kill the transition state, we are now in the active mode
+                transitionState = NULL;
+                cout << "Transition Complete" << endl;
+                
+                // Copy the active state's skeleton into the local skeleton
+                for(Node::flattreemap::iterator it = skeletonTable.begin(); it != skeletonTable.end(); it++)
+                {
+                    // Get the local transform of the cooresponding bone in the active layer
+                    it->second->LocalTransform() = activeState->Bones().find(it->first)->second->LocalTransform();
+                }
+                
+                // Return
+                return;
+            }
+        }
+        
+        // Update the transition state's content
+        transitionState->Update(delta, now, false);
+            
+        // Set the skeleton as a blend between the two
+        for(Node::flattreemap::iterator it = skeletonTable.begin(); it != skeletonTable.end(); it++)
+        {
+            // Get the local transform of the cooresponding bone in the transition layer
+            const Transform& a = transitionState->Bones().find(it->first)->second->LocalTransform();
+                
+            // Get the local transform of the cooresponding bone in the active layer
+            const Transform& b = activeState->Bones().find(it->first)->second->LocalTransform();
+                
+            // Store the interpolated transform
+            it->second->LocalTransform() = Transform::Interpolate(a, b, progress);
+        }
+            
+        // Return from the update method
+        return;
+    }
+    
+    else
+    {
+        // Copy the active state's skeleton into the local skeleton
+        for(Node::flattreemap::iterator it = skeletonTable.begin(); it != skeletonTable.end(); it++)
+        {
+            // Get the local transform of the cooresponding bone in the active layer
+            it->second->LocalTransform() = activeState->Bones().find(it->first)->second->LocalTransform();
+        }
     }
 }
 
@@ -213,55 +264,107 @@ void AnimationLayer::Transition(const std::string& state, double now)
         throw std::runtime_error("void AnimationLayer::Transition(const std::string& state) - reference state does not exist");
     }
     
-    // Special transition case, we are currently transitioning from a state and we've been requested to transition back
-    if(transitionState == stateIt->second)
+    /**
+     * The animation transitions are a little complicated to keep smooth.  Here is the solution =P
+     * There are up to three states that will be considered.  The "Active State" is the currently
+     * running state.  The "Transition State" is the old active state being phased out.  The "Transition
+     * on deck" is the state poised to become active.  In order to make things smooth, we allow the
+     * current transition to finish before moving to something else.  The logic is as follows
+     *
+     * If there is no active state, the requested state immediately becomes active.  this should only ever happen once (case 1)
+     *
+     * If there is an active state and no transition is in progress, the active state is moved to the transition state,
+     * and requested state is set as active.  The timers are setup to handle this (case 2)
+     * 
+     * If there is an active state AND a transition in progress, one of two things can happen.
+     *     If the target state is the currently phasing out state, the transition will be reversed, and the remaining
+     *     animation time will be reversed (i.e. if the transition was 20% complete, the reversal would be 80% complete) (case 3)
+     *
+     *     If the target state is a new state, it will be set "on deck" and the active state will loose transitional 
+     *     priviledges (which the on deck transition will gain eventually) (case 4)
+     */
+    
+    // Special initial condition
+    if(activeState == NULL)
     {
-        // Reverse the current transition time (moving back to old state)
-        double transitionTime = 1.0 - ((now - transitionStartTime) / transitionLength);
-        
-        // Calculate a fudged transition start time
-        transitionStartTime = now - (transitionTime * transitionLength);
-        
-        // Store the new transition state
-        transitionState = activeState;
-        
-        // Active state is now the old state
+        // Store the new active state
         activeState = stateIt->second;
         
-        // Print out the current state transition information
-        cout << "Transition Occurring: " << transitionState->Id() << " => " << activeState->Id() << endl;
+        // Cause the active state to enter the transitional phase
+        activeState->WillTransition(now);
         
-        // Get out
-        return;
+        // Log
+        cout << "Transition Case 1 ==> ";
+        cout << "Active: " << activeState->Id() << endl;
     }
     
-    // If we have a transition state and the transition is for the most part not complete
-    else if(transitionState && ((now - transitionStartTime) / transitionLength) < 0.5)
+    // If there is in fact an active state, perform the considerations
+    else
     {
-
-    }
-    
-    // Transition to the state (if we currently are currently active)
-    else if(activeState)
-    {
-        // The new transiton state is the old active state
-        transitionState = activeState;
+        // If there is no current transition, setup the state transition
+        if(transitionState == NULL)
+        {
+            // Currently active state is moved off to the inactive, transitional phase
+            transitionState = activeState;
+            
+            // The transition start time is stored
+            transitionStartTime = now;
+            
+            // The desired transition length is set
+            transitionLength = 0.25;
+            
+            // The new active state is the desired state
+            activeState = stateIt->second;
+            
+            // Cause the active state to enter the transitional phase
+            activeState->WillTransition(now);
+            
+            // Log
+            cout << "Transition Case 2 ==> ";
+            cout << "Active: " << activeState->Id() << " ";
+            cout << "Transition: " << transitionState->Id() << endl;
+        }
         
-        // Store some transition information
-        transitionStartTime = now;
-        transitionLength = 0.25;
-    }
-    
-    // Store the new active state
-    activeState = stateIt->second;
-    
-    // Cause the active state to enter the transitional phase
-    activeState->WillTransition(now);
-    
-    // Print out the current state transition
-    if(transitionState)
-    {
-        cout << "Transition Occurring: " << transitionState->Id() << " => " << activeState->Id() << endl;
+        // If there is a transition in progress
+        else
+        {
+            // Is the desired state the state currently being phased out?
+            if(transitionState == stateIt->second || transitionStateOnDeck == stateIt->second)
+            {
+                // Reverse the current transition time (moving back to old state)
+                double transitionTime = 1.0 - ((now - transitionStartTime) / transitionLength);
+                
+                // Calculate a fudged transition start time
+                transitionStartTime = now - (transitionTime * transitionLength);
+                
+                // Store the new transition state
+                transitionState = activeState;
+                
+                // Active state is now the old state
+                activeState = stateIt->second;
+                
+                // Clear the on deck state
+                transitionStateOnDeck = NULL;
+                
+                // Log
+                cout << "Transition Case 3 ==> ";
+                cout << "Active: " << activeState->Id() << " ";
+                cout << "Transition: " << transitionState->Id() << endl;
+            }
+            
+            // Otherwise we shall place this new state "on deck"
+            else
+            {
+                transitionStateOnDeck = stateIt->second;
+                
+                // Log
+                cout << "Transition Case 4 ==> ";
+                cout << "Active: " << activeState->Id() << " ";
+                cout << "Transition: " << transitionState->Id() << " ";
+                cout << "On Deck: " << transitionStateOnDeck->Id() << endl;
+            }
+        }
+        
     }
 }
 

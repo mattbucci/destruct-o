@@ -68,6 +68,9 @@ protected:
     /** The state being transitioned from */
     AnimationState *transitionState;
     
+    /** The transition state "on deck" (will transition, not blending) */
+    AnimationState *transitionStateOnDeck;
+    
     /** The time at which the transition began */
     double          transitionStartTime;
     
