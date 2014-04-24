@@ -463,8 +463,12 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         glUniform2f(glGetUniformLocation(program->GetId(), "material_reflectivity"), specular.x, specular.y);
         
         // Set the color
-        glUniform3fv(program->UniformColorAmbient(), 1, (const GLfloat *) &((*renderable)->material->ColorAmbient()));
-        glUniform3fv(program->UniformColorDiffuse(), 1, (const GLfloat *) &((*renderable)->material->ColorDiffuse()));
+        glm::vec3 ambient = (*renderable)->material->ColorAmbient();
+        glm::vec3 diffuse = (*renderable)->material->ColorDiffuse();
+        glUniform3f(program->UniformColorAmbient(), ambient.r, ambient.g, ambient.b);
+        glUniform3f(program->UniformColorDiffuse(), diffuse.r, diffuse.g, diffuse.b);
+        //cout << "Diffuse = " << diffuse.r << " " << diffuse.g << " " << diffuse.b << endl;
+        //cout << "Ambient = " << ambient.r << " " << ambient.g << " " << ambient.b << endl;
         
         // Finally, we can draw the god damn mesh
         glDrawElements(GL_TRIANGLES, (GLsizei) (*renderable)->meshpart->indices.size(), GL_UNSIGNED_SHORT, NULL);
