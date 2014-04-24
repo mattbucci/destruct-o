@@ -110,7 +110,8 @@ public:
 	//Happens with the player tries to fire without enough energy
 	//(the player is the only one stupid enough to try this)
 	GameEvent<void(Actor*,Weapon*)> ActorFiredWhileEmpty;
-
+	//If an air unit crashes this event fires
+	GameEvent<void(Actor*)> ActorVehicleCrash;
 
 	//Actor Accessor
 	ContiguousList<Actor*>* GetActors();

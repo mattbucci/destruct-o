@@ -3,13 +3,21 @@
 #include "ActorAI.h"
 #include "EffectLaser.h"
 
-//How long before the body disappears after death
-#define AI_ROT_TIME 10
-
 class Weapon;
 
 class ActorAIBomber : public ActorAI {
+	bool runStarted;
+	vec2 runStartPosition;
+	vec2 runDirection;
+	bool runFinished;
 protected:
+	//Bombers don't find a target and then attack it
+	//they find a target and then set up a bombing run
+
+	//Path until you're in range of the bomb run
+	virtual void stateEngaging(bool & holdingTrigger);
+
+
 
 	//Check if your spine can face the enemy right now
 	virtual bool checkSpineLimits() override;
@@ -47,6 +55,10 @@ protected:
 public:
 	ActorAIBomber();
 	~ActorAIBomber();
+
+
+	//Whether or not a bombing run completed
+	bool BombingRunComplete();
 
 	CLASS_DECLARATION(ActorAIBomber)
 		INHERITS_FROM(ActorAI)

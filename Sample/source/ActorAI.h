@@ -10,9 +10,10 @@
 class Weapon;
 
 class ActorAI : public PhysicsActor {
-	//The weapon which characterizes this AI
-	Weapon * weapon;
 protected:
+	//The weapon which characterizes this AI
+	//Do not change!
+	Weapon * weapon;
 
 	enum aiStates {
 		//Moving towards an enemy
@@ -32,6 +33,15 @@ protected:
 		//The AI is rotting now
 		AI_ROTTING,
 	};
+
+	//State implementations which can be overridden if necessary
+	virtual void statePathing(bool & holdingTrigger);
+	virtual void stateWaitingForPath(bool & holdingTrigger);
+	virtual void stateScanning(bool & holdingTrigger);
+	virtual void stateTargeting(bool & holdingTrigger);
+	virtual void stateEngaging(bool & holdingTrigger);
+	virtual void stateDying(bool & holdingTrigger);
+	virtual void stateRotting(bool & holdingTrigger);
 
 	//Ai state
 	aiStates state;
@@ -55,6 +65,8 @@ protected:
 	vec3 muzzlePositionB;
 	//The player position
 	MovingAverage<vec3> enemyPosition;
+	//If the actor is crashing (after flying)
+	bool actorCrashing;
 
 	//Retrieve the muzzle position after a draw calculate
 	//and save in muzzlePositionA

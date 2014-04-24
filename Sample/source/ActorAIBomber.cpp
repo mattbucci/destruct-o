@@ -3,12 +3,50 @@
 #include "ModelInstance.h"
 #include "BombDropAIWeapon.h"
 
-ActorAIBomber::ActorAIBomber() : ActorAI(new BombDropAIWeapon(this,energyPool),200,vec3(3,3,2))  {
+ActorAIBomber::ActorAIBomber() : ActorAI(new BombDropAIWeapon(this,energyPool),20,vec3(5,5,2))  {
 	flying = true;
+	scale = 3;
+	runStarted = false;
+	runFinished = false;
 }
 ActorAIBomber::~ActorAIBomber() {
 
 }
+
+//Path until you're in range of the bomb run
+void ActorAIBomber::stateEngaging(bool & holdingTrigger) {
+	if (!runStarted) {
+		//Plan the bombing run
+		//check you've got an enemy
+		if (targetEnemy == NULL) {
+			state = AI_SCANNING;
+			return;
+		}
+		//Set the run goal
+		vec2 goal = vec2(targetEnemy->GetPosition());
+		//Pick a point past that
+		runDirection = glm::normalize(goal - vec2(Position));
+		runStartPosition = vec2(Position);
+		runStarted = true;
+	}
+	//Move towards your run direction
+	Velocity = vec3(runDirection*baseMovementSpeed(),Velocity.z);
+
+	//Check if the run is done
+	if (glm::distance(runStartPosition,vec2(Position)) > sightDistance()*2.0f)
+		runFinished = true;
+
+	//Face the direction your run is moving
+	facingDirection = atan2(runDirection.y,runDirection.x);
+
+	//During your run, bomb the hell out of the enemy
+	if (!runFinished) {
+		weapon->Update(vec3(),muzzlePositionA,muzzlePositionB);
+		weapon->HoldingTrigger(true);
+		holdingTrigger = true;
+	}
+}
+
 
 //Attempts to snap the user's spine to face the enemy
 //returns true if successful
@@ -29,24 +67,12 @@ void ActorAIBomber::snapSpineToEnemy() {
 	//Right now don't even try
 	return;
 
-	//Take a guess at the correction in 2d only
-	float distance = glm::length(targetEnemy->GetPosition() - Position);
-	vec3 correctVector = glm::normalize(vec3(0,distance,targetEnemy->GetPosition().z - 1.5f - Position.z));
-	//Get angle between them
-	float angle = atan2(-correctVector.z,correctVector.y);
 	
+}
 
-	vec3 axis = vec3(1,0,0);//glm::normalize(glm::cross(desiredFace,facing));
-	//float angle = fmod(OS::Now()/2,M_PI) - .5f*M_PI;
-	
-	quat rotation = glm::quat(glm::rotate(angle,axis));
-	//Apply to the spine
-	Node * spineNode = model->Animation().Skeleton()->FindNode("Bind_Spine1");
-
-
-	spineNode->LocalTransform().Rotation() = glm::rotate(spineNode->LocalTransform().Rotation(),angle/M_PI*180.0f,axis);
-
-	spineNode->Recalculate();
+//Whether or not a bombing run completed
+bool ActorAIBomber::BombingRunComplete() {
+	return runFinished;
 }
 
 void ActorAIBomber::findMuzzlePosition() {
@@ -67,8 +93,12 @@ void ActorAIBomber::findMuzzlePosition() {
 	//Calculate the position along the muzzle
 	muzzlePositionA = vec3(globalTransformA * vec4(aVector,1.0));
 	muzzlePositionB = vec3(globalTransformB * vec4(bVector,1.0));*/
-	muzzlePositionA = Position+vec3(2,0,0);
-	muzzlePositionB = Position-vec3(2,0,0);
+
+	//Get 90 degree difference from the facing vector
+	vec2 fireDir = glm::normalize(vec2(cos(facingDirection+M_PI/2.0f),sin(facingDirection+M_PI/2.0f)));
+
+	muzzlePositionA = Position+vec3(fireDir*2.0f,0.0f);
+	muzzlePositionB = Position-vec3(fireDir*2.0f,0.0f);
 }
 
 
@@ -81,12 +111,12 @@ double ActorAIBomber::targetTime() {
 //The movement speed of this enemy
 //should be tuned to walk animation speed
 float ActorAIBomber::baseMovementSpeed() {
-	return 6;
+	return 15;
 }
 
 //How far can enemies spot each other
 float ActorAIBomber::sightDistance() {
-	return 30;
+	return 45;
 }
 
 //How many radians per second this actor can rotate

@@ -45,22 +45,6 @@ void BombDropAIWeapon::Fire() {
 	Weapon::Fire();
 }
 
-/*
-	static const string table[6] = {
-		//ANIMATION_IDLE
-		"idleWgun",
-		//ANIMATION_AIM
-		"",
-		//ANIMATION_WALK
-		"run",
-		//ANIMATION_JUMP
-		"jump",
-		//ANIMATION_DEATH
-		"death",
-		//ANIMATION_INAIR
-		"idleWgun"
-	};
-	*/
 
 
 //Weapon firing animation

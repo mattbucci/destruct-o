@@ -49,7 +49,7 @@ bool Weapon::HoldingTrigger(bool trigger) {
 	bool prev = lastHoldingTrigger;
 	lastHoldingTrigger = true;
 	//Check if cooldown is over
-	if (Game()->Now() < (lastWeaponFire+WeaponCooldownTime()))
+	if ((lastWeaponFire != 0) && (Game()->Now() < (lastWeaponFire+WeaponCooldownTime())))
 		return false;
 
 	//Check if you have sufficient charge

@@ -3,6 +3,7 @@
 
 ActorBomb::ActorBomb() : PhysicsActor(vec3(1,.5,.5),20,GameFactions::FACTION_HOSTILE), bomb(this,energyPool) {
 	energyPool = 100;
+	setModel(bomb.LookupAnimation(Weapon::ANIMATION_MODELNAME));
 }
 
 bool ActorBomb::Update() {

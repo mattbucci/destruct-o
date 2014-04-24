@@ -8,6 +8,7 @@ Actor::Actor() {
 	model = NULL;
 	lastAnimationEndTime = 0;
 	facingDirection = 0;
+	scale = 1;
 }
 Actor::~Actor() {
 	delete model;
@@ -80,6 +81,7 @@ void Actor::Draw(MaterialProgram * materialShader) {
 		//Normalize the quaternion after they're combined
 		//or terrible terrible things happen (trust me)
 		model->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, facingDirection + 0.5 * M_PI));
+		model->GetTransform().Scale() = vec3(scale,scale,scale);
 		model->Update(SIMULATION_DELTA,Game()->Now());
 		model->Draw(materialShader);
 	}

@@ -25,6 +25,7 @@ bool AidsActionBomberRun::Update() {
 	if (deployed->Dead())
 		return true;
 	//If they're too far away, undeploy them
+	//This takes care of bombers after bombing runs automatically
 	if (glm::distance(deployed->GetPosition(),Game()->Actors.Player()->GetPosition()) > 300) {
 		deployed->Kill();
 	}

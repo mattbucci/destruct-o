@@ -56,8 +56,8 @@ void PhysicsSystem::updatePhysicsActors() {
 		int tilesChecked = 0;
 
 		//Use these four blocks as a support for any blocks on top of the ground
-		for (float atY = PhysicsUtilities::_trunc(actorVolumeStart.y);atY < actorVolumeEnd.y; atY++) {
-			for (float atX = PhysicsUtilities::_trunc(actorVolumeStart.x);atX < actorVolumeEnd.x; atX++) {
+		for (float atY = floor(actorVolumeStart.y);atY < actorVolumeEnd.y; atY++) {
+			for (float atX = floor(actorVolumeStart.x);atX < actorVolumeEnd.x; atX++) {
 				tilesChecked++;
 				//check if the square is under the ground for this ground tile
 				float height = voxelSystem->GetPositionHeight(vec2(atX,atY));

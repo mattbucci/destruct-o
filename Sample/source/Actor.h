@@ -63,6 +63,9 @@ protected:
 	//in radians
 	float facingDirection;
 
+	//The scale applied to the model
+	float scale;
+
 	//Just a shortcut to the actors
 	ActorSystem & Actors();
 

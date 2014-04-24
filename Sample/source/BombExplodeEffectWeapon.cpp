@@ -36,34 +36,19 @@ void BombExplodeEffectWeapon::Fire() {
 	//Blow up where you stand
 	weaponImpact(firePointA);
 	
- 	Universal::Concuss(firePointA,4,40,(PhysicsActor*)this->weaponOwner);
+ 	Universal::Concuss(firePointA,3,30,(PhysicsActor*)this->weaponOwner);
 
 	Weapon::Fire();
 }
 
-/*
-	static const string table[6] = {
-		//ANIMATION_IDLE
-		"idleWgun",
-		//ANIMATION_AIM
-		"",
-		//ANIMATION_WALK
-		"run",
-		//ANIMATION_JUMP
-		"jump",
-		//ANIMATION_DEATH
-		"death",
-		//ANIMATION_INAIR
-		"idleWgun"
-	};
-	*/
+
 
 
 //Weapon firing animation
 string BombExplodeEffectWeapon::LookupAnimation(Weapon::HandAnimations animation) {
     static const string animations[10] = {
         //ANIMATION_MODELNAME,
-        "dropship01",
+        "soldier01",
         //ANIMATION_AIM,
         "",
         //ANIMATION_FIRE,
