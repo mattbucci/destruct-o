@@ -50,17 +50,7 @@ void AudioPlayer::PlayerInit(ActorPlayer* user) {
 
 
 }
-
-void AudioPlayer::DemoInit(Demo* demo) {
-    GameEventSubscriber::Subscribe<void(vec3)>(&demo->CraterCalled,[this](vec3 Position) {
-        event test;
-        test.type="explosions-grenade";
-        test.id=4 + rand() % 50;
-        test.pos = Position - user->GetPosition();
-        EffectPlayer.PlayEffect(test);
-    });
 }
 */
 void AudioPlayer::Update(){
     MusicPlayer.Update();
-}

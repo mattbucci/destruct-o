@@ -10,6 +10,7 @@ GameSystem::GameSystem(ShaderGroup * _shaders)
 	nextFrameTime = 0;
 	fps = 40;
 	simTime = 0;
+	isReady = false;
 }
 
 GameSystem::~GameSystem() {
@@ -82,6 +83,19 @@ void GameSystem::OnFrameLeave() {
 	Controls.FireEvent(ie);
 }
 
+//Set the Width and Height of Frame
+GL2DProgram * GameSystem::SetWidthHeight(float width, float height) {
+	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
+	shaders2d->UseProgram();
+	shaders2d->SetWidthHeight((float)width,(float)height);
+	return shaders2d;
+}
+
 double GameSystem::Now() {
 	return simTime;
+}
+
+//Function to test if GameSystem is Ready
+bool GameSystem::IsReady() {
+	return isReady;
 }

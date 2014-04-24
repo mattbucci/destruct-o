@@ -49,9 +49,6 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
 
 	Controls.AddWindow(pauseWindow);
 	Controls.AddWindow(&notification);
-	
-	// Enable the first person controller
-	FirstPerson->Enable(true);
 
 	//Not a unique save. Should be altered in the future
 	SaveName = "Default_Save";
@@ -142,7 +139,6 @@ void BaseFrame::OnFrameFocus() {
 
 	//Physics.BuildVoxel(vec3(40,42,80));
 	
-	
 	//The physics demo
 	//we won't have this forever
 	demo = new Demo();
@@ -155,10 +151,12 @@ void BaseFrame::OnFrameFocus() {
 	
 }
 
+void BaseFrame::OnFrameLeave() {
+	FirstPerson->Enable(false);
+}
+
 void BaseFrame::Build()
 {
-	//Generate first few tiles
-	Voxels.Update(vec3());
     // Load the model group from the manifest
     cout << "Loading models\n";
     models = new ModelGroup("meshes/manifest.json", Textures);
@@ -294,9 +292,7 @@ void BaseFrame::Draw(double width, double height)
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
 
 	//Set up the 2D Shader
-	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
-	shaders2d->UseProgram();
-	shaders2d->SetWidthHeight((float)width,(float)height);
+	GL2DProgram * shaders2d = SetWidthHeight(width, height);
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
@@ -330,8 +326,9 @@ string BaseFrame::GetSaveLocation() {
 //global function
 BaseFrame * Game() {
 	//Can only be used when the game is running
-	_ASSERTE(typeid(*CurrentSystem) == typeid(BaseFrame));
-	return (BaseFrame*)CurrentSystem;
+	BaseFrame* frame = (BaseFrame*)Frames::GetSystem(Frames::FRAME_GAME);
+	_ASSERTE(typeid(*frame) == typeid(BaseFrame));
+	return frame;
 }
 
 HUD* BaseFrame::GetHUD() {

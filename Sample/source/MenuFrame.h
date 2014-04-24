@@ -2,10 +2,20 @@
 
 #include "VoxEngine.h"
 #include "ShaderGroup.h"
-
 #include "GameSystem.h"
+#include "Window.h"
+#include "Button.h"
+#include "TexturedRect.h"
 
 class MenuFrame : public GameSystem {
+	TexturedRect background;
+	TexturedRect logo;
+
+	Window buttonWindow;
+
+	Button playButton;
+	Button loadButton;
+	Button optionsButton;
 
 public:
 	MenuFrame(ShaderGroup * shaders);

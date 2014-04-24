@@ -8,6 +8,7 @@
 #include "OS.h"
 #include "VoxEngine.h"
 #include "LoadingScreen.h"
+#include "BaseFrame.h"
 
 SDL_Renderer* displayRenderer;
 
@@ -136,10 +137,6 @@ void VoxEngine::Start() {
 
 	//Attempt to enable vsync (fails on mobile)
 	SDL_GL_SetSwapInterval(1);
-	if(SDL_SetRelativeMouseMode(SDL_TRUE) < 0)
-	{
-	    cout << "No mouse relative mode" << endl;
-	}
 	
 	/* Print information about attached joysticks (actually works on iOS WOOHOO)*/
 	printf("There are %d joystick(s) attached\n", SDL_NumJoysticks());
@@ -185,34 +182,6 @@ void VoxEngine::Start() {
 	VisualInterface.init();
 	//Populate the list of game systems
 	Frames::BuildSystemList();
-	//Do game initial load
-	//at this point we're going to enter a really fast draw loop
-	//and show our please wait dialog
-	{
-		LoadingScreen load;
-		//Assume one of the frames constructed the 2d shader
-		GL2DProgram * shader = (GL2DProgram*)Frames::shaders->GetShader("2d");
-
-		glActiveTexture(GL_TEXTURE0);
-
-		while (!Frames::loadingComplete) {
-			//Run the frame draw
-			glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-			//Pump events even though we ignore them
-			SDL_PumpEvents();
-			//Check window size
-			SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
-			ResizeWindow();
-			//render the loading screen
-			glViewport(0, 0, curWidth, curHeight);
-			load.Draw(curWidth,curHeight,shader);
-			SDL_GL_SwapWindow(displayWindow);
-
-			//Sleep softly and use no cpu power
-			OS::SleepTime(.15);
-		}
-	}
-
 
 	//Start up game
 	continueGameLoop = true;
@@ -229,7 +198,30 @@ void VoxEngine::Start() {
 	
 	//The game loop begins
 	while (continueGameLoop) {
+		if(!CurrentSystem->IsReady()) {
+			LoadingScreen load;
+			//Assume one of the frames constructed the 2d shader
+			GL2DProgram * shader = (GL2DProgram*)Frames::shaders->GetShader("2d");
 
+			glActiveTexture(GL_TEXTURE0);
+
+			while(!CurrentSystem->IsReady()) {
+				//Run the frame draw
+				glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+				//Pump events even though we ignore them
+				SDL_PumpEvents();
+				//Check window size
+				SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
+				ResizeWindow();
+				//render the loading screen
+				glViewport(0, 0, curWidth, curHeight);
+				load.Draw(curWidth,curHeight,shader);
+				SDL_GL_SwapWindow(displayWindow);
+
+				//Sleep softly and use no cpu power
+				OS::SleepTime(.15);
+			}
+		}
 		//Jump ahead detection, if the simulation loop
 		//is behind more than 2 seconds, assume the application
 		//was paused for some reason (break point)
