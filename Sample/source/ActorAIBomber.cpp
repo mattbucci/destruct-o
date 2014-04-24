@@ -7,7 +7,7 @@ CLASS_SAVE_CONSTRUCTOR(ActorAIBomber);
 
 ActorAIBomber::ActorAIBomber() : ActorAI(new BombDropAIWeapon(this),20,vec3(5,5,2))  {
 	flying = true;
-	scale = 3;
+	scale = 1;
 	runStarted = false;
 	runFinished = false;
 }

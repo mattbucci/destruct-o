@@ -27,6 +27,7 @@ void ActorSystem::cleanActorList() {
 	//Cleanup player and aids now
 	delete player;
 	delete aids;
+	allActors.clear();
 }
 
 void ActorSystem::Load(Json::Value & parentValue, LoadData & loadData) {
