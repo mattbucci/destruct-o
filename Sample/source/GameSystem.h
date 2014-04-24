@@ -50,6 +50,9 @@ public:
 	//When this frame stops running this will be called
 	virtual void OnFrameLeave();
 
+	//Set width and height of Frame
+	virtual GL2DProgram * SetWidthHeight(float width, float height);
+
 	//Get simulation time
 	//relative to this frame
 	double Now();

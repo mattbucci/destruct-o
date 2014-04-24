@@ -13,7 +13,6 @@
 MenuFrame::MenuFrame(ShaderGroup * shaders)
 : GameSystem(shaders)
 {
-
 	//testSystem = NULL;
 	Window * window = new Window(Rect(0, 0, 200, 400), "On Bottom");
 	window->hPin = Control::CENTER;
@@ -82,6 +81,7 @@ bool MenuFrame::Update(vector<InputEvent> inputEvents) {
 
 void MenuFrame::Draw(double width, double height)
 {
+	SetWidthHeight(width, height);
 	//Call the parent draw to draw interface
 	GameSystem::Draw(width, height);
 }

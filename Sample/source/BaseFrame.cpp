@@ -169,7 +169,6 @@ void BaseFrame::Build()
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
 	audio->PlayerInit(Actors.Player());
-    audio->DemoInit(demo);
     Actors.Player()->Build();
 }
 
@@ -296,9 +295,7 @@ void BaseFrame::Draw(double width, double height)
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
 
 	//Set up the 2D Shader
-	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
-	shaders2d->UseProgram();
-	shaders2d->SetWidthHeight((float)width,(float)height);
+	GL2DProgram * shaders2d = SetWidthHeight(width, height);
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
@@ -332,8 +329,9 @@ string BaseFrame::GetSaveLocation() {
 //global function
 BaseFrame * Game() {
 	//Can only be used when the game is running
-	_ASSERTE(typeid(*CurrentSystem) == typeid(BaseFrame));
-	return (BaseFrame*)CurrentSystem;
+	BaseFrame* frame = (BaseFrame*)Frames::GetSystem(Frames::FRAME_GAME);
+	_ASSERTE(typeid(*frame) == typeid(BaseFrame));
+	return frame;
 }
 
 HUD* BaseFrame::GetHUD() {
