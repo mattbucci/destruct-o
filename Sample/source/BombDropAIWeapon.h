@@ -24,7 +24,11 @@ protected:
 	//What you shoot
 	vec3 hitPos;
 public:
-	BombDropAIWeapon(PhysicsActor * weaponOwner, float & chargePool);
+	//DO NOT CALL
+	BombDropAIWeapon();
+
+	//Call me
+	BombDropAIWeapon(PhysicsActor * weaponOwner);
 
 	//Weapon firing animation
 	virtual string LookupAnimation(HandAnimations animation) override;
@@ -34,4 +38,8 @@ public:
 
 	//Draw any effects the weapon may own
 	virtual void DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) override;
+
+	CLASS_DECLARATION(BombDropAIWeapon)
+		INHERITS_FROM(Weapon)
+	END_DECLARATION
 };

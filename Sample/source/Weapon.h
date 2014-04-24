@@ -5,7 +5,7 @@
 class GLEffectProgram;
 class PhysicsActor;
 
-class Weapon {
+class Weapon : public Savable {
 protected:
 	PhysicsActor * weaponOwner;
 
@@ -33,8 +33,6 @@ protected:
 
 	//Last time the weapon was fire
 	double lastWeaponFire;
-	//pool to draw charge from
-	float & chargePool;
 	//Whether or not they were holding the trigger last time
 	bool lastHoldingTrigger;
 
@@ -50,7 +48,15 @@ protected:
 	vec3 weaponJitterA;
 	vec3 weaponJitterB;
 public:
-	Weapon(PhysicsActor * weaponOwner, float & chargePool);
+	//Special constructor used by load only
+	//no one else use this
+	Weapon();
+
+	//Normal constructor
+	//use this to build a weapon
+	Weapon(PhysicsActor * weaponOwner);
+
+
 	virtual ~Weapon();
 
     enum HandAnimations {
@@ -77,4 +83,15 @@ public:
 
 	//Draw any effects the weapon may own
 	virtual void DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 FirePointB = vec3());
+
+	CLASS_DECLARATION(Weapon)
+		CLASS_MEMBER(weaponOwner,ReflectionData::SAVE_HANDLE)
+		CLASS_MEMBER(fireVector,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(firePointA,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(firePointB,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(finalFireVectorA,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(finalFireVectorB,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(weaponJitterA,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(weaponJitterB,ReflectionData::SAVE_VEC3)
+	END_DECLARATION
 };

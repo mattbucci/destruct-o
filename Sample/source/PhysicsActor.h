@@ -48,6 +48,9 @@ protected:
 	//your life (starts at max)
 	float life;
 
+	//The energy pool for firing a weapon
+	float energyPool;
+
 	//The faction this actor is on
 	FactionId faction;
 
@@ -79,9 +82,23 @@ public:
 	//Draw this actor
 	virtual void Draw(MaterialProgram * materialShader) override;
 
+	//Access to the energy pool for weapons
+	//kind of hacky
+	float & EnergyPool();
+
 	CLASS_DECLARATION(PhysicsActor)
 		INHERITS_FROM(Actor)
 		CLASS_MEMBER(velocity,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(acceleration,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(size,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(onGround,ReflectionData::SAVE_BOOL)
+
+		CLASS_MEMBER(flying,ReflectionData::SAVE_BOOL)
+		CLASS_MEMBER(energyPool,ReflectionData::SAVE_FLOAT)
+		CLASS_MEMBER(maxLife,ReflectionData::SAVE_FLOAT)
+		CLASS_MEMBER(life,ReflectionData::SAVE_FLOAT)
+		CLASS_MEMBER(lastDamageRecieved,ReflectionData::SAVE_DOUBLE)
+
+		CLASS_MEMBER(faction,ReflectionData::SAVE_INT32)
 	END_DECLARATION
 };

@@ -24,7 +24,9 @@ protected:
 	//What you shoot
 	vec3 hitPos;
 public:
-	BombExplodeEffectWeapon(PhysicsActor * weaponOwner, float & chargePool);
+	BombExplodeEffectWeapon();
+
+	BombExplodeEffectWeapon(PhysicsActor * weaponOwner);
 
 	//Weapon firing animation
 	virtual string LookupAnimation(HandAnimations animation) override;

@@ -5,6 +5,7 @@
 #include "PhysicsVoxel.h"
 #include "GLEffectProgram.h"
 
+
 CLASS_SAVE_CONSTRUCTOR(ActorPlayer);
 
 //Right now there's no physics system and this actor is a pseudo physics object
@@ -20,7 +21,7 @@ static const float energyPerSecond = 5.0f;
 ActorPlayer::ActorPlayer()
     : PhysicsActor(vec3(2,2,6),500, GameFactions::FACTION_PLAYER),
     weaponCamera(GameCamera(40.0f)),
-	testWeapon(this,energyPool) {
+	testWeapon(this) {
 	//Start the player off in abouts the center
 	Position = (vec3(34,40,0));
     deltaPosition = 0.0;

@@ -57,8 +57,6 @@ protected:
 	//current goal on the path
 	int pathIndex;
 	vec2 goal;
-	//This AI's charge pool
-	float energyPool;
 	//The gun's dangerous end
 	vec3 muzzlePositionA;
 	//If the gun has two dangerous ends
@@ -156,5 +154,17 @@ public:
 
 	CLASS_DECLARATION(ActorAI)
 		INHERITS_FROM(PhysicsActor)
+		CLASS_MEMBER(weapon,ReflectionData::SAVE_OWNEDHANDLE)
+		CLASS_MEMBER(targetEnemy,ReflectionData::SAVE_HANDLE)
+		CLASS_MEMBER(targetAcquiredAt,ReflectionData::SAVE_DOUBLE)
+		CLASS_MEMBER(finishRotting,ReflectionData::SAVE_DOUBLE)
+		CLASS_CONTAINER_MEMBER(path,ReflectionData::SAVE_VECTOR,ReflectionData::SAVE_VEC2)
+		CLASS_MEMBER(pathIndex,ReflectionData::SAVE_INT32)
+		CLASS_MEMBER(goal,ReflectionData::SAVE_VEC2)
+		CLASS_MEMBER(muzzlePositionA,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(muzzlePositionB,ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(enemyPosition,ReflectionData::SAVE_INSTANCE)
+		CLASS_MEMBER(actorCrashing,ReflectionData::SAVE_BOOL)
 	END_DECLARATION
 };
+

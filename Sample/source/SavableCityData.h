@@ -21,7 +21,7 @@ public:
 	//gun turret positions
 	vector<vec3> gunPositions;
 	//whether or not each turret is alive
-	vector<bool> gunAlive;
+	vector<int8_t> gunAlive;
 
 	//If the city is populated this is the list of AI in the city
 	vector<ActorAI*> cityPopulation;
@@ -32,7 +32,7 @@ public:
 		CLASS_MEMBER(originalCityCenterVoxel,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(ownedByPlayer,ReflectionData::SAVE_BOOL)
 		CLASS_CONTAINER_MEMBER(gunPositions,ReflectionData::SAVE_VECTOR,ReflectionData::SAVE_VEC3)
-		CLASS_CONTAINER_MEMBER(gunAlive,ReflectionData::SAVE_VECTOR,ReflectionData::SAVE_BOOL)
+		CLASS_CONTAINER_MEMBER(gunAlive,ReflectionData::SAVE_VECTOR,ReflectionData::SAVE_INT8)
 		CLASS_CONTAINER_MEMBER(cityPopulation,ReflectionData::SAVE_VECTOR,ReflectionData::SAVE_HANDLE)
 	END_DECLARATION
 };

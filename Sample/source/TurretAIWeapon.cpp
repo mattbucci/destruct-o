@@ -3,7 +3,14 @@
 #include "Universal.h"
 #include "BaseFrame.h"
 
-TurretAIWeapon::TurretAIWeapon(PhysicsActor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool), laserA(vec4(1,.5,.1,1),.1f),laserB(vec4(1,.5,.1,1),.1f)  {
+CLASS_SAVE_CONSTRUCTOR(TurretAIWeapon);
+
+TurretAIWeapon::TurretAIWeapon() : Weapon(), laserA(vec4(1,.5,.1,1),.1f),laserB(vec4(1,.5,.1,1),.1f)  {
+	laserA.SetTiming(.05f,2.2f,true);
+	laserB.SetTiming(.05f,2.2f,true);
+}
+
+TurretAIWeapon::TurretAIWeapon(PhysicsActor * weaponOwner) : Weapon(weaponOwner), laserA(vec4(1,.5,.1,1),.1f),laserB(vec4(1,.5,.1,1),.1f)  {
 	laserA.SetTiming(.05f,2.2f,true);
 	laserB.SetTiming(.05f,2.2f,true);
 }

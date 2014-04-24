@@ -6,11 +6,15 @@
 class ActorBomb : public PhysicsActor {
 	BombExplodeEffectWeapon bomb;
 
-	float energyPool;
 public:
 	ActorBomb();
 
 	void SetFaction(FactionId faction);
 
 	virtual bool Update() override;
+
+	CLASS_DECLARATION(ActorBomb)
+		INHERITS_FROM(PhysicsActor)
+		CLASS_MEMBER(bomb,ReflectionData::SAVE_INSTANCE);
+	END_DECLARATION
 };

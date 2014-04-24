@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "ActorBomb.h"
 
-ActorBomb::ActorBomb() : PhysicsActor(vec3(1,.5,.5),20,GameFactions::FACTION_HOSTILE), bomb(this,energyPool) {
+CLASS_SAVE_CONSTRUCTOR(ActorBomb);
+
+ActorBomb::ActorBomb() : PhysicsActor(vec3(1,.5,.5),20,GameFactions::FACTION_HOSTILE), bomb(this) {
 	energyPool = 100;
 	setModel(bomb.LookupAnimation(Weapon::ANIMATION_MODELNAME));
 }

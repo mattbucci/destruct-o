@@ -3,7 +3,9 @@
 #include "ModelInstance.h"
 #include "SoldierAIWeapon.h"
 
-ActorAISoldier::ActorAISoldier() : ActorAI(new SoldierAIWeapon(this,energyPool),100,vec3(1.5,1.5,4))  {
+CLASS_SAVE_CONSTRUCTOR(ActorAISoldier);
+
+ActorAISoldier::ActorAISoldier() : ActorAI(new SoldierAIWeapon(this),100,vec3(1.5,1.5,4))  {
 
 }
 ActorAISoldier::~ActorAISoldier() {

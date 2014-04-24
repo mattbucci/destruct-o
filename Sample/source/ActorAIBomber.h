@@ -62,5 +62,9 @@ public:
 
 	CLASS_DECLARATION(ActorAIBomber)
 		INHERITS_FROM(ActorAI)
+		CLASS_MEMBER(runStarted,ReflectionData::SAVE_BOOL);
+		CLASS_MEMBER(runStartPosition,ReflectionData::SAVE_VEC2);
+		CLASS_MEMBER(runDirection,ReflectionData::SAVE_VEC2);
+		CLASS_MEMBER(runFinished,ReflectionData::SAVE_BOOL);
 	END_DECLARATION
 };

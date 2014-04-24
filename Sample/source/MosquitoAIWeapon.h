@@ -24,7 +24,11 @@ protected:
 	//What you shoot
 	vec3 hitPos;
 public:
-	MosquitoAIWeapon(PhysicsActor * weaponOwner, float & chargePool);
+	//DO NOT CALL
+	MosquitoAIWeapon();
+
+	//Call me
+	MosquitoAIWeapon(PhysicsActor * weaponOwner);
 
 	//Weapon firing animation
 	virtual string LookupAnimation(HandAnimations animation) override;
@@ -34,4 +38,9 @@ public:
 
 	//Draw any effects the weapon may own
 	virtual void DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) override;
+
+	CLASS_DECLARATION(MosquitoAIWeapon)
+		INHERITS_FROM(Weapon)
+		CLASS_MEMBER(hitPos, ReflectionData::SAVE_VEC3)
+	END_DECLARATION
 };

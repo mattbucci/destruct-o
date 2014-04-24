@@ -2,7 +2,13 @@
 #include "Weapon.h"
 #include "BaseFrame.h"
 
-Weapon::Weapon(PhysicsActor * weaponOwner, float & pool) : chargePool(pool) {
+Weapon::Weapon() {
+	lastHoldingTrigger = false;
+	weaponOwner = NULL;
+	lastWeaponFire = 0;
+}
+
+Weapon::Weapon(PhysicsActor * weaponOwner) {
 	lastHoldingTrigger = false;
 	this->weaponOwner = weaponOwner;
 	lastWeaponFire = 0;
@@ -13,7 +19,7 @@ Weapon::~Weapon() {
 
 void Weapon::Fire() {
 	//Decrease the charge
-	chargePool -= WeaponChargeRequired();
+	weaponOwner->EnergyPool() -= WeaponChargeRequired();
 	//Mark the gun as fired
 	lastWeaponFire = Game()->Now();
 	//Run the weapon fired event
@@ -53,7 +59,7 @@ bool Weapon::HoldingTrigger(bool trigger) {
 		return false;
 
 	//Check if you have sufficient charge
-	if (chargePool < WeaponChargeRequired()) {
+	if (weaponOwner->EnergyPool() < WeaponChargeRequired()) {
 		//Fire the event that you're out of charge
 		if (!prev) {
 			Game()->Actors.ActorFiredWhileEmpty.Fire([this](function<void(Actor*,Weapon*)> observer) {

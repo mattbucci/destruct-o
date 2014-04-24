@@ -3,7 +3,9 @@
 #include "ModelInstance.h"
 #include "BombDropAIWeapon.h"
 
-ActorAIBomber::ActorAIBomber() : ActorAI(new BombDropAIWeapon(this,energyPool),20,vec3(5,5,2))  {
+CLASS_SAVE_CONSTRUCTOR(ActorAIBomber);
+
+ActorAIBomber::ActorAIBomber() : ActorAI(new BombDropAIWeapon(this),20,vec3(5,5,2))  {
 	flying = true;
 	scale = 3;
 	runStarted = false;

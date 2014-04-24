@@ -27,7 +27,11 @@ protected:
 	vec3 hitPosA;
 	vec3 hitPosB;
 public:
-	TurretAIWeapon(PhysicsActor * weaponOwner, float & chargePool);
+	//DO NOT CALL
+	TurretAIWeapon();
+
+	//Call me
+	TurretAIWeapon(PhysicsActor * weaponOwner);
 
 	//Weapon firing animation
 	virtual string LookupAnimation(HandAnimations animation) override;
@@ -37,4 +41,10 @@ public:
 
 	//Draw any effects the weapon may own
 	virtual void DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 FirePointB) override;
+
+	CLASS_DECLARATION(TurretAIWeapon)
+		INHERITS_FROM(Weapon)
+		CLASS_MEMBER(hitPosA, ReflectionData::SAVE_VEC3)
+		CLASS_MEMBER(hitPosB, ReflectionData::SAVE_VEC3)
+	END_DECLARATION
 };

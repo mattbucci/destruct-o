@@ -60,10 +60,35 @@ public:
 	//so city access is locked by the above mutex
 	void RegisterNewCity(SavableCityData * cityData);
 
-	CLASS_DECLARATION(ActorAI)
+	CLASS_DECLARATION(ActorAids)
 		INHERITS_FROM(Actor)
 		CLASS_MEMBER(spawnedNasties,ReflectionData::SAVE_BOOL);
 		CLASS_CONTAINER_MEMBER(pathingRequestors,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_HANDLE);
 		CLASS_CONTAINER_MEMBER(pathingRequests,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_VEC2);
+
+		CLASS_MEMBER(intensityAdded,ReflectionData::SAVE_INSTANCE);
+		CLASS_MEMBER(intensityCalculationOffset,ReflectionData::SAVE_FLOAT);
+		CLASS_CONTAINER_MEMBER(actions,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE);
+		CLASS_CONTAINER_MEMBER(cities,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE);
 	END_DECLARATION
 };
+
+/*
+	float targetIntensity;
+	float currentIntensity;
+	//Current intensity delta
+	MovingAverage<float> intensityAdded;
+	//A list of actions that can be taken by AIDS
+	map<float,function<AidsAction*(vec3)>> actionList;
+	//Original intensity offset
+	//used during generation of the targetIntensity
+	float intensityCalculationOffset;
+	//All currently executing actions
+	ContiguousList<AidsAction*> actions;
+
+	//Populate nearby cities to the player with enemies/allies
+	void populateCities();
+
+	//List of cities
+	ContiguousList<SavableCityData*> cities;
+	*/

@@ -5,7 +5,13 @@
 #include "ActorBomb.h"
 #include "ActorSystem.h"
 
-BombDropAIWeapon::BombDropAIWeapon(PhysicsActor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool) {
+CLASS_SAVE_CONSTRUCTOR(BombDropAIWeapon);
+
+BombDropAIWeapon::BombDropAIWeapon() : Weapon() {
+
+}
+
+BombDropAIWeapon::BombDropAIWeapon(PhysicsActor * weaponOwner) : Weapon(weaponOwner) {
 }
 
 //Whether or not the weapon should repeat firing automatically

@@ -4,6 +4,13 @@
 
 #include "ActorAIBomber.h"
 
+CLASS_SAVE_CONSTRUCTOR(AidsActionBomberRun);
+
+//This constructor is /only/ called by the loader
+AidsActionBomberRun::AidsActionBomberRun() : AidsAction(vec3(),0) {
+	//Loader runs directly after this
+}
+
 //Constructing the action should start it
 AidsActionBomberRun::AidsActionBomberRun(vec3 actionLocation) : AidsAction(actionLocation,GetIntensityValue()) {
 	//Find a hidden location

@@ -25,6 +25,12 @@ PhysicsActor::~PhysicsActor() {
 }
 
 
+//Access to the energy pool for weapons
+//kind of hacky
+float & PhysicsActor::EnergyPool() {
+	return energyPool;
+}
+
 //Override to prevent immediate death
 void PhysicsActor::onDeath() {
 	//On death destroy this actor

@@ -3,7 +3,10 @@
 #include "Universal.h"
 #include "BaseFrame.h"
 
-BombExplodeEffectWeapon::BombExplodeEffectWeapon(PhysicsActor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool) {
+BombExplodeEffectWeapon::BombExplodeEffectWeapon() : Weapon() {
+}
+
+BombExplodeEffectWeapon::BombExplodeEffectWeapon(PhysicsActor * weaponOwner) : Weapon(weaponOwner) {
 }
 
 //Whether or not the weapon should repeat firing automatically

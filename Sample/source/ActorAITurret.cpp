@@ -3,7 +3,9 @@
 #include "ModelInstance.h"
 #include "TurretAIWeapon.h"
 
-ActorAITurret::ActorAITurret() : ActorAI(new TurretAIWeapon(this,energyPool),100,vec3(3,3,2.5))  {
+CLASS_SAVE_CONSTRUCTOR(ActorAITurret);
+
+ActorAITurret::ActorAITurret() : ActorAI(new TurretAIWeapon(this),100,vec3(3,3,2.5))  {
 
 }
 ActorAITurret::~ActorAITurret() {
