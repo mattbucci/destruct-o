@@ -213,9 +213,6 @@ void VoxEngine::Start() {
 		}
 	}
 
-	Frames::SetSystem(Frames::FRAME_MAINMENU);
-	Frames::UpdateAliveFrame();
-
 	//Start up game
 	continueGameLoop = true;
 	//Get the current window size
