@@ -62,7 +62,7 @@ void LoadingScreen::Draw(int width, int height, GL2DProgram * shader) {
 	shader->Model.Reset();
 	shader->Model.Apply();
 	shader->Clipping.PushClippingRect(shader->Model,Rect(-1,-1,-1,-1));
-	shader->SetColor(vec4(1,0,1,1));
+	shader->SetColor(vec4(1,1,1,1));
 
 	GL2DVertexGroup::Draw(shader);
 

@@ -137,7 +137,6 @@ void BaseFrame::OnFrameFocus() {
 
 	//Physics.BuildVoxel(vec3(40,42,80));
 	
-	
 	//The physics demo
 	//we won't have this forever
 	demo = new Demo();
