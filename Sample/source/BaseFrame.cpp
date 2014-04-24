@@ -247,8 +247,6 @@ void BaseFrame::Draw(double width, double height)
 	Camera.Apply((GL3DProgram*)shaders->GetShader("3d"));
     SetupShader<MaterialProgram>("model", fogDistance);
     Camera.Apply((MaterialProgram*)shaders->GetShader("model"));
-    SetupShader<MaterialProgram>("model_skinned", fogDistance);
-    Camera.Apply((MaterialProgram*)shaders->GetShader("model_skinned"));
     SetupShader<GLEffectProgram>("effects", fogDistance);
     Camera.Apply((GLEffectProgram*)shaders->GetShader("effects"));
     
@@ -284,14 +282,11 @@ void BaseFrame::Draw(double width, double height)
         // Draw the model instance
         (*it)->Draw(modelShader);
     }
-
-    // Setup the mesh shader boneless
-    modelShader = (MaterialProgram *) shaders->GetShader("model_skinned");
-    modelShader->UseProgram();
     
+    // Draw the actors
 	Actors.Draw(shaders);
 
-    // Herp a derp
+    // Draw the player weapon
     modelShader->UseProgram();
     Actors.Player()->DrawWeapon(modelShader);
     

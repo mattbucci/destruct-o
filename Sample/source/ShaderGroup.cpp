@@ -53,17 +53,11 @@ ShaderGroup::ShaderGroup() {
 		cout << "Failed to build opengl program\n";
 	AddShader(shadersT,"terrain");
     
-    //Build the model shader
+    // Build the model shader
     MaterialProgram * modelShader = new MaterialProgram(&commonShader,"Interface/Shaders/universal/vsh_model.glsl","Interface/Shaders/universal/fsh_model.glsl");
     if (!modelShader->Valid())
         cout << "Failed to build opengl program (model)\n";
     AddShader(modelShader,"model");
-    
-    //Build the skinned model shader
-    MaterialProgram * skinnedModelShader = new MaterialProgram(&commonShader,"Interface/Shaders/universal/vsh_model_skinned.glsl","Interface/Shaders/universal/fsh_model_skinned.glsl");
-    if (!skinnedModelShader->Valid())
-        cout << "Failed to build opengl program (model_skinned)\n";
-    AddShader(skinnedModelShader,"model_skinned");
 
 	//Build Effect Shader
 	GLEffectProgram * shadersE = new GLEffectProgram(&commonShader,"Interface/Shaders/universal/vsh_effect.glsl","Interface/Shaders/universal/fsh_effect.glsl");
