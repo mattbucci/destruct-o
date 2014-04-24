@@ -3,7 +3,7 @@
 #include "ModelInstance.h"
 #include "MosquitoAIWeapon.h"
 
-ActorAIMosquito::ActorAIMosquito() : ActorAI(new MosquitoAIWeapon(this,energyPool),200)  {
+ActorAIMosquito::ActorAIMosquito() : ActorAI(new MosquitoAIWeapon(this,energyPool),200,vec3(3,3,2))  {
 	flying = true;
 }
 ActorAIMosquito::~ActorAIMosquito() {

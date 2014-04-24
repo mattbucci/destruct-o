@@ -8,8 +8,8 @@
 
 #define TWO_PI ((float)(M_PI*2.0f))
 
-ActorAI::ActorAI(Weapon * actorWeapon, float maxLife) : 
-	PhysicsActor(vec3(1.5,1.5,4),maxLife, GameFactions::FACTION_ENEMY),
+ActorAI::ActorAI(Weapon * actorWeapon, float maxLife, vec3 size) : 
+	PhysicsActor(size,maxLife, GameFactions::FACTION_ENEMY),
 	weapon(actorWeapon),
 	enemyPosition(100,5) {
 	//Use a default weapon for now
