@@ -18,20 +18,12 @@ void AudioPlayer::SetVolume(Uint8 effectvolume,Uint8 backgroundvolume) {
    // EffectPlayer.SetVolume();
 }
 
-void AudioPlayer::ReceiveEvent(event action) {
-    //check the event type
-    //if player paused, pause music and effect
-    
-    //if effect
-    //pass the event to the effect handler
-    
-    //if in battle
-    //set the intensity
-}
+
+/*
 void AudioPlayer::PlayerInit(ActorPlayer* user) {
     this->user = user;
 	//FIXME
-	/*
+	
     GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&user->PlayerJumped,[this](ActorPlayer* Object) {
         event test;
         test.type="player-jump";
@@ -55,7 +47,7 @@ void AudioPlayer::PlayerInit(ActorPlayer* user) {
         test.pos = vec3(0,0,0);
         EffectPlayer.PlayEffect(test);
     });
-	*/
+
 
 }
 
@@ -68,7 +60,7 @@ void AudioPlayer::DemoInit(Demo* demo) {
         EffectPlayer.PlayEffect(test);
     });
 }
-
+*/
 void AudioPlayer::Update(){
     MusicPlayer.Update();
 }
