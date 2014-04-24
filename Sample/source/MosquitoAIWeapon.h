@@ -24,7 +24,7 @@ protected:
 	//What you shoot
 	vec3 hitPos;
 public:
-	MosquitoAIWeapon(Actor * weaponOwner, float & chargePool);
+	MosquitoAIWeapon(PhysicsActor * weaponOwner, float & chargePool);
 
 	//Weapon firing animation
 	virtual string LookupAnimation(HandAnimations animation) override;

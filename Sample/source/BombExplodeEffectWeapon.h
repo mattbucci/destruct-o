@@ -4,7 +4,7 @@
 #include "Weapon.h"
 #include "EffectLaser.h"
 
-class SmallMechAIWeapon : public Weapon {
+class BombExplodeEffectWeapon : public Weapon {
 protected:
 	//Whether or not the weapon should repeat firing automatically
 	virtual bool RepeatFireAutomatically() override;
@@ -22,10 +22,9 @@ protected:
 	virtual void Fire() override;
 
 	//What you shoot
-	EffectLaser laser;
 	vec3 hitPos;
 public:
-	SmallMechAIWeapon(PhysicsActor * weaponOwner, float & chargePool);
+	BombExplodeEffectWeapon(PhysicsActor * weaponOwner, float & chargePool);
 
 	//Weapon firing animation
 	virtual string LookupAnimation(HandAnimations animation) override;

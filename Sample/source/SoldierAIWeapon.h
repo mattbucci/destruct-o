@@ -25,7 +25,7 @@ protected:
 	EffectLaser laser;
 	vec3 hitPos;
 public:
-	SoldierAIWeapon(Actor * weaponOwner, float & chargePool);
+	SoldierAIWeapon(PhysicsActor * weaponOwner, float & chargePool);
 
 	//Weapon firing animation
 	virtual string LookupAnimation(HandAnimations animation) override;

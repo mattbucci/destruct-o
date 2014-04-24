@@ -400,4 +400,5 @@ void ActorAI::Draw(GLEffectProgram * effectShader)  {
 //Cause the actor to have a heart attack and die on the spot
 void ActorAI::Kill() {
 	life = 0;
+	Destroy();
 }

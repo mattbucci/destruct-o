@@ -1,44 +1,42 @@
 #include "stdafx.h"
-#include "MosquitoAIWeapon.h"
+#include "BombExplodeEffectWeapon.h"
 #include "Universal.h"
 #include "BaseFrame.h"
 
-MosquitoAIWeapon::MosquitoAIWeapon(PhysicsActor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool) {
+BombExplodeEffectWeapon::BombExplodeEffectWeapon(PhysicsActor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool) {
 }
 
 //Whether or not the weapon should repeat firing automatically
-bool MosquitoAIWeapon::RepeatFireAutomatically() {
-	return true;
+bool BombExplodeEffectWeapon::RepeatFireAutomatically() {
+	return false;
 }
 
 //The amount of charge it takes to fire the weapon
-float MosquitoAIWeapon::WeaponChargeRequired() {
+float BombExplodeEffectWeapon::WeaponChargeRequired() {
 	return 0;
 }
 
 //Cooldown length for the weapon
-float MosquitoAIWeapon::WeaponCooldownTime() {
-	return .1;
+float BombExplodeEffectWeapon::WeaponCooldownTime() {
+	return 100000;
 }
 
 //The amount of jitter in the weapon
-float MosquitoAIWeapon::JitterAmount() {
+float BombExplodeEffectWeapon::JitterAmount() {
 	return .08;
 }
 
 //Simulate a gun shot (or laser pulse or whatever)
-void MosquitoAIWeapon::Fire() {
+void BombExplodeEffectWeapon::Fire() {
 	//Fire appropriate events and calculate jitter
 	Weapon::Fire();
 	//Apply jitter
 	Weapon::updateFinalFireVectors();
 
-	if (!Universal::Trace(firePointA,finalFireVectorA,&hitPos))
-		hitPos = firePointA+finalFireVectorA*100.0f;
+	//Blow up where you stand
+	weaponImpact(firePointA);
 	
-	weaponImpact(hitPos);
-	
- 	Universal::Concuss(hitPos,1,2,(PhysicsActor*)this->weaponOwner);
+ 	Universal::Concuss(firePointA,4,40,(PhysicsActor*)this->weaponOwner);
 
 	Weapon::Fire();
 }
@@ -62,10 +60,10 @@ void MosquitoAIWeapon::Fire() {
 
 
 //Weapon firing animation
-string MosquitoAIWeapon::LookupAnimation(Weapon::HandAnimations animation) {
+string BombExplodeEffectWeapon::LookupAnimation(Weapon::HandAnimations animation) {
     static const string animations[10] = {
         //ANIMATION_MODELNAME,
-        "mosquito",
+        "dropship01",
         //ANIMATION_AIM,
         "",
         //ANIMATION_FIRE,
@@ -85,11 +83,11 @@ string MosquitoAIWeapon::LookupAnimation(Weapon::HandAnimations animation) {
 }
 
 //Update the state of the weapon
-void MosquitoAIWeapon::Update(vec3 firingVector, vec3 firePointA, vec3 firePointB) {
+void BombExplodeEffectWeapon::Update(vec3 firingVector, vec3 firePointA, vec3 firePointB) {
 	Weapon::Update(firingVector, firePointA, firePointB);
 }
 
 //Draw any effects the weapon may own
-void MosquitoAIWeapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) {
+void BombExplodeEffectWeapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) {
 	//laser.Draw(shader);
 }

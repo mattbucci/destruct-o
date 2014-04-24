@@ -3,11 +3,11 @@
 #include "stdafx.h"
 
 class GLEffectProgram;
-class Actor;
+class PhysicsActor;
 
 class Weapon {
 protected:
-	Actor * weaponOwner;
+	PhysicsActor * weaponOwner;
 
 	//Whether or not the weapon should repeat firing automatically
 	virtual bool RepeatFireAutomatically() = 0;
@@ -50,7 +50,7 @@ protected:
 	vec3 weaponJitterA;
 	vec3 weaponJitterB;
 public:
-	Weapon(Actor * weaponOwner, float & chargePool);
+	Weapon(PhysicsActor * weaponOwner, float & chargePool);
 	virtual ~Weapon();
 
     enum HandAnimations {

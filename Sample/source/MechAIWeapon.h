@@ -27,7 +27,7 @@ protected:
 	vec3 hitPosA;
 	vec3 hitPosB;
 public:
-	MechAIWeapon(Actor * weaponOwner, float & chargePool);
+	MechAIWeapon(PhysicsActor * weaponOwner, float & chargePool);
 
 	//Weapon firing animation
 	virtual string LookupAnimation(HandAnimations animation) override;

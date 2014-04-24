@@ -3,7 +3,7 @@
 #include "Universal.h"
 #include "BaseFrame.h"
 
-WeaponLaserCannon::WeaponLaserCannon(Actor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool), laser(vec4(1,.5,.1,1),.1f) {
+WeaponLaserCannon::WeaponLaserCannon(PhysicsActor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool), laser(vec4(1,.5,.1,1),.1f) {
 	laser.SetTiming(.05f,1.0f,true);
 }
 

@@ -2,7 +2,7 @@
 #include "Weapon.h"
 #include "BaseFrame.h"
 
-Weapon::Weapon(Actor * weaponOwner, float & pool) : chargePool(pool) {
+Weapon::Weapon(PhysicsActor * weaponOwner, float & pool) : chargePool(pool) {
 	lastHoldingTrigger = false;
 	this->weaponOwner = weaponOwner;
 	lastWeaponFire = 0;

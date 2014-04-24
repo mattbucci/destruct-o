@@ -6,6 +6,7 @@
 //All AI actions
 #include "AidsActionDeploySoldier.h"
 #include "AidsActionDeployMosquito.h"
+#include "AidsActionBomberRun.h"
 
 //500 is 5 seconds
 //this depends on SIMULATION_DELTA
@@ -27,7 +28,8 @@ ActorAids::ActorAids() :
 
 	//Register possible actions
 	//actionList[AidsActionDeploySoldier::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeploySoldier(pos);};
-	actionList[AidsActionDeployMosquito::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeployMosquito(pos);};
+	//actionList[AidsActionDeployMosquito::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeployMosquito(pos);};
+	actionList[AidsActionBomberRun::GetIntensityValue()] = [](vec3 pos) {return new AidsActionBomberRun(pos);};
 
 	//Random offset for the intensity
 	intensityCalculationOffset = Utilities::random(-10,10);

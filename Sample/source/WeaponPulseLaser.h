@@ -25,7 +25,7 @@ protected:
 	EffectLaser laser;
 	vec3 hitPos;
 public:
-	WeaponPulseLaser(Actor * weaponOwner, float & chargePool);
+	WeaponPulseLaser(PhysicsActor * weaponOwner, float & chargePool);
 
 	//Weapon firing animation
     virtual string LookupAnimation(HandAnimations animation) override;
