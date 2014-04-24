@@ -43,15 +43,22 @@ public:
         kColorAttributeReflection = 4,
     } ColorAttribute;
     
+    // Texture storage type
+    typedef std::map<TextureType, std::string> texture_store;
+    
     // Iterator type
-    typedef std::map<TextureType, std::string>::const_iterator const_texture_iterator;
+    typedef std::map<ColorAttribute, glm::vec4> color_store;
     
 private:
     // Name of the material
     std::string id;
     
     // The textures this material uses
-    std::map<TextureType, std::string> textures;
+    texture_store textures;
+    
+    // Material colors
+    vec3 colorDiffuse;
+    vec3 colorAmbient;
     
 public:
     // Standard constructor - create an empty material
@@ -63,10 +70,12 @@ public:
     // Get the name of the material
     std::string& Id();
     
-    // Get a const iterator to textures
-    const_texture_iterator texturesBegin() const;
-    const_texture_iterator texturesEnd() const;
-    const_texture_iterator texturesFind(const TextureType& key) const;
+    // Get a const reference to the texture storage
+    const texture_store& Textures() const;
+    
+    // Get the material colors
+    const vec3& ColorDiffuse() const;
+    const vec3& ColorAmbient() const;
 };
 
 #endif

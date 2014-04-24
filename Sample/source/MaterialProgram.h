@@ -37,23 +37,37 @@ class MaterialProgram : public GL3DProgram
     // The uniform for whether or not the model is skinned
     GLint uniformSkinned;
     
+    // The uniform for wheterh or not the model is textured
+    GLint uniformTextured;
+    
+    // The uniform for the material colors
+    GLint uniformColorAmbient;
+    GLint uniformColorDiffuse;
+    
 public:
 	MaterialProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath);
     
     // Get the attribute for a bone weight
-	const GLint AttributeBoneWeight(int idx);
+	const GLint AttributeBoneWeight(int idx) const;
     
     // Get the attribute for a texture coordinate
-    const GLint AttributeTexture(int idx);
+    const GLint AttributeTexture(int idx) const;
     
     // Get the uniform for the skeleton
-    const GLint UniformBones(int idx);
+    const GLint UniformBones(int idx) const;
     
     // Get the uniform for the texture samplers
-    const GLint UniformTexture(Material::TextureType idx);
+    const GLint UniformTexture(Material::TextureType idx) const;
     
     // Get the uniform for the skinning flag
-    const GLint UniformSkinned();
+    const GLint UniformSkinned() const;
+    
+    // Get the uniform for texturing
+    const GLint UniformTextured() const;
+    
+    // Colors
+    const GLint UniformColorAmbient() const;
+    const GLint UniformColorDiffuse() const;
 };
 
 #endif
