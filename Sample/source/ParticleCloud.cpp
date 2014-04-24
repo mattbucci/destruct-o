@@ -13,6 +13,8 @@
 
 //Include weapons for RTTI
 #include "MosquitoAIWeapon.h"
+#include "WeaponLaserCannon.h"
+#include "WeaponPulseLaser.h"
 
 //Register particle events
 ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) {
@@ -42,6 +44,22 @@ ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) {
 		if (dynamic_cast<MosquitoAIWeapon*>(firedWeapon) != NULL) {
 			ParticleData & particlePuff = Game()->Particles.GetParticleData("bulletLand.vpart");
 			ParticleSystem * testSystem = BuildParticleSystem(particlePuff, .2f);
+			testSystem->Position = hitPos;
+		}
+		//pulse laser
+		else if (dynamic_cast<WeaponPulseLaser*>(firedWeapon) != NULL) {
+			ParticleData & particlePuff = Game()->Particles.GetParticleData("laserLand.vpart");
+			particlePuff.Color.ClearValues();
+			particlePuff.Color.AddValue(0,vec4(.1,.4,1,1));
+			ParticleSystem * testSystem = BuildParticleSystem(particlePuff, .2f);
+			testSystem->Position = hitPos;
+		}
+		//laser cannon
+		else if (dynamic_cast<WeaponLaserCannon*>(firedWeapon) != NULL) {
+			ParticleData & particlePuff = Game()->Particles.GetParticleData("laserLand.vpart");
+			particlePuff.Color.ClearValues();
+			particlePuff.Color.AddValue(0,vec4(1,.5,.1,1));
+			ParticleSystem * testSystem = BuildParticleSystem(particlePuff, .3f);
 			testSystem->Position = hitPos;
 		}
 	});

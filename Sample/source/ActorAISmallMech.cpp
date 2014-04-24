@@ -51,8 +51,6 @@ void ActorAISmallMech::snapSpineToEnemy() {
 
 void ActorAISmallMech::findMuzzlePosition() {
 	//Find bone
-	Node::const_flattreemap flatmap;
-	model->Skeleton()->GetFlatNodeTree(flatmap);
 	const Node * nA = model->Skeleton()->FindNode("rt_shoulder");
 	mat4 globalTransformA = model->GetTransform().TransformMatrix() * nA->TransformMatrix();
 

@@ -48,8 +48,6 @@ void ActorAISoldier::snapSpineToEnemy() {
 
 void ActorAISoldier::findMuzzlePosition() {
 	//Find bone
-	Node::const_flattreemap flatmap;
-	model->Skeleton()->GetFlatNodeTree(flatmap);
 	const Node * n = model->Skeleton()->FindNode("Bind_RightHand");
 	mat4 globalTransform = model->GetTransform().TransformMatrix() * n->TransformMatrix();
 
