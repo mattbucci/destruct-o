@@ -2,6 +2,7 @@
 #include "MenuFrame.h"
 #include "GL2DProgram.h"
 #include "GL3DProgram.h"
+#include "Frames.h"
 
 #include "OS.h"
 
@@ -33,6 +34,17 @@ MenuFrame::MenuFrame(ShaderGroup * shaders)
 	optionsButton.position = Rect(0, 10 + 96.66f*2, 380, 86.66f);
 	optionsButton.SetText("Options");
 	buttonWindow.AddControl(&optionsButton);
+
+	//Subscribe Main Menu Buttons to Actions
+	Subscribe<void(Button*)>(&playButton.EventClicked, [this](Button * b) {
+		Frames::SetSystem(Frames::FRAME_GAME);
+	});
+
+	Subscribe<void(Button*)>(&loadButton.EventClicked, [this](Button * b) {
+	});
+
+	Subscribe<void(Button*)>(&optionsButton.EventClicked, [this](Button * b) {
+	});
 }
 
 MenuFrame::~MenuFrame()
@@ -61,7 +73,7 @@ void MenuFrame::Build()
 {    //Build the sample dialog 
 	//Build a window that says "On Top"
 
-
+	isReady = true;
 
 }
 

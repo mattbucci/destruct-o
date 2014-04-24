@@ -167,6 +167,8 @@ void BaseFrame::Build()
 	audio = new AudioPlayer(100);
 	audio->PlayerInit(Actors.Player());
     Actors.Player()->Build();
+
+	isReady = true;
 }
 
 bool BaseFrame::Update(vector<InputEvent> inputEvents) {

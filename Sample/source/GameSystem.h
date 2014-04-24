@@ -17,6 +17,7 @@ protected:
 	FPSCounter fpsCount;
 	set<Sint64> currentlyPressedKeys;
 	ShaderGroup * shaders;
+	bool isReady;
 
 	//Handle key events, recording held keys and sending events to dialogs
 	virtual void passEventsToControl(vector<InputEvent> & inputEvents);
@@ -63,6 +64,8 @@ public:
 	virtual bool Update(vector<InputEvent> inputEvents);
 	//Draw happens whenever possible
 	virtual void Draw(double width, double height);
+	//Function to test if GameSystem is Ready
+	virtual bool IsReady();
 
 	//Save time
 	CLASS_DECLARATION(GameSystem)

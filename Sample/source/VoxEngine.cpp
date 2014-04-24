@@ -182,36 +182,6 @@ void VoxEngine::Start() {
 	VisualInterface.init();
 	//Populate the list of game systems
 	Frames::BuildSystemList();
-	//Do game initial load
-	//at this point we're going to enter a really fast draw loop
-	//and show our please wait dialog
-	{
-		LoadingScreen load;
-		//Assume one of the frames constructed the 2d shader
-		GL2DProgram * shader = (GL2DProgram*)Frames::shaders->GetShader("2d");
-
-		glActiveTexture(GL_TEXTURE0);
-
-		//Hide Loading Screen for Now... This will need to
-		//appear when the user clicks play but the game has
-		//not fully loaded in the background
-		/*while (!Frames::loadingComplete) {
-			//Run the frame draw
-			glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-			//Pump events even though we ignore them
-			SDL_PumpEvents();
-			//Check window size
-			SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
-			ResizeWindow();
-			//render the loading screen
-			glViewport(0, 0, curWidth, curHeight);
-			load.Draw(curWidth,curHeight,shader);
-			SDL_GL_SwapWindow(displayWindow);
-
-			//Sleep softly and use no cpu power
-			OS::SleepTime(.15);
-		}*/
-	}
 
 	//Start up game
 	continueGameLoop = true;
@@ -228,6 +198,30 @@ void VoxEngine::Start() {
 	
 	//The game loop begins
 	while (continueGameLoop) {
+		if(!CurrentSystem->IsReady()) {
+			LoadingScreen load;
+			//Assume one of the frames constructed the 2d shader
+			GL2DProgram * shader = (GL2DProgram*)Frames::shaders->GetShader("2d");
+
+			glActiveTexture(GL_TEXTURE0);
+
+			while(!CurrentSystem->IsReady()) {
+				//Run the frame draw
+				glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+				//Pump events even though we ignore them
+				SDL_PumpEvents();
+				//Check window size
+				SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
+				ResizeWindow();
+				//render the loading screen
+				glViewport(0, 0, curWidth, curHeight);
+				load.Draw(curWidth,curHeight,shader);
+				SDL_GL_SwapWindow(displayWindow);
+
+				//Sleep softly and use no cpu power
+				OS::SleepTime(.15);
+			}
+		}
 		//Jump ahead detection, if the simulation loop
 		//is behind more than 2 seconds, assume the application
 		//was paused for some reason (break point)

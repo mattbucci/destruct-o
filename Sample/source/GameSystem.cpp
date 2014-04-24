@@ -10,6 +10,7 @@ GameSystem::GameSystem(ShaderGroup * _shaders)
 	nextFrameTime = 0;
 	fps = 40;
 	simTime = 0;
+	isReady = false;
 }
 
 GameSystem::~GameSystem() {
@@ -92,4 +93,9 @@ GL2DProgram * GameSystem::SetWidthHeight(float width, float height) {
 
 double GameSystem::Now() {
 	return simTime;
+}
+
+//Function to test if GameSystem is Ready
+bool GameSystem::IsReady() {
+	return isReady;
 }
