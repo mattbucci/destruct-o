@@ -22,7 +22,6 @@ protected:
 	virtual void Fire() override;
 
 	//What you shoot
-	EffectLaser laser;
 	vec3 hitPos;
 public:
 	MosquitoAIWeapon(Actor * weaponOwner, float & chargePool);

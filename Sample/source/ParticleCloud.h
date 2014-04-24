@@ -25,7 +25,7 @@ class ParticleCloud : GameEventSubscriber {
 
 	//Retrieve a copy of a particle system
 	//private because you're supposed to use subscriptions!
-	ParticleData GetParticleData(string systemFileName);
+	ParticleData & GetParticleData(string systemFileName);
 
 	//This is the renderer for particles
 	//similar to the voxel system, it will probably be replaced

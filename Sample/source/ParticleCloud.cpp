@@ -11,6 +11,9 @@
 #include "PhysicsSystem.h"
 #include "PhysicsVoxel.h"
 
+//Include weapons for RTTI
+#include "MosquitoAIWeapon.h"
+
 //Register particle events
 ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) {
 
@@ -28,11 +31,19 @@ ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) {
 	Subscribe<void(PhysicsVoxel*)>(&physics->VoxelDisintegrating,[this](PhysicsVoxel * voxel) {
 		ParticleData particlePuff = Game()->Particles.GetParticleData("physicsDisintegrate.vpart");
 		//disintegrate voxel
-		//this is temporary. will be replaced by an event soon
 		particlePuff.Color.ClearValues();
 		particlePuff.Color.AddValue(0,materialColors[voxel->MaterialId]);
 		ParticleSystem * testSystem = BuildParticleSystem(particlePuff, Utilities::random(.3,.5));
 		testSystem->Position = voxel->Position;
+	});
+	//WEAPON EVENT HIT EVENTS
+	Subscribe<void(Actor*,Weapon*,vec3)>(&actors->ActorWeaponImpact,[this](Actor * firingActor, Weapon * firedWeapon, vec3 hitPos) {
+		//Mosquito weapon
+		if (dynamic_cast<MosquitoAIWeapon*>(firedWeapon) != NULL) {
+			ParticleData & particlePuff = Game()->Particles.GetParticleData("bulletLand.vpart");
+			ParticleSystem * testSystem = BuildParticleSystem(particlePuff, .2f);
+			testSystem->Position = hitPos;
+		}
 	});
 }
 //Cleanup all systems
@@ -63,7 +74,7 @@ void ParticleCloud::LoadParticles() {
 	cout << "Done particles\n";
 }
 
-ParticleData ParticleCloud::GetParticleData(string systemFileName) {
+ParticleData & ParticleCloud::GetParticleData(string systemFileName) {
 	_ASSERTE(loadedParticleData.find(systemFileName) != loadedParticleData.end());
 	return loadedParticleData[systemFileName];
 }

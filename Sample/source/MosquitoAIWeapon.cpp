@@ -3,8 +3,7 @@
 #include "Universal.h"
 #include "BaseFrame.h"
 
-MosquitoAIWeapon::MosquitoAIWeapon(Actor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool), laser(vec4(1,.5,.1,1),.1f) {
-	laser.SetTiming(.05f,1.0f,true);
+MosquitoAIWeapon::MosquitoAIWeapon(Actor * weaponOwner, float & chargePool) : Weapon(weaponOwner, chargePool) {
 }
 
 //Whether or not the weapon should repeat firing automatically
@@ -19,12 +18,12 @@ float MosquitoAIWeapon::WeaponChargeRequired() {
 
 //Cooldown length for the weapon
 float MosquitoAIWeapon::WeaponCooldownTime() {
-	return .5;
+	return .1;
 }
 
 //The amount of jitter in the weapon
 float MosquitoAIWeapon::JitterAmount() {
-	return .09;
+	return .08;
 }
 
 //Simulate a gun shot (or laser pulse or whatever)
@@ -39,9 +38,7 @@ void MosquitoAIWeapon::Fire() {
 	
 	weaponImpact(hitPos);
 	
- 	Universal::Concuss(hitPos,1.5,5,(PhysicsActor*)this->weaponOwner);
-	laser.StartFiring();
-	laser.Move(firePointA,hitPos);
+ 	Universal::Concuss(hitPos,1,2,(PhysicsActor*)this->weaponOwner);
 
 	Weapon::Fire();
 }
@@ -94,5 +91,5 @@ void MosquitoAIWeapon::Update(vec3 firingVector, vec3 firePointA, vec3 firePoint
 
 //Draw any effects the weapon may own
 void MosquitoAIWeapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) {
-	laser.Draw(shader);
+	//laser.Draw(shader);
 }
