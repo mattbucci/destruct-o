@@ -31,13 +31,14 @@ const static std::string TextureTypeKeys[] =
 
 // Standard constructor - create an empty material
 Material::Material()
-    : id("")
+    : id(""), textures(Material::texture_store()), colorDiffuse(glm::vec3(1.0, 1.0, 1.0)), colorAmbient(glm::vec3(1.0, 1.0, 1.0))
 {
     
 }
 
 // Deserialization constructor - load from a Json serialized blob
 Material::Material(const Json::Value& value, const std::string directory)
+    : id(""), textures(Material::texture_store()), colorDiffuse(glm::vec3(1.0, 1.0, 1.0)), colorAmbient(glm::vec3(1.0, 1.0, 1.0))
 {
     // We first need to validate that this a Json object
     if(!value.isObject())
@@ -52,7 +53,7 @@ Material::Material(const Json::Value& value, const std::string directory)
     const Json::Value& bitmaps = value["textures"];
     
     // If this mesh contains a vertices entry (there could be some empty cases, for instance, an empty mesh was created, then serialized)
-    if(bitmaps != Json::Value::null && bitmaps.isArray())
+    if(bitmaps.isArray())
     {
         // Read in all the textures
         for(Json::Value::iterator tIt = bitmaps.begin(); tIt != bitmaps.end(); tIt++)
@@ -67,6 +68,26 @@ Material::Material(const Json::Value& value, const std::string directory)
             textures[type] = directory + "/" + (*tIt)["filename"].asString();
         }
     }
+    
+    // Search for the diffuse color type
+    const Json::Value& diffuse_color = value["diffuse"];
+    
+    // Do we have a diffuse color
+    if(diffuse_color.isArray())
+    {
+        // Create a color storage vector and cache it
+        colorDiffuse = glm::vec3(diffuse_color[0].asFloat(), diffuse_color[1].asFloat(), diffuse_color[2].asFloat());
+    }
+    
+    // Search for particular color types
+    const Json::Value& ambient_color = value["ambient"];
+    
+    // Do we have a diffuse color
+    if(ambient_color.isArray())
+    {
+        // Create a color storage vector and cache it
+        colorAmbient = glm::vec3(ambient_color[0].asFloat(), ambient_color[1].asFloat(), ambient_color[2].asFloat());
+    }
 }
 
 // Get the name of the material
@@ -75,18 +96,19 @@ std::string& Material::Id()
     return id;
 }
 
-// Get a const iterator to textures
-Material::const_texture_iterator Material::texturesBegin() const
+// Get a const reference to the texture storage
+const Material::texture_store& Material::Textures() const
 {
-    return textures.begin();
+    return textures;
 }
 
-Material::const_texture_iterator Material::texturesEnd() const
+// Get the material colors
+const vec3& Material::ColorDiffuse() const
 {
-    return textures.end();
+    return colorDiffuse;
 }
 
-Material::const_texture_iterator Material::texturesFind(const TextureType& key) const
+const vec3& Material::ColorAmbient() const
 {
-    return textures.find(key);
+    return colorAmbient;
 }

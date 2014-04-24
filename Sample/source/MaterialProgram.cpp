@@ -43,6 +43,10 @@ MaterialProgram::MaterialProgram(GLCommonShaderFile * commonShader, string verte
     
     uniformSkinned = glGetUniformLocation(programId, "skinned");
     
+    uniformTextured = glGetUniformLocation(programId, "textured");
+    uniformColorAmbient = glGetUniformLocation(programId, "material_color_ambient");
+    uniformColorDiffuse = glGetUniformLocation(programId, "material_color_diffuse");
+    
     /*cout << "---- Material Program Init Log ----" << endl;
     cout << "Attribute Vertex: " << AttributeVertex() << endl;
     cout << "Attribute Normal: " << AttributeNormal() << endl;
@@ -59,27 +63,44 @@ MaterialProgram::MaterialProgram(GLCommonShaderFile * commonShader, string verte
     cout << "-----------------------------------" << endl;*/
 }
 
-const GLint MaterialProgram::AttributeBoneWeight(int idx)
+const GLint MaterialProgram::AttributeBoneWeight(int idx) const
 {
     return attributeBoneWeights[idx];
 }
 
-const GLint MaterialProgram::AttributeTexture(int idx)
+const GLint MaterialProgram::AttributeTexture(int idx) const
 {
     return attributeTextures[idx];
 }
 
-const GLint MaterialProgram::UniformBones(int idx)
+const GLint MaterialProgram::UniformBones(int idx) const
 {
     return uniformBones[idx];
 }
 
-const GLint MaterialProgram::UniformTexture(Material::TextureType idx)
+const GLint MaterialProgram::UniformTexture(Material::TextureType idx) const
 {
     return uniformTextures[idx];
 }
 
-const GLint MaterialProgram::UniformSkinned()
+const GLint MaterialProgram::UniformSkinned() const
 {
     return uniformSkinned;
+}
+
+// Textured
+const GLint MaterialProgram::UniformTextured() const
+{
+    return uniformTextured;
+}
+
+// Colors
+const GLint MaterialProgram::UniformColorAmbient() const
+{
+    return uniformColorAmbient;
+}
+
+const GLint MaterialProgram::UniformColorDiffuse() const
+{
+    return uniformColorDiffuse;
 }

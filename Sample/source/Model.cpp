@@ -315,7 +315,7 @@ void Model::Upload()
     for(std::map<std::string, Material *>::iterator mIt = materials.begin(); mIt != materials.end(); mIt++)
     {
         // Iterate through this material's textures and upload them
-        for(Material::const_texture_iterator it = mIt->second->texturesBegin(); it != mIt->second->texturesEnd(); it++)
+        for(Material::texture_store::const_iterator it = mIt->second->Textures().begin(); it != mIt->second->Textures().end(); it++)
         {
             // Upload the texture
             textureCache.GetTexture(it->second);
@@ -425,7 +425,7 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         }
 
         // Bind the material's textures to some texturing units
-        for(Material::const_texture_iterator tIt = (*renderable)->material->texturesBegin(); tIt != (*renderable)->material->texturesEnd(); tIt++)
+        for(Material::texture_store::const_iterator tIt = (*renderable)->material->Textures().begin(); tIt != (*renderable)->material->Textures().end(); tIt++)
         {
             // Set the shader texture sampler to this texture unit
             glUniform1i(program->UniformTexture(tIt->first), tIt->first);
@@ -436,10 +436,6 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
             // Bind the texture for this texture unit
             textureCache.GetTexture(tIt->second)->Bind();
         }
-        
-        // Set the reflectivity (should pull this from the material right??)
-        glm::vec2 specular = glm::vec2(1.0, 1.0);
-        glUniform2f(glGetUniformLocation(program->GetId(), "material_reflectivity"), specular.x, specular.y);
         
         // Set all the bones according to the skeleton
         GLint boneIdx = 0;
@@ -455,8 +451,24 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
             glUniformMatrix4fv(program->UniformBones(boneIdx), 1, GL_FALSE, (const GLfloat *) &finalTransform);
         }
         
-        // Pass the bone count through (well, anything more than zero means skinned
-        glUniform1i(program->UniformSkinned(), boneIdx);
+        // Pass the bone count through (well, anything more than zero means skinned)
+        glUniform1i(program->UniformSkinned(), (*renderable)->bones.size());
+        
+        // Pass the texture count through (anything more than zero means skinned)
+        glUniform1i(program->UniformTextured(), (*renderable)->material->Textures().size());
+        
+        
+        // Set the reflectivity (should pull this from the material right??)
+        glm::vec2 specular = glm::vec2(1.0, 1.0);
+        glUniform2f(glGetUniformLocation(program->GetId(), "material_reflectivity"), specular.x, specular.y);
+        
+        // Set the color
+        glm::vec3 ambient = (*renderable)->material->ColorAmbient();
+        glm::vec3 diffuse = (*renderable)->material->ColorDiffuse();
+        glUniform3f(program->UniformColorAmbient(), ambient.r, ambient.g, ambient.b);
+        glUniform3f(program->UniformColorDiffuse(), diffuse.r, diffuse.g, diffuse.b);
+        //cout << "Diffuse = " << diffuse.r << " " << diffuse.g << " " << diffuse.b << endl;
+        //cout << "Ambient = " << ambient.r << " " << ambient.g << " " << ambient.b << endl;
         
         // Finally, we can draw the god damn mesh
         glDrawElements(GL_TRIANGLES, (GLsizei) (*renderable)->meshpart->indices.size(), GL_UNSIGNED_SHORT, NULL);
