@@ -93,9 +93,6 @@ private:
     
     // Root node of the model
     Node                                *skeleton;
-
-	// flattened node list of the model
-	std::map<std::string,Node *>		 nodes;
     
     // The mesh part renderers
     std::vector<MeshPartRenderData *>    renderables;
@@ -108,6 +105,8 @@ private:
     
     // Previous shader used to render (do we need to update vao)
     MaterialProgram                     *previousProgram;
+    
+    // Flag indicating if the model data has been uploaded to the gpu
     bool                                 uploaded;
     
     // Helper function to load animations
@@ -151,9 +150,6 @@ public:
     
     // Accessor method for the skeleton
     const Node* Skeleton() const;
-
-	// Accessor method for fast node lookup list
-	Node * FastNodeLookup(const string & node);
     
     // Accessor method for the animations
     const std::map<std::string, Animation *>& Animations() const;

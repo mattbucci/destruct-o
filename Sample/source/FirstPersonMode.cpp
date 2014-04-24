@@ -85,7 +85,7 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 		return;
 
 	//Desktop method of calculating move vector
-	moveVector = vec2(0, 0);
+	moveVector = vec2(0.0f, 0.0f);
 
 	if (pressedKeys.find('w') != pressedKeys.end())
 		moveVector.x = 1.0f;
@@ -98,13 +98,14 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 		moveVector.y = -1.0f;
     
     // Normalize the movement vector (uncomment for a huge cluster fuck)
-    //moveVector = glm::normalize(moveVector);
+    if(moveVector.x > 0 || moveVector.y > 0)
+    {
+        moveVector = glm::normalize(moveVector);
+    }
     
     // Multiple the movement vector by the movement speed
     moveVector *= movement_speed;
     
-	
-
 	static bool firedOnce = false;
 
 	// Did the user request jump?
