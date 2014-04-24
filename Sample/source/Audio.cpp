@@ -68,3 +68,7 @@ void AudioPlayer::DemoInit(Demo* demo) {
         EffectPlayer.PlayEffect(test);
     });
 }
+
+void AudioPlayer::Update(){
+    MusicPlayer.Update();
+}

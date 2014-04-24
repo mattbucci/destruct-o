@@ -126,6 +126,10 @@ public:
 	// Get HUD
 	HUD* GetHUD();
 
+    GameEvent<void(BaseFrame*)> GameStarted;
+    GameEvent<void(BaseFrame*)> GamePaused;
+    GameEvent<void(BaseFrame*)> GameLoaded;
+    
 	//Define how the base frame saves
 	CLASS_DECLARATION(BaseFrame)
 		INHERITS_FROM(GameSystem)

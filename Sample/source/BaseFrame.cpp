@@ -118,6 +118,9 @@ bool BaseFrame::Load(string saveFile) {
     // Build player stuff
     Actors.Player()->Build();
 	return true;
+    GameLoaded.Fire([this](function<void(BaseFrame*)> subscriber) {
+        subscriber(this);
+    });
 }
 
 void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
@@ -169,6 +172,9 @@ void BaseFrame::Build()
 	audio->PlayerInit(Actors.Player());
     audio->DemoInit(demo);
     Actors.Player()->Build();
+    GameStarted.Fire([this](function<void(BaseFrame*)> subscriber) {
+        subscriber(this);
+    });
 }
 
 bool BaseFrame::Update(vector<InputEvent> inputEvents) {
@@ -195,6 +201,8 @@ bool BaseFrame::Update(vector<InputEvent> inputEvents) {
 
 	demo->OnInput(inputEvents,Actors.Player()->GetPosition(),FirstPerson->GetLookVector());
 	demo->Update();
+    
+    audio->Update();
 
 	//Update physics/Particles
 	Physics.Update();
