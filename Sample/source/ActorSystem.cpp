@@ -54,7 +54,6 @@ void ActorSystem::Update() {
 	//Update all the actors
 	Actor * previous = NULL;
 	for (auto it = allActors.begin(); it != allActors.end(); ) {
-		//_ASSERTE((unsigned int)*it != 0xFEEEFEEE);
 		previous = *it;
 		if ((*it)->Update()) {
 			//Unregister physics actors
