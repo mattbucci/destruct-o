@@ -53,7 +53,6 @@ protected:
 	//If the gun has two dangerous ends
 	vec3 muzzlePositionB;
 
-
 	//Retrieve the muzzle position after a draw calculate
 	//and save in muzzlePositionA
 	//and in muzzlePositionB if appropriate
@@ -103,6 +102,12 @@ protected:
 
 	//How many radians per second this actor can rotate
 	virtual float turnSpeed() = 0;
+
+	//The altitude to hover at normally
+	virtual float flyHeight();
+
+	//The fastest this aircraft can correct its altitude
+	virtual float altitudeChangeRate();
 
 	//Overrode to prevent immediate death
 	virtual void onDeath() override;

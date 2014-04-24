@@ -138,6 +138,18 @@ bool ActorAI::Update() {
 		targetEnemy = NULL;
 
 	bool pullingTrigger = false;
+	//If you fly, try to maintain correct attitude, unless you're dying
+	if (flying && (state != AI_DYING) && (state != AI_ROTTING)) {
+		float correction = (Game()->Voxels.GetPositionHeight(vec2(Position))+flyHeight()) - Position.z;
+		//Convert error to velocity
+		correction *= .5f;
+		//limit to max correction rates
+		correction = max(correction,-altitudeChangeRate());
+		correction = min(correction,altitudeChangeRate());
+		//Correct directly without fooling with velocity
+		//there is probably a better way
+		Position.z += correction * SIMULATION_DELTA;
+	}
 
 	//AI is a state machine
 	switch (state) {
@@ -357,7 +369,15 @@ void ActorAI::PathingReady(vector<vec2> path) {
 }
 
 
+//The altitude to hover at normally
+float ActorAI::flyHeight() {
+	return 40;
+}
 
+//The fastest this aircraft can correct its altitude
+float ActorAI::altitudeChangeRate() {
+	return 5;
+}
 
 //Change the allegiance of this AI
 void ActorAI::SetFaction(FactionId newFaction) {

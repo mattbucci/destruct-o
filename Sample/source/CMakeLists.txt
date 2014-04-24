@@ -179,6 +179,9 @@ source_group(OpenGL FILES ${GLFiles})
 FILE(GLOB ActorFiles "Actor*")
 source_group(Actors FILES ${ActorFiles})
 
+FILE(GLOB AidsFiles "AidsAction*")
+source_group(AIDS FILES ${AidsFiles})
+
 #audio
 FILE(GLOB AudioFiles "Audio*" "Music.h" "Music.cpp" "Effect.h" "Effect.cpp")
 source_group(Audio FILES ${AudioFiles})

@@ -5,6 +5,7 @@
 
 //All AI actions
 #include "AidsActionDeploySoldier.h"
+#include "AidsActionDeployMosquito.h"
 
 //500 is 5 seconds
 //this depends on SIMULATION_DELTA
@@ -25,7 +26,8 @@ ActorAids::ActorAids() :
 	spawnedNasties = false;
 
 	//Register possible actions
-	actionList[AidsActionDeploySoldier::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeploySoldier(pos);};
+	//actionList[AidsActionDeploySoldier::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeploySoldier(pos);};
+	actionList[AidsActionDeployMosquito::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeployMosquito(pos);};
 
 	//Random offset for the intensity
 	intensityCalculationOffset = Utilities::random(-10,10);
@@ -36,6 +38,9 @@ ActorAids::ActorAids() :
 
 //All of the devious logic goes here
 bool ActorAids::Update() {
+	//REMOVE ME
+	if (spawnedNasties)
+		return Actor::Update();
 
 	//Calculate the target intensity using magic
 	//Use game time as a modifier
@@ -91,6 +96,7 @@ bool ActorAids::Update() {
 	//always find the closest point to the player
 	//should do something smarter than this
 	actions.push_back(randomAction->second(Game()->Actors.Player()->GetPosition()));
+	spawnedNasties = true;
 
 	//Update the underlying actor
 	return Actor::Update();

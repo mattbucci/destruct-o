@@ -18,6 +18,7 @@ PhysicsActor::PhysicsActor(vec3 size, float maxLife, FactionId faction) :
 	life = maxLife;
 	vulnerable = true;
 	faction = GameFactions::FACTION_HOSTILE;
+	flying = false;
 }
 PhysicsActor::~PhysicsActor() {
 	
