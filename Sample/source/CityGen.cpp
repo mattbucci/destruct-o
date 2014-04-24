@@ -3,51 +3,17 @@
 #include "Structure.h"
 #include "Rect.h"
 #include "Utilities.h"
+#include "SavableCityData.h"
+
+#include "BaseFrame.h"
+#include "ActorSystem.h"
+#include "ActorAids.h"
 //the size of each city
 const int citysize = 150;
 
 //the space between each city
 const int cityspacing = 250;
 
-
-//For comparing
-//vec2
-class comparableVec2 {
-public:
-	comparableVec2() {
-		x=y=0;
-	}
-	comparableVec2(vec2 original) {
-		x = original.x;
-		y = original.y;
-	}
-	comparableVec2(const comparableVec2 & b) {
-		x = b.x;
-		y = b.y;
-	}
-
-	comparableVec2 & operator=(const comparableVec2 & b) {
-		x = b.x;
-		y = b.y;
-		return *this;
-	}
-
-	bool operator<(const comparableVec2 & b) const {
-		if (x < b.x)
-			return true;
-		if (x > b.x)
-			return false;
-		
-		return (y < b.y);
-	}
-
-	bool operator==(const comparableVec2 & b) const {
-		return (x == b.x) && (y == b.y);
-	}
-
-	float x;
-	float y;
-};
 
 
 int CityGen::BufferIndex(GameTile* tile,int x, int y) {
@@ -109,16 +75,46 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 	
 	TileCell * cells = tile->Cells;
 
+	vec3 tileOffset = vec3(tile->tile_x,tile->tile_y,0) * vec3(TILE_SIZE,TILE_SIZE,1.0);
+
+	//Warning HACK
+	//create savable city data here
+	SavableCityData * cityData = new SavableCityData();
+	cityData->cityPosition = pos+tileOffset;
+	cityData->ownedByPlayer = false;
+
+	float originalCityHeight = cells[int((pos.y)*TILE_SIZE + pos.x)].height;
+
 	//Generate lines
 	//set<vec2> usedSpace;
 	static const int lineCount = 30;
+	static const int turretSkip = 6;
 	static const int samples = 200;
 	static const float anglePart = M_PI*2.0f/(float)lineCount;
-	for (int i = 0; i < lineCount; i++) {
-		vec2 lineDirection = glm::normalize(vec2(cos(anglePart*i),sin(anglePart*i)));
+	for (int p = 0; p < lineCount; p++) {
+		vec2 lineDirection = glm::normalize(vec2(cos(anglePart*p),sin(anglePart*p)));
 		float lineLength = citysize*1.5;
 		float lineSection = lineLength/samples;
 
+
+		if ((p % turretSkip) == 0) {
+			//Place turret
+			vec2 spos = glm::floor(lineDirection*(-lineLength/2.0f+samples/4*lineSection)) + vec2(pos);
+
+			//raise the height around the turrent
+			float newHeight = originalCityHeight +10.0f;
+			for (int x = -1; x <= 0; x++) {
+				for (int y = -1; y <= 0; y++) {
+					vec2 absPos = spos+vec2(x,y);
+					TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
+					cell.height = newHeight;
+				}
+			}
+
+
+			cityData->gunAlive.push_back(true);
+			cityData->gunPositions.push_back(tileOffset+vec3(spos,newHeight));
+		}
 
 		//Generate the line by sampling along it
 		
@@ -165,6 +161,12 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 			//The tower is made of tough stuff
 			cell.cellHealth = 50;
 			cell.cellMaxHealth = 50;
+			//Register the center
+			if (ring == 0) {
+				cityData->cityCenterVoxel = spos+vec2(tileOffset);
+				cityData->originalCityCenterVoxel = cell.height;
+			}
+				
 		} 
 	}
 
@@ -176,6 +178,9 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 			cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 2;
 		}
 	}
+
+	//Super hack, transfer city data to ai
+	Game()->Actors.Aids()->RegisterNewCity(cityData);
 
 }
 

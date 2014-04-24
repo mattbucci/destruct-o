@@ -111,6 +111,10 @@ bool ActorAI::checkEnemyValid() {
 		}
 	}
 
+	//Check if you're not too far away
+	if (glm::distance(targetEnemy->GetPosition(),Position) > sightDistance()*1.5f)
+		return false;
+
 	return true;
 }
 
@@ -222,16 +226,16 @@ void ActorAI::stateWaitingForPath(bool & holdingTrigger) {
 
 void ActorAI::stateScanning(bool & holdingTrigger) {
 	setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
-	if (baseMovementSpeed() < 0) {
-		//Turret
-		//not implemented yet
+
+	//Not a turret find the closest enemy and try to walk to them
+	targetEnemy = Actors().GetClosestEnemy(Position,faction);
+	//Check if there is anything to do
+	if (targetEnemy == NULL)
+		return;
+	if (baseMovementSpeed() <= 0) {
+		state = AI_TARGETING_ENEMY;
 	}
 	else {
-		//Not a turret find the closest enemy and try to walk to them
-		targetEnemy = Actors().GetClosestEnemy(Position,faction);
-		//Check if there is anything to do
-		if (targetEnemy == NULL)
-			return;
 		//Request a pathing solution to their current position
 		state = AI_WAITINGFORPATH;
 		Actors().Aids()->PathingSolutionRequest(this,vec2(enemyPosition.GetAverage()));
@@ -420,7 +424,10 @@ float ActorAI::altitudeChangeRate() {
 
 //Change the allegiance of this AI
 void ActorAI::SetFaction(FactionId newFaction) {
-	faction = newFaction;
+	if (faction != newFaction) {
+		faction = newFaction;
+		targetEnemy = NULL;
+	}
 }
 
 void ActorAI::Draw(GLEffectProgram * effectShader)  {

@@ -4,6 +4,9 @@
 #include "Actor.h"
 #include "ContiguousList.h"
 #include "MovingAverage.h"
+#include "SavableCityData.h"
+
+#include <mutex>
 
 class ActorAI;
 class AidsAction;
@@ -27,8 +30,20 @@ class ActorAids : public Actor {
 	float intensityCalculationOffset;
 	//All currently executing actions
 	ContiguousList<AidsAction*> actions;
+
+	//Populate nearby cities to the player with enemies/allies
+	void populateCities();
+
+	//List of cities
+	ContiguousList<SavableCityData*> cities;
+
+	//This is my fault this is necessary
+	//this is because RegisterNewCity is called from the tile gen thread
+	//this is terrible
+	mutex cityListMutex;
 public:
 	ActorAids();
+	~ActorAids();
 
 	//All of the devious logic goes here
 	virtual bool Update();
@@ -38,6 +53,12 @@ public:
 
 	//An actor (probably one pending destruction) can cancel all requests
 	void CancelRequests(PhysicsActor * canclingActor);
+
+	//Register a new city
+	//this is called during tile gen
+	//from the tile gen thread
+	//so city access is locked by the above mutex
+	void RegisterNewCity(SavableCityData * cityData);
 
 	CLASS_DECLARATION(ActorAI)
 		INHERITS_FROM(Actor)
