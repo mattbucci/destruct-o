@@ -62,7 +62,8 @@ void ModelInstance::Update(double delta, double now)
 /*
 * Modify the animation directly, cause we be crazy man
 */
-AnimationClip & ModelInstance::Animation() {
+AnimationClip & ModelInstance::Animation()
+{
 	return animation;
 }
 

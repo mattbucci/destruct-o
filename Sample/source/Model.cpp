@@ -171,10 +171,6 @@ void Model::loadSkeleton(const Json::Value &root)
             // Add this child to our list
             skeleton->AddChild(child, false);
         }
-
-		// Flatten the skeleton into a singular node map
-        this->nodes = std::map<std::string, Node *>();
-        skeleton->GetFlatNodeTree(this->nodes);
     }
 }
 
@@ -610,10 +606,4 @@ Model* Model::LoadFromCompressedJsonFile(const std::string &directory, const std
     
     // Return an allocated model
     return model;
-}
-
-
-Node * Model::FastNodeLookup(const string & node)
-{
-	return nodes[node];
 }

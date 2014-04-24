@@ -92,6 +92,9 @@ protected:
     /** The transitions this state uses */
     transition_vector transitions;
     
+    /** is this a one shot or repetitive action */
+    bool loop;
+    
 public:
     /**
      * Standard constructor.  Create an empty anmation state

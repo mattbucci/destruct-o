@@ -39,7 +39,7 @@ const static std::string ComparisonFunctionKeys[] =
  * @param layer The animation layer this state will reside on
  */
 AnimationState::AnimationState(AnimationLayer *_layer)
-    : layer(_layer), name(""), source(new AnimationSource()), transitions(transition_vector())
+    : layer(_layer), name(""), source(new AnimationSource()), transitions(transition_vector()), loop(true)
 {
     
 }
@@ -51,7 +51,7 @@ AnimationState::AnimationState(AnimationLayer *_layer)
  * @param layer The animation layer this state will reside on
  */
 AnimationState::AnimationState(const AnimationState& state, AnimationLayer *_layer)
-    : layer(_layer), name(state.name), source(NULL), transitions(state.transitions)
+    : layer(_layer), name(state.name), source(NULL), transitions(state.transitions), loop(state.loop)
 {
     // Duplicate the animation source
     AnimationClip *animation = dynamic_cast<AnimationClip *>(state.source);
@@ -74,7 +74,7 @@ AnimationState::AnimationState(const AnimationState& state, AnimationLayer *_lay
  * @param layer The animation layer this state will reside on
  */
 AnimationState::AnimationState(const Json::Value& value, AnimationLayer *_layer)
-    : layer(_layer), name(""), source(new AnimationSource()), transitions(transition_vector())
+    : layer(_layer), name(""), source(new AnimationSource()), transitions(transition_vector()), loop(true)
 {
     // We first need to validate that this a Json object
     if(!value.isObject())
@@ -121,6 +121,10 @@ AnimationState::AnimationState(const Json::Value& value, AnimationLayer *_layer)
             {
                 // Create a new AnimationClip based on the input animation
                 source = new AnimationClip(animationIt->second);
+                
+                // Get whether or not this animation is to loop
+                Json::Value defaultValue = true;
+                loop = animationSource.get("loop", defaultValue).asBool();
             }
             
             // Otherwise throw an exception
@@ -252,10 +256,10 @@ void AnimationState::WillTransition(double now)
     AnimationClip *animation = dynamic_cast<AnimationClip *>(source);
     
     // If we are an animation clip
-    if(animation)
+    if(animation && !animation->IsPlaying())
     {
         // Cause the animation to begin playing (also resets the pose)
-        animation->Play(true, now);
+        animation->Play(loop, now);
         
         // Get out
         return;
