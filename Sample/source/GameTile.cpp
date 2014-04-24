@@ -204,6 +204,7 @@ void GameTile::Crater(IntRect craterRegion, int craterBottomZ, float damageDone,
 	_ASSERTE((craterRegion.StartX <= craterRegion.EndX) && (craterRegion.StartY <= craterRegion.EndY));
 	_ASSERTE(craterBottomZ > 0);
 
+	int cellsRemoved = 0;
 
 	for (int x = craterRegion.StartX; x <= craterRegion.EndX; x++) {
 		for (int y = craterRegion.StartY; y <= craterRegion.EndY; y++) {
@@ -230,6 +231,7 @@ void GameTile::Crater(IntRect craterRegion, int craterBottomZ, float damageDone,
 			//Keep track of all removed voxels
 			while (heightDiff >= 0) {
 				removedVoxels.push_back(vec4(x+(tile_x*TILE_SIZE),y+(tile_y*TILE_SIZE),height,cell.materialId));
+				cellsRemoved++;
 				heightDiff--;
 				height--;
 			}
@@ -240,6 +242,11 @@ void GameTile::Crater(IntRect craterRegion, int craterBottomZ, float damageDone,
 			Cells[y*TILE_SIZE+x].height = craterBottomZ-1;
 		}
 	}
+
+	//Update nothing if no cells changed
+	if (cellsRemoved <= 0)
+		return;
+
 	//Alter the values to be large enough for stack calculation
 	craterRegion.StartX-=2;
 	craterRegion.StartY-=2;
@@ -325,45 +332,6 @@ void GameTile::Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShade
 			voxelCount += chunk->VoxelCount;
 		}
 	}
-
-	voxelShader->UseProgram();
-	voxelShader->Model.PushMatrix();
-	voxelShader->Model.Translate(vec3(tile_x * TILE_SIZE, tile_y * TILE_SIZE, 0));
-	//Next check for any structures on this tile which intersect the view rectangle
-	for (auto structure : Structures) {
-		int structx = (int)structure.Position.x;
-		int structy = (int)structure.Position.y;
-		int structex = structx + (int)structure.Extents.x;
-		int structey = structy + (int)structure.Extents.y;
-		//Now see if the struct rectangle intersects the draw rectangle
-
-		if (((drawRegion.StartX < structx) &&
-			(drawRegion.EndX > structex))	 &&
-			((drawRegion.StartY < structy) &&
-			(drawRegion.EndY > structey))) {
-				//Time to draw the structure
-				//Push the structure's position
-				if (structure.Cells.size() > 0){
-					voxelShader->Model.PushMatrix();
-					voxelShader->Model.Translate(structure.Position);
-					voxelShader->Model.Apply();
-					//Track voxels drawn for debug
-					//Todo: fix broken voxel count
-					//voxelCount += structure.Cells.size();
-					//Start the draw cycle
-					cellDrawSystem->startDraw(voxelShader);
-					StructureCell * celliterator = &structure.Cells.front();
-					unsigned int endCount = structure.Cells.size();
-					//Push all the cells
-					for (unsigned int i = 0; i < endCount; i++, celliterator++)
-						cellDrawSystem->pushVoxel(voxelShader, celliterator->pos, celliterator->material);
-					//Finish drawing and remove the structure matrix
-					cellDrawSystem->finishDraw(voxelShader);
-					voxelShader->Model.PopMatrix();
-				}
-		}
-	}	
-	voxelShader->Model.PopMatrix();
 	//Undo tile translation
 	terrainShader->Model.PopMatrix();
 }
