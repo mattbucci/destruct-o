@@ -139,7 +139,7 @@ void BaseFrame::OnFrameFocus() {
 	FirstPerson->Enable(true);
 
 	//Physics.BuildVoxel(vec3(40,42,80));
-	/*
+	
 	
 	//The physics demo
 	//we won't have this forever
@@ -150,7 +150,7 @@ void BaseFrame::OnFrameFocus() {
 #endif
 
 	demo->DoInitialSave();
-	*/
+	
 }
 
 void BaseFrame::Build()
@@ -167,7 +167,7 @@ void BaseFrame::Build()
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);
 	audio->PlayerInit(Actors.Player());
-    //audio->DemoInit(demo);
+    audio->DemoInit(demo);
     Actors.Player()->Build();
 }
 
@@ -193,8 +193,8 @@ bool BaseFrame::Update(vector<InputEvent> inputEvents) {
 	//Update actors
 	Actors.Update();
 
-	//demo->OnInput(inputEvents,Actors.Player()->GetPosition(),FirstPerson->GetLookVector());
-	//demo->Update();
+	demo->OnInput(inputEvents,Actors.Player()->GetPosition(),FirstPerson->GetLookVector());
+	demo->Update();
 
 	//Update physics/Particles
 	Physics.Update();
@@ -203,7 +203,7 @@ bool BaseFrame::Update(vector<InputEvent> inputEvents) {
 		//testSystem->UpdateEmitter(now);
 
 	//Update demo
-	//demo->CheckTouchInput(Actors.Player()->GetPosition(),FirstPerson->GetLookVector());
+	demo->CheckTouchInput(Actors.Player()->GetPosition(),FirstPerson->GetLookVector());
 	return true;
 }
 
@@ -266,8 +266,8 @@ void BaseFrame::Draw(double width, double height)
 	//so it must always immediately follow Voxels.draw()
 	Physics.Draw(shaders);
     
-    // Setup the mesh shader
-    MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model_skinned");
+    // Setup the mesh shader boneless
+    MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
     modelShader->UseProgram();
     
     // Draw the meshes
@@ -277,6 +277,10 @@ void BaseFrame::Draw(double width, double height)
         (*it)->Draw(modelShader);
     }
 
+    // Setup the mesh shader boneless
+    modelShader = (MaterialProgram *) shaders->GetShader("model_skinned");
+    modelShader->UseProgram();
+    
 	Actors.Draw(shaders);
 
     // Herp a derp

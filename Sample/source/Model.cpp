@@ -250,6 +250,9 @@ void Model::loadPartsNodeSearch(const Json::Value &node)
                 }
             }
             
+            // Store the node this is attached to
+            renderable->id = id;
+            
             // Store this renderable data in our renderable list
             renderables.push_back(renderable);
         }
@@ -351,16 +354,20 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         return;
     }
     
-    // Calculate the global inverse transform of the mesh (for internal scaling purposes)
-    glm::mat4 globalInverseTransform = glm::inverse(_skeleton.LocalTransform().TransformMatrix());
-    
-    // Offset the render by the global inverse transform
-    program->Model.Combine(_skeleton.LocalTransform().TransformMatrix());
-    program->Model.Apply();
-    
     // Iterate through all the renderables
     for(std::vector<Model::MeshPartRenderData *>::iterator renderable = renderables.begin(); renderable != renderables.end(); renderable++)
     {
+        // Find the node this thing is attached to
+        const Node *node = _skeleton.FindNode((*renderable)->id);
+        
+        // Calculate the global inverse transform of the mesh (for internal scaling purposes)
+        glm::mat4 globalInverseTransform = glm::inverse(node->TransformMatrix());
+        
+        // Offset the render by the global inverse transform
+        program->Model.PushMatrix();
+        program->Model.Combine(node->TransformMatrix());
+        program->Model.Apply();
+        
         // Bind the vertex array object
         glBindVertexArray((*renderable)->attributes);
         
@@ -450,6 +457,9 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         
         // Finally, we can draw the god damn mesh
         glDrawElements(GL_TRIANGLES, (GLsizei) (*renderable)->meshpart->indices.size(), GL_UNSIGNED_SHORT, NULL);
+        
+        // Pop the matrix
+        program->Model.PopMatrix();
     }
     
     // Store the previous program

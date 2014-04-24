@@ -258,6 +258,12 @@ void FirstPersonModeMobile::ReadInput(const set<Sint64> & pressedKeys, vector<In
 	lookVector.y = sin(t)*sin(f);
 	lookVector.z = cos(t);
 	lookVector = glm::normalize(lookVector); //IIRC this isn't necessary
+    
+    // If the move vector is non zero, normalize
+    if(moveVector.x > 0 || moveVector.y > 0)
+    {
+        moveVector = glm::normalize(moveVector);
+    }
 }
 
 // Override standard drawing function

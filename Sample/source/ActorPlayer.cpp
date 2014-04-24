@@ -56,7 +56,6 @@ void ActorPlayer::setWeapon(Weapon * weapon) {
     setModel(weapon->LookupAnimation(Weapon::ANIMATION_MODELNAME));
     model->GetTransform().Rotation() = glm::quat(vec3(0.5 * M_PI, 0.0, 0.0));
     model->GetTransform().Translation() = glm::vec3(0, -0.3, -1.95);
-    setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
     model->Controller()->SetFloat("speed", 0.0f);
     
     //Save weapon
@@ -111,8 +110,7 @@ bool ActorPlayer::Update() {
         }
     }
 
-
-
+    // Calculate the direction we are facing
 	facingDirection = atan2(moveVector.y,moveVector.x);
 	
     if(deltaPosition>200 && OnGround()) {

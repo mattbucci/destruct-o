@@ -329,19 +329,8 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
 			}
             else if (eve.Key == '0')
             {
-                // Pick a random model from the model group
-                ModelGroup::const_iterator model = game->Models()->begin();
-                std::advance(model, rand() % game->Models()->size());
-                
                 // Create a model instance from this model
-                ModelInstance *instance = game->Models()->NewInstance(model->first);
-                
-                // Get a random animation
-                Model::animation_const_iterator anim = instance->GetModel()->Animations().begin();
-                std::advance(anim, (rand() % instance->GetModel()->Animations().size()));
-                instance->PlayAnimation(anim->first);
-
-				//anim->second->Length()
+                ModelInstance *instance = game->Models()->NewInstance("turret1");
                 
                 // Set the location of this instance
                 instance->GetTransform().Translation() = playerPos + playerFacing * 5.0f;
@@ -351,6 +340,7 @@ void Demo::OnInput(vector<InputEvent> events, vec3 playerPos, vec3 playerFacing)
                 
                 // Store this instance for rendering
                 game->modelInstances.push_back(instance);
+                
             } else if (eve.Key == '\\') {
 				vec3 hit, norm;
 				if(Universal::Trace(playerPos + vec3(0, 0, 2.5), playerFacing, &hit)) {

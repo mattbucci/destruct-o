@@ -62,6 +62,9 @@ private:
     // Class which handles rendering mesh components
     struct MeshPartRenderData
     {
+        // Node this bone is attached to
+        std::string          id;
+        
         // Mesh part we are rendering
         Mesh::Part          *meshpart;
         
