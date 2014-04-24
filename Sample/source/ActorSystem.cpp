@@ -116,6 +116,9 @@ void ActorSystem::Draw(ShaderGroup * shaders) {
 	for (unsigned int i = 0; i < allActors.size(); i++) 
 		allActors[i]->Draw(modelShader);
 
+	//Reset texture unit 0 to the active texture unit
+	glActiveTexture(GL_TEXTURE0);
+
 	//setup the effect shader
 	GLEffectProgram * effectShader = (GLEffectProgram*) shaders->GetShader("effects");
 	effectShader->UseProgram();

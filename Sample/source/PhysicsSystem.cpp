@@ -39,7 +39,8 @@ PhysicsSystem::~PhysicsSystem() {
 void PhysicsSystem::updatePhysicsActors() {
 	//Update all the physics voxels
 	for (auto actor : actors) {
-		actor->acceleration += vec3(0,0,-10);
+		if (!actor->flying)
+			actor->acceleration += vec3(0,0,-10);
 	
 		vec3 actorPosition = actor->position;
 		vec3 halfActorSize = actor->size*.5f;

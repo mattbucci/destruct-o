@@ -34,6 +34,9 @@ protected:
 	vec3 & Position;
 	vec3 & Acceleration;
 	const vec3 & Size;
+	//Whether or not this actor flies
+	//(doesn't experience gravity)
+	bool flying;
 	//Status checkups
 	bool OnGround();
 	//if you've taken any damage in the last 4 seconds this is true
