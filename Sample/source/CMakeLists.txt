@@ -28,6 +28,7 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     include_directories("../includes/glew")
     include_directories("../includes/glm-0.9.4.4")
     include_directories("../includes/libnoise")
+    include_directories("../includes/curl/windows")
 
     # Windows Libraries
     target_link_libraries(VoxEngine "../libs/windows/glew/glew32")
@@ -36,6 +37,12 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_link_libraries(VoxEngine "../libs/windows/SDL2_mixer-2.0.0/SDL2_mixer")
     target_link_libraries(VoxEngine "../libs/windows/libnoise/libnoise")
     target_link_libraries(VoxEngine "opengl32.lib")
+    
+    # Windows cURL things.  Are these correct
+    target_link_libraries(VoxEngine "../libs/windows/curl/libcurl_imp")
+    target_link_libraries(VoxEngine "../libs/windows/curl/libeay32")
+    target_link_libraries(VoxEngine "../libs/windows/curl/openldap")
+    target_link_libraries(VoxEngine "../libs/windows/curl/ssleay32")
 	
 	#enable Multiprocessor build
 	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /MP" )
