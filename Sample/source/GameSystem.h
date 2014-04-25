@@ -17,6 +17,7 @@ protected:
 	FPSCounter fpsCount;
 	set<Sint64> currentlyPressedKeys;
 	ShaderGroup * shaders;
+	bool isReady;
 
 	//Handle key events, recording held keys and sending events to dialogs
 	virtual void passEventsToControl(vector<InputEvent> & inputEvents);
@@ -38,17 +39,13 @@ public:
 	//Texture cache system
 	TextureCache Textures;
 
-	//This is called right after all frames are constructed
-	//but before any frames start running
-	//it runs from a separate thread so do NOT do any opengl calls!
-	//should be used for all heavy performance intensive loading
-	//it is only called once
-	virtual void Build();
-
 	//When this frame starts running this will be called
 	virtual void OnFrameFocus();
 	//When this frame stops running this will be called
 	virtual void OnFrameLeave();
+
+	//Set width and height of Frame
+	virtual GL2DProgram * SetWidthHeight(float width, float height);
 
 	//Get simulation time
 	//relative to this frame
@@ -60,6 +57,8 @@ public:
 	virtual bool Update(vector<InputEvent> inputEvents);
 	//Draw happens whenever possible
 	virtual void Draw(double width, double height);
+	//Function to test if GameSystem is Ready
+	virtual bool IsReady();
 
 	//Save time
 	CLASS_DECLARATION(GameSystem)

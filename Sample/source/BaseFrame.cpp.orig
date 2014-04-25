@@ -258,9 +258,20 @@ void BaseFrame::Draw(double width, double height)
     // Setup the mesh shader boneless
     MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
     modelShader->UseProgram();
+<<<<<<< HEAD
     modelShader->Lights.Enable(1);
     modelShader->Lights.Apply();
     
+    // Draw the meshes
+    for(std::vector<ModelInstance *>::iterator it = modelInstances.begin(); it != modelInstances.end(); ++it)
+    {
+        // Draw the model instance
+        (*it)->Draw(modelShader);
+    }
+    
+=======
+
+>>>>>>> ec40a9afa10633e225326e804acf81fb76a99aee
     // Draw the actors
 	Actors.Draw(shaders);
 

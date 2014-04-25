@@ -23,6 +23,10 @@ class ActorSystem : public Savable {
 	ContiguousList<Actor*> deadActors2;
 	//Newly born actors waiting to be added to the actor list
 	ContiguousList<Actor*> newlyBornActors;
+
+	//Clean an actor list without touching the important actors
+	void cleanList(ContiguousList<Actor*> & actorList);
+
 	//Flip these back and forth like double buffers
 	bool useDeadActors1;
 

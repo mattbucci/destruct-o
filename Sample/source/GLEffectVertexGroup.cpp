@@ -2,6 +2,7 @@
 #include "GLEffectVertexGroup.h"
 #include "GLModel.h"
 #include "GLEffectProgram.h"
+#include "VoxEngine.h"
 
 //Build the arrays to create the vertex group
 GLEffectVertexGroup::GLEffectVertexGroup(GLenum gltype, int vertexCount) {
@@ -17,15 +18,18 @@ GLEffectVertexGroup::GLEffectVertexGroup(GLenum gltype, int vertexCount) {
 
 	sizeChanged = true;
 
-	//Generate the opengl buffers representing this vertex group
-	//will also need a buffer for textures in the future
-	glGenBuffers(1,&vertexBuffer);
-	glGenVertexArrays(1,&vertexArray);
+	//Protect against running on the wrong thread
+	VoxEngine::SynchronousTask.RequestTask([this,vertexCount]() {
+		//Generate the opengl buffers representing this vertex group
+		//will also need a buffer for textures in the future
+		glGenBuffers(1,&vertexBuffer);
+		glGenVertexArrays(1,&vertexArray);
 
-	//Buffer junk data (doesn't matter if data is uninitialized)
-	//This allows the allocation to happen once
-	glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
-	glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(EffectVertex), vertices, GL_DYNAMIC_DRAW );
+		//Buffer junk data (doesn't matter if data is uninitialized)
+		//This allows the allocation to happen once
+		glBindBuffer ( GL_ARRAY_BUFFER, vertexBuffer );
+		glBufferData ( GL_ARRAY_BUFFER, vertexCount*sizeof(EffectVertex), vertices, GL_DYNAMIC_DRAW );
+	});
 }
 
 void GLEffectVertexGroup::ResizeVertexGroup(int newSize) {
@@ -37,8 +41,11 @@ void GLEffectVertexGroup::ResizeVertexGroup(int newSize) {
 }
 
 GLEffectVertexGroup::~GLEffectVertexGroup() {
-	glDeleteBuffers(1,&vertexBuffer);
-	glDeleteVertexArrays(1,&vertexArray);
+	//Protect against running on the wrong thread
+	VoxEngine::SynchronousTask.RequestTask([this]() {
+		glDeleteBuffers(1,&vertexBuffer);
+		glDeleteVertexArrays(1,&vertexArray);
+	});
 
 	delete [] vertices;
 }

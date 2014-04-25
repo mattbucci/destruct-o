@@ -2,47 +2,56 @@
 #include "MenuFrame.h"
 #include "GL2DProgram.h"
 #include "GL3DProgram.h"
-
-#include "Window.h"
-#include "Button.h"
-#include "Listbox.h"
-
+#include "Frames.h"
+#include "BaseFrame.h"
 #include "OS.h"
 
 
 MenuFrame::MenuFrame(ShaderGroup * shaders)
-: GameSystem(shaders)
+: GameSystem(shaders),
+  logo(Rect(0, 0, 648, 150), "menu/logo.png", vec4(1,1,1,1)),
+  background(Rect(0, 0, 800, 600),"menu/background.png", vec4(1,1,1,1))
 {
+	buttonWindow.hPin = Control::CENTER;
+	buttonWindow.vPin = Control::MAX;
+	buttonWindow.position = Rect(0, -50, 400, 300);
+	Controls.AddWindow(&buttonWindow);
 
-	//testSystem = NULL;
-	Window * window = new Window(Rect(0, 0, 200, 400), "On Bottom");
-	window->hPin = Control::CENTER;
-	window->vPin = Control::MAX;
-	window->SetVisible(false);
-	Controls.AddWindow(window);
-	//Give it a list box with a bunch of random crap
-	vector<string> randomCrap;
-	randomCrap.push_back("Monkey");
-	randomCrap.push_back("Walrus");
-	randomCrap.push_back("Cheeto");
-	randomCrap.push_back("Spaghetii");
-	randomCrap.push_back("Canada");
-	randomCrap.push_back("Banana");
-	randomCrap.push_back("One");
-	randomCrap.push_back("Seventeen");
-	randomCrap.push_back("Lamp");
-	randomCrap.push_back("Voxel");
-	randomCrap.push_back("Game");
-	randomCrap.push_back("Walrus");
-	randomCrap.push_back("Still Walrus");
-	randomCrap.push_back("Cloud");
-	Listbox * list = new Listbox();
-	list->position = Rect(0, 0, 180, 150);
-	list->hPin = list->vPin = Control::CENTER;
-	list->SetEntries(randomCrap);
-	//When the user selects something, change the title to the 
-	//selected item
-	window->AddControl(list);
+	playButton.hPin = Control::CENTER;
+	playButton.vPin = Control::MIN;
+	playButton.position = Rect(0, 10 + 96.66f*0, 380, 86.66f);
+	playButton.SetText("Play");
+	buttonWindow.AddControl(&playButton);
+
+	loadButton.hPin = Control::CENTER;
+	loadButton.vPin = Control::MIN;
+	loadButton.position = Rect(0, 10 + 96.66f*1, 380, 86.66f);
+	loadButton.SetText("Load");
+	buttonWindow.AddControl(&loadButton);
+
+	optionsButton.hPin = Control::CENTER;
+	optionsButton.vPin = Control::MIN;
+	optionsButton.position = Rect(0, 10 + 96.66f*2, 380, 86.66f);
+	optionsButton.SetText("Options");
+	buttonWindow.AddControl(&optionsButton);
+
+	//Subscribe Main Menu Buttons to Actions
+	Subscribe<void(Button*)>(&playButton.EventClicked, [this](Button * b) {
+		//Tell the engine to load a new game
+		VoxEngine::SetAsyncTask(new AsyncTask([]() {Game()->NewWorld();}));
+		Frames::SetSystem(Frames::FRAME_GAME);
+	});
+
+	Subscribe<void(Button*)>(&loadButton.EventClicked, [this](Button * b) {
+		//Tell the engine to load the only save
+		//if the only save doesn't exist, something terrible happens
+		VoxEngine::SetAsyncTask(new AsyncTask([]() {Game()->Load(Game()->GetSaveLocation() + "data.json.compressed");}));
+		Frames::SetSystem(Frames::FRAME_GAME);
+		
+	});
+
+	Subscribe<void(Button*)>(&optionsButton.EventClicked, [this](Button * b) {
+	});
 }
 
 MenuFrame::~MenuFrame()
@@ -67,21 +76,26 @@ bool MenuFrame::Load(string saveFile) {
 void MenuFrame::OnFrameFocus() {
 }
 
-void MenuFrame::Build()
-{    //Build the sample dialog 
-	//Build a window that says "On Top"
 
-
-
-}
 
 bool MenuFrame::Update(vector<InputEvent> inputEvents) {
-	return true;
+	//Pass Update to GameSystem to Handle Control Input
+	return GameSystem::Update(inputEvents);
 }
 
 
 void MenuFrame::Draw(double width, double height)
 {
+	GL2DProgram * shaders2d = SetWidthHeight(width, height);
+
+	shaders2d->Model.Reset();
+	shaders2d->Model.Apply();
+	background.Draw(shaders2d);
+	shaders2d->Model.Translate(width/2.0f - 648/2.0f, 80, 0);
+	shaders2d->Model.Apply();
+	logo.Draw(shaders2d);
+	shaders2d->Model.Reset();
+	shaders2d->Model.Apply();
 
 	//Call the parent draw to draw interface
 	GameSystem::Draw(width, height);

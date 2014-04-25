@@ -8,6 +8,7 @@
 #include "OS.h"
 #include "VoxEngine.h"
 #include "LoadingScreen.h"
+#include "BaseFrame.h"
 
 SDL_Renderer* displayRenderer;
 
@@ -40,6 +41,14 @@ int VoxEngine::curHeight;
 vec2 VoxEngine::scaledSize;
 //The scaling applied to the mouse positions
 vec2 VoxEngine::scaleFactor;
+
+//An async operation to execute before the next frame
+AsyncTask * VoxEngine::task = NULL;
+
+//If you need to run a task on the main thread
+//do so from here
+SyncTask VoxEngine::SynchronousTask;
+
 
 Options VoxEngine::AccountOptions;
 
@@ -136,10 +145,6 @@ void VoxEngine::Start() {
 
 	//Attempt to enable vsync (fails on mobile)
 	SDL_GL_SetSwapInterval(1);
-	if(SDL_SetRelativeMouseMode(SDL_TRUE) < 0)
-	{
-	    cout << "No mouse relative mode" << endl;
-	}
 	
 	/* Print information about attached joysticks (actually works on iOS WOOHOO)*/
 	printf("There are %d joystick(s) attached\n", SDL_NumJoysticks());
@@ -185,34 +190,6 @@ void VoxEngine::Start() {
 	VisualInterface.init();
 	//Populate the list of game systems
 	Frames::BuildSystemList();
-	//Do game initial load
-	//at this point we're going to enter a really fast draw loop
-	//and show our please wait dialog
-	{
-		LoadingScreen load;
-		//Assume one of the frames constructed the 2d shader
-		GL2DProgram * shader = (GL2DProgram*)Frames::shaders->GetShader("2d");
-
-		glActiveTexture(GL_TEXTURE0);
-
-		while (!Frames::loadingComplete) {
-			//Run the frame draw
-			glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-			//Pump events even though we ignore them
-			SDL_PumpEvents();
-			//Check window size
-			SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
-			ResizeWindow();
-			//render the loading screen
-			glViewport(0, 0, curWidth, curHeight);
-			load.Draw(curWidth,curHeight,shader);
-			SDL_GL_SwapWindow(displayWindow);
-
-			//Sleep softly and use no cpu power
-			OS::SleepTime(.15);
-		}
-	}
-
 
 	//Start up game
 	continueGameLoop = true;
@@ -227,9 +204,48 @@ void VoxEngine::Start() {
 	gameEventDelta = globalTime-OS::Now();
 	globalTime = -SIMULATION_DELTA;
 	
+	//First task is to build the game
+	VoxEngine::task = new AsyncTask([]() {Game()->Build();});
+
 	//The game loop begins
 	while (continueGameLoop) {
+		if(VoxEngine::task != NULL) {
+			//Start the task
+			VoxEngine::task->Start();
 
+			LoadingScreen load;
+			//Assume one of the frames constructed the 2d shader
+			GL2DProgram * shader = (GL2DProgram*)Frames::shaders->GetShader("2d");
+
+			glActiveTexture(GL_TEXTURE0);
+			SynchronousTask.PollingThreadStart();
+
+			while(!VoxEngine::task->IsDone()) {
+				//Run the frame draw
+				glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+				//Pump events even though we ignore them
+				SDL_PumpEvents();
+				//Check window size
+				SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
+				ResizeWindow();
+				//render the loading screen
+				glViewport(0, 0, curWidth, curHeight);
+				load.Draw(curWidth,curHeight,shader);
+				SDL_GL_SwapWindow(displayWindow);
+
+				//If there's a sync task, execute it now
+				SynchronousTask.PollingThreadPoll();
+
+				//Sleep softly and use no cpu power
+				OS::SleepTime(.05);
+			}
+
+			SynchronousTask.PollingThreadStop();
+
+			//Cleanup the task
+			delete VoxEngine::task;
+			VoxEngine::task = NULL;
+		}
 		//Jump ahead detection, if the simulation loop
 		//is behind more than 2 seconds, assume the application
 		//was paused for some reason (break point)
@@ -459,9 +475,13 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 	return displayWindow;
 }
 
-#ifdef malloc
-#undef malloc
-#endif
-void *  __secret(size_t size) {
-	return malloc(size);
+//Run an async task before the next frame switch
+void VoxEngine::SetAsyncTask(AsyncTask * task) {
+	//If you already have a task ignore the given task
+	if (VoxEngine::task != NULL) {
+		delete task;
+		return;
+	}
+	//Otherwise set it to your new task
+	VoxEngine::task = task;
 }

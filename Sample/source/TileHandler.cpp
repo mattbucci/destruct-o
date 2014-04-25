@@ -15,6 +15,8 @@ TileHandler::~TileHandler(void)
 	genCv.notify_all();
 	handlerThread->join();
 	delete handlerThread;
+
+	worldSeed = 0;
 }
 
 TileHandler::TileHandler()  {
@@ -125,6 +127,9 @@ void TileHandler::handlerLoop() {
 GameTile * TileHandler::genRoutine(vec2 pos) {
  	bool tileOnDisk = false;
 	
+	//Reset the seed to the correct value
+	terraingenerator.setSeed(worldSeed);
+
 	{
 		//Lock the world mutex
 		lock_guard<mutex> locker(worldMtx);
@@ -196,11 +201,11 @@ void TileHandler::forceTile(vec2 pos) {
 }
 
 void TileHandler::setSeed(int seed) {
-	terraingenerator.setSeed(seed);
+	worldSeed = seed;
 }
 
 int TileHandler::getSeed() {
-	return terraingenerator.getSeed();
+	return worldSeed;
 }
 
 GameTile * TileHandler::getTile(vec2 pos) {

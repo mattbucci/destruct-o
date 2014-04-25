@@ -51,14 +51,14 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 
 	//Subscribe Main Menu Buttons to Actions
 	Subscribe<void(Button*)>(&menuSave.EventClicked, [this](Button * b) {
-		if(this->p->Save("testsavefile.json.compressed")) {
+		if(this->p->Save(Game()->GetSaveLocation() + "data.json.compressed")) {
 			cout << "Save Successful!" << endl;
 		} else {
 			cout << "Save Unsuccessful." << endl;
 		}
 	});
 	Subscribe<void(Button*)>(&menuLoad.EventClicked, [this](Button * b) {
-		if(this->p->Load("testsavefile.json.compressed")) {
+		if(this->p->Load(Game()->GetSaveLocation() + "data.json.compressed")) {
 			cout << "Load Successful!" << endl;
 		} else {
 			cout << "Load Unsuccessful." << endl;
@@ -69,7 +69,7 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 	});
 	Subscribe<void(Button*)>(&menuSaveAndQuit.EventClicked, [this](Button * b) {
 		cout << "\'Save & Quit\' Button Clicked" << endl;
-		this->p->Save("testsavefile.json.compressed");
+		this->p->Save(Game()->GetSaveLocation() + "data.json.compressed");
 		exit(0);
 	});
 	Subscribe<void(Button*)>(&menuExit.EventClicked, [this](Button * b) {

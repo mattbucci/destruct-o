@@ -28,7 +28,6 @@
 
 class ActorPlayer;
 class ParticleSystem;
-class Demo;
 
 //Retrieve base frame
 BaseFrame * Game();
@@ -36,7 +35,6 @@ BaseFrame * Game();
 class BaseFrame : public GameSystem {
 	AudioPlayer * audio;
 
-	Demo * demo;
 	DemoWindow * demoWindow;
 	Notification notification;
 	PauseWindow * pauseWindow;
@@ -89,17 +87,22 @@ public:
 	//goes here
 private:
 	Achievements achievements;
+	//This is the reset save
+	//it represents the initial state of the world when there isnt' a world
+	//its loaded to force the state to clear when making a new world
+	vector<unsigned char> resetSave;
 public:
 
-    
-    // Model instances to draw for the demo
-    std::vector<ModelInstance *> modelInstances;
+	//Randomly generate a new world
+	//Should be called async because this takes a long time
+    void NewWorld();
 
-	//for notes on Build() see GameSystem::Build()
-	void Build() override;
+	//Build() now is manually called by voxengine
+	void Build();
 
 	//Build basic entities (such as the player)
 	void OnFrameFocus() override;
+	void OnFrameLeave() override;
 
 	//Toggle Escape Menu
 	void ToggleMenu();

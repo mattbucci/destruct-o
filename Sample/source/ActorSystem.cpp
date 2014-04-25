@@ -17,17 +17,28 @@ ActorSystem::~ActorSystem() {
 	cleanActorList();
 }
 
-void ActorSystem::cleanActorList() {
+	//Clean an actor list without touching the important actors
+void ActorSystem::cleanList(ContiguousList<Actor*> & actorList) {
 	//cleanup all the actors
 	//but cleanup player and aids last
-	for (auto actor : allActors) {
+	for (auto actor : actorList) {
 		if ((actor != player) && (actor != aids))
 			delete actor;
 	}
+	actorList.clear();
+}
+
+void ActorSystem::cleanActorList() {
+	//cleanup all the actors
+	//but cleanup player and aids last
+	cleanList(newlyBornActors);
+	cleanList(deadActors1);
+	cleanList(deadActors2);
+	cleanList(allActors);
+
 	//Cleanup player and aids now
 	delete player;
 	delete aids;
-	allActors.clear();
 }
 
 void ActorSystem::Load(Json::Value & parentValue, LoadData & loadData) {

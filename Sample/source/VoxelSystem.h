@@ -33,6 +33,10 @@ public:
 	VoxelSystem();
 	~VoxelSystem();
 
+	//Build a new world
+	//from the given seed
+	void NewWorld(int seed);
+
 	//Get a Tile
 	GameTile * GetTile(vec2 pos);
 

@@ -13,7 +13,6 @@ GameSystem * CurrentSystem = NULL;
 //The integer reference
 int Frames::currentSystem;
 map<int,GameSystem*> Frames::systems;
-bool Frames::loadingComplete;
 ShaderGroup * Frames::shaders;
 
 //Build the initial system list. Should be called by main()
@@ -25,25 +24,13 @@ void Frames::BuildSystemList() {
 	cout << "Building systems list...";
 
 	//Build each frame
-	//systems[FRAME_MAINMENU] = new MenuFrame(shaders);
-	
+	systems[FRAME_MAINMENU] = new MenuFrame(shaders);
 	//Set initial frame  
 	//SetSystem(FRAME_MAINMENU);
 	systems[FRAME_GAME] = new BaseFrame(shaders);
-	SetSystem(FRAME_GAME);
-	//Start deferred loading on another thread
-	loadingComplete = false;
-	//Thread starts immediately
-	thread thr([](){
-		//Start each system
-		for (auto system : systems)
-			system.second->Build();
-		//Mark the system list as loaded
-		loadingComplete = true;
-		cout << "Finished async build.\n";
-	});
-	//Thread will automatically cleanup on end
-	thr.detach();
+	//SetSystem(FRAME_GAME);
+
+	SetSystem(FRAME_MAINMENU);
 }
 //If during the last sim frame the current system was changed
 //enact the change now
