@@ -9,7 +9,7 @@ class ActorAIBomber : public ActorAI {
 	bool runStarted;
 	vec2 runStartPosition;
 	vec2 runDirection;
-	bool runFinished;
+	int turnarounddistance;
 protected:
 	//Bombers don't find a target and then attack it
 	//they find a target and then set up a bombing run
@@ -65,6 +65,5 @@ public:
 		CLASS_MEMBER(runStarted,ReflectionData::SAVE_BOOL);
 		CLASS_MEMBER(runStartPosition,ReflectionData::SAVE_VEC2);
 		CLASS_MEMBER(runDirection,ReflectionData::SAVE_VEC2);
-		CLASS_MEMBER(runFinished,ReflectionData::SAVE_BOOL);
 	END_DECLARATION
 };
