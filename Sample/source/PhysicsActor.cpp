@@ -2,11 +2,9 @@
 #include "PhysicsActor.h"
 #include "BaseFrame.h"
 
-PhysicsActor::PhysicsActor(vec3 size, float maxLife, FactionId faction) :
-	Velocity(velocity),
-	Acceleration(acceleration),
-	Position(position),
-	Size(this->size){
+PhysicsActor::PhysicsActor(vec3 size, float maxLife, FactionId faction)
+    : Velocity(velocity), Position(position), Acceleration(acceleration), Size(this->size)
+{
 
 	//Save settings
 	this->size = size;

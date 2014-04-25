@@ -190,6 +190,10 @@ source_group(Audio FILES ${AudioFiles})
 FILE(GLOB ModelFiles "Model.*" "ModelInstance.*" "ModelGroup.*" "Animation*" "Node.*" "Transform.*" "Mesh.*" "VertexAttributes.*" "Material.*" "MaterialProgram.*")
 source_group(Models FILES ${ModelFiles})
 
+# cURL
+FILE(GLOB CurlCppFiles "Curl*")
+source_group(curlcpp FILES ${CurlCppFiles})
+
 #Dialog/Interface files
 FILE(GLOB InterfaceFiles
     Button.h

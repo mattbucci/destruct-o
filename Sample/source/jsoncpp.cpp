@@ -1821,8 +1821,8 @@ Value::Value( ValueType type )
 #if defined(JSON_HAS_INT64)
 Value::Value( UInt value )
    : type_( uintValue )
-   , comments_( 0 )
    , allocated_( 0 )
+   , comments_( 0 )
 # ifdef JSON_VALUE_USE_INTERNAL_MAP
    , itemIsUsed_( 0 )
 #endif
@@ -1832,8 +1832,8 @@ Value::Value( UInt value )
 
 Value::Value( Int value )
    : type_( intValue )
-   , comments_( 0 )
    , allocated_( 0 )
+   , comments_( 0 )
 # ifdef JSON_VALUE_USE_INTERNAL_MAP
    , itemIsUsed_( 0 )
 #endif
@@ -1846,8 +1846,8 @@ Value::Value( Int value )
 
 Value::Value( Int64 value )
    : type_( intValue )
-   , comments_( 0 )
    , allocated_( 0 )
+   , comments_( 0 )
 # ifdef JSON_VALUE_USE_INTERNAL_MAP
    , itemIsUsed_( 0 )
 #endif
@@ -1858,8 +1858,8 @@ Value::Value( Int64 value )
 
 Value::Value( UInt64 value )
    : type_( uintValue )
-   , comments_( 0 )
    , allocated_( 0 )
+   , comments_( 0 )
 # ifdef JSON_VALUE_USE_INTERNAL_MAP
    , itemIsUsed_( 0 )
 #endif
@@ -1869,8 +1869,8 @@ Value::Value( UInt64 value )
 
 Value::Value( double value )
    : type_( realValue )
-   , comments_( 0 )
    , allocated_( 0 )
+   , comments_( 0 )
 # ifdef JSON_VALUE_USE_INTERNAL_MAP
    , itemIsUsed_( 0 )
 #endif
@@ -1944,8 +1944,8 @@ Value::Value( const CppTL::ConstString &value )
 
 Value::Value( bool value )
    : type_( booleanValue )
-   , comments_( 0 )
    , allocated_( 0 )
+   , comments_( 0 )
 # ifdef JSON_VALUE_USE_INTERNAL_MAP
    , itemIsUsed_( 0 )
 #endif
@@ -1956,8 +1956,8 @@ Value::Value( bool value )
 
 Value::Value( const Value &other )
    : type_( other.type_ )
-   , comments_( 0 )
    , allocated_( 0 )
+   , comments_( 0 )
 # ifdef JSON_VALUE_USE_INTERNAL_MAP
    , itemIsUsed_( 0 )
 #endif
