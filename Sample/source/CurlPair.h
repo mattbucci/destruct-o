@@ -4,6 +4,10 @@
  *
  * Created on March 25, 2014, 10:39 PM
  */
+#ifdef WIN32
+#define noexcept throw()
+#endif
+
 
 #ifndef CURLPAIR_H
 #define	CURLPAIR_H

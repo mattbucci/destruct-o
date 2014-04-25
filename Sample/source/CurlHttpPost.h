@@ -4,6 +4,9 @@
  *
  * Created on March 25, 2014, 10:38 PM
  */
+#ifdef WIN32
+#define noexcept throw()
+#endif
 
 #ifndef CURLHTTPPOST_H
 #define	CURLHTTPPOST_H

@@ -4,7 +4,7 @@
  * 
  * Created on March 25, 2014, 10:38 PM
  */
-
+#include "stdafx.h"
 #include "CurlHttpPost.h"
 
 using curl::CurlHttpPost;

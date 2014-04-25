@@ -4,6 +4,10 @@
  *
  * Created on March 25, 2014, 10:17 PM
  */
+#ifdef WIN32
+#define noexcept throw()
+#endif
+
 
 #ifndef CURLINTERFACE_H
 #define	CURLINTERFACE_H
