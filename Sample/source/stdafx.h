@@ -41,6 +41,12 @@ using namespace std;
 #define _ASSERTE assert
 #endif
 
+//visual studio is retarded
+#ifdef WIN32
+#define noexcept throw()
+#endif
+
+
 //Too lazy to allow Unicode support (only effects windows)
 #ifdef UNICODE
 #undef UNICODE

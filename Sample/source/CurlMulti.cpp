@@ -4,7 +4,7 @@
  * 
  * Created on March 25, 2014, 11:02 PM
  */
-
+#include "stdafx.h"
 #include <algorithm>
 #include "CurlError.h"
 #include "CurlMessage.h"

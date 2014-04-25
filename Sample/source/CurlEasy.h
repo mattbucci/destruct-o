@@ -4,6 +4,10 @@
  *
  * Created on March 25, 2014, 10:54 PM
  */
+#ifdef WIN32
+#define noexcept throw()
+#endif
+
 
 #ifndef CURLEASY_H
 #define	CURLEASY_H

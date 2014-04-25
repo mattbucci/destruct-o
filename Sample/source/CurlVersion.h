@@ -5,6 +5,10 @@
 //  Created by Giuseppe Persico on 30/03/14.
 //  Copyright (c) 2014 Giuseppe Persico. All rights reserved.
 //
+#ifdef WIN32
+#define noexcept throw()
+#endif
+
 
 #ifndef __curlcpp__CurlVersion__
 #define __curlcpp__CurlVersion__

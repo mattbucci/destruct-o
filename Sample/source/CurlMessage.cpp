@@ -4,7 +4,7 @@
  * 
  * Created on March 25, 2014, 11:08 PM
  */
-
+#include "stdafx.h"
 #include "CurlMessage.h"
 
 using curl::CurlMulti;

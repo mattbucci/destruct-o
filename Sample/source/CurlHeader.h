@@ -8,6 +8,12 @@
 #ifndef CURLHEADER_H
 #define	CURLHEADER_H
 
+//visual studio is retarded
+#ifdef WIN32
+#define noexcept throw()
+#endif
+
+
 #include <vector>
 #include <string>
 #include <list>

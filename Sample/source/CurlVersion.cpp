@@ -5,7 +5,7 @@
 //  Created by Giuseppe Persico on 30/03/14.
 //  Copyright (c) 2014 Giuseppe Persico. All rights reserved.
 //
-
+#include "stdafx.h"
 #include "CurlVersion.h"
 
 using curl::CurlVersion;

@@ -4,7 +4,7 @@
  * 
  * Created on March 25, 2014, 10:54 PM
  */
-
+#include "stdafx.h"
 #include "CurlEasy.h"
 
 using curl::CurlEasy;
