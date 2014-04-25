@@ -61,9 +61,6 @@ void AnimationClip::SetPlaybackSpeed(float _speed)
  */
 void AnimationClip::Play(bool _loop, double now)
 {
-    // Reset the pose to the initial pose
-    //Reset();
-    
     // Start playing
     playing = true;
     loop = _loop;
@@ -71,7 +68,7 @@ void AnimationClip::Play(bool _loop, double now)
     // Store the starting time
     animationStartTime = now;
     
-    // Set to animation
+    // Force an update cycle.  Will set animation to the first frame of the animation
     Update(0.01, now);
 }
 
@@ -155,62 +152,66 @@ void AnimationClip::Update(double delta, double now)
                 // Get the next iterator
                 std::vector<Animation::Keyframe *>::const_iterator nextKeyframe = keyframe + 1;
                 
-                // Is the animation time within the bounds of this frame
-                if(nextKeyframe != bone->second.end())
+                // If the next keyframe is the end of the animation
+                if(nextKeyframe == bone->second.end())
                 {
-                    if(animationTime < (*nextKeyframe)->keytime)
+                    // Point the next keyframe at the beginning
+                    nextKeyframe = bone->second.begin();
+                }
+                
+                // Update the animation (blend between keyframes)
+                if(animationTime < (*nextKeyframe)->keytime)
+                {
+                    // Calculate position between the two keyframes
+                    const float t = (animationTime - (*keyframe)->keytime) / ((*nextKeyframe)->keytime - (*keyframe)->keytime);
+                    
+                    // Get the two translations to lerp between (they default to the initial pose)
+                    glm::vec3 tA = iNode->LocalTransform().Translation();
+                    glm::vec3 tB = tA;
+                    Animation::Keyframe::iterator itA = (*keyframe)->transforms.find(Animation::Keyframe::kTransformTypeTranslation);
+                    Animation::Keyframe::iterator itB = (*nextKeyframe)->transforms.find(Animation::Keyframe::kTransformTypeTranslation);
+                    if(itA != (*keyframe)->transforms.end())
                     {
-                        // Calculate position between the two keyframes
-                        const float t = (animationTime - (*keyframe)->keytime) / ((*nextKeyframe)->keytime - (*keyframe)->keytime);
-                        
-                        // Get the two translations to lerp between (they default to the initial pose)
-                        glm::vec3 tA = iNode->LocalTransform().Translation();
-                        glm::vec3 tB = tA;
-                        Animation::Keyframe::iterator itA = (*keyframe)->transforms.find(Animation::Keyframe::kTransformTypeTranslation);
-                        Animation::Keyframe::iterator itB = (*nextKeyframe)->transforms.find(Animation::Keyframe::kTransformTypeTranslation);
-                        if(itA != (*keyframe)->transforms.end())
-                        {
-                            tA = itA->second.Translation();
-                        }
-                        if(itB != (*nextKeyframe)->transforms.end())
-                        {
-                            tB = itB->second.Translation();
-                        }
-                        
-                        // Get the two scales to lerp between (they default to the initial pose)
-                        glm::vec3 sA = iNode->LocalTransform().Scale();
-                        glm::vec3 sB = sA;
-                        Animation::Keyframe::iterator isA = (*keyframe)->transforms.find(Animation::Keyframe::kTransformTypeScale);
-                        Animation::Keyframe::iterator isB = (*nextKeyframe)->transforms.find(Animation::Keyframe::kTransformTypeScale);
-                        if(isA != (*keyframe)->transforms.end())
-                        {
-                            sA = isA->second.Scale();
-                        }
-                        if(isB != (*nextKeyframe)->transforms.end())
-                        {
-                            sB = isB->second.Scale();
-                        }
-                        
-                        // Get the two rotations to slerp between (they default to the initial pose)
-                        glm::quat rA = iNode->LocalTransform().Rotation();
-                        glm::quat rB = rA;
-                        Animation::Keyframe::iterator irA = (*keyframe)->transforms.find(Animation::Keyframe::kTransformTypeRotation);
-                        Animation::Keyframe::iterator irB = (*nextKeyframe)->transforms.find(Animation::Keyframe::kTransformTypeRotation);
-                        if(irA != (*keyframe)->transforms.end())
-                        {
-                            rA = irA->second.Rotation();
-                        }
-                        if(irB != (*nextKeyframe)->transforms.end())
-                        {
-                            rB = irB->second.Rotation();
-                        }
-                        
-                        // Set the skeleton node properly
-                        node->LocalTransform().Translation() = glm::mix(tA, tB, t);
-                        node->LocalTransform().Scale() = glm::mix(sA, sB, t);
-                        node->LocalTransform().Rotation() = glm::slerp(rA, rB, t);
-                        break;
+                        tA = itA->second.Translation();
                     }
+                    if(itB != (*nextKeyframe)->transforms.end())
+                    {
+                        tB = itB->second.Translation();
+                    }
+                    
+                    // Get the two scales to lerp between (they default to the initial pose)
+                    glm::vec3 sA = iNode->LocalTransform().Scale();
+                    glm::vec3 sB = sA;
+                    Animation::Keyframe::iterator isA = (*keyframe)->transforms.find(Animation::Keyframe::kTransformTypeScale);
+                    Animation::Keyframe::iterator isB = (*nextKeyframe)->transforms.find(Animation::Keyframe::kTransformTypeScale);
+                    if(isA != (*keyframe)->transforms.end())
+                    {
+                        sA = isA->second.Scale();
+                    }
+                    if(isB != (*nextKeyframe)->transforms.end())
+                    {
+                        sB = isB->second.Scale();
+                    }
+                    
+                    // Get the two rotations to slerp between (they default to the initial pose)
+                    glm::quat rA = iNode->LocalTransform().Rotation();
+                    glm::quat rB = rA;
+                    Animation::Keyframe::iterator irA = (*keyframe)->transforms.find(Animation::Keyframe::kTransformTypeRotation);
+                    Animation::Keyframe::iterator irB = (*nextKeyframe)->transforms.find(Animation::Keyframe::kTransformTypeRotation);
+                    if(irA != (*keyframe)->transforms.end())
+                    {
+                        rA = irA->second.Rotation();
+                    }
+                    if(irB != (*nextKeyframe)->transforms.end())
+                    {
+                        rB = irB->second.Rotation();
+                    }
+                    
+                    // Set the skeleton node properly
+                    node->LocalTransform().Translation() = glm::mix(tA, tB, t);
+                    node->LocalTransform().Scale() = glm::mix(sA, sB, t);
+                    node->LocalTransform().Rotation() = glm::slerp(rA, rB, t);
+                    break;
                 }
             }
         }

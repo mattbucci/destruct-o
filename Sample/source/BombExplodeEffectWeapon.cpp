@@ -51,7 +51,7 @@ void BombExplodeEffectWeapon::Fire() {
 string BombExplodeEffectWeapon::LookupAnimation(Weapon::HandAnimations animation) {
     static const string animations[10] = {
         //ANIMATION_MODELNAME,
-        "soldier01",
+        "bomb",
         //ANIMATION_AIM,
         "",
         //ANIMATION_FIRE,

@@ -120,11 +120,18 @@ AnimationState::AnimationState(const Json::Value& value, AnimationLayer *_layer)
             if(animationIt != layer->Controller()->GetModel()->Animations().end())
             {
                 // Create a new AnimationClip based on the input animation
-                source = new AnimationClip(animationIt->second);
+                AnimationClip *animClip = new AnimationClip(animationIt->second);
                 
                 // Get whether or not this animation is to loop
                 Json::Value defaultValue = true;
                 loop = animationSource.get("loop", defaultValue).asBool();
+                
+                // Get the rate of animation for this clip
+                Json::Value normalRate = 1.0;
+                animClip->SetPlaybackSpeed(animationSource.get("speed", defaultValue).asFloat());
+                
+                // Store the source
+                source = animClip;
             }
             
             // Otherwise throw an exception
@@ -256,6 +263,31 @@ void AnimationState::WillTransition(double now)
     AnimationClip *animation = dynamic_cast<AnimationClip *>(source);
     
     // If we are an animation clip
+    if(animation)
+    {
+        // Reset the pose to the initial state
+        animation->Stop();
+        
+        // Get out
+        return;
+    }
+    
+    // TODO Add support for animation blend groups
+    
+    // If we don't recognize the source type, just reset the source to initial pose
+    source->Reset();
+}
+
+/**
+ * Event to signal that this state has become active
+ * @param now the current simulated time
+ */
+void AnimationState::DidTransition(double now)
+{
+    // Is the source an animation clip
+    AnimationClip *animation = dynamic_cast<AnimationClip *>(source);
+    
+    // If we are an animation clip
     if(animation && !animation->IsPlaying())
     {
         // Cause the animation to begin playing (also resets the pose)
@@ -264,6 +296,8 @@ void AnimationState::WillTransition(double now)
         // Get out
         return;
     }
+    
+    // TODO Add support for animation blend groups
     
     // If we don't recognize the source type, just reset the source to initial pose
     source->Reset();

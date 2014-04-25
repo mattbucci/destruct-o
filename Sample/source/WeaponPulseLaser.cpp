@@ -14,7 +14,8 @@ WeaponPulseLaser::WeaponPulseLaser(PhysicsActor * weaponOwner) : Weapon(weaponOw
 }
 
 //Whether or not the weapon should repeat firing automatically
-bool WeaponPulseLaser::RepeatFireAutomatically() {
+bool WeaponPulseLaser::RepeatFireAutomatically()
+{
 	return true;
 }
 
@@ -23,9 +24,10 @@ float WeaponPulseLaser::WeaponChargeRequired() {
 	return 0;
 }
 
-//Cooldown length for the weapon
-float WeaponPulseLaser::WeaponCooldownTime() {
-	return .35;
+// Cooldown length for the weapon
+float WeaponPulseLaser::WeaponCooldownTime()
+{
+	return 0.366667;
 }
 
 //The amount of jitter in the weapon

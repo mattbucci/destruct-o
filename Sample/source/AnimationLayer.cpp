@@ -18,6 +18,9 @@
 #include "AnimationLayer.h"
 #include "AnimationController.h"
 
+#define DEFAULT_TRANSITION_DURATION 0.25
+#define __ANIMLAYER_PRINT_LOGS__
+
 /**
  * Empty constructor.  Builds an empty animation layer bound to an animation
  * controller.
@@ -132,7 +135,7 @@ void AnimationLayer::Bind(const Node* root)
     // Call the base bind function (we're extending it)
     AnimationSource::Bind(root);
     
-    // Update all the states with the new skeleton
+    // Bind all the states with the new skeleton
     for(state_store::iterator it = states.begin(); it != states.end(); it++)
     {
         it->second->Bind(root);
@@ -184,17 +187,23 @@ void AnimationLayer::Update(double delta, double now)
                 transitionStateOnDeck = NULL;
                 
                 // The desired transition length is set
-                transitionLength = 0.25;
+                transitionLength = DEFAULT_TRANSITION_DURATION;
                 
                 // The transition start time is stored
                 transitionStartTime = now;
                 
-                // Alert the state that is will come on deck (good for those one shot animations)
-                activeState->WillTransition(now);
+                // Alert the active state that it has become active
+                activeState->DidTransition(now);
+                
+                // Reset the progress to zero
                 progress = 0.0;
                 
+#if (defined __ANIMLAYER_PRINT_LOGS__)
                 // Log
-                cout << "Transition Case 4 ==> On Deck State Now Active" << endl;
+                cout << "Transition Case 4 ==> ";
+                cout << "OnDeck Now Active: " << activeState->Id() << " ";
+                cout << "Transition: " << transitionState->Id() << endl;
+#endif
             }
             
             // If it was a normal transition
@@ -202,8 +211,10 @@ void AnimationLayer::Update(double delta, double now)
             {
                 // Kill the transition state, we are now in the active mode
                 transitionState = NULL;
-                cout << "Transition Complete" << endl;
                 
+#if (defined __ANIMLAYER_PRINT_LOGS__)
+                cout << "Transition Complete" << endl;
+#endif
                 // Copy the active state's skeleton into the local skeleton
                 for(Node::flattreemap::iterator it = skeletonTable.begin(); it != skeletonTable.end(); it++)
                 {
@@ -292,10 +303,13 @@ void AnimationLayer::Transition(const std::string& state, double now)
         
         // Cause the active state to enter the transitional phase
         activeState->WillTransition(now);
+        activeState->DidTransition(now);
         
         // Log
+#if (defined __ANIMLAYER_PRINT_LOGS__)
         cout << "Transition Case 1 ==> ";
         cout << "Active: " << activeState->Id() << endl;
+#endif
     }
     
     // If there is in fact an active state, perform the considerations
@@ -311,25 +325,28 @@ void AnimationLayer::Transition(const std::string& state, double now)
             transitionStartTime = now;
             
             // The desired transition length is set
-            transitionLength = 0.25;
+            transitionLength = DEFAULT_TRANSITION_DURATION;
             
             // The new active state is the desired state
             activeState = stateIt->second;
             
             // Cause the active state to enter the transitional phase
             activeState->WillTransition(now);
+            activeState->DidTransition(now);
             
             // Log
+#if (defined __ANIMLAYER_PRINT_LOGS__)
             cout << "Transition Case 2 ==> ";
             cout << "Active: " << activeState->Id() << " ";
             cout << "Transition: " << transitionState->Id() << endl;
+#endif
         }
         
         // If there is a transition in progress
         else
         {
             // Is the desired state the state currently being phased out?
-            if(transitionState == stateIt->second || transitionStateOnDeck == stateIt->second)
+            if(transitionState == stateIt->second)
             {
                 // Reverse the current transition time (moving back to old state)
                 double transitionTime = 1.0 - ((now - transitionStartTime) / transitionLength);
@@ -347,21 +364,29 @@ void AnimationLayer::Transition(const std::string& state, double now)
                 transitionStateOnDeck = NULL;
                 
                 // Log
+#if (defined __ANIMLAYER_PRINT_LOGS__)
                 cout << "Transition Case 3 ==> ";
                 cout << "Active: " << activeState->Id() << " ";
                 cout << "Transition: " << transitionState->Id() << endl;
+#endif
             }
             
             // Otherwise we shall place this new state "on deck"
             else
             {
+                // Place the transition on deck
                 transitionStateOnDeck = stateIt->second;
                 
+                // Prepare it for animation
+                transitionStateOnDeck->WillTransition(now);
+                
                 // Log
+#if (defined __ANIMLAYER_PRINT_LOGS__)
                 cout << "Transition Case 4 ==> ";
                 cout << "Active: " << activeState->Id() << " ";
                 cout << "Transition: " << transitionState->Id() << " ";
                 cout << "On Deck: " << transitionStateOnDeck->Id() << endl;
+#endif
             }
         }
         

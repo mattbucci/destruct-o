@@ -4,31 +4,34 @@
 #include "GameEvent.h"
 #include "GameCamera.h"
 #include "Weapon.h"
+
 #include "WeaponPulseLaser.h"
+#include "WeaponLaserCannon.h"
 
 class ActorPlayer : public PhysicsActor
 {	
-    //Change the current weapon to this weapon
-    //Right now happens instantly
+    // Change the current weapon to this weapon
+    // Right now happens instantly
     void setWeapon(Weapon * weapon);
 
 	//delta since last walk fired
 	double deltaPosition;
     
     // Weapon
-    GameCamera     weaponCamera;
-	WeaponPulseLaser testWeapon;
-    Weapon * currentWeapon;
+    GameCamera       weaponCamera;
+    Weapon          *currentWeapon;
+    
+    // Standard player weaponry
+	WeaponPulseLaser  pulseLaser;
+    WeaponLaserCannon laserCannon;
+    
     //If the player fired the gun
     bool weaponFired;
-
-
 	float maxEnergyPool;
     
 	//Protect the player from actually dying
 	virtual void onDeath() override;
     
-
 	//Weapon position
 	//position of the weapon bone
 	vec3 weaponBonePos;

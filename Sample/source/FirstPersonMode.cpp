@@ -11,6 +11,8 @@ FirstPersonMode::FirstPersonMode()
 	debug_target_height = 0;
 	lookVector = vec3(1,0,0);
 	triggerPulled = false;
+    weaponModeSwitch = false;
+    weaponModeSwitchEvent = false;
 }
 FirstPersonMode::~FirstPersonMode() {
 
@@ -41,6 +43,16 @@ bool FirstPersonMode::GetJumpRequested(bool clearFlag)
 		jumpRequested = false;
 	}
 	return _t;
+}
+
+bool FirstPersonMode::GetSwitchWeaponRequested(bool clearFlag)
+{
+    bool _t = weaponModeSwitchEvent;
+    if(clearFlag)
+    {
+        weaponModeSwitchEvent = false;
+    }
+    return _t;
 }
 
 
@@ -142,6 +154,19 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 	}
 	//DEBUGGING}
 
+    // Does the user want to switch weapons?
+    if(pressedKeys.find(SDLK_TAB) != pressedKeys.end())
+    {
+        if(!weaponModeSwitch)
+        {
+            weaponModeSwitch = true;
+            weaponModeSwitchEvent = true;
+        }
+    } else
+    {
+        weaponModeSwitch = false;
+    }
+    
 	//Sum up the mouse deltas into the current looking vector
 	//Mouse sensitivity constants for now
 	static const float mouseXSensitivity = 1.0f/6.0f;

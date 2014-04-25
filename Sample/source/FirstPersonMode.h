@@ -22,8 +22,13 @@ protected:
 	// Since the ActorPlayer polls this object per frame, GameEvents don't comply with the way the
 	// rest of the object is implemented
 	bool jumpRequested;
+    
 	//Check if the trigger has been pulled
 	bool triggerPulled;
+    
+    // Does the user want to switch weapon modes
+    bool weaponModeSwitch;
+    bool weaponModeSwitchEvent;
 public:
 	FirstPersonMode();
 	~FirstPersonMode();
@@ -44,6 +49,9 @@ public:
 
 	//Check if the trigger is being pulled right now
 	bool GetTriggerPulled();
+    
+    // Check if switch weapon is requested
+    bool GetSwitchWeaponRequested(bool clearFlag = true);
 
 	//debug getters
 	bool GetDebug();

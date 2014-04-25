@@ -139,10 +139,16 @@ public:
     void Update(double delta, double now, bool comparison = true);
     
     /**
-     * Event to signal that the animation is transitioning to this state
+     * Event to signal that this state is being considered for transition
      * @param now the current simulated time
      */
     void WillTransition(double now);
+    
+    /**
+     * Event to signal that this state has become active
+     * @param now the current simulated time
+     */
+    void DidTransition(double now);
     
     /**
      * Get the name of this animation state
