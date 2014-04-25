@@ -215,6 +215,38 @@ void AnimationState::Update(double delta, double now, bool comparison)
         // Otherwise, pull the parameter and compare
         else
         {
+            // Check the name of the parameter against some builtin types
+            if(it->parameter == "builtin.animation.progress")
+            {
+                // Throw runtime error if this is not an animation clip
+                AnimationClip *animation = dynamic_cast<AnimationClip *>(source);
+                
+                // If we currently have a valid animation, use it
+                if(animation)
+                {
+                    // Get the animation's progress
+                    const float progress = animation->GetProgress(now);
+                    
+                    // Perform the comparison
+                    if((it->function == AnimationState::Transition::kComparisonFunctionEquals && progress == it->value.number) ||
+                       (it->function == AnimationState::Transition::kComparisonFunctionLess && progress < it->value.number) ||
+                       (it->function == AnimationState::Transition::kComparisonFunctionGreater && progress > it->value.number))
+                    {
+                        layer->Transition(it->target, now);
+                        break;
+                    }
+                }
+                
+                // If we has a blend group
+                else
+                {
+                    throw new std::runtime_error("void AnimationState::Update(double delta, double now) - builtin.animation.progress parameter only supported for AnimationClips");
+                }
+                
+                // Skip
+                continue;
+            }
+            
             // Lookup the parameter
             AnimationController::parameter_const_iterator parameter = layer->Controller()->GetParameter(it->parameter);
             

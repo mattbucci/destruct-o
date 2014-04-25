@@ -97,6 +97,12 @@ public:
      * @return true if the animation is playing on a loop
      */
     bool IsLooping();
+    
+    /**
+     * Method to get current animation progress
+     * @return animation progress (0.0 -> 1.0)
+     */
+    const float GetProgress(double now) const;
 };
 
 #endif

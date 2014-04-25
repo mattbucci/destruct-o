@@ -220,3 +220,32 @@ void AnimationClip::Update(double delta, double now)
         skeleton->Recalculate();
     }
 }
+
+/**
+ * Method to get current animation progress
+ * @return animation progress (0.0 -> 1.0)
+ */
+const float AnimationClip::GetProgress(double now) const
+{
+    // If the animation is not playing, it is "done"
+    if(!playing)
+        return 1.0f;
+    
+    // Calculate the current animation time
+    float animationTime = (now - animationStartTime) * speed;
+    
+    // Make sure its not negative
+    if(animationTime < 0)
+    {
+        animationTime = 0.0;
+    }
+    
+    // If the animation is capable of looping, do so
+    else
+    {
+        animationTime = std::fmod(animationTime, animation->Length());
+    }
+    
+    // Return the progress
+    return animationTime / animation->Length();
+}
