@@ -19,7 +19,7 @@ static const float energyPerSecond = 5.0f;
 
 // Construct an actor player.  Weapon camera is setup for optimal weapon size
 ActorPlayer::ActorPlayer()
-    : PhysicsActor(vec3(2,2,6),500, GameFactions::FACTION_PLAYER), weaponCamera(GameCamera(40.0f)), currentWeapon(NULL), pulseLaser(this), laserCannon(this)
+    : PhysicsActor(vec3(2,2,6),500, GameFactions::FACTION_PLAYER), weaponCamera(GameCamera(40.0f)), currentWeapon(NULL), pulseLaser(NULL), laserCannon(NULL)
 {
 	//Start the player off in abouts the center
 	Position = (vec3(34,40,0));
@@ -35,7 +35,11 @@ ActorPlayer::ActorPlayer()
 
 ActorPlayer::~ActorPlayer()
 {
-    
+    /*VoxEngine::SynchronousTask.RequestTask([this]()
+    {
+        delete pulseLaser;
+        delete laserCannon;
+    });*/
 }
 
 float ActorPlayer::GetCharge() {
@@ -49,18 +53,23 @@ float ActorPlayer::GetMaxCharge() {
 // Create anything related to the actor
 void ActorPlayer::Build()
 {
-    setWeapon(&pulseLaser);
+    // Create the weapons
+    pulseLaser = new WeaponPulseLaser(this);
+    laserCannon = new WeaponLaserCannon(this);
+    
+    // Set initial weapon to pulse laser
+    setWeapon(pulseLaser);
 }
 
 void ActorPlayer::setWeapon(Weapon * weapon)
 {
     // Construct the weapon model instance
     //setModel(weapon->LookupAnimation(Weapon::ANIMATION_MODELNAME));
-    if(!model)
-    {
+    //if(!model)
+    //{
         setModel("player_weapon");
         model->GetTransform().Translation() = glm::vec3(0, -0.3, -1.95);
-    }
+    //}
     
     //Save weapon
     this->currentWeapon = weapon;
@@ -94,12 +103,12 @@ bool ActorPlayer::Update()
     // Check if we should switch weapons
     if(Game()->FirstPerson->GetSwitchWeaponRequested())
     {
-        if(currentWeapon == &laserCannon)
+        if(currentWeapon == laserCannon)
         {
-            setWeapon(&pulseLaser);
+            setWeapon(pulseLaser);
         } else
         {
-            setWeapon(&laserCannon);
+            setWeapon(laserCannon);
         }
     }
     
@@ -110,7 +119,7 @@ bool ActorPlayer::Update()
     energyPool = glm::clamp(energyPool + (energyPerSecond * (float) SIMULATION_DELTA), 0.0f, 100.0f);
     
     // The firing setting depends on the weapon
-    if(currentWeapon == &pulseLaser)
+    if(currentWeapon == pulseLaser)
     {
         // Forward the potential shoot request
         currentWeapon->HoldingTrigger(Game()->FirstPerson->GetTriggerPulled());
@@ -131,7 +140,7 @@ bool ActorPlayer::Update()
     }
     
     // Forward the weapon mode to the controller
-    model->Controller()->SetBoolean("mode", (currentWeapon == &laserCannon) ? true : false);
+    model->Controller()->SetBoolean("mode", (currentWeapon == laserCannon) ? true : false);
     
     // Forward the movement speed to the player's weapon animation controller
     model->Controller()->SetFloat("speed", OnGround() ? magnitude : 0.0f);

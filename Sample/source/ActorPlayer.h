@@ -22,8 +22,8 @@ class ActorPlayer : public PhysicsActor
     Weapon          *currentWeapon;
     
     // Standard player weaponry
-	WeaponPulseLaser  pulseLaser;
-    WeaponLaserCannon laserCannon;
+	WeaponPulseLaser  *pulseLaser;
+    WeaponLaserCannon *laserCannon;
     
     //If the player fired the gun
     bool weaponFired;
