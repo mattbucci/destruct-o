@@ -38,11 +38,10 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_link_libraries(VoxEngine "../libs/windows/libnoise/libnoise")
     target_link_libraries(VoxEngine "opengl32.lib")
     
-    # Windows cURL things.  Are these correct
-    target_link_libraries(VoxEngine "../libs/windows/curl/libcurl_imp")
-    target_link_libraries(VoxEngine "../libs/windows/curl/libeay32")
-    target_link_libraries(VoxEngine "../libs/windows/curl/openldap")
-    target_link_libraries(VoxEngine "../libs/windows/curl/ssleay32")
+    # Windows cURL things.  Are these correct (no they werent)
+    target_link_libraries(VoxEngine "../libs/windows/curl/libcurl")
+    #target_link_libraries(VoxEngine "../libs/windows/curl/openldap")
+    #target_link_libraries(VoxEngine "../libs/windows/curl/ssleay32")
 	
 	#enable Multiprocessor build
 	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /MP" )
