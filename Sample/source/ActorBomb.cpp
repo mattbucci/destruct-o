@@ -5,6 +5,7 @@ CLASS_SAVE_CONSTRUCTOR(ActorBomb);
 
 ActorBomb::ActorBomb() : PhysicsActor(vec3(1,.5,.5),20,GameFactions::FACTION_HOSTILE), bomb(this) {
 	energyPool = 100;
+	this->Velocity = vec3(0, 0, -50);
 	setModel(bomb.LookupAnimation(Weapon::ANIMATION_MODELNAME));
 }
 

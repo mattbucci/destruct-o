@@ -112,7 +112,7 @@ bool ActorAI::checkEnemyValid() {
 	}
 
 	//Check if you're not too far away
-	if (glm::distance(targetEnemy->GetPosition(),Position) > sightDistance()*1.5f)
+	if (glm::distance(targetEnemy->GetPosition(), Position) > sightDistance()*1.5f && !flying)
 		return false;
 
 	return true;

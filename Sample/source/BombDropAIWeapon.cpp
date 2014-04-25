@@ -26,7 +26,7 @@ float BombDropAIWeapon::WeaponChargeRequired() {
 
 //Cooldown length for the weapon
 float BombDropAIWeapon::WeaponCooldownTime() {
-	return .75;
+	return .25;
 }
 
 //The amount of jitter in the weapon

@@ -25,11 +25,15 @@ public:
 	//if<0 voxel lives forever
 	double DeathAt;
 
+	//if the voxel can collide with other objects
+	bool cancollide;
+
 	CLASS_DECLARATION(PhysicsVoxel)
 		CLASS_MEMBER(Acceleration,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(Velocity,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(Position,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(MaterialId,ReflectionData::SAVE_INT32)
 		CLASS_MEMBER(DeathAt,ReflectionData::SAVE_DOUBLE)
+		CLASS_MEMBER(cancollide, ReflectionData::SAVE_BOOL)
 	END_DECLARATION
 };
