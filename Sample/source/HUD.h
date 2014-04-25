@@ -27,7 +27,8 @@ class HUD {
 	TexturedRect minimapBackground;
 	TexturedRect chargeBar;
 	TexturedRect chargeBarBG;
-
+    TexturedRect reticle;
+    
 	HUD();
 public:
 	HUD(BaseFrame* baseFrame);
@@ -37,4 +38,6 @@ public:
 	void DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize);
 
 	void MarkDamage(vec2 source);
+    
+    void SetReticle(string texture, vec2 size);
 };

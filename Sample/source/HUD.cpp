@@ -21,13 +21,15 @@ HUD::HUD(BaseFrame* baseFrame) :
 	minimapDot(Rect(0,0,MOBILE_MINIMAP_DOT_SIZE,MOBILE_MINIMAP_DOT_SIZE),"hud/dot.png",vec4(1,0,0,1)),
 	minimapBackground(Rect(0,0,MOBILE_MINIMAP_SIZE,MOBILE_MINIMAP_SIZE),"hud/minimap.png", vec4(1, 1, 1, .66)),
 	chargeBar(Rect(0,0,20,180),"hud/charge.png", vec4(1,1,1,.66)),
-	chargeBarBG(Rect(0,0,20,180),"hud/purewhite.png",vec4(0,0,0,.66))
+    chargeBarBG(Rect(0,0,20,180),"hud/purewhite.png",vec4(0,0,0,.66)),
+    reticle(Rect(0, 0, 48, 48),"hud/reticle_sniper.png",glm::vec4(1.0, 1.0, 1.0, 0.80))
 #else
 	damageIndicator(Rect(0,0,DAMAGE_INDICATOR_SIZE,DAMAGE_INDICATOR_SIZE),"hud/arrow.png",vec4(7,.2,.2,.66)),
 	minimapDot(Rect(0,0,MINIMAP_DOT_SIZE,MINIMAP_DOT_SIZE),"hud/dot.png",vec4(1,0,0,1)),
 	minimapBackground(Rect(0,0,MINIMAP_SIZE,MINIMAP_SIZE),"hud/minimap.png", vec4(1, 1, 1, .66)),
 	chargeBar(Rect(0,0,10,180),"hud/charge.png", vec4(1,1,1,.66)),
-	chargeBarBG(Rect(0,0,10,180),"hud/purewhite.png",vec4(0,0,0,.66))
+	chargeBarBG(Rect(0,0,10,180),"hud/purewhite.png",vec4(0,0,0,.66)),
+    reticle(Rect(0, 0, 48, 48),"hud/reticle_sniper.png",glm::vec4(1.0, 1.0, 1.0, 0.80))
 #endif
 {
 	//Grab Baseframe Reference
@@ -226,8 +228,27 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 
 	//Reset to the original matrix
 	shader->Model.PopMatrix();
+    
+    // ---------------------
+    // |||| Reticle ||||||
+    // ---------------------
+    
+    // Preserve current matrix
+    shader->Model.PushMatrix();
+    
+    // Move to the center of the screen
+    shader->Model.Translate((viewPortSize.x*.5f) - (reticle.GetRect().Width*.5f), (viewPortSize.y*.5f) - (reticle.GetRect().Height*.5f), 0);
+    shader->Model.Apply();
+    reticle.Draw(shader);
+    shader->Model.PopMatrix();
 }
 
 void HUD::MarkDamage(vec2 source) {
 	damagePoints.push_back(pair<double, vec2>(Game()->Now() + DAMAGE_INDICATOR_TIME, source));
+}
+
+void HUD::SetReticle(string reticleTex, vec2 size)
+{
+    reticle.SetTexture(reticleTex);
+    reticle.SetRect(Rect(0, 0, size.x, size.y));
 }

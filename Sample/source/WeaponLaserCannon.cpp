@@ -20,9 +20,9 @@ bool WeaponLaserCannon::RepeatFireAutomatically()
 	return false;
 }
 
-//The amount of charge it takes to fire the weapon
+//The amount of charge it takes to fire the weapon (5 shots per charge)
 float WeaponLaserCannon::WeaponChargeRequired() {
-	return 33.5;
+	return 20.0;
 }
 
 //Cooldown length for the weapon
@@ -49,7 +49,7 @@ void WeaponLaserCannon::Fire() {
 	//Fire event
 	weaponImpact(hitPos);
 	//Do damage
- 	Universal::Concuss(hitPos,3,33.5,(PhysicsActor*)this->weaponOwner);
+ 	Universal::Concuss(hitPos,1,33.3,(PhysicsActor*)this->weaponOwner);
 
 	//Update laser
 	laser.StartFiring();

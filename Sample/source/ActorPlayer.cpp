@@ -64,12 +64,20 @@ void ActorPlayer::Build()
 void ActorPlayer::setWeapon(Weapon * weapon)
 {
     // Construct the weapon model instance
-    //setModel(weapon->LookupAnimation(Weapon::ANIMATION_MODELNAME));
-    //if(!model)
-    //{
+    if(!model)
+    {
         setModel("player_weapon");
-        model->GetTransform().Translation() = glm::vec3(0, -0.3, -1.95);
-    //}
+    }
+    model->GetTransform().Translation() = glm::vec3(0, -0.3, -1.95);
+    
+    // Based on which weapon it is, select a reticle
+    if(weapon == laserCannon)
+    {
+        Game()->hud.SetReticle("hud/reticle_sniper.png", glm::vec2(48, 48));
+    } else
+    {
+        Game()->hud.SetReticle("hud/reticle.png", glm::vec2(48, 48));
+    }
     
     //Save weapon
     this->currentWeapon = weapon;

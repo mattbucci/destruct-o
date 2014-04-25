@@ -44,8 +44,6 @@ class BaseFrame : public GameSystem
 	PauseWindow * pauseWindow;
     ModelGroup * models;
 
-	HUD hud;
-
 	//Setup all the global values for shaders
 	//Sets up, acid shader and fog
 	template <class T>
@@ -87,6 +85,8 @@ public:
 	PhysicsSystem Physics;
 	ActorSystem Actors;
 	ParticleCloud Particles;
+    
+	HUD hud;
 
 	//Private objects which must be initialized after everything else
 	//goes here

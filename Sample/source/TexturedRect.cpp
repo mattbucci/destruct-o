@@ -16,6 +16,7 @@ TexturedRect::~TexturedRect() {
 }
 //Change the rect
 void TexturedRect::SetRect(Rect r) {
+    rI = r;
 	svat(0,vec2(r.X,r.Y));
 	sxat(0,vec2(0,0));
 	svat(1,vec2(r.X,r.Y+r.Height));
@@ -27,6 +28,7 @@ void TexturedRect::SetRect(Rect r) {
 }
 //Change the rect + texture bounds
 void TexturedRect::SetRectandTexRect(Rect r, Rect t) {
+    rI = r;
 	svat(0,vec2(r.X,r.Y));
 	sxat(0,vec2(t.X,t.Y));
 	svat(1,vec2(r.X,r.Y+r.Height));
@@ -39,6 +41,18 @@ void TexturedRect::SetRectandTexRect(Rect r, Rect t) {
 //Change the color tint
 void TexturedRect::SetColor(vec4 color) {
 	tint = color;
+}
+
+// Change the texture
+void TexturedRect::SetTexture(string texturePath)
+{
+    this->texturePath = texturePath;
+}
+
+// Get the rectangle
+const Rect& TexturedRect::GetRect()
+{
+    return rI;
 }
 
 //Draw the rect now

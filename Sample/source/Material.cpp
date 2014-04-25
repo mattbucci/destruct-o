@@ -97,10 +97,10 @@ Material::Material(const Json::Value& value, const std::string directory)
         //cout << " << loaded default ambient color >> " << endl;
     }
     
-    /*cout << "Loaded Material (" << id << "): ";
+    cout << "Loaded Material (" << id << "): ";
     cout << "Ambient => {" << colorAmbient.r << " " << colorAmbient.g << " " << colorAmbient.b << "} ";
     cout << "Diffuse => {"  << colorDiffuse.r << " " << colorDiffuse.g << " " << colorDiffuse.b << "} ";
-    cout << "Textures (" << textures.size() << ")" << endl;*/
+    cout << "Textures (" << textures.size() << ")" << endl;
 }
 
 // Get the name of the material
