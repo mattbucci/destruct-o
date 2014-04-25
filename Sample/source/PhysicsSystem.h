@@ -61,7 +61,7 @@ public:
 
 	//Constructs a voxel at the given coordinate
 	//returns the voxel
-	PhysicsVoxel * BuildVoxel(vec3 voxelCoordinate, double lifeTime=-1.0);
+	PhysicsVoxel * BuildVoxel(vec3 voxelCoordinate, double lifeTime=-1.0, bool collidable = true);
 
 	//Used by PhysicsActor to register/unregister itself. Not needed elsewhere
 	void RegisterPhysicsActor(PhysicsActor * toRegister);

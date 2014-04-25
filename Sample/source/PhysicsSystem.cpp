@@ -121,10 +121,11 @@ void PhysicsSystem::updatePhysicsActors() {
 	}
 }
 
-PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate,double lifeTime) {
+PhysicsVoxel * PhysicsSystem::BuildVoxel(vec3 voxelCoordinate, double lifeTime, bool collidable) {
 	PhysicsVoxel * voxel = new PhysicsVoxel();
-	voxel->Position = voxelCoordinate + vec3(.5,.5,.5);
+	voxel->Position = voxelCoordinate + vec3(.5, .5, .5);
 	voxel->MaterialId = 1;
+	voxel->cancollide = collidable;
 	if (lifeTime <= 0)
 		voxel->DeathAt = -1;
 	else
@@ -224,41 +225,42 @@ void PhysicsSystem::collideVoxelsToVoxels() {
 
 		//Limit individual sections 
 		int sectionSize = min(MaxSectionSize,section.size());
+		if (allVoxels[s]->cancollide) {
+			//Now do the O(n^2) which checks for collisions
+			for (unsigned int a = 0; a < sectionSize; a++) {
+				for (unsigned int b = a + 1; b < sectionSize; b++) {
+					//Do AABB before you do full physics check... or things will be slow
+					if (section[a]->AabColiding(section[b]->Position)) {
+						Intersection intr = PhysicsUtilities::CalculateIntersection(section[a]->Position, section[b]->Position);
 
-		//Now do the O(n^2) which checks for collisions
-		for (unsigned int a = 0; a < sectionSize; a++) {
-			for (unsigned int b = a+1; b < sectionSize; b++) {
-				//Do AABB before you do full physics check... or things will be slow
-				if (section[a]->AabColiding(section[b]->Position)) {
-					Intersection intr = PhysicsUtilities::CalculateIntersection(section[a]->Position,section[b]->Position);
+						float depth = intr.Depth;
+						float force = 100 * depth;
 
-					float depth = intr.Depth;
-					float force = 100*depth;
+						//No two voxels can occupy the same position, push one voxel a little out of the other
+						if (section[a]->Position == section[b]->Position)
+							section[b]->Position += vec3(.01, .01, .01);
 
-					//No two voxels can occupy the same position, push one voxel a little out of the other
-					if (section[a]->Position == section[b]->Position)
-						section[b]->Position += vec3(.01,.01,.01);
-
-					vec3 forceDirection = intr.Normal;
-					//one idea is to mix the ideal direction (face aligned) with 
-					//the natural direction (collision aligned)
-					//to add instabilities which cause blocks on the edge to fall over
+						vec3 forceDirection = intr.Normal;
+						//one idea is to mix the ideal direction (face aligned) with 
+						//the natural direction (collision aligned)
+						//to add instabilities which cause blocks on the edge to fall over
 
 
-					section[a]->Acceleration += forceDirection*force;
-					section[b]->Acceleration += -forceDirection*force; 
-					//Remove Velocity in that direction
-					float vel = 0.0f;
-					vel += PhysicsUtilities::removeInDirection(section[a]->Velocity,-forceDirection);
-					vel += PhysicsUtilities::removeInDirection(section[b]->Velocity,forceDirection);
-					//The removed Velocity will now be thirded (instead of average since some is lost)
-					//and added back in the opposite direction
-					vel /= 3.0f;
-					section[a]->Velocity += vel*forceDirection;
-					section[b]->Velocity += vel*-forceDirection;
-					//Apply enhanced friction while they're touching
-					section[a]->Velocity *= .99;
-					section[b]->Velocity *= .99;
+						section[a]->Acceleration += forceDirection*force;
+						section[b]->Acceleration += -forceDirection*force;
+						//Remove Velocity in that direction
+						float vel = 0.0f;
+						vel += PhysicsUtilities::removeInDirection(section[a]->Velocity, -forceDirection);
+						vel += PhysicsUtilities::removeInDirection(section[b]->Velocity, forceDirection);
+						//The removed Velocity will now be thirded (instead of average since some is lost)
+						//and added back in the opposite direction
+						vel /= 3.0f;
+						section[a]->Velocity += vel*forceDirection;
+						section[b]->Velocity += vel*-forceDirection;
+						//Apply enhanced friction while they're touching
+						section[a]->Velocity *= .99;
+						section[b]->Velocity *= .99;
+					}
 				}
 			}
 		}
@@ -276,36 +278,38 @@ void PhysicsSystem::collideVoxelsToActors() {
 		vec3 actorVolumeEnd =	actor->position + halfActorSize;
 
 		for (auto voxel : allVoxels) {
-			//Do AABB before you do full physics check... or things will be slow
-			if (actor->aabbCollision(voxel->Position)) {
-				Intersection intr = PhysicsUtilities::CalculateIntersection(voxel->Position,actorPosition,halfActorSize);
+			if (voxel->cancollide) {
+				//Do AABB before you do full physics check... or things will be slow
+				if (actor->aabbCollision(voxel->Position)) {
+					Intersection intr = PhysicsUtilities::CalculateIntersection(voxel->Position, actorPosition, halfActorSize);
 
-				float depth = intr.Depth;
-				float force = 100*depth;
+					float depth = intr.Depth;
+					float force = 100 * depth;
 
-				//No two voxels can occupy the same position, push one voxel a little out of the other
-				if (actor->Position == voxel->Position)
-					voxel->Position += vec3(.01,.01,.01);
+					//No two voxels can occupy the same position, push one voxel a little out of the other
+					if (actor->Position == voxel->Position)
+						voxel->Position += vec3(.01, .01, .01);
 
-				vec3 forceDirection = -intr.Normal;
-				//Check if the force will move the actor up
-				if (intr.Normal.z > 0)
-					actor->onGround = true;
+					vec3 forceDirection = -intr.Normal;
+					//Check if the force will move the actor up
+					if (intr.Normal.z > 0)
+						actor->onGround = true;
 
-				voxel->Acceleration += forceDirection*force;
-				actor->Acceleration += -forceDirection*force; 
-				//Remove Velocity in that direction
-				float vel = 0.0f;
-				vel += PhysicsUtilities::removeInDirection(voxel->Velocity,-forceDirection);
-				vel += PhysicsUtilities::removeInDirection(actor->Velocity,forceDirection);
-				//The removed Velocity will now be thirded (instead of average since some is lost)
-				//and added back in the opposite direction
-				vel /= 3.0f;
-				voxel->Velocity += vel*forceDirection;
-				actor->Velocity += vel*-forceDirection*.7f;
-				//Apply enhanced friction while they're touching
-				voxel->Velocity *= .99;
-				actor->Velocity *= .99;
+					voxel->Acceleration += forceDirection*force;
+					actor->Acceleration += -forceDirection*force;
+					//Remove Velocity in that direction
+					float vel = 0.0f;
+					vel += PhysicsUtilities::removeInDirection(voxel->Velocity, -forceDirection);
+					vel += PhysicsUtilities::removeInDirection(actor->Velocity, forceDirection);
+					//The removed Velocity will now be thirded (instead of average since some is lost)
+					//and added back in the opposite direction
+					vel /= 3.0f;
+					voxel->Velocity += vel*forceDirection;
+					actor->Velocity += vel*-forceDirection*.7f;
+					//Apply enhanced friction while they're touching
+					voxel->Velocity *= .99;
+					actor->Velocity *= .99;
+				}
 			}
 		}
 	}
