@@ -459,7 +459,7 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         
         
         // Set the reflectivity (should pull this from the material right??)
-        glm::vec2 specular = glm::vec2(1.0, 1.0);
+        glm::vec2 specular = glm::vec2(0.5, 0.5);
         glUniform2f(glGetUniformLocation(program->GetId(), "material_reflectivity"), specular.x, specular.y);
         
         // Set the color

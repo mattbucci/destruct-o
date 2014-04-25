@@ -15,23 +15,24 @@ WeaponLaserCannon::WeaponLaserCannon(PhysicsActor * weaponOwner) : Weapon(weapon
 }
 
 //Whether or not the weapon should repeat firing automatically
-bool WeaponLaserCannon::RepeatFireAutomatically() {
+bool WeaponLaserCannon::RepeatFireAutomatically()
+{
 	return false;
 }
 
 //The amount of charge it takes to fire the weapon
 float WeaponLaserCannon::WeaponChargeRequired() {
-	return 0;
+	return 33.5;
 }
 
 //Cooldown length for the weapon
 float WeaponLaserCannon::WeaponCooldownTime() {
-	return 2;
+	return 1.5;
 }
 
 //The amount of jitter in the weapon
 float WeaponLaserCannon::JitterAmount(){
-	return .02f;
+	return .001f;
 }
 
 //Simulate a gun shot (or laser pulse or whatever)
@@ -48,7 +49,7 @@ void WeaponLaserCannon::Fire() {
 	//Fire event
 	weaponImpact(hitPos);
 	//Do damage
- 	Universal::Concuss(hitPos,3,20,(PhysicsActor*)this->weaponOwner);
+ 	Universal::Concuss(hitPos,3,33.5,(PhysicsActor*)this->weaponOwner);
 
 	//Update laser
 	laser.StartFiring();

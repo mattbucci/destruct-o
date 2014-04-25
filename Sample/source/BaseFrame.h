@@ -26,13 +26,17 @@
 #include "ModelInstance.h"
 #include "ModelGroup.h"
 
+#include "GameEvent.h"
+#include "GameEventSubscriber.h"
+
 class ActorPlayer;
 class ParticleSystem;
 
 //Retrieve base frame
 BaseFrame * Game();
 
-class BaseFrame : public GameSystem {
+class BaseFrame : public GameSystem
+{
 	AudioPlayer * audio;
 
 	DemoWindow * demoWindow;
@@ -45,7 +49,8 @@ class BaseFrame : public GameSystem {
 	//Setup all the global values for shaders
 	//Sets up, acid shader and fog
 	template <class T>
-	void SetupShader(string shaderName, float fogDistance) {
+	void SetupShader(string shaderName, float fogDistance)
+    {
 		T * shader = (T*)shaders->GetShader(shaderName);
 		shader->UseProgram();
 		//Setup fog

@@ -167,6 +167,13 @@ void BaseFrame::Build()
     GameStarted.Fire([this](function<void(BaseFrame*)> subscriber) {
         subscriber(this);
     });
+    
+    // Subscribe to the pause window visibility events
+    GameEventSubscriber::Subscribe<void(Control*,bool)>(&pauseWindow->VisibilityChanged, [this](Control *control, bool visible)
+    {
+        // If the pause window is visible, first person is not
+        this->FirstPerson->Enable(!visible);
+    });
 
 	//Build the reset save
 	resetSave = Savable::Serialize(this);
@@ -178,12 +185,16 @@ bool BaseFrame::Update(vector<InputEvent> inputEvents) {
 	//Run the dialog system and monitor pressed keys
 	passEventsToControl(inputEvents);
 
-	//Update the looking direction
+	// Update the looking direction
 	FirstPerson->ReadInput(currentlyPressedKeys,inputEvents);
-
-	//The player is the only actor which reads input
-	//player->ReadInput(inputEvents);
-
+    
+    // Did we want to pause
+    if(FirstPerson->GetPauseRequested())
+    {
+        pauseWindow->toggle();
+    }
+    
+    // Update the voxels
 	Voxels.Update(Actors.Player()->GetPosition());
 
 	//Update actors

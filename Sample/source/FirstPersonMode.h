@@ -18,17 +18,22 @@ protected:
 	// for debugging movement control
 	bool debug;
 	float debug_target_height;
+    
+	// Check if the trigger has been pulled
+	bool triggerPulled;
 
 	// Since the ActorPlayer polls this object per frame, GameEvents don't comply with the way the
 	// rest of the object is implemented
 	bool jumpRequested;
     
-	//Check if the trigger has been pulled
-	bool triggerPulled;
-    
     // Does the user want to switch weapon modes
     bool weaponModeSwitch;
     bool weaponModeSwitchEvent;
+    
+    // Check whether the pause button has been pressed
+    bool pauseRequested;
+    bool pauseRequestedEvent;
+    
 public:
 	FirstPersonMode();
 	~FirstPersonMode();
@@ -52,6 +57,9 @@ public:
     
     // Check if switch weapon is requested
     bool GetSwitchWeaponRequested(bool clearFlag = true);
+    
+    // Check if pause is requested
+    bool GetPauseRequested(bool clearFlag = true);
 
 	//debug getters
 	bool GetDebug();

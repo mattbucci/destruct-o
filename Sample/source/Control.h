@@ -4,6 +4,7 @@
 #include "Rect.h"
 #include "GL2DVertexGroup.h"
 #include "InterfaceGlobals.h"
+#include "GameEvent.h"
 
 class GL2DProgram;
 class NinePatchBinary;
@@ -120,4 +121,7 @@ public:
 	void SendToFront();
 	//draw this control last
 	void SendToBack();
+    
+    // Visibility changed event
+    GameEvent<void (Control *, bool)> VisibilityChanged;
 };

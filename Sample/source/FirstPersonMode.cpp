@@ -13,6 +13,8 @@ FirstPersonMode::FirstPersonMode()
 	triggerPulled = false;
     weaponModeSwitch = false;
     weaponModeSwitchEvent = false;
+    pauseRequested = false;
+    pauseRequestedEvent = false;
 }
 FirstPersonMode::~FirstPersonMode() {
 
@@ -35,6 +37,7 @@ vec2 FirstPersonMode::GetAngleVector() {
 	return aggregateMouseVector;
 }
 
+// Get whether the user wanted to jump
 bool FirstPersonMode::GetJumpRequested(bool clearFlag)
 {
 	bool _t = jumpRequested;
@@ -45,6 +48,7 @@ bool FirstPersonMode::GetJumpRequested(bool clearFlag)
 	return _t;
 }
 
+// Get whether the user requested to switch weapons
 bool FirstPersonMode::GetSwitchWeaponRequested(bool clearFlag)
 {
     bool _t = weaponModeSwitchEvent;
@@ -55,6 +59,16 @@ bool FirstPersonMode::GetSwitchWeaponRequested(bool clearFlag)
     return _t;
 }
 
+// Get whether the user requested to pause the game
+bool FirstPersonMode::GetPauseRequested(bool clearFlag)
+{
+    bool _t = pauseRequestedEvent;
+    if(clearFlag)
+    {
+        pauseRequestedEvent = false;
+    }
+    return _t;
+}
 
 bool FirstPersonMode::GetTriggerPulled() {
 	return triggerPulled;
@@ -96,18 +110,27 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 	if (!firstPersonEnabled)
 		return;
 
-	//Desktop method of calculating move vector
+	// Initialize movement vector to zero
 	moveVector = vec2(0.0f, 0.0f);
 
+    // Calculate the movement vector
 	if (pressedKeys.find('w') != pressedKeys.end())
+    {
 		moveVector.x = 1.0f;
+    }
 	else if (pressedKeys.find('s') != pressedKeys.end())
-		moveVector.x = -1.0f;
-
+	{
+        moveVector.x = -1.0f;
+    }
+    
 	if (pressedKeys.find('a') != pressedKeys.end())
-		moveVector.y = 1.0f;
-	else if (pressedKeys.find('d') != pressedKeys.end())
-		moveVector.y = -1.0f;
+	{
+        moveVector.y = 1.0f;
+	}
+    else if (pressedKeys.find('d') != pressedKeys.end())
+	{
+        moveVector.y = -1.0f;
+    }
     
     // Normalize the movement vector (uncomment for a huge cluster fuck)
     if(moveVector.x > 0 || moveVector.y > 0)
@@ -117,42 +140,13 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
     
     // Multiple the movement vector by the movement speed
     moveVector *= movement_speed;
-    
-	static bool firedOnce = false;
 
 	// Did the user request jump?
-	if (pressedKeys.find(' ') != pressedKeys.end() && !debug)
+	if (pressedKeys.find(' ') != pressedKeys.end())
 	{
 		// User requested jump
 		jumpRequested = true;
 	}
-
-	//{DEBUGGING
-	else if (pressedKeys.find(' ') != pressedKeys.end()) {
-		debug_target_height += .1;
-		cout << "target_height:" << debug_target_height << endl;
-	}
-	else if (pressedKeys.find('p') != pressedKeys.end()) {
-		if(!firedOnce) {
-			firedOnce = true;
-			if (debug) {
-				debug = false;
-				cout << "DEBUG OFF" << endl;
-			}
-			else {
-				debug = true;
-				cout << "DEBUG ON" << endl;
-			}
-		}
-	}
-	else if (pressedKeys.find(SDLK_LCTRL) != pressedKeys.end()) {
-		debug_target_height -= .1f;
-		cout << "target_height:" << debug_target_height << endl;
-	}
-	if(pressedKeys.find('p') == pressedKeys.end()) {
-		firedOnce = false;
-	}
-	//DEBUGGING}
 
     // Does the user want to switch weapons?
     if(pressedKeys.find(SDLK_TAB) != pressedKeys.end())
@@ -165,6 +159,19 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
     } else
     {
         weaponModeSwitch = false;
+    }
+    
+    // Does the user want to pause (or unpause) the game
+    if(pressedKeys.find(SDLK_ESCAPE) != pressedKeys.end())
+    {
+        if(!pauseRequested)
+        {
+            pauseRequested = true;
+            pauseRequestedEvent = true;
+        }
+    } else
+    {
+        pauseRequested = false;
     }
     
 	//Sum up the mouse deltas into the current looking vector

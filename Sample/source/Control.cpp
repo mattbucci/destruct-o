@@ -372,6 +372,12 @@ void Control::SetVisible(bool visible) {
 	}
 		
 	this->visible = visible;
+    
+    // Alert subscribers that the visiblity of this component has changed
+    VisibilityChanged.Fire([this](function<void (Control *, bool)> subscriber)
+    {
+        subscriber(this, this->visible);
+    });
 }
 
 void Control::Draw(GL2DProgram * shaders) {
