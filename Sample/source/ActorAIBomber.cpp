@@ -10,7 +10,7 @@ ActorAIBomber::ActorAIBomber() : ActorAI(new BombDropAIWeapon(this),20,vec3(5,5,
 	flying = true;
 	scale = 2;
 	runStarted = false;
-	turnarounddistance = 250;
+	turnarounddistance = 150;
 }
 ActorAIBomber::~ActorAIBomber() {
 
@@ -32,14 +32,14 @@ void ActorAIBomber::stateEngaging(bool & holdingTrigger) {
 		runStartPosition = vec2(Position);
 		runStarted = true;
 	}
-	//Move towards your run direction
-	Velocity = vec3(runDirection*baseMovementSpeed(),Velocity.z);
+	//Move towards your forward direction
+	Velocity = vec3(vec2(cos(this->facingDirection), sin(this->facingDirection))*baseMovementSpeed(), Velocity.z);
 
 	if (glm::length(vec2(targetEnemy->GetPosition()) - vec2(this->GetPosition())) > turnarounddistance) {
 		runStarted = false;
 	}
 	//Face the direction your run is moving
-	facingDirection = atan2(runDirection.y,runDirection.x);
+	this->applyFacingDirection(atan2(runDirection.y,runDirection.x));
 
 	//During your run, bomb the hell out of the enemy
 	if (glm::length(vec2(targetEnemy->GetPosition()) - vec2(this->GetPosition())) < sightDistance()) {
@@ -113,7 +113,7 @@ float ActorAIBomber::baseMovementSpeed() {
 
 //How far can enemies spot each other
 float ActorAIBomber::sightDistance() {
-	return 45;
+	return 30;
 }
 
 //How many radians per second this actor can rotate
