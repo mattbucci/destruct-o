@@ -22,7 +22,7 @@ AidsActionDeployMosquito::AidsActionDeployMosquito(vec3 actionLocation) : AidsAc
 
 //Every subclass should have a static member GetIntensityValue()
 float AidsActionDeployMosquito::GetIntensityValue() {
-	return 40.0f;
+	return 50.0f;
 }
 
 

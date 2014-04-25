@@ -18,7 +18,7 @@ vec3 AidsAction::findHiddenLocation(vec3 startLocation, float desiredAltitude) {
 		float angle = i*anglePart;
 		float distance = pow((float)i,1.3f)*distancePart+distanceOffset;
 		//Calculate the guess
-		vec2 twoDGuess = vec2(cos(angle+angleOffset)*distance,sin(angle+angleOffset)*distance);
+		vec2 twoDGuess = vec2(player->GetPosition())+vec2(cos(angle+angleOffset)*distance,sin(angle+angleOffset)*distance);
 		lastPos = vec3(twoDGuess,Game()->Voxels.GetPositionHeight(twoDGuess)+desiredAltitude);
 		
 		//Check if you're obscured by fog
@@ -28,12 +28,10 @@ vec3 AidsAction::findHiddenLocation(vec3 startLocation, float desiredAltitude) {
 
 		PhysicsActor * actorHit;
 		if (!Universal::Trace(lastPos,glm::normalize(player->GetPosition() - lastPos),NULL,&actorHit)) {
-			//Failed to find the actor
+			//hit the actor
 			if (actorHit == player)
 				continue;
 		}
-
-		//This point is good
 		break;
 	}
 	return lastPos;
