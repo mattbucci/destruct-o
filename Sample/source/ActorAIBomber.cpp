@@ -2,14 +2,15 @@
 #include "ActorAIBomber.h"
 #include "ModelInstance.h"
 #include "BombDropAIWeapon.h"
+#include "BaseFrame.h"
 
 CLASS_SAVE_CONSTRUCTOR(ActorAIBomber);
 
 ActorAIBomber::ActorAIBomber() : ActorAI(new BombDropAIWeapon(this),20,vec3(5,5,2))  {
 	flying = true;
-	scale = 1;
+	scale = 2;
 	runStarted = false;
-	runFinished = false;
+	turnarounddistance = 250;
 }
 ActorAIBomber::~ActorAIBomber() {
 
@@ -34,15 +35,14 @@ void ActorAIBomber::stateEngaging(bool & holdingTrigger) {
 	//Move towards your run direction
 	Velocity = vec3(runDirection*baseMovementSpeed(),Velocity.z);
 
-	//Check if the run is done
-	if (glm::distance(runStartPosition,vec2(Position)) > sightDistance()*2.0f)
-		runFinished = true;
-
+	if (glm::length(vec2(targetEnemy->GetPosition()) - vec2(this->GetPosition())) > turnarounddistance) {
+		runStarted = false;
+	}
 	//Face the direction your run is moving
 	facingDirection = atan2(runDirection.y,runDirection.x);
 
 	//During your run, bomb the hell out of the enemy
-	if (!runFinished) {
+	if (glm::length(vec2(targetEnemy->GetPosition()) - vec2(this->GetPosition())) < sightDistance()) {
 		weapon->Update(vec3(),muzzlePositionA,muzzlePositionB);
 		weapon->HoldingTrigger(true);
 		holdingTrigger = true;
@@ -70,11 +70,6 @@ void ActorAIBomber::snapSpineToEnemy() {
 	return;
 
 	
-}
-
-//Whether or not a bombing run completed
-bool ActorAIBomber::BombingRunComplete() {
-	return runFinished;
 }
 
 void ActorAIBomber::findMuzzlePosition() {
@@ -113,7 +108,7 @@ double ActorAIBomber::targetTime() {
 //The movement speed of this enemy
 //should be tuned to walk animation speed
 float ActorAIBomber::baseMovementSpeed() {
-	return 15;
+	return 50;
 }
 
 //How far can enemies spot each other
@@ -128,7 +123,7 @@ float ActorAIBomber::turnSpeed() {
 
 //The altitude to hover at normally
 float ActorAIBomber::flyHeight() {
-	return 20;
+	return 100;
 }
 
 //The fastest this aircraft can correct its altitude
