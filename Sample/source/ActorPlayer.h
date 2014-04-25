@@ -17,7 +17,6 @@ class ActorPlayer : public PhysicsActor
     
     // Weapon
     GameCamera     weaponCamera;
-	WeaponPulseLaser testWeapon;
     Weapon * currentWeapon;
     //If the player fired the gun
     bool weaponFired;

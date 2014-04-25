@@ -20,8 +20,7 @@ static const float energyPerSecond = 5.0f;
 // Construct an actor player.  Weapon camera is setup for optimal weapon size
 ActorPlayer::ActorPlayer()
     : PhysicsActor(vec3(2,2,6),500, GameFactions::FACTION_PLAYER),
-    weaponCamera(GameCamera(40.0f)),
-	testWeapon(this) {
+    weaponCamera(GameCamera(40.0f)) {
 	//Start the player off in abouts the center
 	Position = (vec3(34,40,0));
     deltaPosition = 0.0;
@@ -49,7 +48,8 @@ float ActorPlayer::GetMaxCharge() {
 
 // Create anything related to the actor
 void ActorPlayer::Build() {
-    setWeapon(&testWeapon);
+	//This leaks a WeaponPulseLaser right now
+    setWeapon(new WeaponPulseLaser(this));
 }
 
 void ActorPlayer::setWeapon(Weapon * weapon) {
@@ -171,9 +171,9 @@ bool ActorPlayer::Update() {
 		*/
 	//Fire always
 	
-	testWeapon.Update(Game()->FirstPerson->GetLookVector(),weaponPos);
+	currentWeapon->Update(Game()->FirstPerson->GetLookVector(),weaponPos);
     if (weaponPos != vec3()) {
-        if (testWeapon.HoldingTrigger(Game()->FirstPerson->GetTriggerPulled())) {
+        if (currentWeapon->HoldingTrigger(Game()->FirstPerson->GetTriggerPulled())) {
             setAnimation(currentWeapon->LookupAnimation(Weapon::ANIMATION_FIRE));
             weaponFired = true;
         }
@@ -239,7 +239,7 @@ void ActorPlayer::Draw(GLEffectProgram * shader) {
 	//Save this position
 
 
-	testWeapon.DrawWeapon(shader,Game()->FirstPerson->GetLookVector(),weaponPos);
+	currentWeapon->DrawWeapon(shader,Game()->FirstPerson->GetLookVector(),weaponPos);
 }
 
 GameCamera& ActorPlayer::WeaponCamera()

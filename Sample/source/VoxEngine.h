@@ -6,6 +6,7 @@
 #include "InputEvent.h"
 #include "Options.h"
 #include "AsyncTask.h"
+#include "SyncTask.h"
 
 #define SIMULATION_DELTA .01f
 
@@ -50,6 +51,10 @@ class VoxEngine {
 public:
 	//Run an async task before the next frame switch
 	static void SetAsyncTask(AsyncTask * task);
+
+	//If you need to run a task on the main thread
+	//do so from here
+	static SyncTask SynchronousTask;
 
 	//Account Options
 	static Options AccountOptions;

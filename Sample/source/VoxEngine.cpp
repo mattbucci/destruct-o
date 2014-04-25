@@ -45,6 +45,11 @@ vec2 VoxEngine::scaleFactor;
 //An async operation to execute before the next frame
 AsyncTask * VoxEngine::task = NULL;
 
+//If you need to run a task on the main thread
+//do so from here
+SyncTask VoxEngine::SynchronousTask;
+
+
 Options VoxEngine::AccountOptions;
 
 /*
@@ -213,6 +218,7 @@ void VoxEngine::Start() {
 			GL2DProgram * shader = (GL2DProgram*)Frames::shaders->GetShader("2d");
 
 			glActiveTexture(GL_TEXTURE0);
+			SynchronousTask.PollingThreadStart();
 
 			while(!VoxEngine::task->IsDone()) {
 				//Run the frame draw
@@ -227,9 +233,15 @@ void VoxEngine::Start() {
 				load.Draw(curWidth,curHeight,shader);
 				SDL_GL_SwapWindow(displayWindow);
 
+				//If there's a sync task, execute it now
+				SynchronousTask.PollingThreadPoll();
+
 				//Sleep softly and use no cpu power
-				OS::SleepTime(.15);
+				OS::SleepTime(.05);
 			}
+
+			SynchronousTask.PollingThreadStop();
+
 			//Cleanup the task
 			delete VoxEngine::task;
 			VoxEngine::task = NULL;
