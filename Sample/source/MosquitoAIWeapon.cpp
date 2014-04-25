@@ -71,7 +71,7 @@ void MosquitoAIWeapon::Fire() {
 string MosquitoAIWeapon::LookupAnimation(Weapon::HandAnimations animation) {
     static const string animations[10] = {
         //ANIMATION_MODELNAME,
-        "mosquito",
+        "helicopter",
         //ANIMATION_AIM,
         "",
         //ANIMATION_FIRE,

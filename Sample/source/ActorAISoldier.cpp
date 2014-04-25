@@ -5,7 +5,7 @@
 
 CLASS_SAVE_CONSTRUCTOR(ActorAISoldier);
 
-ActorAISoldier::ActorAISoldier() : ActorAI(new SoldierAIWeapon(this),100,vec3(1.5,1.5,4))  {
+ActorAISoldier::ActorAISoldier() : ActorAI(new SoldierAIWeapon(this),50,vec3(1.5,1.5,4))  {
 
 }
 ActorAISoldier::~ActorAISoldier() {
