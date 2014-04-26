@@ -95,3 +95,9 @@ double GameSystem::Now() {
 bool GameSystem::IsReady() {
 	return isReady;
 }
+
+// Standard clear bits
+GLenum GameSystem::ClearBits()
+{
+    return GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT;
+}

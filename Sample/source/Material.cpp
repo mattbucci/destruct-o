@@ -17,6 +17,8 @@
 #include "stdafx.h"
 #include "Material.h"
 
+//#define __MATERIAL_PRINT_LOGS__
+
 // Unique texture type count
 const static unsigned int TextureTypeCount = 4;
 
@@ -80,7 +82,6 @@ Material::Material(const Json::Value& value, const std::string directory)
     } else
     {
         colorDiffuse = glm::vec3(1.0, 1.0, 1.0);
-        //cout << " << loaded default ambient color >> " << endl;
     }
     
     // Search for particular color types
@@ -94,13 +95,14 @@ Material::Material(const Json::Value& value, const std::string directory)
     } else
     {
         colorAmbient = colorDiffuse;
-        //cout << " << loaded default ambient color >> " << endl;
     }
     
+#if (defined __MATERIAL_PRINT_LOGS__)
     cout << "Loaded Material (" << id << "): ";
     cout << "Ambient => {" << colorAmbient.r << " " << colorAmbient.g << " " << colorAmbient.b << "} ";
     cout << "Diffuse => {"  << colorDiffuse.r << " " << colorDiffuse.g << " " << colorDiffuse.b << "} ";
     cout << "Textures (" << textures.size() << ")" << endl;
+#endif
 }
 
 // Get the name of the material

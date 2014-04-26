@@ -21,6 +21,7 @@
 #include "PauseWindowMobile.h"
 #include "Achievements.h"
 #include "HUD.h"
+#include "GLSkybox.h"
 
 #include "Model.h"
 #include "ModelInstance.h"
@@ -43,7 +44,9 @@ class BaseFrame : public GameSystem
 	Notification notification;
 	PauseWindow * pauseWindow;
     ModelGroup * models;
-
+	HUD hud;
+    GLSkybox   *skybox;
+    
 	//Setup all the global values for shaders
 	//Sets up, acid shader and fog
 	template <class T>
@@ -52,7 +55,7 @@ class BaseFrame : public GameSystem
 		T * shader = (T*)shaders->GetShader(shaderName);
 		shader->UseProgram();
 		//Setup fog
-		shader->Fog.SetFogColor(vec4(.5,.5,.5,1));
+		shader->Fog.SetFogColor(vec4(.65,.70,.76,1));
 		shader->Fog.SetFogDistance(fogDistance);
 		//Setup acid shader
 		shader->Acid.SetCurrentTime(Game()->Now());
@@ -85,8 +88,6 @@ public:
 	PhysicsSystem Physics;
 	ActorSystem Actors;
 	ParticleCloud Particles;
-    
-	HUD hud;
 
 	//Private objects which must be initialized after everything else
 	//goes here
@@ -133,6 +134,9 @@ public:
 
 	// Get HUD
 	HUD* GetHUD();
+    
+    // Function should return the desired glClear bits
+    virtual GLenum ClearBits() override;
 
     GameEvent<void(BaseFrame*)> GameStarted;
     GameEvent<void(BaseFrame*)> GamePaused;

@@ -142,7 +142,7 @@ void AnimationClip::Update(double delta, double now)
             // Error if we could not find the bones (skip bone)
             if(!node || !iNode)
             {
-                cout << "WTF: could not find bone -> " << bone->first << endl;
+                //cout << "WTF: could not find bone -> " << bone->first << endl;
                 continue;
             }
             

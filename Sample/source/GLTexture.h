@@ -2,7 +2,9 @@
 
 #include "stdafx.h"
 
-class GLTexture {
+class GLTexture
+{
+protected:
 	GLuint textureId;
 
 	string texturePathName;
@@ -13,14 +15,14 @@ class GLTexture {
 	friend class GL2DProgram;
 public:
 	GLTexture(string texturePathName);
-	~GLTexture();
+	virtual ~GLTexture();
 
 	//Create an error texture which relies only on memory
 	//do not attempt to cache
 	static GLTexture * GenerateErrorTexture();
 
 	//Attempt to cache the texture in graphics memory
-	bool CacheTexture();
+	virtual bool CacheTexture();
 
 	//Whether or not this texture is cached currently
 	bool IsCached();
@@ -29,7 +31,6 @@ public:
 	float GetWidth();
 	float GetHeight();
 
-	//Bind this texture to the 0 texture unit
-	//if you need to bind to a different texture unit, add an override
-	void Bind();
+	// Bind this texture to the currently selected texture unit
+	virtual void Bind();
 };

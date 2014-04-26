@@ -18,6 +18,8 @@
 #include "ModelInstance.h"
 #include "OS.h"
 
+//#define __MODELINSTANCE_PRINT_LOGS__
+
 /**
  * Create a model instance for a model
  * @param _model Model to provide an instance of
@@ -169,11 +171,13 @@ ModelInstance* ModelInstance::LoadManifestEntry(const Json::Value& model, Textur
         instance->controller = new AnimationController(controller, instance->model.get());
     }
     
+#if (defined __MODELINSTANCE_PRINT_LOGS__)
     // Print out the animations
     for(Model::animation_const_iterator it = instance->model->Animations().begin(); it != instance->model->Animations().end(); it++)
     {
         cout << "Animation: " << it->first << " is " << it->second->Length() << " seconds" << endl;
     }
+#endif
     
     // Return the created instance
     return instance;

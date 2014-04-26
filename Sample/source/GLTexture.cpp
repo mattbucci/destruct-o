@@ -35,9 +35,7 @@ GLTexture * GLTexture::GenerateErrorTexture() {
 		}
 	}
 
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, 8,
-				8, 0, GL_RGBA, GL_FLOAT,
-				&errorTexture[0] );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, 8, 8, 0, GL_RGBA, GL_FLOAT, &errorTexture[0] );
 	return err;
 }
 

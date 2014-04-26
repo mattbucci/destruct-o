@@ -277,7 +277,7 @@ void VoxEngine::Start() {
 		}
 
 		//Run the frame draw
-		glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		glClear ( CurrentSystem->ClearBits() );
 		//Draw
 		CurrentSystem->Draw(scaledSize.x,scaledSize.y);
 
@@ -442,7 +442,7 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 		return NULL;
 	}
 #else
-	displayWindow = SDL_CreateWindow("Sample",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	displayWindow = SDL_CreateWindow("Destructo",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 #endif
 	
 	cout << "Built context with opengl version: " << openglMajorVersion << "." << openglMinorVersion << "\n";

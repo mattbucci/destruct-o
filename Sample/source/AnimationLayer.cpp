@@ -19,7 +19,7 @@
 #include "AnimationController.h"
 
 #define DEFAULT_TRANSITION_DURATION 0.25
-#define __ANIMLAYER_PRINT_LOGS__
+//#define __ANIMLAYER_PRINT_LOGS__
 
 /**
  * Empty constructor.  Builds an empty animation layer bound to an animation
