@@ -73,10 +73,10 @@ void ActorPlayer::setWeapon(Weapon * weapon)
     // Based on which weapon it is, select a reticle
     if(weapon == laserCannon)
     {
-        Game()->hud.SetReticle("hud/reticle_sniper.png", glm::vec2(48, 48));
+        Game()->GetHUD()->SetReticle("hud/reticle_sniper.png", glm::vec2(48, 48));
     } else
     {
-        Game()->hud.SetReticle("hud/reticle.png", glm::vec2(48, 48));
+        Game()->GetHUD()->SetReticle("hud/reticle.png", glm::vec2(48, 48));
     }
     
     //Save weapon

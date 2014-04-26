@@ -59,6 +59,9 @@ public:
 	virtual void Draw(double width, double height);
 	//Function to test if GameSystem is Ready
 	virtual bool IsReady();
+    
+    // Function should return the desired glClear bits
+    virtual GLenum ClearBits();
 
 	//Save time
 	CLASS_DECLARATION(GameSystem)

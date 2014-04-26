@@ -19,12 +19,35 @@
 
 #include "stdafx.h"
 #include "GLTextureCubeMap.h"
+#include "GL3DProgram.h"
+#include "TextureCache.h"
 
 class GLSkybox
 {
+    // The GL state variables
+    GLuint vertexArrayObject;
+    GLuint vertexBuffer;
+    GLuint indexBuffer;
+    
+    // The name of the skybox texture
+    std::string skyboxName;
+    
+    // Previous program used to render
+    GL3DProgram *previousProgram;
+    
+    // Texture cache
+    TextureCache& textureCache;
+    
 public:
-    GLSkybox();
+    // Allocate a skybox with a particular name
+    GLSkybox(std::string skyboxName, TextureCache& textureCache);
     ~GLSkybox();
+    
+    // Build the skybox
+    void Build();
+    
+    // Draw the skybox
+    void Draw(GL3DProgram * program);
 };
 
 #endif

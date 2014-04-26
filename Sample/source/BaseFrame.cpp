@@ -51,7 +51,8 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
 
 	Controls.AddWindow(pauseWindow);
 	Controls.AddWindow(&notification);
-
+    skybox = new GLSkybox("skybox/skybox", Textures);
+    
 	//Not a unique save. Should be altered in the future
 	SaveName = "Default_Save";
     
@@ -179,12 +180,8 @@ void BaseFrame::Build()
     
     VoxEngine::SynchronousTask.RequestTask([this] ()
     {
-        // Test getting a cubemap
-        GLTextureCubeMap *cubemap = Textures.GetTexture<GLTextureCubeMap>("skybox/skybox");
-        if(cubemap)
-        {
-            std::cout << "Cubemap is valid!! " << endl;
-        }
+        // Build the skybox (upload to GPU)
+        skybox->Build();
     });
     
 	//Build the reset save
@@ -267,16 +264,35 @@ void BaseFrame::Draw(double width, double height)
 	shaders3d->Lights.Apply();
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+    
+    // Re-enable the depth test
+	glEnable(GL_DEPTH_TEST);
 	
 	// Draw voxels
 	Voxels.Draw(shaders,pos,ViewDistance.GetDrawRegion(vec2(pos),FirstPerson->GetAngleVector().x/180.0f*(float)M_PI));
 	//The physics system uses the same texture that the voxels above binds every time it draws
 	//so it must always immediately follow Voxels.draw()
 	Physics.Draw(shaders);
+    
+    // Use the skybox shader
+    GL3DProgram * skyboxShader = (GL3DProgram *) shaders->GetShader("skybox");
+    skyboxShader->UseProgram();
+    
+    // Y U DO DIS? Y Z VECTOR UP??? Y U GOT TO FUCK THE SYSTEM??
+    // Change the up vector from z up to y up for the skybox.  Use a camera fixed a 0,0,0, y up coordinate space.  rather not do matrix math
+    // just for the skybox
+    vec3 unfuckedLookVector = vec3(FirstPerson->GetLookVector().x, FirstPerson->GetLookVector().z, -FirstPerson->GetLookVector().y);
+    skyboxShader->Camera.SetCameraPosition(vec3(0,0,0), unfuckedLookVector, vec3(0,1,0));
+    skyboxShader->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25,1000); //width/height
+    skyboxShader->Camera.Apply();
+    
+    // Apply the model transform (identity transform =/)
+    skyboxShader->Model.Apply();
+    
+    // Draw the skybox
+    skybox->Draw(skyboxShader);
     
     // Setup the mesh shader boneless
     MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
@@ -341,4 +357,10 @@ BaseFrame * Game() {
 
 HUD* BaseFrame::GetHUD() {
 	return &hud;
+}
+
+// As we have the skybox, we only need clear the depth buffer
+GLenum BaseFrame::ClearBits()
+{
+    return GL_DEPTH_BUFFER_BIT;
 }

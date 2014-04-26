@@ -18,7 +18,7 @@
 #include "ModelInstance.h"
 #include "OS.h"
 
-#define __MODELINSTANCE_PRINT_LOGS__
+//#define __MODELINSTANCE_PRINT_LOGS__
 
 /**
  * Create a model instance for a model

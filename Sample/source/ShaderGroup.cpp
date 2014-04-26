@@ -59,6 +59,12 @@ ShaderGroup::ShaderGroup() {
         cout << "Failed to build opengl program (model)\n";
     AddShader(modelShader,"model");
 
+    // Build the skybox shader
+    GL3DProgram * skyboxShader = new GL3DProgram(&commonShader,"Interface/Shaders/universal/vsh_skybox.glsl","Interface/Shaders/universal/fsh_skybox.glsl");
+    if (!skyboxShader->Valid())
+        cout << "Failed to build opengl program (skybox)\n";
+    AddShader(skyboxShader,"skybox");
+    
 	//Build Effect Shader
 	GLEffectProgram * shadersE = new GLEffectProgram(&commonShader,"Interface/Shaders/universal/vsh_effect.glsl","Interface/Shaders/universal/fsh_effect.glsl");
 	if (!shadersE->Valid()) 
