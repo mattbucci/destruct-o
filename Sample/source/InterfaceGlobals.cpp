@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "InterfaceGlobals.h"
 #include "Font.h"
+#include "NinePatchBinary.h"
 
 //Defined in this cpp file
 InterfaceGlobals VisualInterface;
@@ -20,7 +21,7 @@ void InterfaceGlobals::init() {
 	
 
 	//Nine patches, overrides ugly colors
-	NPWindow = NULL;
+	NPWindow = new NinePatchBinary("Interface/9Patches/sample.9ptch");
 	NPButton = NULL;
 	NPButtonHover = NULL;
 	NPButtonDown = NULL;
