@@ -103,7 +103,7 @@ void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shade
     }
     
 	//Enable the texture used for this particle system
-	GLTexture * texture = CurrentSystem->Textures.GetTexture(particleSystemDescription.MaterialTexture);
+	GLTexture * texture = CurrentSystem->Textures.GetTexture<GLTexture>(particleSystemDescription.MaterialTexture);
 	texture->Bind();
 	//Call the renderer to render all the particles
 	renderer->Render(shader,&particleList[0],particleList.size());
