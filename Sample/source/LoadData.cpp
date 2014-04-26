@@ -6,9 +6,13 @@
 void LoadData::RegisterLoadedHandle(uint64_t original, void * newHandle) {
 	//If the handle is being rebuilt twice, we have a problem
 	_ASSERTE(handlesRebuilt.find(original) == handlesRebuilt.end());
+	handleSize++;
 
 
 	handlesRebuilt[original] = newHandle;
+		if (handlesRebuilt.size() != handleSize) {
+			_ASSERTE(false);
+	}
 }
 //Register a pointer to a recreated object which has not been created yet
 void LoadData::RegisterHandleToLoad(uint64_t original, void ** handleToLoad) {

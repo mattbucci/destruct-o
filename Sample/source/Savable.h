@@ -16,22 +16,31 @@ class Savable {
 		ContainerType<InternalType,AllocaterType<InternalType>> & container =  *(ContainerType<InternalType,AllocaterType<InternalType>>*)valueData.member;
 		//clear out any data already in the class
 		container.clear();
-		//Now load values into the class
-		for (unsigned int i = 0; i < value.size(); i++) {
+		if ( value.size() > 0) {
+			//Reserve the capacity needed
+			//this /must/ happen so that pointers to the memory space
+			//are still valid (auto-resizes destroy existing pointers)
+			container.resize(value.size());
+			//Use an iterator for full compatibility
+			auto it = container.begin();
 
-			//Push a new value into the container
-			container.push_back(InternalType());
+			//Now load values into the class
+			for (unsigned int i = 0; i < value.size(); i++) {
 
-			ReflectionData::savable saveData;
-			saveData.dataType = valueData.internalType;
-			saveData.internalType = ReflectionData::SAVE_NOTHING;
-			saveData.member = &container.back();
-			//saveData.member = (void *) &container.back();
-			saveData.memberName = ""; //No name since its part of an array
-			//Load the value
-			LoadValue(saveData, value[i],loadData);
+				//Push a new value into the container
+				*it = InternalType();
 
-
+				ReflectionData::savable saveData;
+				saveData.dataType = valueData.internalType;
+				saveData.internalType = ReflectionData::SAVE_NOTHING;
+				saveData.member = &*it;
+				//saveData.member = (void *) &container.back();
+				saveData.memberName = ""; //No name since its part of an array
+				//Load the value
+				LoadValue(saveData, value[i],loadData);
+				//go to the next value
+				it++;
+			}
 		}
 	}
 
@@ -46,21 +55,34 @@ class Savable {
 		for (auto member : containerCopy)
 			delete (Savable*)member;
 		container.clear();
-		//Now load values into the class
-		for (unsigned int i = 0; i < value.size(); i++) {
-			InternalType valueToLoad = NULL;
 
-			ReflectionData::savable saveData;
-			saveData.dataType = valueData.internalType;
-			saveData.internalType = ReflectionData::SAVE_NOTHING;
-			saveData.member = &valueToLoad;
-			saveData.memberName = ""; //No name since its part of an array
-			//Load the value
-			LoadValue(saveData, value[i],loadData);
+		if ( value.size() > 0) {
+			//Reserve the capacity needed
+			//this /must/ happen so that pointers to the memory space
+			//are still valid (auto-resizes destroy existing pointers)
+			container.resize(value.size());
+			//Use an iterator for full compatibility
+			auto it = container.begin();
 
-			//Push the value into the container, unless the handle autoregisters
-			if (valueData.internalType != ReflectionData::SAVE_OWNEDHANDLEAR)
-				container.push_back(valueToLoad);
+			//Now load values into the class
+			for (unsigned int i = 0; i < value.size(); i++) {
+				InternalType valueToLoad = NULL;
+
+				ReflectionData::savable saveData;
+				saveData.dataType = valueData.internalType;
+				saveData.internalType = ReflectionData::SAVE_NOTHING;
+				saveData.member = &valueToLoad;
+				saveData.memberName = ""; //No name since its part of an array
+				//Load the value
+				LoadValue(saveData, value[i],loadData);
+
+				//Push the value into the container, unless the handle autoregisters
+				if (valueData.internalType != ReflectionData::SAVE_OWNEDHANDLEAR)
+					*it = valueToLoad;
+
+				//go to the next value
+				it++;
+			}
 		}
 	}
 

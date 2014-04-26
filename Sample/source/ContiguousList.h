@@ -28,18 +28,6 @@ class ContiguousList{
 	//enabled by default
 	bool autoreduceCapacity;
 
-	//Resize data to the new listCapacity
-	void resize(int newCapacity) {
-		//Allocate the new storage
-		T * newData = new T[newCapacity];
-		//Copy over the data
-		memcpy(newData,data,sizeof(T)*((listSize > (unsigned int)newCapacity) ? newCapacity : listSize));
-		//Clean up the old storage
-		delete [] data;
-		//Remember only the new storage
-		data = newData;
-		listCapacity = newCapacity;
-	}
 public:
 	ContiguousList() {
 		autoreduceCapacity = true;
@@ -59,6 +47,27 @@ public:
 		listSize = original.listSize;
 		data = new T[listCapacity];
 		memcpy(data,original.data,original.listSize*sizeof(T));
+	}
+
+	void reserve(unsigned int newCapacity) {
+		//Allocate the new storage
+		T * newData = new T[newCapacity];
+		//Copy over the data
+		memcpy(newData,data,sizeof(T)*((listSize > newCapacity) ? newCapacity : listSize));
+		//Clean up the old storage
+		delete [] data;
+		//Remember only the new storage
+		data = newData;
+		listCapacity = newCapacity;
+	}
+
+	//Resize data to the new listCapacity
+	void resize(unsigned int newSize) {
+		//Check you have enough capacity
+		if (listCapacity < newSize) 
+			reserve(newSize);
+		//Increase size
+		listSize = newSize;
 	}
 
 	const ContiguousList & operator=(const ContiguousList & original) {
@@ -298,7 +307,7 @@ public:
 	void push_back(T toInsert) {
 		if (listSize == listCapacity)
 			//Not enough room, make some more
-			resize((int)(listCapacity * 1.5 + 4));
+			reserve((int)(listCapacity * 1.5 + 4));
 		//Assume the space after listSize is empty
 		data[listSize++] = toInsert;
 		//return listSize-1;
@@ -321,7 +330,7 @@ public:
 			//at this point looks like we could shrink some
 			//Determine the position of the old iterator
 			int pos = (int)(toErase.at-data);
-			resize((int)(listSize*1.25)+5);
+			reserve((int)(listSize*1.25)+5);
 			//Build a new iterator at the same position but with the new data
 			return iterator(data+pos);
 		}

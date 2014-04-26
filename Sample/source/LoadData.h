@@ -11,7 +11,13 @@ class LoadData {
 	vector<loadhandle> handlesToLoad;
 	//matches an original handle to a created handle
 	map<uint64_t,void*> handlesRebuilt;
+
+	int handleSize;
 public:
+	LoadData() {
+		handleSize = 0;
+	}
+
 	//Register a recreated object
 	void RegisterLoadedHandle(uint64_t original, void * newHandle);
 	//Register a pointer to a recreated object which has not been created yet
