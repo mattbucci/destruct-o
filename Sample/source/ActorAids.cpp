@@ -183,7 +183,7 @@ bool ActorAids::Update() {
 	//Another dumb thing
 	//always find the closest point to the player
 	//should do something smarter than this
-	actions.push_back(randomAction->second(Game()->Actors.Player()->GetPosition()));
+	//actions.push_back(randomAction->second(Game()->Actors.Player()->GetPosition()));
 	spawnedNasties = true;
 
 	//Update the underlying actor
