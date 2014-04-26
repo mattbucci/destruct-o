@@ -61,7 +61,6 @@ bool GLTextureCubeMap::CacheTexture()
     }
     
     // Generate an cubemap OpenGL Texture
-	glEnable(GL_TEXTURE_CUBE_MAP);
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

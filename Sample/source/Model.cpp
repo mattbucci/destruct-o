@@ -318,7 +318,7 @@ void Model::Upload()
         for(Material::texture_store::const_iterator it = mIt->second->Textures().begin(); it != mIt->second->Textures().end(); it++)
         {
             // Upload the texture
-            textureCache.GetTexture(it->second);
+            textureCache.GetTexture<GLTexture>(it->second);
         }
     }
     
@@ -434,7 +434,7 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
             glActiveTexture(GL_TEXTURE0 + tIt->first);
             
             // Bind the texture for this texture unit
-            textureCache.GetTexture(tIt->second)->Bind();
+            textureCache.GetTexture<GLTexture>(tIt->second)->Bind();
         }
         
         // Set all the bones according to the skeleton

@@ -126,7 +126,7 @@ void EffectLaser::Draw(GLEffectProgram * program) {
 
 	program->UseTexture(true);
 	program->SetTint(laserColor*vec4(laserPower,laserPower,laserPower,laserPower));
-	Game()->Textures.GetTexture("effects/laser.png")->Bind();
+	Game()->Textures.GetTexture<GLTexture>("effects/laser.png")->Bind();
 
 	GLEffectVertexGroup::Draw(program,true);
 

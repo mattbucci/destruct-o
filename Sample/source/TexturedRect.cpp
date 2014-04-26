@@ -60,7 +60,7 @@ void TexturedRect::Draw(GL2DProgram * program) {
 	//Enable the texture and tint
 	program->EnableTexture(true);
 	program->SetColor(tint);
-	CurrentSystem->Textures.GetTexture(texturePath)->Bind();
+	CurrentSystem->Textures.GetTexture<GLTexture>(texturePath)->Bind();
 	//Draw the rect
 	GL2DVertexGroup::Draw(program);
 }

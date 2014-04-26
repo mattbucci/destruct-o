@@ -260,7 +260,7 @@ void BaseFrame::Draw(double width, double height)
 	shaders3d->Model.Apply();
 	//Setup sun here for now
 	//translate it to follow world coordinates
-	shaders3d->Lights.On();
+	shaders3d->Lights.Off();
 	shaders3d->Lights.Apply();
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
@@ -275,7 +275,11 @@ void BaseFrame::Draw(double width, double height)
 	//The physics system uses the same texture that the voxels above binds every time it draws
 	//so it must always immediately follow Voxels.draw()
 	Physics.Draw(shaders);
-    
+
+	//Turn lights back on because I'm not sure if this is necessary
+	shaders3d->Lights.On();
+	shaders3d->Lights.Apply();
+
     // Use the skybox shader
     GL3DProgram * skyboxShader = (GL3DProgram *) shaders->GetShader("skybox");
     skyboxShader->UseProgram();

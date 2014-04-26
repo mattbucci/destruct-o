@@ -17,7 +17,7 @@ public:
 	~TextureCache();
     
     // Acquires the given texture, caching it on the fly if necessary
-    template <class T = GLTexture>
+    template <class T>
     T * GetTexture(string path)
     {
         //Check cache first
@@ -54,7 +54,7 @@ public:
     }
 
 	// Caches the texture forever without unloading it until Flush() is explicitly called
-    template <typename T = GLTexture>
+    template <typename T>
     void PermaCacheTexture(string path)
     {
         //Attempt to cache
