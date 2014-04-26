@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "9patch-tool", "9patch-tool\9patch-tool.vcxproj", "{93751C2A-F1AC-490C-B574-EA3BC0ECE80D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{93751C2A-F1AC-490C-B574-EA3BC0ECE80D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{93751C2A-F1AC-490C-B574-EA3BC0ECE80D}.Debug|Win32.Build.0 = Debug|Win32
+		{93751C2A-F1AC-490C-B574-EA3BC0ECE80D}.Release|Win32.ActiveCfg = Release|Win32
+		{93751C2A-F1AC-490C-B574-EA3BC0ECE80D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
