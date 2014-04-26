@@ -3,9 +3,8 @@
 #include "GLTexture.h"
 #include "stdafx.h"
 
-class TextureCache {
-	GLTexture * errorTexture;
-
+class TextureCache
+{
 	typedef pair<GLTexture*,double> cached;
 
 	//The time of this current frame so that OS::Now() is not called every time a texture is retrieved
@@ -16,12 +15,58 @@ class TextureCache {
 public:
 	TextureCache();
 	~TextureCache();
+    
+    // Acquires the given texture, caching it on the fly if necessary
+    template <class T = GLTexture>
+    T * GetTexture(string path)
+    {
+        //Check cache first
+        auto it = cachedTextures.find(path);
+        if (it == cachedTextures.end())
+        {
+            //Attempt to cache
+            GLTexture * tex = new T(path);
+            if (!tex->CacheTexture())
+            {
+                //Cache failed, destroy the texture
+                //Substitute the memory-created error texture
+                //cache the error texture to avoid redundant errors
+                delete tex;
+                
+                //Errors are perma-cached
+                //this is expected behavior since GetTexture() could be called after a permacache request
+                T * errorTexture = T::GenerateErrorTexture();
+                cachedTextures[path] = cached(errorTexture, -1);
+                return errorTexture;
+            }
+            
+            //Add in cache with expiration date
+            cachedTextures[path] = cached(tex,expirationTime);
+            return dynamic_cast<T*> (tex);
+        }
+        else
+        {
+            //Only update the time stamp if its not set to perma cache
+            if (it->second.second > 0)
+                it->second.second = expirationTime;
+            return dynamic_cast<T*> (it->second.first);
+        }
+    }
 
-	//Acquires the given texture, caching it on the fly if necessary
-	GLTexture * GetTexture(string path);
-
-	//Caches the texture forever without unloading it until Flush() is explicitly called
-	void PermaCacheTexture(string path);
+	// Caches the texture forever without unloading it until Flush() is explicitly called
+    template <typename T = GLTexture>
+    void PermaCacheTexture(string path)
+    {
+        //Attempt to cache
+        GLTexture * tex = new T(path);
+        if (!tex->CacheTexture()) {
+            //Cache failed, destroy the texture
+            delete tex;
+            return;
+        }
+        //Add in cache without expiration
+        cachedTextures[path] = cached(tex,-1);
+    }
 
 	//Flush all textures out of cache including those perm-cached
 	void Flush();

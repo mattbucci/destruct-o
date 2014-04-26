@@ -25,6 +25,8 @@
 #include "Demo.h"
 #include "Building.h"
 
+#include "GLTextureCubeMap.h"
+
 BaseFrame::BaseFrame(ShaderGroup * shaders)
     : GameSystem(shaders), 
 	Physics(&Voxels), 
@@ -174,7 +176,17 @@ void BaseFrame::Build()
         // If the pause window is visible, first person is not
         this->FirstPerson->Enable(!visible);
     });
-
+    
+    VoxEngine::SynchronousTask.RequestTask([this] ()
+    {
+        // Test getting a cubemap
+        GLTextureCubeMap *cubemap = Textures.GetTexture<GLTextureCubeMap>("skybox/skybox");
+        if(cubemap)
+        {
+            std::cout << "Cubemap is valid!! " << endl;
+        }
+    });
+    
 	//Build the reset save
 	resetSave = Savable::Serialize(this);
 }
