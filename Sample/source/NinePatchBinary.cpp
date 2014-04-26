@@ -47,20 +47,16 @@ bool NinePatchBinary::IsValid() {
 
 //Attempt to load a ninepatch from file
 NinePatchBinary::NinePatchBinary(string filename) {
-	ifstream toLoad(filename.c_str(),ios::binary);
+	vector<unsigned char> ninepatchData;
+	lodepng::load_file(ninepatchData,filename);
 	valid = false;
 	//Check that the file opened
-	if (!toLoad.is_open()) {
+	if (ninepatchData.size() < sizeof(savedNinepatch)) {
 		cout << "Failed to open 9patch: " << filename << "\n";
 		return;
 	}
 	//Read in bytes until the struct is populated
-	toLoad.read((char *)&savedNinepatch,sizeof(savedNinepatch));
-	//Check that at least that many bytes could be read
-	if (toLoad.fail()) {
-		cout << "Failed to read 9patch: " << filename << "\n";
-		return;
-	}
+	memcpy((char *)&savedNinepatch,ninepatchData.data(),sizeof(savedNinepatch));
 	//Check file signature
 	if (string(savedNinepatch.fileSignature,4) != "PTCH") {
 		cout << "Corrupted 9patch: " << filename << "\n";

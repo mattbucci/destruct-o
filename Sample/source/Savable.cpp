@@ -277,6 +277,8 @@ void Savable::Load(Json::Value & parentValue, LoadData & loadData) {
 	savesystem_reflect(members);
 	//Load every member of the class
 	for (auto member : members) {
+		if (member.memberName == "cityPopulation")
+			cout << "";
 		if (!parentValue.isMember(member.memberName))
 			cout << "Member: " << member.memberName << " missing.\n";
 		else
