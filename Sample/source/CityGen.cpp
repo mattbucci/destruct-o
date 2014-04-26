@@ -91,6 +91,16 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 	static const int turretSkip = 6;
 	static const int samples = 200;
 	static const float anglePart = M_PI*2.0f/(float)lineCount;
+    
+    //flatten terrain
+	//generate roads
+	
+	for (int y = -citysize / 2; y < citysize / 2; y++) {
+		for (int x = -citysize / 2; x < citysize / 2; x++) {
+			cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 2;
+		}
+	}
+    
 	for (int p = 0; p < lineCount; p++) {
 		vec2 lineDirection = glm::normalize(vec2(cos(anglePart*p),sin(anglePart*p)));
 		float lineLength = citysize*1.5;
@@ -151,6 +161,7 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 		10
 	};
 
+
 	//Place the spire
 	for (float x = -4; x <= 4; x++) {
 		for (float y = -4; y <= 4; y++) {
@@ -161,6 +172,7 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 			//The tower is made of tough stuff
 			cell.cellHealth = 50;
 			cell.cellMaxHealth = 50;
+            cell.materialId = 3;
 			//Register the center
 			if (ring == 0) {
 				cityData->cityCenterVoxel = spos+vec2(tileOffset);
@@ -168,15 +180,6 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 			}
 				
 		} 
-	}
-
-	//flatten terrain
-	//generate roads
-	
-	for (int y = -citysize / 2; y < citysize / 2; y++) {
-		for (int x = -citysize / 2; x < citysize / 2; x++) {
-			cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 2;
-		}
 	}
 
 	//Super hack, transfer city data to ai

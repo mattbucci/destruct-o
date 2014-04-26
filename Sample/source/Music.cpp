@@ -136,6 +136,7 @@ void Music::SetVolume(uint8_t volume) {
 void Music::Update(){
     if(!Mix_PlayingMusic() && shouldbeplaying) {
         track_numbers[sceneintensity]++;
-        play_track(ambient_tracks[sceneintensity][track_numbers[sceneintensity]]);
+        if(ambient_tracks[sceneintensity].size() >= sceneintensity +1)
+            play_track(ambient_tracks[sceneintensity][track_numbers[sceneintensity]]);
     }
 }
