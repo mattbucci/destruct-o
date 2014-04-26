@@ -126,39 +126,6 @@ ModelGroup::ModelGroup(const std::string& manifestPath, TextureCache& _textureCa
 	delete deadThreads;
 }
 
-// Insert a model into the model group
-/*void ModelGroup::AddModel(std::string& directory, std::string& path, std::string& name)
-{
-    // Add this model to the model list
-    double s = OS::Now();
-    Model * loadedModel = Model::LoadFromJsonFile(directory, path, textureCache);
-	modelGroupMutex.lock();
-	models[name] = loadedModel;
-	modelGroupMutex.unlock();
-    double f = OS::Now() - s;
-    cout << "Loaded: " << path << " (in " << f << " seconds) ==> " << name << endl;
-}
-
-void ModelGroup::AddCompressedModel(std::string& directory, std::string& path, std::string& name)
-{
-    // Add this model to the model list
-    double s = OS::Now();
-	Model *loadedModel  = Model::LoadFromCompressedJsonFile(directory, path, textureCache);
-	modelGroupMutex.lock();
-	models[name] = loadedModel;
-	modelGroupMutex.unlock();
-    double f = OS::Now() - s;
-    
-    // Log the animations
-    cout << "Loaded: " << path << " (in " << f << " seconds) ==> " << name << endl;
-    cout << "---- " << name << " animations ----" << endl;
-    for(Model::animation_const_iterator it = loadedModel->Animations().begin(); it != loadedModel->Animations().end(); it++)
-    {
-        cout << " " << it->first << "\t" << it->second->Length() << " seconds" << endl;
-    }
-    cout << "-----------------------------------" << endl << endl;
-}*/
-
 // Create a new model instance from a model in the group
 ModelInstance* ModelGroup::NewInstance(const std::string modelName)
 {
