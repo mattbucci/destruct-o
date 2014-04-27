@@ -47,8 +47,8 @@ public:
 
 template <class T>
 Slider<T>::Slider() :
+    down(Rect(0,0,25,25), "-"),
 	up(Rect(0,0,25,25), "+"),
-	down(Rect(0,0,25,25), "-"),
 	fill(4)
 {
 	up.hPin = Control::MAX;

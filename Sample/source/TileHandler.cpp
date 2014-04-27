@@ -375,7 +375,6 @@ void TileHandler::Load(Json::Value & parentValue, LoadData & loadData) {
 
 	//Load tiles
 	Json::Value & tiles = parentValue["tiles"];
-	int tileNumber = 0;
 	for (auto tile : tiles) {
 		vec2 tilePosition((int)tile["x"].asFloat(),(int)tile["y"].asFloat());
 		//Get the tile data

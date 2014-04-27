@@ -15,7 +15,6 @@
 #include "PhysicsSystem.h"
 #include "ParticleCloud.h"
 #include "Audio.h"
-#include "DemoWindow.h"
 #include "Notification.h"
 #include "PauseWindow.h"
 #include "PauseWindowMobile.h"
@@ -40,7 +39,6 @@ class BaseFrame : public GameSystem
 {
 	AudioPlayer * audio;
 
-	DemoWindow * demoWindow;
 	Notification notification;
 	PauseWindow * pauseWindow;
     ModelGroup * models;
@@ -119,9 +117,13 @@ public:
 	//provided by the game system
 	virtual bool Update(vector<InputEvent> inputEvents) override;
 
-	//synchronously saves the game
+	// state that we want to also include the original save function (prevents the hides overloaded virtual function warning)
+    using GameSystem::Save;
+    
+    //synchronously saves the game
 	//returns true if successful
 	bool Save(string saveFile);
+    
 	//synchronously loads the game over any existing data
 	//returns true if successful
 	bool Load(string saveFile);

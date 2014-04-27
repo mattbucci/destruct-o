@@ -31,9 +31,12 @@ public:
 
 	//synchronously saves the game
 	//returns true if successful
+    using GameSystem::Save;
 	bool Save(string saveFile);
+    
 	//synchronously loads the game over any existing data
 	//returns true if successful
+    using GameSystem::Load;
 	bool Load(string saveFile);
 
 	//Draw happens whenever possible

@@ -114,32 +114,6 @@ static void intersect1D(int & rangeAStart, int & rangeAEnd, int rangeBStart, int
 	rangeAEnd = min(rangeAEnd, rangeBEnd);
 }
 
-struct rectGroup {
-	IntRect parts[4];
-	int usedParts;
-};
-static rectGroup subtract(IntRect outer, IntRect inner) {
-	//If the inner region is empty, the outer region is the intersection
-	if ((inner.StartX == inner.EndX) || (inner.StartY == inner.EndY)) {
-		rectGroup grp;
-		grp.usedParts = 1;
-		grp.parts[0] = outer;
-		return grp;
-	}
-	//If the inner region is not empty there are four regions that could describe the intersection
-	rectGroup grp;
-	grp.usedParts = 0;
-	if (outer.StartY < inner.StartY)
-		grp.parts[grp.usedParts++] = IntRect(outer.StartX,outer.StartY,outer.EndX,inner.StartY);
-	if (outer.StartX < inner.StartX) 
-		grp.parts[grp.usedParts++] = IntRect(outer.StartX,inner.StartY,inner.StartX,inner.EndY);
-	if (outer.EndX > inner.EndX) 
-		grp.parts[grp.usedParts++] = IntRect(inner.EndX,inner.StartY,outer.EndX,inner.EndY);
-	if (outer.EndY > inner.EndY) 
-		grp.parts[grp.usedParts++] = IntRect(outer.StartX,inner.EndY,outer.EndX,outer.EndY);
-	return grp;
-};
-
 //Draw the voxels in a region
 void VoxelSystem::Draw(ShaderGroup * shaders, vec3 drawPos, IntRect drawRegion) {
 	//_ASSERTE(tileData != NULL);

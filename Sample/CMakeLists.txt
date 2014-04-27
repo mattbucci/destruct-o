@@ -94,6 +94,9 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 	# Set the runtime search path to look for frameworks and libraries in the Frameworks folder of the .app
 	set_target_properties(Destructo PROPERTIES XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path @loader_path/../Frameworks")
+    
+    # Don't strip symbols on copy (for frameworks)
+    set_target_properties(Destructo PROPERTIES XCODE_ATTRIBUTE_COPY_PHASE_STRIP "No")
 
     # Link the frameworks to destructo
     target_link_libraries(Destructo ${SDL2_FRAMEWORK})

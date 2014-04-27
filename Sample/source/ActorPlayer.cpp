@@ -10,9 +10,7 @@ CLASS_SAVE_CONSTRUCTOR(ActorPlayer);
 
 //Right now there's no physics system and this actor is a pseudo physics object
 //so here are the constants involved
-static const float groundThreshold = .05f;
 static const float movementSpeed = 6.0f;
-static const float gravity = -9.8f;
 static const float jumpVelocity = 20.0f;
 //Other player specific constants
 static const float energyPerSecond = 5.0f;

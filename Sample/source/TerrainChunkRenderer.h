@@ -10,8 +10,8 @@ class TerrainChunkRenderer {
 	
 
 	//A render slot for chunks
-	class HotChunk {
-		TerrainChunk * toRender;
+	class HotChunk
+    {
 		GLuint vertexArrayBuffer;
 		GLuint vertexData;
 		int vertexCount;

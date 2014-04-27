@@ -13,7 +13,6 @@
 #include "Music.h"
 #include "Effect.h"
 #include "ActorPlayer.h"
-#include "Demo.h"
 
 class AudioPlayer : protected GameEventSubscriber {
 private:

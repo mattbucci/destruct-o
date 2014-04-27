@@ -60,8 +60,8 @@ using namespace std;
 #ifndef WIN32
 //for OSX
 #ifdef __APPLE__
-//Prevent SDL from using gl.h
-#define __gl_h_
+// GLEW defines __gl_h_ which will trip OS X into thinking the old gl header was included
+#undef __gl_h_
 #endif
 //For Android
 #ifdef __ANDROID__

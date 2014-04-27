@@ -118,7 +118,7 @@ namespace noise
       public:
 
         /// Constructor.
-        Color ()
+        Color () : alpha(0), blue(0), green(0), red(0)
         {
         }
 
@@ -128,9 +128,8 @@ namespace noise
         /// @param g Value of the green channel.
         /// @param b Value of the blue channel.
         /// @param a Value of the alpha (transparency) channel.
-        Color (noise::uint8 r, noise::uint8 g, noise::uint8 b,
-          noise::uint8 a):
-          red (r), green (g), blue (b), alpha (a)
+        Color (noise::uint8 r, noise::uint8 g, noise::uint8 b, noise::uint8 a)
+        : alpha(a), blue(b), green(g), red(r)
         {
         }
 
@@ -630,9 +629,9 @@ namespace noise
         ///
         /// The returned value is measured by the number of @a float values
         /// required to store the noise map, not by the number of bytes.
-        size_t CalcMinMemUsage (int width, int height) const
+        size_t CalcMinMemUsage (size_t width, size_t height) const
         {
-          return CalcStride ((size_t)width) * (size_t)height;
+          return CalcStride (width * height);
         }
 
         /// Calculates the stride amount for a noise map.
@@ -645,10 +644,9 @@ namespace noise
         ///   points of any two adjacent slabs in a noise map.
         /// - The stride amount is measured by the number of @a float values
         ///   between these two points, not by the number of bytes.
-        size_t CalcStride (int width) const
+        size_t CalcStride (size_t width) const
         {
-          return (size_t)(((width + RASTER_STRIDE_BOUNDARY - 1)
-            / RASTER_STRIDE_BOUNDARY) * RASTER_STRIDE_BOUNDARY);
+            return ((width + RASTER_STRIDE_BOUNDARY - 1) / RASTER_STRIDE_BOUNDARY) * RASTER_STRIDE_BOUNDARY;
         }
 
         /// Copies the contents of the buffer in the source noise map into
@@ -1211,9 +1209,8 @@ namespace noise
       public:
 
         /// Constructor.
-        WriterTER ():
-          m_pSourceNoiseMap (NULL),
-          m_metersPerPoint ((float)DEFAULT_METERS_PER_POINT)
+        WriterTER ()
+            : m_metersPerPoint ((float)DEFAULT_METERS_PER_POINT), m_pSourceNoiseMap (NULL)
         {
         }
 

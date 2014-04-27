@@ -22,18 +22,12 @@
 #include "ParticleSystem.h"
 #include "ParticleData.h"
 
-#include "Demo.h"
 #include "Building.h"
 
 #include "GLTextureCubeMap.h"
 
 BaseFrame::BaseFrame(ShaderGroup * shaders)
-    : GameSystem(shaders), 
-	Physics(&Voxels), 
-	Actors(&Physics),
-	Particles(&Actors,&Physics),
-	achievements(&notification,this),
-	hud(this)
+    : GameSystem(shaders), hud(this), Physics(&Voxels), Actors(&Physics), Particles(&Actors,&Physics), achievements(&notification,this)
 {
 	cout << "\t Constructing base frame\n";
     

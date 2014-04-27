@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:VoxEngine.xcodeproj">
+      location = "self:Destructo.xcodeproj">
    </FileRef>
 </Workspace>

@@ -112,7 +112,6 @@ public:
 		}
 		//postfix operator (not sure what the argument does?)
 		iterator operator++(int) {
-			iterator copy(*this);
 			at++;
 			return *this;
 		}
@@ -124,7 +123,6 @@ public:
 		}
 		//postfix operator (not sure what the argument does?)
 		iterator operator--(int) {
-			iterator copy(*this);
 			at--;
 			return *this;
 		}

@@ -33,6 +33,9 @@ public:
 	//Used for showing debug info in the upper left
 	DebugWindow Debug;
 
+    // state that we want to also include the original draw function (prevents the hides overloaded virtual function warning)
+    using Control::Draw;
+    
 	//Draw all contrls
 	void Draw(GL2DProgram * prg, Rect size);
 };

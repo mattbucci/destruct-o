@@ -635,9 +635,9 @@
 		F1989FD718A58C3900A5165E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F1989FD918A58C3900A5165E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F1989FDB18A58C3900A5165E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		F1989FDF18A58C3900A5165E /* VoxEngine-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "VoxEngine-Info.plist"; sourceTree = "<group>"; };
+		F1989FDF18A58C3900A5165E /* Destructo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Destructo-Info.plist"; sourceTree = "<group>"; };
 		F1989FE118A58C3900A5165E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		F1989FE518A58C3900A5165E /* VoxEngine-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VoxEngine-Prefix.pch"; sourceTree = "<group>"; };
+		F1989FE518A58C3900A5165E /* Destructo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Destructo-Prefix.pch"; sourceTree = "<group>"; };
 		F1989FE918A58C3900A5165E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		F1E65A9218AA0BA300A799C9 /* libSDL2_mixer.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_mixer.a; path = ../libs/ios/SDL2/libSDL2_mixer.a; sourceTree = "<group>"; };
 		F1E65A9418AA0BA300A799C9 /* libSDL2_ttf.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2_ttf.a; path = ../libs/ios/SDL2/libSDL2_ttf.a; sourceTree = "<group>"; };
@@ -1125,9 +1125,9 @@
 			isa = PBXGroup;
 			children = (
 				F1989FE918A58C3900A5165E /* Images.xcassets */,
-				F1989FDF18A58C3900A5165E /* VoxEngine-Info.plist */,
+				F1989FDF18A58C3900A5165E /* Destructo-Info.plist */,
 				F1989FE018A58C3900A5165E /* InfoPlist.strings */,
-				F1989FE518A58C3900A5165E /* VoxEngine-Prefix.pch */,
+				F1989FE518A58C3900A5165E /* Destructo-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			path = VoxEngine;
@@ -1154,9 +1154,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		F1989FD318A58C3900A5165E /* VoxEngine */ = {
+		F1989FD318A58C3900A5165E /* Destructo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F198A00018A58C3900A5165E /* Build configuration list for PBXNativeTarget "VoxEngine" */;
+			buildConfigurationList = F198A00018A58C3900A5165E /* Build configuration list for PBXNativeTarget "Destructo" */;
 			buildPhases = (
 				F1989FD018A58C3900A5165E /* Sources */,
 				F1989FD118A58C3900A5165E /* Frameworks */,
@@ -1166,7 +1166,7 @@
 			);
 			dependencies = (
 			);
-			name = VoxEngine;
+			name = Destructo;
 			productName = VoxEngine;
 			productReference = F1989FD418A58C3900A5165E /* VoxEngine.app */;
 			productType = "com.apple.product-type.application";
@@ -1180,7 +1180,7 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = HoodooNet;
 			};
-			buildConfigurationList = F1989FCF18A58C3900A5165E /* Build configuration list for PBXProject "VoxEngine" */;
+			buildConfigurationList = F1989FCF18A58C3900A5165E /* Build configuration list for PBXProject "Destructo" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1192,7 +1192,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F1989FD318A58C3900A5165E /* VoxEngine */,
+				F1989FD318A58C3900A5165E /* Destructo */,
 			);
 		};
 /* End PBXProject section */
@@ -1537,13 +1537,13 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				COMPRESS_PNG_FILES = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "VoxEngine/VoxEngine-Prefix.pch";
-				INFOPLIST_FILE = "VoxEngine/VoxEngine-Info.plist";
+				GCC_PREFIX_HEADER = "VoxEngine/Destructo-Prefix.pch";
+				INFOPLIST_FILE = "VoxEngine/Destructo-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/nathaniel/Desktop/main-client/Sample/libs/ios/curl",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Destructo;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1555,13 +1555,13 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				COMPRESS_PNG_FILES = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "VoxEngine/VoxEngine-Prefix.pch";
-				INFOPLIST_FILE = "VoxEngine/VoxEngine-Info.plist";
+				GCC_PREFIX_HEADER = "VoxEngine/Destructo-Prefix.pch";
+				INFOPLIST_FILE = "VoxEngine/Destructo-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Users/nathaniel/Desktop/main-client/Sample/libs/ios/curl",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Destructo;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1569,7 +1569,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F1989FCF18A58C3900A5165E /* Build configuration list for PBXProject "VoxEngine" */ = {
+		F1989FCF18A58C3900A5165E /* Build configuration list for PBXProject "Destructo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F1989FFE18A58C3900A5165E /* Debug */,
@@ -1578,7 +1578,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F198A00018A58C3900A5165E /* Build configuration list for PBXNativeTarget "VoxEngine" */ = {
+		F198A00018A58C3900A5165E /* Build configuration list for PBXNativeTarget "Destructo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F198A00118A58C3900A5165E /* Debug */,

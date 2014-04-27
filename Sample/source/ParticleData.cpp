@@ -103,6 +103,9 @@ bool ParticleData::Parser::processValue(string valueName, string value) {
 	case NOSECTION:
 		cout << "Error on line " << lineNumber << ": No section header before rule. All rules must be within a section.\n";
 		return false;
+    case PROPERTIES:
+            break;
+            
 	}
 
 	return true;

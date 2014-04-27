@@ -30,7 +30,6 @@ bool ParticleSystem::UpdateEmitter() {
 	//Adjust the time so it's relative to you
 	double now = Game()->Now();
 	double systemTime = now-creationTime;
-	BaseFrame * game = (BaseFrame*)CurrentSystem;
 	float systemLifeFactor = (float)(systemTime/(deathAt-creationTime));
 	if (deathAt < 0)
 		systemLifeFactor = 1;

@@ -321,16 +321,13 @@ void PhysicsSystem::collideActorsToActors() {
 		PhysicsActor * actorA = actors[a];
 		vec3 actorPositionA = actorA->position;
 		vec3 halfActorSizeA = actorA->size*.5f;
-		vec3 actorVolumeStartA = actorA->position - halfActorSizeA;
-		vec3 actorVolumeEndA =	actorA->position + halfActorSizeA;
 
 		for (int b = a+1; b < actors.size(); b++) {
 			PhysicsActor * actorB = actors[b];
 
 			vec3 actorPositionB = actorB->position;
 			vec3 halfActorSizeB = actorB->size*.5f;
-			vec3 actorVolumeStartB = actorB->position - halfActorSizeB;
-			vec3 actorVolumeEndB =	actorB->position + halfActorSizeB;
+
 			//Do AABB before you do full physics check... or things will be slow
 			if (actorA->aabbCollision(actorB)) {
 				Intersection intr = PhysicsUtilities::CalculateIntersection(actorPositionA,halfActorSizeA,actorPositionB,halfActorSizeB);

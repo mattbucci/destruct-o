@@ -5,19 +5,19 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>1C559DD6-2AA4-4EF7-BE7A-B3BB22CBC313</string>
+	<string>813B1F3E-3F52-4EB2-A0EE-9D6FACDFAB3A</string>
 	<key>IDESourceControlProjectName</key>
 	<string>VoxEngine</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>0CA0DD0F-BB92-456A-BB66-25C8B6664A01</key>
+		<key>3846C977-5222-4178-923A-D70F6072EFF4</key>
 		<string>https://bitbucket.org/destructo_game/main-client.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Sample/iosproject/VoxEngine.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>0CA0DD0F-BB92-456A-BB66-25C8B6664A01</key>
+		<key>3846C977-5222-4178-923A-D70F6072EFF4</key>
 		<string>../../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
@@ -25,14 +25,14 @@
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>0CA0DD0F-BB92-456A-BB66-25C8B6664A01</string>
+	<string>3846C977-5222-4178-923A-D70F6072EFF4</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>0CA0DD0F-BB92-456A-BB66-25C8B6664A01</string>
+			<string>3846C977-5222-4178-923A-D70F6072EFF4</string>
 			<key>IDESourceControlWCCName</key>
 			<string>main-client</string>
 		</dict>
