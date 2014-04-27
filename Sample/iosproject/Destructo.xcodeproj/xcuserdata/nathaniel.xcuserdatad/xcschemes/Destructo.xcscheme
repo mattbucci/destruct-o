@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "F1989FD318A58C3900A5165E"
-               BuildableName = "VoxEngine.app"
-               BlueprintName = "VoxEngine"
-               ReferencedContainer = "container:VoxEngine.xcodeproj">
+               BuildableName = "Destructo.app"
+               BlueprintName = "Destructo"
+               ReferencedContainer = "container:Destructo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F1989FD318A58C3900A5165E"
-            BuildableName = "VoxEngine.app"
-            BlueprintName = "VoxEngine"
-            ReferencedContainer = "container:VoxEngine.xcodeproj">
+            BuildableName = "Destructo.app"
+            BlueprintName = "Destructo"
+            ReferencedContainer = "container:Destructo.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -44,7 +44,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
@@ -52,9 +52,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F1989FD318A58C3900A5165E"
-            BuildableName = "VoxEngine.app"
-            BlueprintName = "VoxEngine"
-            ReferencedContainer = "container:VoxEngine.xcodeproj">
+            BuildableName = "Destructo.app"
+            BlueprintName = "Destructo"
+            ReferencedContainer = "container:Destructo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -70,9 +70,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "F1989FD318A58C3900A5165E"
-            BuildableName = "VoxEngine.app"
-            BlueprintName = "VoxEngine"
-            ReferencedContainer = "container:VoxEngine.xcodeproj">
+            BuildableName = "Destructo.app"
+            BlueprintName = "Destructo"
+            ReferencedContainer = "container:Destructo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
