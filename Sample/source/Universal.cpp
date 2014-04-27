@@ -107,7 +107,7 @@ void Universal::Concuss(vec3 at, float radius, float damage, PhysicsActor * dama
 		voxPos += vec3(Utilities::random(-initialDisplacement,initialDisplacement),Utilities::random(-initialDisplacement,initialDisplacement),Utilities::random(-initialDisplacement,initialDisplacement));
 		//voxel is alive for a random amount of time
 		//cheating now, effect voxels are not physics enabled
-		PhysicsVoxel * vox = Game()->Physics.BuildVoxel(vec3(newVoxel),Utilities::random(4.0,6.0),false);
+		PhysicsVoxel * vox = Game()->Physics.BuildVoxel(vec3(newVoxel),Utilities::random(4.0,6.0));
 		//set material and a random velocity
 		vox->MaterialId = (int)newVoxel.w;
 		vox->Velocity = vec3(Utilities::random(-initialEnergy,initialEnergy),Utilities::random(-initialEnergy,initialEnergy),Utilities::random(-initialEnergy,initialEnergy));

@@ -26,11 +26,13 @@ bool ControlBase::FireEvent(InputEvent event) {
 	bool eventConsumed = false;
 	//Pass an event received from the event system to the control (can be passed to lua)
 	if (event.Event == InputEvent::MouseDown) {
+		Control::OnMouseMove(vec2(event.MouseX,event.MouseY));
 		Control::OnMousePress(vec2(event.MouseX,event.MouseY),(int) event.Key,true);
 		eventConsumed = hasFocusedChild();
 	}
 		
 	else if (event.Event == InputEvent::MouseUp) {
+		Control::OnMouseMove(vec2(event.MouseX,event.MouseY));
 		Control::OnMousePress(vec2(event.MouseX,event.MouseY),(int) event.Key,false);
 		eventConsumed = hasFocusedChild();
 	}
