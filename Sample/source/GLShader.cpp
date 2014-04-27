@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GLShader.h"
 #include "GLCommonShaderFile.h"
+#include "OS.h"
 #include <fstream>
 
 
@@ -54,7 +55,7 @@ GLShader::GLShader(GLCommonShaderFile * commonShader, string filename,GLenum sha
 			if (filename[firstChar-1] == '/')
 				break;
 		//Now write the shader
-		ofstream debugOutput(string("debug_") + filename.substr(firstChar),ios::binary);
+		ofstream debugOutput(OS::SaveDirectory() + string("debug_") + filename.substr(firstChar),ios::binary);
 		for (unsigned int i = 0; i < virtualShader.size(); i++)
 			debugOutput << virtualShader[i];
 	}

@@ -3,9 +3,8 @@
 #include "stdafx.h"
 #include "OS.h"
 
-#if (defined __IPHONEOS__)
-#error you son of a bitch dont include this file on ios you gonna break this shitty shit
-#endif
+// Only include this file on non apple platforms
+#if !(defined __IPHONEOS__) && !(defined __APPLE__)
 
 #if !(defined __ANDROID__)
 
@@ -30,5 +29,7 @@ std::string OS::SaveDirectory()
     // Return the magical save directory
     return saveDir;
 }
+
+#endif
 
 #endif

@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8)
 project (Destructo)
 
 file(GLOB Destructo_SRC
@@ -11,6 +11,13 @@ file(GLOB libnoise_src
     "includes/libnoise/noise/model/*.cpp"
     "includes/libnoise/noise/module/*.cpp"
 )
+
+FILE(GLOB AppleCompatFiles
+	"source/apple-compat/SaveDirectory.mm"
+	"source/apple-compat/NSFileManager+ApplicationSupport.h"
+	"source/apple-compat/NSFileManager+ApplicationSupport.m"
+)
+source_group(AppleCompat FILES ${AppleCompatFiles})
 
 #Add universal includes
 include_directories("includes/json")
@@ -49,8 +56,7 @@ ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 # Are we compiling on Mac OS X?
 IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-
-	# Make sure Xcode uses Clang set for libc++ and c++ version 2011
+    # Make sure Xcode uses Clang set for libc++ and c++ version 2011
 	set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvm.clang.1_0")
 	set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11")
 	set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
@@ -84,7 +90,7 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	set_source_files_properties(${MACOSX_FRAMEWORKS} PROPERTIES MACOSX_PACKAGE_LOCATION Frameworks)
 
 	# Declare the destructo executable
-	add_executable(Destructo MACOSX_BUNDLE ${Destructo_SRC} ${MACOSX_RESOURCES} ${MACOSX_FRAMEWORKS})
+	add_executable(Destructo MACOSX_BUNDLE ${Destructo_SRC} ${AppleCompatFiles} ${MACOSX_RESOURCES} ${MACOSX_FRAMEWORKS})
 
 	# Set the runtime search path to look for frameworks and libraries in the Frameworks folder of the .app
 	set_target_properties(Destructo PROPERTIES XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path @loader_path/../Frameworks")
@@ -194,7 +200,7 @@ ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 #Code should be organized
 #opengl files are really easy to organize
 FILE(GLOB GLFiles
-	"source/source/GL*"
+	"source/GL*"
 	"source/IOSGL.h"
 	"source/AndroidGLEW.h"
 	"source/AndroidGLEW.cpp"
@@ -392,7 +398,7 @@ FILE(GLOB UtilityFiles
 	source/IntRect.h
 	source/IntRect.cpp
 	source/Network.cpp
-	source/source/Network.h
+	source/Network.h
 )
 source_group(Utilities FILES ${UtilityFiles})
 
