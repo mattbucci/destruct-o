@@ -8,6 +8,8 @@
 
 #define TWO_PI ((float)(M_PI*2.0f))
 
+unsigned int ActorAI::currentAIID = 0;
+
 ActorAI::ActorAI(Weapon * actorWeapon, float maxLife, vec3 size) : 
 	PhysicsActor(size,maxLife, GameFactions::FACTION_ENEMY),
 	weapon(actorWeapon),
@@ -20,6 +22,8 @@ ActorAI::ActorAI(Weapon * actorWeapon, float maxLife, vec3 size) :
 	//Max out the energy pool
 	energyPool = 100;
 	targetEnemy = NULL;
+	//Setup the AI ID
+	aiID = currentAIID = (currentAIID+1) % 10;
 }
 
 
@@ -138,18 +142,21 @@ vec3 ActorAI::getFireVector() {
 
 	//State implementations which can be overridden if necessary
 void ActorAI::statePathing(bool & holdingTrigger) {
-	PhysicsActor * seenEnemy = sightNearbyEnemy();
-	if (seenEnemy != NULL) {
-		//Found an enemy, target and kill
-		targetEnemy = seenEnemy;
-		state = AI_TARGETING_ENEMY;
-		targetAcquiredAt = Game()->Now();
-		Game()->Actors.AITargetAcquired.Fire([this](function<void(Actor *, Actor *)> observer) {
-			observer(this,targetEnemy);
-		});
-		//Clear movement velocity
-		Velocity = vec3(vec2(),Velocity.z);
-		return;
+	//Only look for an enemy if you're on the ground
+	if (OnGround()) {
+		PhysicsActor * seenEnemy = sightNearbyEnemy();
+		if (seenEnemy != NULL) {
+			//Found an enemy, target and kill
+			targetEnemy = seenEnemy;
+			state = AI_TARGETING_ENEMY;
+			targetAcquiredAt = Game()->Now();
+			Game()->Actors.AITargetAcquired.Fire([this](function<void(Actor *, Actor *)> observer) {
+				observer(this,targetEnemy);
+			});
+			//Clear movement velocity
+			Velocity = vec3(vec2(),Velocity.z);
+			return;
+		}
 	}
 		
 	//No enemy found
@@ -162,11 +169,6 @@ void ActorAI::statePathing(bool & holdingTrigger) {
 		Velocity = vec3(vec2(),Velocity.z);
 		return;
 	}
-
-	//Face the direction you're moving
-	vec2 diff = goal - vec2(Position);
-			
-	applyFacingDirection(atan2f(diff.y,diff.x));
 
 			
 	//If you're in the air, look like it
@@ -211,10 +213,6 @@ void ActorAI::statePathing(bool & holdingTrigger) {
 						
 		}
 	}
-
-	//Apply some velocity in the direction you want to move
-	vec2 moveVelocity = glm::normalize(diff)*baseMovementSpeed();
-	Velocity = vec3(moveVelocity,Velocity.z);
 
 }
 void ActorAI::stateWaitingForPath(bool & holdingTrigger) {
@@ -303,7 +301,10 @@ void ActorAI::stateRotting(bool & holdingTrigger) {
 }
 
 
-bool ActorAI::Update() {
+//The smarts, ray traces and all that should go here
+//planning etc.
+//runs at 10hz
+void ActorAI::expensiveUpdate() {
 	//Update what you know of the enemies position
 	if (targetEnemy != NULL)
 		enemyPosition.AddSample(targetEnemy->GetPosition());
@@ -365,6 +366,51 @@ bool ActorAI::Update() {
 
 	if (!pullingTrigger)
 		weapon->HoldingTrigger(false);
+}
+
+//The simple things, such as moving
+//or facing
+//should go here
+//runs at 100hz
+void ActorAI::cheapUpdate() {
+	//AI is a state machine
+	switch (state) {
+	case AI_WAITINGFORPATH:
+	case AI_PATHING:
+		{
+			//Face the direction you're moving
+			vec2 diff = goal - vec2(Position);
+			
+			applyFacingDirection(atan2f(diff.y,diff.x));
+			//Apply some velocity in the direction you want to move
+			vec2 moveVelocity = glm::normalize(diff)*baseMovementSpeed();
+			Velocity = vec3(moveVelocity,Velocity.z);
+		}
+		break;
+	case AI_SCANNING:
+		break;
+	case AI_TARGETING_ENEMY:
+		//If you have an enemy, face them
+		if (targetEnemy != NULL) 
+			//Face the enemy you're targeting
+			faceEnemy();
+		break;
+	case AI_ENGAGING_ENEMY:
+		break;
+	case AI_DYING:
+		break;
+	case AI_ROTTING:
+		break;
+	}
+}
+
+
+bool ActorAI::Update() {
+	//Do expensive updates at 10hz
+	if (Game()->Actors.Aids()->DoHeavyCycle(aiID))
+		expensiveUpdate();
+	//and do cheap updates at 100hz
+	cheapUpdate();
 
 	return PhysicsActor::Update();
 }

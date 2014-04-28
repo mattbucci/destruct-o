@@ -41,6 +41,7 @@ ActorAids::ActorAids() :
 
 	currentIntensity = 0;
 	targetIntensity = 0;
+	cycleId = 0;
 }
 
 ActorAids::~ActorAids() {
@@ -127,6 +128,9 @@ void ActorAids::populateCities() {
 
 //All of the devious logic goes here
 bool ActorAids::Update() {
+	//Next cycle
+	cycleId++;
+
 	//Update cities
 	populateCities();
 
@@ -200,4 +204,10 @@ void ActorAids::PathingSolutionRequest(PhysicsActor * requestingActor, vec2 toPo
 //An actor (probably one pending destruction) can cancel all requests
 void ActorAids::CancelRequests(PhysicsActor * canclingActor) {
 	//STUB
+}
+
+//Use the AIId
+//to determine if that AI should do a heavy update, or a light update
+bool ActorAids::DoHeavyCycle(unsigned int aiId) {
+	return ((aiId + cycleId) % 10) == 0;
 }

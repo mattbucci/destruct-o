@@ -15,6 +15,9 @@ class AidsAction;
 class ActorAids : public Actor {
 	bool spawnedNasties;
 
+	//The id of this current update cycle
+	unsigned int cycleId;
+
 	//Requested pathing solutions
 	ContiguousList<ActorAI*> pathingRequestors;
 	ContiguousList<vec2> pathingRequests;
@@ -66,6 +69,11 @@ public:
 	//so city access is locked by the above mutex
 	void RegisterNewCity(SavableCityData * cityData);
 
+
+	//Use the AIId
+	//to determine if that AI should do a heavy update, or a light update
+	bool DoHeavyCycle(unsigned int aiId);
+	
 	CLASS_DECLARATION(ActorAids)
 		INHERITS_FROM(Actor)
 		CLASS_MEMBER(spawnedNasties,ReflectionData::SAVE_BOOL);
@@ -78,23 +86,3 @@ public:
 		CLASS_CONTAINER_MEMBER(cities,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE);
 	END_DECLARATION
 };
-
-/*
-	float targetIntensity;
-	float currentIntensity;
-	//Current intensity delta
-	MovingAverage<float> intensityAdded;
-	//A list of actions that can be taken by AIDS
-	map<float,function<AidsAction*(vec3)>> actionList;
-	//Original intensity offset
-	//used during generation of the targetIntensity
-	float intensityCalculationOffset;
-	//All currently executing actions
-	ContiguousList<AidsAction*> actions;
-
-	//Populate nearby cities to the player with enemies/allies
-	void populateCities();
-
-	//List of cities
-	ContiguousList<SavableCityData*> cities;
-	*/

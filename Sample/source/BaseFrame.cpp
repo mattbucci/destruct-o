@@ -26,9 +26,16 @@
 
 #include "GLTextureCubeMap.h"
 
+
+//Make baseframe a singleton now
+BaseFrame * BaseFrame::instance = NULL;
+
 BaseFrame::BaseFrame(ShaderGroup * shaders)
     : GameSystem(shaders), hud(this), Physics(&Voxels), Actors(&Physics), Particles(&Actors,&Physics), achievements(&notification,this)
 {
+	_ASSERTE(instance == NULL);
+	instance = this;
+
 	cout << "\t Constructing base frame\n";
     
     // Remove me test
@@ -345,10 +352,8 @@ string BaseFrame::GetSaveLocation() {
 //Retrieve the game object
 //global function
 BaseFrame * Game() {
-	//Can only be used when the game is running
-	BaseFrame* frame = (BaseFrame*)Frames::GetSystem(Frames::FRAME_GAME);
-	_ASSERTE(typeid(*frame) == typeid(BaseFrame));
-	return frame;
+	_ASSERTE(BaseFrame::instance != NULL);
+	return BaseFrame::instance;
 }
 
 HUD* BaseFrame::GetHUD() {

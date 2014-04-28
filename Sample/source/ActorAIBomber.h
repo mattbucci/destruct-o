@@ -56,6 +56,12 @@ public:
 	ActorAIBomber();
 	~ActorAIBomber();
 
+	//The simple things, such as moving
+	//or facing
+	//should go here
+	//runs at 100hz
+	virtual void cheapUpdate();
+
 
 	//Whether or not a bombing run completed
 	bool BombingRunComplete();
