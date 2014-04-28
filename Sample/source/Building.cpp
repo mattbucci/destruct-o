@@ -124,7 +124,7 @@ void Building::ConstructSpire(vec3 growDirection, float bottomRadius, float leng
 	for (float z = 0; z < length; z+=.5f) {
 		float t = (1.0f-z/length);
 		int iterations = (int)(t*length*.6f);
-		float angle = M_PI*2.0f/(float)iterations;
+		float angle = (float)M_PI*2.0f/(float)iterations;
 		float radius = t*bottomRadius;
 
 		for (float r = 0; r < iterations; r+=Utilities::random(angle/2.0f,angle)) {

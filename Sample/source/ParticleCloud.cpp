@@ -35,7 +35,7 @@ ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) {
 		//disintegrate voxel
 		particlePuff.Color.ClearValues();
 		particlePuff.Color.AddValue(0,materialColors[voxel->MaterialId]);
-		ParticleSystem * testSystem = BuildParticleSystem(particlePuff, Utilities::random(.3,.5));
+		ParticleSystem * testSystem = BuildParticleSystem(particlePuff, Utilities::random(.3f,.5f));
 		testSystem->Position = voxel->Position;
 	});
 	//WEAPON EVENT HIT EVENTS

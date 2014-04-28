@@ -5,7 +5,7 @@
 
 Notification::Notification(void) {
 	w = 800;
-	position = Rect(0, 0, w, 20);
+	position = Rect(0, 0, (float)w, 20.0f);
 	this->color = vec4(1.0f, 1.0f, 1.0f, 0.65f);
 	hPin = Control::CENTER;
 	SetVisible(true);
@@ -29,7 +29,7 @@ void Notification::Notify(string msg) {
 
 void Notification::Draw(GL2DProgram * shader) {
 	if(w != getParent()->position.Width) {
-		w = getParent()->position.Width;
+		w = (int)getParent()->position.Width;
 		resizeElement();
 	}
 	if(Game()->Now() > updateTime) {
@@ -46,5 +46,5 @@ void Notification::Draw(GL2DProgram * shader) {
 }
 
 void Notification::resizeElement() {
-	position = Rect(0, 0, w, 20);
+	position = Rect(0, 0, (float)w, 20);
 }

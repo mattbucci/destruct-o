@@ -29,12 +29,14 @@ void Effect::PlayEffect(event action) {
     }
     else {
         if (action.pos != vec3(0,0,0)) {
-			float distancefactor = 3*(pow(glm::length(action.pos - vec3(0, 0, 0)), -.3) - .2);
+			float distancefactor = 3*(pow(glm::length(action.pos - vec3(0, 0, 0)), -.3f) - .2f);
 			if (distancefactor > 1) distancefactor = 1;
 			cout << distancefactor << endl;
-            int distance = 255 - 255 * distancefactor;
+            int distance = (int)(255 - 255 * distancefactor);
 
-            int angle = acos(action.pos.x)+(action.pos.y < 0 ? 180 : 0);
+			//Seems a little strange, cmath functions take radians and return them
+			//but 180 is degrees typically
+            int angle = (int)(acos(action.pos.x)+(action.pos.y < 0 ? 180 : 0));
             
             Mix_SetPosition(action.id, angle, distance);
             

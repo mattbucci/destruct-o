@@ -171,8 +171,8 @@ void GameTile::UpdateTileSection(unsigned int rx, unsigned int ry, unsigned int 
 		//Chunk-align the tox,toy
 		rx -= rx % CHUNK_SIZE;
 		ry -= ry % CHUNK_SIZE;
-		for (int y = ry; y < toy; y+= CHUNK_SIZE) {
-			for (int x = rx;x < tox; x+= CHUNK_SIZE) {
+		for (unsigned int y = ry; y < toy; y+= CHUNK_SIZE) {
+			for (unsigned int x = rx;x < tox; x+= CHUNK_SIZE) {
 				//Find the chunk the given x,y is in
 				int chunkx = x/CHUNK_SIZE;
 				int chunky = y/CHUNK_SIZE;
@@ -217,7 +217,7 @@ void GameTile::Crater(IntRect craterRegion, int craterBottomZ, float damageDone,
 
 			//Damage the voxel
 			//determine damage scaled with distance from the epicenter
-			float damageScaler = ((craterRegion.EndX - craterRegion.StartX)*1.5 - glm::distance(vec2(x,y),vec2(epicenter)));
+			float damageScaler = ((craterRegion.EndX - craterRegion.StartX)*1.5f - glm::distance(vec2(x,y),vec2(epicenter)));
 			damageScaler = max(0.0f,min(damageScaler,1.0f));
 			float damage = damageDone*damageScaler;
 			float originalLife = cell.cellHealth;

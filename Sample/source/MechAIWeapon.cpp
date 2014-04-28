@@ -31,7 +31,7 @@ float MechAIWeapon::WeaponCooldownTime() {
 
 //The amount of jitter in the weapon
 float MechAIWeapon::JitterAmount() {
-	return .08;
+	return .08f;
 }
 
 //Simulate a gun shot (or laser pulse or whatever)

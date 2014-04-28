@@ -45,7 +45,7 @@ Achievements::Achievements(Notification* notification, BaseFrame * game){
 };
 
 void Achievements::incrementAchievement(string name, float incrementQuantity) {
-    for(int i = 0; i < this->achievementlist.size(); i++) {
+    for(unsigned int i = 0; i < this->achievementlist.size(); i++) {
         if(achievementlist[i]->type==name)
             achievementlist[i]->IncrementValue(incrementQuantity);
     }

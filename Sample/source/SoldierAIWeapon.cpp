@@ -30,7 +30,7 @@ float SoldierAIWeapon::WeaponCooldownTime() {
 
 //The amount of jitter in the weapon
 float SoldierAIWeapon::JitterAmount() {
-	return .06;
+	return .06f;
 }
 
 //Simulate a gun shot (or laser pulse or whatever)

@@ -4,12 +4,12 @@
 #include "BaseFrame.h"
 
 vec3 AidsAction::findHiddenLocation(vec3 startLocation, float desiredAltitude) {
-	const static float anglePart = M_PI/4.0f;
+	const static float anglePart = (float)M_PI/4.0f;
 	//Only tries 10 locations
 	//don't want to do too many ray traces 
 	const static float distancePart = 5;
-	float distanceOffset = Utilities::random(20,30);
-	float angleOffset = Utilities::random(-M_PI,M_PI);
+	float distanceOffset = (float)Utilities::random(20,30);
+	float angleOffset = (float)Utilities::random(-M_PI,M_PI);
 
 	vec3 lastPos;
 	ActorPlayer * player = Game()->Actors.Player();

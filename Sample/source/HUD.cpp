@@ -141,7 +141,7 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 		float y = actor->GetPosition().y;
 
 		//Calculate Actor Angle Relative to Player
-		float actorAngle = 180 / M_PI * atan2(y - py, x - px);
+		float actorAngle = (float)(180 / M_PI * atan2(y - py, x - px));
 		//Calculate Actor Distance Relative to Player
 		float actorDistance = sqrtf((y - py) * (y - py) + (x - px) * (x - px)) * minimapScale;
 
@@ -195,7 +195,7 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 			double ptTime = (*it).first;
 			float x = (*it).second.x;
 			float y = (*it).second.y;
-			float damageAngle = 180 / M_PI * atan2(y - py, x - px);
+			float damageAngle = (float)(180 / M_PI * atan2(y - py, x - px));
 
 			//Save Center of Screen Location
 			shader->Model.PushMatrix();

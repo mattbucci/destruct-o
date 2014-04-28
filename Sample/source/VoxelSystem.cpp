@@ -90,10 +90,10 @@ int VoxelSystem::GetPositionStackSize(vec2 pos) {
 void VoxelSystem::forTilesInRect(IntRect region, function<void(GameTile * tile)> foreachFunction) {
 	//Align the starting position with the nearest tile boundary
 
-	region.StartX = floor((float)region.StartX/(float)TILE_SIZE)*TILE_SIZE;
-	region.StartY = floor((float)region.StartY/(float)TILE_SIZE)*TILE_SIZE;
-	for (float x = region.StartX; x < region.EndX; x+=TILE_SIZE) {
-		for (float y = region.StartY; y < region.EndY; y+=TILE_SIZE) {
+	region.StartX = (int)floor((float)region.StartX/(float)TILE_SIZE)*TILE_SIZE;
+	region.StartY = (int)floor((float)region.StartY/(float)TILE_SIZE)*TILE_SIZE;
+	for (float x = region.StartX; x < region.EndX; x+=(float)TILE_SIZE) {
+		for (float y = region.StartY; y < region.EndY; y+=(float)TILE_SIZE) {
 			//Retrieve a valid tile for this position
 			//and call the foreachFunction
 			foreachFunction(GetTile(glm::floor(vec2(x/TILE_SIZE,y/TILE_SIZE))));
@@ -191,8 +191,8 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size, float damage) {
 		rectEndX = rectStartX + TILE_SIZE-1;
 		rectEndY = rectStartY + TILE_SIZE-1;
 		//Intersect it with the region you're supposed to be drawing
-		intersect1D(rectStartX, rectEndX, pos.x - size / 2, pos.x + size / 2);
-		intersect1D(rectStartY, rectEndY, pos.y - size / 2, pos.y + size / 2);
+		intersect1D(rectStartX, rectEndX, (int)(pos.x - size / 2), (int)(pos.x + size / 2));
+		intersect1D(rectStartY, rectEndY, (int)(pos.y - size / 2), (int)(pos.y + size / 2));
 
 
 		//Now offset the region by the tile position so that it is relative to the tile

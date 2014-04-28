@@ -177,7 +177,7 @@ size_t Base64encode_len(size_t len)
 
 size_t Base64encode(char *encoded, const char *string, size_t len)
 {
-    int i;
+    unsigned int i;
     char *p;
 
     p = encoded;

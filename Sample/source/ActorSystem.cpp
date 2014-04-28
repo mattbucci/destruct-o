@@ -111,7 +111,7 @@ void ActorSystem::DoAOEDamage(vec3 at, float radius, float damage, PhysicsActor 
 		float actorDamage = ((1.0f - dist/radius)*.5f+.5f)*damage;
 		damagableActor->Damage(damager,actorDamage);
 		//And fling the actor some amount
-		float fling = damage*.05;
+		float fling = damage*.05f;
 		//Check if the actor is at the epicenter
 		vec3 damageDirection;
 		if (damagableActor->GetPosition() == at)

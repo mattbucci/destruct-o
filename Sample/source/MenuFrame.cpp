@@ -84,12 +84,12 @@ bool MenuFrame::Update(vector<InputEvent> inputEvents) {
 
 void MenuFrame::Draw(double width, double height)
 {
-	GL2DProgram * shaders2d = SetWidthHeight(width, height);
+	GL2DProgram * shaders2d = SetWidthHeight((float)width, (float)height);
 
 	shaders2d->Model.Reset();
 	shaders2d->Model.Apply();
 	background.Draw(shaders2d);
-	shaders2d->Model.Translate(width/2.0f - 648/2.0f, 80, 0);
+	shaders2d->Model.Translate((float)(width/2.0f - 648/2.0f), 80, 0);
 	shaders2d->Model.Apply();
 	logo.Draw(shaders2d);
 	shaders2d->Model.Reset();

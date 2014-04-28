@@ -81,11 +81,11 @@ void TerrainChunk::Reconstruct() {
 	int maxHeight = 0;
 	//Calc chunk limits
 	//and count voxels
-	int ceX = X + CHUNK_SIZE;
-	int ceY = Y + CHUNK_SIZE;
+	int ceX = (int)X + CHUNK_SIZE;
+	int ceY = (int)Y + CHUNK_SIZE;
 	VoxelCount= 0;
-	for (int y = Y; y < ceY; y++) {
-		for (int x = X; x < ceX; x++) {
+	for (int y = (int)Y; y < ceY; y++) {
+		for (int x = (int)X; x < ceX; x++) {
 			TileCell & cell = owner->Cells[y*TILE_SIZE+x];
 			VoxelCount+= cell.stackHeight+1;
 			minHeight = min((int)cell.height,minHeight);
@@ -195,7 +195,7 @@ void TerrainChunk::Reconstruct() {
 	delete [] VertexData;
 	VertexData = new ChunkVertexData[VertexDataSize];
 	int vcount = 0;
-	for (int i = 0; i < quads.size(); i++) {
+	for (unsigned int i = 0; i < quads.size(); i++) {
 		//Lighting is currently broken
 		//set every surface to be fully lit
 		unsigned char shading = 255; 
@@ -249,12 +249,12 @@ void TerrainChunk::Reconstruct() {
 		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].a1);
 		VertexData[vcount].TextureCoordinateX = 0;
-		VertexData[vcount].TextureCoordinateY = quads[i].BSize;
+		VertexData[vcount].TextureCoordinateY = (uint8_t)quads[i].BSize;
 		VertexData[vcount].TextureCoordinateSX = terX;
 		VertexData[vcount].TextureCoordinateSY = terY;
 		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].b1);
-		VertexData[vcount].TextureCoordinateX = quads[i].ASize;
+		VertexData[vcount].TextureCoordinateX = (uint8_t)quads[i].ASize;
 		VertexData[vcount].TextureCoordinateY = 0;
 		VertexData[vcount].TextureCoordinateSX = terX;
 		VertexData[vcount].TextureCoordinateSY = terY;
@@ -263,19 +263,19 @@ void TerrainChunk::Reconstruct() {
 
 		//Second triangle
 		VertexData[vcount].TextureCoordinateX = 0;
-		VertexData[vcount].TextureCoordinateY = quads[i].BSize;
+		VertexData[vcount].TextureCoordinateY = (uint8_t)quads[i].BSize;
 		VertexData[vcount].TextureCoordinateSX = terX;
 		VertexData[vcount].TextureCoordinateSY = terY;
 		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].b1);
-		VertexData[vcount].TextureCoordinateX = quads[i].ASize;
+		VertexData[vcount].TextureCoordinateX = (uint8_t)quads[i].ASize;
 		VertexData[vcount].TextureCoordinateY = 0;
 		VertexData[vcount].TextureCoordinateSX = terX;
 		VertexData[vcount].TextureCoordinateSY = terY;
 		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].a2);
-		VertexData[vcount].TextureCoordinateX = quads[i].ASize;
-		VertexData[vcount].TextureCoordinateY = quads[i].BSize;
+		VertexData[vcount].TextureCoordinateX = (uint8_t)quads[i].ASize;
+		VertexData[vcount].TextureCoordinateY = (uint8_t)quads[i].BSize;
 		VertexData[vcount].TextureCoordinateSX = terX;
 		VertexData[vcount].TextureCoordinateSY = terY;
 		VertexData[vcount].Shading = shading;

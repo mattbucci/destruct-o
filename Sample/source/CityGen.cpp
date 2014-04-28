@@ -88,7 +88,7 @@ void CityGen::construct_city(GameTile * tile, vec3 pos)
 	static const int lineCount = 30;
 	static const int turretSkip = 6;
 	static const int samples = 200;
-	static const float anglePart = M_PI*2.0f/(float)lineCount;
+	static const float anglePart = (float)(M_PI*2.0f/lineCount);
     
     //flatten terrain
 	//generate roads
@@ -115,7 +115,7 @@ void CityGen::construct_city(GameTile * tile, vec3 pos)
 				for (int y = -1; y <= 0; y++) {
 					vec2 absPos = spos+vec2(x,y);
 					TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
-					cell.height = newHeight;
+					cell.height = (unsigned char)newHeight;
 				}
 			}
 
@@ -140,10 +140,10 @@ void CityGen::construct_city(GameTile * tile, vec3 pos)
 			if (len < 16)
 				continue;
 			//Place a line here
-			float height = (len*len-15*15)*.0008+2;
+			float height = (float)((len*len-15*15)*.0008+2);
 			vec2 absPos = glm::floor(vec2(pos)+spos);
 			TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
-			cell.height += height;
+			cell.height += (unsigned char)height;
 			//City is stronger than surrounding terrain
 			cell.cellHealth = 25;
 			cell.cellMaxHealth = 25;
@@ -228,8 +228,8 @@ void CityGen::generatecitylocations(GameTile* tile){
 			float bottomIntensity = cells[TILE_SIZE*(y - 1) + x].height;
 			float topIntensity = cells[TILE_SIZE*(y + 1) + x].height;
 
-			float h = -topLeftIntensity - 2.0 * topIntensity - topRightIntensity + bottomLeftIntensity + 2.0 * bottomIntensity + bottomRightIntensity;
-			float v = -bottomLeftIntensity - 2.0 * leftIntensity - topLeftIntensity + bottomRightIntensity + 2.0 * rightIntensity + topRightIntensity;
+			float h = -topLeftIntensity - 2.0f * topIntensity - topRightIntensity + bottomLeftIntensity + 2.0f * bottomIntensity + bottomRightIntensity;
+			float v = -bottomLeftIntensity - 2.0f * leftIntensity - topLeftIntensity + bottomRightIntensity + 2.0f * rightIntensity + topRightIntensity;
 
 			float mag = glm::length(vec2(h, v));
 			analysis[y*TILE_SIZE + x] = mag;
@@ -255,7 +255,7 @@ void CityGen::generatecitylocations(GameTile* tile){
 				double middle = analysis[y*TILE_SIZE + x] + leftIntensity + rightIntensity;
 				double bottom = bottomIntensity + bottomLeftIntensity + bottomRightIntensity;
 
-				float average = (top + middle + bottom) / 9;
+				float average = (float)(top + middle + bottom) / 9;
 
 				analysis[y*TILE_SIZE + x] = average;
 			}
@@ -273,7 +273,7 @@ void CityGen::generatecitylocations(GameTile* tile){
 
 				//check if we're too close to another city
 				bool tooclose = false;
-				for (int i = 0; i < tile->Cities.size(); i++) {
+				for (unsigned int i = 0; i < tile->Cities.size(); i++) {
 					if (glm::length(vec2(tile->Cities[i].x - x, tile->Cities[i].y - y)) < cityspacing)
 						tooclose = true;
 				}
@@ -294,7 +294,7 @@ void CityGen::generatecitylocations(GameTile* tile){
 	}
 
 	//Flatten Terrain
-	for (int i = 0; i < tile->Cities.size(); i++) {
+	for (unsigned int i = 0; i < tile->Cities.size(); i++) {
 		vec3 pos = tile->Cities[i];
 		for (int y = -citysize / 2; y < citysize / 2; y++) {
 			for (int x = -citysize / 2; x < citysize / 2; x++) {
@@ -328,7 +328,7 @@ void CityGen::generatecitylocations(GameTile* tile){
 }
 void CityGen::GenerateCities(GameTile * tile) {
 	generatecitylocations(tile);
-	for (int i = 0; i < tile->Cities.size(); i++) {
+	for (unsigned int i = 0; i < tile->Cities.size(); i++) {
 		construct_city(tile, tile->Cities[i]);
 	}
 	tile->UpdateTileSection(0, 0, TILE_SIZE, TILE_SIZE);

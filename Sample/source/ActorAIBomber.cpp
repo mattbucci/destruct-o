@@ -59,7 +59,7 @@ bool ActorAIBomber::checkSpineLimits() {
 	vec2 diff = vec2(targetEnemy->GetPosition()) - vec2(Position);
 			
 	float desired = atan2f(diff.y,diff.x);
-	float horizontalDiff = abs(fmodf(desired - facingDirection,M_PI));
+	float horizontalDiff = abs(fmodf(desired - facingDirection,(float)M_PI));
 	//Check against a tight angle check
 	return horizontalDiff < M_PI/90.0f;
 }

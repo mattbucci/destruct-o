@@ -88,7 +88,7 @@ void Universal::Concuss(vec3 at, float radius, float damage, PhysicsActor * dama
 	static const float initialEnergy = 20.0f;
 	static const float initialDisplacement = 0.5f;
 	//Damage the terrain
-	vector<vec4> newPhysicsVoxels = Game()->Voxels.Crater(at,radius*2.0,damage);
+	vector<vec4> newPhysicsVoxels = Game()->Voxels.Crater(at,radius*2.0f,damage);
 	//Damage the existing physics voxels
 	Game()->Physics.Explode(at,radius,damage);
 	//Now create new ones based off of the damaged terrain

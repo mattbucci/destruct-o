@@ -49,7 +49,7 @@ void WeaponLaserCannon::Fire() {
 	//Fire event
 	weaponImpact(hitPos);
 	//Do damage
- 	Universal::Concuss(hitPos,2,33.3,(PhysicsActor*)this->weaponOwner);
+ 	Universal::Concuss(hitPos,2,33.3f,(PhysicsActor*)this->weaponOwner);
 
 	//Update laser
 	laser.StartFiring();

@@ -21,7 +21,7 @@ Music::Music() {
     ambient_tracks.resize(10);
     track_numbers.resize(10);
     
-    for(int i = 0; i < track_numbers.size(); i++){
+    for(unsigned int i = 0; i < track_numbers.size(); i++){
         track_numbers[i] = 0;
     }
     

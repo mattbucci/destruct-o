@@ -21,7 +21,7 @@ bool ActorAITurret::checkSpineLimits() {
 	vec2 diff = vec2(targetEnemy->GetPosition()) - vec2(Position);
 			
 	float desired = atan2f(diff.y,diff.x);
-	float horizontalDiff = abs(fmodf(desired - facingDirection,M_PI));
+	float horizontalDiff = abs(fmodf(desired - facingDirection,(float)M_PI));
 	//Check against a tight angle check
 	return horizontalDiff < M_PI/90.0f;
 }
@@ -41,8 +41,8 @@ void ActorAITurret::snapSpineToEnemy() {
     
 	//Apply to the spine
 	Node * spineNode = model->Animation().Skeleton()->FindNode("Hig_Poly_Guns");
-	angle -= M_PI/2.0;
-	spineNode->LocalTransform().Rotation() = glm::rotate(quat(),angle/M_PI*180.0f,axis);
+	angle -= (float)M_PI/2.0f;
+	spineNode->LocalTransform().Rotation() = glm::rotate(quat(),angle/(float)M_PI*180.0f,axis);
 	spineNode->Recalculate();
 }
 

@@ -21,7 +21,7 @@ bool ActorAIMech::checkSpineLimits() {
 	vec2 diff = vec2(targetEnemy->GetPosition()) - vec2(Position);
 			
 	float desired = atan2f(diff.y,diff.x);
-	float horizontalDiff = abs(fmodf(desired - facingDirection,M_PI));
+	float horizontalDiff = abs(fmodf(desired - facingDirection,(float)M_PI));
 	//Check against a tight angle check
 	return horizontalDiff < M_PI/90.0f;
 }
@@ -45,7 +45,7 @@ void ActorAIMech::snapSpineToEnemy() {
 	
     //Apply to the spine
 	Node * spineNode = model->Animation().Skeleton()->FindNode("Bind_Spine1");
-	spineNode->LocalTransform().Rotation() = glm::rotate(spineNode->LocalTransform().Rotation(),angle/M_PI*180.0f,axis);
+	spineNode->LocalTransform().Rotation() = glm::rotate(spineNode->LocalTransform().Rotation(),angle/(float)M_PI*180.0f,axis);
 	spineNode->Recalculate();
 }
 

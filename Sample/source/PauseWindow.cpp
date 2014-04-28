@@ -158,8 +158,8 @@ bool PauseWindow::toggle() {
 
 void PauseWindow::Draw(GL2DProgram * shaders) {
 	if(w != (int)getParent()->position.Width || h != (int)getParent()->position.Height) {
-		w = getParent()->position.Width;
-		h = getParent()->position.Height;
+		w = (int)getParent()->position.Width;
+		h = (int)getParent()->position.Height;
 		resizeElement();
 	}
 	Window::Draw(shaders);
@@ -174,5 +174,5 @@ void PauseWindow::hideOptsMenu() {
 }
 
 void PauseWindow::resizeElement() {
-	position = Rect(0, 20, w, h-20);
+	position = Rect(0, 20, (float)w, (float)h-20);
 }

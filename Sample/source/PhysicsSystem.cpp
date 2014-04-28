@@ -224,7 +224,7 @@ void PhysicsSystem::collideVoxelsToVoxels() {
 		largestSection = max(section.size(),largestSection);
 
 		//Limit individual sections 
-		int sectionSize = min(MaxSectionSize,section.size());
+		unsigned int sectionSize = min(MaxSectionSize,section.size());
 		if (allVoxels[s]->cancollide) {
 			//Now do the O(n^2) which checks for collisions
 			for (unsigned int a = 0; a < sectionSize; a++) {
@@ -315,12 +315,12 @@ void PhysicsSystem::collideVoxelsToActors() {
 
 void PhysicsSystem::collideActorsToActors() {
 	//Now do the O(n^2) which checks for collisions
-	for (int a = 0; a < actors.size(); a++) {
+	for (unsigned int a = 0; a < actors.size(); a++) {
 		PhysicsActor * actorA = actors[a];
 		vec3 actorPositionA = actorA->position;
 		vec3 halfActorSizeA = actorA->size*.5f;
 
-		for (int b = a+1; b < actors.size(); b++) {
+		for (unsigned int b = a+1; b < actors.size(); b++) {
 			PhysicsActor * actorB = actors[b];
 
 			vec3 actorPositionB = actorB->position;
@@ -545,7 +545,7 @@ void PhysicsSystem::Explode(vec3 pos, float radius, float damage) {
 			continue;
 
 		//Damage decreases linearly with distance
-		float physicsVoxelDamage = ((radius-dist)*.5+.5)*damage;
+		float physicsVoxelDamage = (float)((radius-dist)*.5+.5)*damage;
 		//Physics voxels don't have health so if you're dealing over 8 damage, vaporize them
 		if (physicsVoxelDamage >= 8.0f) {
 			//Setting death at to one guarantees death next update cycle

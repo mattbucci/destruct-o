@@ -16,7 +16,7 @@ inline double determineZero<double>() {
 }
 template <>
 inline int determineZero<int>() {
-	return 0.0;
+	return 0;
 }
 
 #include "Savable.h"

@@ -91,7 +91,7 @@ void EffectLaser::Draw(GLEffectProgram * program) {
 	case LASER_IDLE:
 		break;
 	case LASER_WINDINGUP:
-		laserPower += delta/winduptime;
+		laserPower += (float)(delta/winduptime);
 		if (laserPower >= 1) {
 			laserPower = 1;
 			state = LASER_FIRING;
@@ -102,7 +102,7 @@ void EffectLaser::Draw(GLEffectProgram * program) {
 			state = LASER_WINDINGDOWN;
 		break;
 	case LASER_WINDINGDOWN:
-		laserPower -= delta/winddowntime;
+		laserPower -= (float)(delta/winddowntime);
 		if (laserPower <= 0) {
 			laserPower = 0;
 			state = LASER_IDLE;

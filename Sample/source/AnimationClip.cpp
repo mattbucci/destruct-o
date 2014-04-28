@@ -66,7 +66,7 @@ void AnimationClip::Play(bool _loop, double now)
     loop = _loop;
     
     // Store the starting time
-    animationStartTime = now;
+    animationStartTime = (float)now;
     
     // Force an update cycle.  Will set animation to the first frame of the animation
     Update(0.01, now);
@@ -110,12 +110,12 @@ void AnimationClip::Update(double delta, double now)
     if(animation && playing)
     {
         // Calculate the current animation time
-        float animationTime = (now - animationStartTime) * speed;
+        float animationTime = (float)((now - animationStartTime) * speed);
         
         // Make sure its not negative
         if(animationTime < 0)
         {
-            animationStartTime = now;
+            animationStartTime = (float)now;
             animationTime = 0.0;
         }
         
@@ -232,7 +232,7 @@ const float AnimationClip::GetProgress(double now) const
         return 1.0f;
     
     // Calculate the current animation time
-    float animationTime = (now - animationStartTime) * speed;
+    float animationTime = (float)((now - animationStartTime) * speed);
     
     // Make sure its not negative
     if(animationTime < 0)

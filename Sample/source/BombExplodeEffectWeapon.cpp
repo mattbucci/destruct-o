@@ -26,7 +26,7 @@ float BombExplodeEffectWeapon::WeaponCooldownTime() {
 
 //The amount of jitter in the weapon
 float BombExplodeEffectWeapon::JitterAmount() {
-	return .08;
+	return .08f;
 }
 
 //Simulate a gun shot (or laser pulse or whatever)

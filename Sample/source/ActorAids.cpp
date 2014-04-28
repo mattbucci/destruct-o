@@ -37,7 +37,7 @@ ActorAids::ActorAids() :
 	actionList[AidsActionDeployMech::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeployMech(pos);};
 
 	//Random offset for the intensity
-	intensityCalculationOffset = Utilities::random(-10,10);
+	intensityCalculationOffset = Utilities::random(-10.0f,10.0f);
 
 	currentIntensity = 0;
 	targetIntensity = 0;
@@ -135,7 +135,7 @@ bool ActorAids::Update() {
 	float timeModifier = (float)(min(Game()->Now(),(double)StartGameBreakLength))/StartGameBreakLength;
 
 	//For now, the magic is really stupid
-	targetIntensity = (1.0f+sin(fmod(Game()->Now()/100 + intensityCalculationOffset,M_PI*2.0)))/2.0f*MaxTargetIntensity;
+	targetIntensity = (float)(1.0f+sin(fmod(Game()->Now()/100 + intensityCalculationOffset,M_PI*2.0)))/2.0f*MaxTargetIntensity;
 	targetIntensity *= timeModifier;
 
 	//update actions and current intensity

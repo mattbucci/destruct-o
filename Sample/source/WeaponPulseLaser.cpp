@@ -27,7 +27,7 @@ float WeaponPulseLaser::WeaponChargeRequired() {
 // Cooldown length for the weapon
 float WeaponPulseLaser::WeaponCooldownTime()
 {
-	return 0.366667;
+	return 0.366667f;
 }
 
 //The amount of jitter in the weapon

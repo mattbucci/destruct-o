@@ -90,7 +90,7 @@ Structure * Structure::LoadStructure(string structureName) {
 	uint32_t cellCount;
 	Read(cellCount,fileData,filePos);
 	//Read all cells
-	for (int i = 0; i < cellCount; i++) {
+	for (unsigned int i = 0; i < cellCount; i++) {
 		StructureCell cell;
 		Read(cell.material,fileData,filePos);
 		Read(cell.pos.x,fileData,filePos);

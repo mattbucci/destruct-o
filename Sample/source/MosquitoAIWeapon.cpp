@@ -24,12 +24,12 @@ float MosquitoAIWeapon::WeaponChargeRequired() {
 
 //Cooldown length for the weapon
 float MosquitoAIWeapon::WeaponCooldownTime() {
-	return .1;
+	return .1f;
 }
 
 //The amount of jitter in the weapon
 float MosquitoAIWeapon::JitterAmount() {
-	return .08;
+	return .08f;
 }
 
 //Simulate a gun shot (or laser pulse or whatever)

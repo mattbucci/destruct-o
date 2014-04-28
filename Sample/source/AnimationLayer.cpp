@@ -240,7 +240,7 @@ void AnimationLayer::Update(double delta, double now)
             const Transform& b = activeState->Bones().find(it->first)->second->LocalTransform();
                 
             // Store the interpolated transform
-            it->second->LocalTransform() = Transform::Interpolate(a, b, progress);
+            it->second->LocalTransform() = Transform::Interpolate(a, b, (float)progress);
         }
             
         // Return from the update method

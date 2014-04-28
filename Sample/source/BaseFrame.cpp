@@ -278,11 +278,8 @@ void BaseFrame::Draw(double width, double height)
     GL3DProgram * skyboxShader = (GL3DProgram *) shaders->GetShader("skybox");
     skyboxShader->UseProgram();
     
-    // Y U DO DIS? Y Z VECTOR UP??? Y U GOT TO FUCK THE SYSTEM??
-    // Change the up vector from z up to y up for the skybox.  Use a camera fixed a 0,0,0, y up coordinate space.  rather not do matrix math
-    // just for the skybox
-    vec3 unfuckedLookVector = vec3(FirstPerson->GetLookVector().x, FirstPerson->GetLookVector().z, -FirstPerson->GetLookVector().y);
-    skyboxShader->Camera.SetCameraPosition(vec3(0,0,0), unfuckedLookVector, vec3(0,1,0));
+
+    skyboxShader->Camera.SetCameraPosition(vec3(0,0,0), FirstPerson->GetLookVector());
     skyboxShader->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25,1000); //width/height
     skyboxShader->Camera.Apply();
     
@@ -314,7 +311,7 @@ void BaseFrame::Draw(double width, double height)
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
 
 	//Set up the 2D Shader
-	GL2DProgram * shaders2d = SetWidthHeight(width, height);
+	GL2DProgram * shaders2d = SetWidthHeight(viewPortSize.x,viewPortSize.y);
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
