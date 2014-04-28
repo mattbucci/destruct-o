@@ -26,6 +26,8 @@ include_directories("includes/json")
 IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 	file(COPY ${PROJECT_SOURCE_DIR}/game/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+	file(COPY ${PROJECT_SOURCE_DIR}/libs/windows/_alldlls/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
+	file(COPY ${PROJECT_SOURCE_DIR}/libs/windows/_alldlls/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
 
 	# Destructo Executable
 	add_executable(Destructo ${Destructo_SRC})
@@ -38,16 +40,16 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     include_directories("includes/curl/windows")
 
     # Windows Libraries
-    target_link_libraries(Destructo "libs/windows/glew/glew32")
-    target_link_libraries(Destructo "libs/windows/SDL/SDL2")
-    target_link_libraries(Destructo "libs/windows/SDL2_ttf-2.0.12/SDL2_ttf")
-    target_link_libraries(Destructo "libs/windows/SDL2_mixer-2.0.0/SDL2_mixer")
-    target_link_libraries(Destructo "libs/windows/libnoise/libnoise")
+    target_link_libraries(Destructo "../libs/windows/glew/glew32")
+    target_link_libraries(Destructo "../libs/windows/SDL/SDL2")
+    target_link_libraries(Destructo "../libs/windows/SDL2_ttf-2.0.12/SDL2_ttf")
+    target_link_libraries(Destructo "../libs/windows/SDL2_mixer-2.0.0/SDL2_mixer")
+    target_link_libraries(Destructo "../libs/windows/libnoise/libnoise")
     target_link_libraries(Destructo "opengl32.lib")
 
     # Windows cURL things.  Are these correct (no they werent)
-    target_link_libraries(Destructo optimized "libs/windows/curl/libcurl_imp")
-	target_link_libraries(Destructo debug "libs/windows/curl/libcurld_imp")
+    target_link_libraries(Destructo optimized "../libs/windows/curl/libcurl_imp")
+	target_link_libraries(Destructo debug "../libs/windows/curl/libcurld_imp")
 
 	#enable Multiprocessor build
 	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /MP" )
