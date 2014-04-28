@@ -108,7 +108,7 @@ void Textbox::OnTextChange(string newText) {
 void Textbox::OnKeyPress(int key) {
 	string writtenText = text.Text();
 	if (key == 25600)
-		cursorPos--;
+		cursorPos = (cursorPos > 0) ? cursorPos - 1 : 0;
 	else if (key == 26112)
 		cursorPos++;
 	else if (key == 8) {
@@ -132,9 +132,7 @@ void Textbox::OnKeyPress(int key) {
 
 	OnTextChange(writtenText);
 
-	//Keep the cursor between normal values
-	if (cursorPos < 0)
-		cursorPos = 0;
+	// Keep the cursor between normal values
 	if (cursorPos > (int)writtenText.size())
 		cursorPos = writtenText.size();
 }
@@ -142,7 +140,7 @@ void Textbox::OnKeyPress(int key) {
 void Textbox::SetText(string text) {
 	this->text = RasterizedText(text,VisualInterface.FontControlText,VisualInterface.ColorControlText);
 }
-void Textbox::SetMaxLength(int length) {
+void Textbox::SetMaxLength(string::size_type length) {
 	maxTextLength = length;
 }
 string Textbox::GetText() {

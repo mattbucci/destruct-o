@@ -7,7 +7,7 @@
 
 template <class T>
 class Slider : public Control, private GameEventSubscriber {
-	unsigned int max;
+    size_t max;
 	unsigned int index;
 	vector<pair<string, T>> values;
 
@@ -148,7 +148,7 @@ void Slider<T>::SetPosition(Rect p) {
 template <class T>
 void Slider<T>::SetElements(const vector<pair<string, T>> in) {
 	values = vector<pair<string, T>>(in);
-	max = in.size()-1;
+	max = (in.size() > 0) ? in.size() - 1 : 0;
 	index = 0;
 	updateText();
 	updateValue();

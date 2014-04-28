@@ -106,7 +106,6 @@ void Building::ConstructSpire(vec3 growDirection, float bottomRadius, float leng
 	this->bottomRadius = bottomRadius;
 	this->length = length;
 
-	float voxelsToPlace = length*10;
 	//Vs. straight up
 	vec3 straightUp(0,0,1);
 	float angle;

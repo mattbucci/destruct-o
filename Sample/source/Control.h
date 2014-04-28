@@ -39,7 +39,8 @@ protected:
 	bool textControl;
 	//Returns true if focusedChild != NULL
 	bool hasFocusedChild();
-	vector<Control*> children;
+    typedef vector<Control *> control_vector;
+	control_vector children;
 
 	//Get the control owning this control
 	Control * getParent();

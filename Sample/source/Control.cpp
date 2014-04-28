@@ -65,16 +65,21 @@ void Control::OnMouseMove(vec2 mousePos) {
 
 	//Children must be iterated in reverse so the click goes to the control on top
 	//that is, the control which draws last and on top of all others
-	for (int i = children.size()-1; i >= 0; i--) {
-		Control * child = children[i];
+	for (control_vector::reverse_iterator childIt = children.rbegin(); childIt != children.rend(); childIt++)
+    {
+        // Get the member
+		Control * child = *childIt;
+        
 		//Must be visible to receive events
 		if (!child->visible)
 			continue;
 
-		if (child->calculatedPosition.InRect(mousePos)) {
+		if (child->calculatedPosition.InRect(mousePos))
+        {
 			//If the control the cursor is in isn't the previously
 			//focused child, change the focused child
-			if (child != focusedChild) {
+			if (child != focusedChild)
+            {
 				if (focusedChild)
 					focusedChild->OnMouseLeave();
 				focusedChild = child;

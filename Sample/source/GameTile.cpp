@@ -305,9 +305,8 @@ vector<unsigned char> GameTile::SaveTileToMemory() {
 
 //Render the given region using the specified detail level
 //the rect should be tile-relative coordinates
-void GameTile::Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, IntRect drawRegion, int & voxelCount) {
-	TileCell * cells;
-
+void GameTile::Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, IntRect drawRegion, int & voxelCount)
+{
 	_ASSERTE(TILE_SIZE >= drawRegion.EndX);
 	_ASSERTE(TILE_SIZE >= drawRegion.EndY);
 

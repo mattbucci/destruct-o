@@ -5,7 +5,7 @@
 //Trims all whitespace at the start/end of the in string
 string ParticleData::Parser::trimWhitespace(string in) {
 	int firstBeforeWhitespace = -1;
-	int lastBitOfSpace = in.size();
+    string::size_type lastBitOfSpace = in.size();
 	bool foundNonwhitespace = false;
 	//Look for whitespace and mark what characters you've found
 	for (unsigned int i = 0; i < in.size(); i++) {
@@ -20,7 +20,7 @@ string ParticleData::Parser::trimWhitespace(string in) {
 		}
 	}
 	int start = firstBeforeWhitespace+1;
-	int length = lastBitOfSpace - start+1;
+    string::size_type length = lastBitOfSpace - start+1;
 	if (length <= 0)
 		return "";
 	return in.substr(start,length);

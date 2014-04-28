@@ -8,9 +8,7 @@
 
 
 MenuFrame::MenuFrame(ShaderGroup * shaders)
-: GameSystem(shaders),
-  logo(Rect(0, 0, 648, 150), "menu/logo.png", vec4(1,1,1,1)),
-  background(Rect(0, 0, 800, 600),"menu/background.png", vec4(1,1,1,1))
+    : GameSystem(shaders), background(Rect(0, 0, 800, 600),"menu/background.png", vec4(1,1,1,1)), logo(Rect(0, 0, 648, 150), "menu/logo.png", vec4(1,1,1,1))
 {
 	buttonWindow.hPin = Control::CENTER;
 	buttonWindow.vPin = Control::MAX;

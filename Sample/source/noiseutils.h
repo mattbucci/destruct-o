@@ -1021,9 +1021,9 @@ namespace noise
         ///
         /// The returned color value is measured by the number of Color
         /// objects required to store the image, not by the number of bytes.
-        size_t CalcMinMemUsage (int width, int height) const
+        size_t CalcMinMemUsage (size_t width, size_t height) const
         {
-          return CalcStride ((size_t)width) * (size_t)height;
+          return CalcStride (width * height);
         }
 
         /// Calculates the stride amount for an image.
@@ -1036,10 +1036,9 @@ namespace noise
         ///   points of any two adjacent slabs in an image.
         /// - The stride amount is measured by the number of Color objects
         ///   between these two points, not by the number of bytes.
-        size_t CalcStride (int width) const
+        size_t CalcStride (size_t width) const
         {
-          return (size_t)(((width + RASTER_STRIDE_BOUNDARY - 1)
-            / RASTER_STRIDE_BOUNDARY) * RASTER_STRIDE_BOUNDARY);
+          return (size_t)(((width + RASTER_STRIDE_BOUNDARY - 1) / RASTER_STRIDE_BOUNDARY) * RASTER_STRIDE_BOUNDARY);
         }
 
         /// Copies the contents of the buffer in the source image into this

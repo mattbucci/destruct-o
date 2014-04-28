@@ -171,7 +171,7 @@ bool ActorAids::Update() {
 	//right now this done stupidly
 	//by randomly selecting an action
 	auto randomAction = actionList.begin();
-    unsigned int randChoice = Utilities::random((unsigned int) 0, (unsigned int) actionList.size());
+    ActorAids::action_store::size_type randChoice = Utilities::random((unsigned int) 0, (unsigned int) actionList.size());
 	if (randChoice >= actionList.size())
 		randChoice = actionList.size()-1;
 	advance(randomAction,randChoice);
@@ -183,7 +183,7 @@ bool ActorAids::Update() {
 	//Another dumb thing
 	//always find the closest point to the player
 	//should do something smarter than this
-	actions.push_back(randomAction->second(Game()->Actors.Player()->GetPosition()));
+	//actions.push_back(randomAction->second(Game()->Actors.Player()->GetPosition()));
 	spawnedNasties = true;
 
 	//Update the underlying actor

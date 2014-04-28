@@ -452,10 +452,10 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         }
         
         // Pass the bone count through (well, anything more than zero means skinned)
-        glUniform1i(program->UniformSkinned(), (*renderable)->bones.size());
+        glUniform1i(program->UniformSkinned(), (GLint)(*renderable)->bones.size());
         
         // Pass the texture count through (anything more than zero means skinned)
-        glUniform1i(program->UniformTextured(), (*renderable)->material->Textures().size());
+        glUniform1i(program->UniformTextured(), (GLint)(*renderable)->material->Textures().size());
         
         
         // Set the reflectivity (should pull this from the material right??)

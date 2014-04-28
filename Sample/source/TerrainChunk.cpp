@@ -191,7 +191,7 @@ void TerrainChunk::Reconstruct() {
 	}
 
 
-	VertexDataSize = quads.size()*6; 
+	VertexDataSize = quads.size() * 6; 
 	delete [] VertexData;
 	VertexData = new ChunkVertexData[VertexDataSize];
 	int vcount = 0;

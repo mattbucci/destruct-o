@@ -274,8 +274,6 @@ void PhysicsSystem::collideVoxelsToActors() {
 	for (auto actor : actors) {
 		vec3 actorPosition = actor->position;
 		vec3 halfActorSize = actor->size*.5f;
-		vec3 actorVolumeStart = actor->position - halfActorSize;
-		vec3 actorVolumeEnd =	actor->position + halfActorSize;
 
 		for (auto voxel : allVoxels) {
 			if (voxel->cancollide) {

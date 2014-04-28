@@ -24,7 +24,8 @@ void CityGen::construct_road(GameTile* tile, vec3 start, vec3 end){
 
 
 }
-void CityGen::construct_building(GameTile* tile, vec3 pos){
+void CityGen::construct_building(GameTile* tile, vec3 pos)
+{
 	//BEGIN BUILDING DEMO
 	//Load building floors (note lack of extension)
 	Structure * bottomFloor = Structure::LoadStructure("teststructures/testfloor30x10");
@@ -34,7 +35,7 @@ void CityGen::construct_building(GameTile* tile, vec3 pos){
 	//Randomize the number of floors a bit
 	//Obviously more varied randomization would have to be done
 	//for more variation in buildings
-	int numberOfBaseFloors = rand() % 3;
+	//int numberOfBaseFloors = rand() % 3;
 	int numberOfTopFloors = rand() % 3;
 
 	//A Building is used to construct a structure by stacking other structures (floors) together
@@ -66,11 +67,8 @@ void CityGen::construct_building(GameTile* tile, vec3 pos){
 
 }
 
-void CityGen::construct_city(GameTile * tile, vec3 pos) {
-	//First create city points at even intervals
-	const static float evenBuildingDistance = 20.0f;
-	const static float buildingSize = 15.0f;
-
+void CityGen::construct_city(GameTile * tile, vec3 pos)
+{
 	ContiguousList<Rect> buildingPlacements;
 	
 	TileCell * cells = tile->Cells;
@@ -263,7 +261,7 @@ void CityGen::generatecitylocations(GameTile* tile){
 			}
 		}
 	}
-	float minheight = 5000;
+
 	vec3 citylocation;
 
 	float noisetolerance = 3;

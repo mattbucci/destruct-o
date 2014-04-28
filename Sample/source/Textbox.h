@@ -10,7 +10,7 @@
 #include "GameEvent.h"
 
 class Textbox : public Control {
-	int cursorPos;
+    string::size_type cursorPos;
 
 	Font textboxFont;
 
@@ -19,7 +19,7 @@ class Textbox : public Control {
 	vec4 backColor;
 	vec4 selectionColor;
 
-	int maxTextLength;
+    string::size_type maxTextLength;
 
 	//This shape represents the inner color with this control's background
 	//is the border color
@@ -48,7 +48,7 @@ public:
 	GameEvent<void(Textbox*,string)> EventTextChanged;
 
 	void SetText(string text);
-	void SetMaxLength(int length);
+	void SetMaxLength(string::size_type length);
 	//Get
 	string GetText();
 };

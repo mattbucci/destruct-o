@@ -52,5 +52,5 @@ public:
 
 	//Array of interleaved vertex data
 	ChunkVertexData * VertexData;
-	int VertexDataSize;
+	size_t VertexDataSize;
 };
