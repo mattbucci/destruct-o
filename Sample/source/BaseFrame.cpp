@@ -263,22 +263,12 @@ void BaseFrame::Draw(double width, double height)
     
     // Re-enable the depth test
 	glEnable(GL_DEPTH_TEST);
-	
-	// Draw voxels
-	Voxels.Draw(shaders,pos,ViewDistance.GetDrawRegion(vec2(pos),FirstPerson->GetAngleVector().x/180.0f*(float)M_PI));
-	//The physics system uses the same texture that the voxels above binds every time it draws
-	//so it must always immediately follow Voxels.draw()
-	Physics.Draw(shaders);
-
-	//Turn lights back on because I'm not sure if this is necessary
-	shaders3d->Lights.On();
-	shaders3d->Lights.Apply();
-
+    
     // Use the skybox shader
     GL3DProgram * skyboxShader = (GL3DProgram *) shaders->GetShader("skybox");
     skyboxShader->UseProgram();
     
-
+    // Setup the skybox's camera
     skyboxShader->Camera.SetCameraPosition(vec3(0,0,0), FirstPerson->GetLookVector());
     skyboxShader->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25,1000); //width/height
     skyboxShader->Camera.Apply();
@@ -288,6 +278,17 @@ void BaseFrame::Draw(double width, double height)
     
     // Draw the skybox
     skybox->Draw(skyboxShader);
+	
+	// Draw voxels
+	Voxels.Draw(shaders,pos,ViewDistance.GetDrawRegion(vec2(pos),FirstPerson->GetAngleVector().x/180.0f*(float)M_PI));
+    
+	//The physics system uses the same texture that the voxels above binds every time it draws
+	//so it must always immediately follow Voxels.draw()
+	Physics.Draw(shaders);
+
+	//Turn lights back on because I'm not sure if this is necessary
+	shaders3d->Lights.On();
+	shaders3d->Lights.Apply();
     
     // Setup the mesh shader boneless
     MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
