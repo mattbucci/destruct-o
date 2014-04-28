@@ -47,7 +47,8 @@ void ViewDistanceCalc::CalculateAndApply(float & fogDistance,float currentFPS) {
 
 	//Fog has to end before view distance
 	//because view distance is not perfect
-	fogDistance = GetViewDistance()*.80f;
+	//fogDistance = GetViewDistance()*.80f;
+	fogDistance = GetViewDistance();
 }
 
 //Retrieve a pair of coordinates representing the appropriate draw section
