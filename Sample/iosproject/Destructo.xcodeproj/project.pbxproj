@@ -107,8 +107,6 @@
 		F13C8596190CEB97006A91AB /* CurlShare.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F13C8473190CEB96006A91AB /* CurlShare.cpp */; };
 		F13C8597190CEB97006A91AB /* CurlVersion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F13C8475190CEB96006A91AB /* CurlVersion.cpp */; };
 		F13C8598190CEB97006A91AB /* DebugWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F13C8477190CEB96006A91AB /* DebugWindow.cpp */; };
-		F13C8599190CEB97006A91AB /* Demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F13C8479190CEB96006A91AB /* Demo.cpp */; };
-		F13C859A190CEB97006A91AB /* DemoWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F13C847B190CEB96006A91AB /* DemoWindow.cpp */; };
 		F13C859B190CEB97006A91AB /* Effect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F13C847D190CEB96006A91AB /* Effect.cpp */; };
 		F13C859C190CEB97006A91AB /* EffectLaser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F13C847F190CEB96006A91AB /* EffectLaser.cpp */; };
 		F13C859D190CEB97006A91AB /* ErrorWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F13C8481190CEB96006A91AB /* ErrorWindow.cpp */; };
@@ -389,10 +387,6 @@
 		F13C8476190CEB96006A91AB /* CurlVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CurlVersion.h; path = ../../source/CurlVersion.h; sourceTree = "<group>"; };
 		F13C8477190CEB96006A91AB /* DebugWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DebugWindow.cpp; path = ../../source/DebugWindow.cpp; sourceTree = "<group>"; };
 		F13C8478190CEB96006A91AB /* DebugWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DebugWindow.h; path = ../../source/DebugWindow.h; sourceTree = "<group>"; };
-		F13C8479190CEB96006A91AB /* Demo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Demo.cpp; path = ../../source/Demo.cpp; sourceTree = "<group>"; };
-		F13C847A190CEB96006A91AB /* Demo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Demo.h; path = ../../source/Demo.h; sourceTree = "<group>"; };
-		F13C847B190CEB96006A91AB /* DemoWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DemoWindow.cpp; path = ../../source/DemoWindow.cpp; sourceTree = "<group>"; };
-		F13C847C190CEB96006A91AB /* DemoWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DemoWindow.h; path = ../../source/DemoWindow.h; sourceTree = "<group>"; };
 		F13C847D190CEB96006A91AB /* Effect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Effect.cpp; path = ../../source/Effect.cpp; sourceTree = "<group>"; };
 		F13C847E190CEB96006A91AB /* Effect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Effect.h; path = ../../source/Effect.h; sourceTree = "<group>"; };
 		F13C847F190CEB96006A91AB /* EffectLaser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EffectLaser.cpp; path = ../../source/EffectLaser.cpp; sourceTree = "<group>"; };
@@ -631,7 +625,7 @@
 		F13C860E190CECEC006A91AB /* SaveDirectory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SaveDirectory.mm; sourceTree = "<group>"; };
 		F13C8610190CED1C006A91AB /* NSFileManager+ApplicationSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+ApplicationSupport.h"; sourceTree = "<group>"; };
 		F13C8611190CED1C006A91AB /* NSFileManager+ApplicationSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+ApplicationSupport.m"; sourceTree = "<group>"; };
-		F1989FD418A58C3900A5165E /* VoxEngine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoxEngine.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1989FD418A58C3900A5165E /* VoxEngine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = VoxEngine.app; path = Destructo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1989FD718A58C3900A5165E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F1989FD918A58C3900A5165E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F1989FDB18A58C3900A5165E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -878,10 +872,6 @@
 				F13C8476190CEB96006A91AB /* CurlVersion.h */,
 				F13C8477190CEB96006A91AB /* DebugWindow.cpp */,
 				F13C8478190CEB96006A91AB /* DebugWindow.h */,
-				F13C8479190CEB96006A91AB /* Demo.cpp */,
-				F13C847A190CEB96006A91AB /* Demo.h */,
-				F13C847B190CEB96006A91AB /* DemoWindow.cpp */,
-				F13C847C190CEB96006A91AB /* DemoWindow.h */,
 				F13C847D190CEB96006A91AB /* Effect.cpp */,
 				F13C847E190CEB96006A91AB /* Effect.h */,
 				F13C847F190CEB96006A91AB /* EffectLaser.cpp */,
@@ -1266,7 +1256,6 @@
 				F13C8569190CEB97006A91AB /* Achievement.cpp in Sources */,
 				F13C85F9190CEB97006A91AB /* TerrainChunk.cpp in Sources */,
 				F13C85AA190CEB97006A91AB /* GL2DProgram.cpp in Sources */,
-				F13C859A190CEB97006A91AB /* DemoWindow.cpp in Sources */,
 				F13C85FB190CEB97006A91AB /* TerrainGen.cpp in Sources */,
 				F13C85D2190CEB97006A91AB /* Model.cpp in Sources */,
 				F13C85C3190CEB97006A91AB /* InstancedVoxelRenderSystem.cpp in Sources */,
@@ -1400,7 +1389,6 @@
 				F13C860C190CEB97006A91AB /* Window.cpp in Sources */,
 				F13C85A6190CEB97006A91AB /* GameFactions.cpp in Sources */,
 				F13C85B7190CEB97006A91AB /* GLLight.cpp in Sources */,
-				F13C8599190CEB97006A91AB /* Demo.cpp in Sources */,
 				F13C8577190CEB97006A91AB /* AidsActionBomberRun.cpp in Sources */,
 				F13C8589190CEB97006A91AB /* BombDropAIWeapon.cpp in Sources */,
 				F11C7F1418A8A7F9004BC84B /* scalepoint.cpp in Sources */,

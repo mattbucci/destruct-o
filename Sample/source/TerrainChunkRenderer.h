@@ -14,7 +14,9 @@ class TerrainChunkRenderer {
     {
 		GLuint vertexArrayBuffer;
 		GLuint vertexData;
+        GLuint indexData;
 		size_t vertexCount;
+        size_t indexCount;
 	public:
 		HotChunk();
 		~HotChunk();

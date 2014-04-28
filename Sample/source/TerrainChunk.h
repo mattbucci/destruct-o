@@ -52,5 +52,7 @@ public:
 
 	//Array of interleaved vertex data
 	ChunkVertexData * VertexData;
+    GLushort * VertexIndices;
 	size_t VertexDataSize;
+    size_t VertexIndicesSize;
 };

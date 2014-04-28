@@ -7,6 +7,7 @@ TerrainChunk::TerrainChunk(GameTile * owningTile, int chunkx, int chunky) {
 	X = (float)chunkx;
 	Y = (float)chunky;
 	VertexData = NULL;
+    VertexIndices = NULL;
 	Reconstruct();
 }
 TerrainChunk::~TerrainChunk() {
@@ -190,11 +191,14 @@ void TerrainChunk::Reconstruct() {
 		}
 	}
 
-
-	VertexDataSize = quads.size() * 6; 
+    // Four verts per quad
+	VertexDataSize = quads.size() * 4;
+    VertexIndicesSize = quads.size() * 6;
+    
 	delete [] VertexData;
 	VertexData = new ChunkVertexData[VertexDataSize];
-	int vcount = 0;
+    VertexIndices = new GLushort[VertexIndicesSize];
+	int vcount = 0, icount = 0;
 	for (unsigned int i = 0; i < quads.size(); i++) {
 		//Lighting is currently broken
 		//set every surface to be fully lit
@@ -238,47 +242,44 @@ void TerrainChunk::Reconstruct() {
 		//cell.materialId = 1;
 		terX = materialWithMostVotes % 4;
 		terY = materialWithMostVotes / 4;
-
-		//Generate interleaved data for each vertex
-		//of each found quad
-		//First triangle
+        
+        // Generate interleaved data for each vertex of each found quad
 		VertexData[vcount].TextureCoordinateX = 0;
 		VertexData[vcount].TextureCoordinateY = 0;
 		VertexData[vcount].TextureCoordinateSX = terX;
 		VertexData[vcount].TextureCoordinateSY = terY;
 		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].a1);
+        
 		VertexData[vcount].TextureCoordinateX = 0;
 		VertexData[vcount].TextureCoordinateY = (uint8_t)quads[i].BSize;
 		VertexData[vcount].TextureCoordinateSX = terX;
 		VertexData[vcount].TextureCoordinateSY = terY;
 		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].b1);
+        
 		VertexData[vcount].TextureCoordinateX = (uint8_t)quads[i].ASize;
 		VertexData[vcount].TextureCoordinateY = 0;
 		VertexData[vcount].TextureCoordinateSX = terX;
 		VertexData[vcount].TextureCoordinateSY = terY;
 		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].a2);
-
-		//Second triangle
-		VertexData[vcount].TextureCoordinateX = 0;
-		VertexData[vcount].TextureCoordinateY = (uint8_t)quads[i].BSize;
-		VertexData[vcount].TextureCoordinateSX = terX;
-		VertexData[vcount].TextureCoordinateSY = terY;
-		VertexData[vcount].Shading = shading;
-		VertexData[vcount++].Vertex = toPOD(quads[i].b1);
-		VertexData[vcount].TextureCoordinateX = (uint8_t)quads[i].ASize;
-		VertexData[vcount].TextureCoordinateY = 0;
-		VertexData[vcount].TextureCoordinateSX = terX;
-		VertexData[vcount].TextureCoordinateSY = terY;
-		VertexData[vcount].Shading = shading;
-		VertexData[vcount++].Vertex = toPOD(quads[i].a2);
+        
 		VertexData[vcount].TextureCoordinateX = (uint8_t)quads[i].ASize;
 		VertexData[vcount].TextureCoordinateY = (uint8_t)quads[i].BSize;
 		VertexData[vcount].TextureCoordinateSX = terX;
 		VertexData[vcount].TextureCoordinateSY = terY;
 		VertexData[vcount].Shading = shading;
 		VertexData[vcount++].Vertex = toPOD(quads[i].b2);
+        
+        // Generate the indices (first triangle)
+        VertexIndices[icount++] = vcount - 4;
+        VertexIndices[icount++] = vcount - 3;
+        VertexIndices[icount++] = vcount - 2;
+
+        // second triangle
+        VertexIndices[icount++] = vcount - 3;
+        VertexIndices[icount++] = vcount - 2;
+        VertexIndices[icount++] = vcount - 1;
 	}
 }
