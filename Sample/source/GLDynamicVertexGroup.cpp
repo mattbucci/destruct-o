@@ -119,7 +119,7 @@ void GLDynamicVertexGroup::UpdateGroup(GLenum gltype, int vertexCount) {
 		vertices = (vec3*)malloc(sizeof(vec3)*vertexCount);
 		vertexNormals = (vec3*)malloc(sizeof(vec3)*vertexCount);
 		textureCoords = (vec2*)malloc(sizeof(vec2)*vertexCount);
-		memset(vertexNormals, 0, sizeof(vertexNormals));
+		memset(vertexNormals, 0, sizeof(vec3) * vertexCount);
 	}
 	else {
 		vertices = (vec3*)realloc(vertices, sizeof(vec3)*vertexCount);

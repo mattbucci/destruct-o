@@ -37,14 +37,11 @@ void ActorAISoldier::snapSpineToEnemy() {
 
 	vec3 axis = vec3(1,0,0);//glm::normalize(glm::cross(desiredFace,facing));
 	//float angle = fmod(OS::Now()/2,M_PI) - .5f*M_PI;
+	//quat rotation = glm::quat(glm::rotate(angle,axis));
 	
-	quat rotation = glm::quat(glm::rotate(angle,axis));
-	//Apply to the spine
+    //Apply to the spine
 	Node * spineNode = model->Animation().Skeleton()->FindNode("Bind_Spine1");
-
-
 	spineNode->LocalTransform().Rotation() = glm::rotate(spineNode->LocalTransform().Rotation(),angle/M_PI*180.0f,axis);
-
 	spineNode->Recalculate();
 }
 

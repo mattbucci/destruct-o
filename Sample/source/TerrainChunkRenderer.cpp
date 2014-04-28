@@ -29,7 +29,7 @@ void TerrainChunkRenderer::HotChunk::Render(GLTerrainProgram * shader) {
 	glVertexAttribPointer ( shader->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,Vertex) );
 	glVertexAttribPointer ( shader->AttributeTexture(), 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,TextureCoordinateX) );
 	glVertexAttribPointer ( shader->AttributeShading(), 1, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,Shading) );*/
-	glDrawArrays( GL_TRIANGLES, 0, vertexCount);
+	glDrawArrays( GL_TRIANGLES, 0, (GLsizei) vertexCount);
     
     // Don't fuck the VAOs
     glBindVertexArray( 0 );
