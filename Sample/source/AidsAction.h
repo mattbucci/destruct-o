@@ -5,6 +5,8 @@
 
 class AidsAction : public Savable {
 	float actionCost;
+
+
 protected:
 	vec3 actionLocation;
 	//Creates a spiral out from the given location

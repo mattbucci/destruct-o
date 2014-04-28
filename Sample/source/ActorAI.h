@@ -10,6 +10,10 @@
 class Weapon;
 
 class ActorAI : public PhysicsActor {
+	static unsigned int currentAIID;
+	//Each AI has a unique ID which decides when the expensive update is done
+	//this helps even out the load of AI running
+	unsigned int aiID;
 protected:
 	//The weapon which characterizes this AI
 	//Do not change!
@@ -97,6 +101,16 @@ protected:
 	//Snap the model's skeleton to face the enemy
 	virtual void snapSpineToEnemy() = 0;
 
+	//The smarts, ray traces and all that should go here
+	//planning etc.
+	//runs at 10hz
+	virtual void expensiveUpdate();
+
+	//The simple things, such as moving
+	//or facing
+	//should go here
+	//runs at 100hz
+	virtual void cheapUpdate();
 
 
 	//AI settings

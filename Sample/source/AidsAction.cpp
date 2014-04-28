@@ -8,7 +8,7 @@ vec3 AidsAction::findHiddenLocation(vec3 startLocation, float desiredAltitude) {
 	//Only tries 10 locations
 	//don't want to do too many ray traces 
 	const static float distancePart = 5;
-	float distanceOffset = (float)Utilities::random(20,30);
+	float distanceOffset = (float)Utilities::random(40,50);
 	float angleOffset = (float)Utilities::random(-M_PI,M_PI);
 
 	vec3 lastPos;

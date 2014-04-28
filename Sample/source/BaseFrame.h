@@ -35,8 +35,10 @@ class ParticleSystem;
 //Retrieve base frame
 BaseFrame * Game();
 
-class BaseFrame : public GameSystem
-{
+class BaseFrame : public GameSystem {
+	//Make baseframe a singleton now
+	static BaseFrame * instance;
+
 	AudioPlayer * audio;
 
 	Notification notification;
@@ -61,6 +63,8 @@ class BaseFrame : public GameSystem
 		//this will be moved to a more powerful game logic system in the future
 		shader->Acid.SetAcidFactor(0);
 	}
+	//Access to the singleton
+	friend BaseFrame * Game();
 protected:
 	//Overload to tell the save system about handles created in the system
 	virtual void Load(Json::Value & parentValue, LoadData & loadData);
