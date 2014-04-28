@@ -11,7 +11,7 @@ public:
 	float HUDTransparency;
 
 	//View Distance
-	int ViewDistance;
+	float ViewDistance;
 
 	void Print();
 };

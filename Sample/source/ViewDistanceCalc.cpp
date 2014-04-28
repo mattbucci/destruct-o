@@ -40,10 +40,7 @@ void ViewDistanceCalc::CalculateAndApply(float & fogDistance,float currentFPS) {
 	else if (currentFPS > maxFrameRate) 
 		viewDistance += confidenceFactor*(currentFPS-acceptableFrameRate)/acceptableFrameRate*.02f;
 	
-	if (viewDistance < 0.0)
-		viewDistance = 0.0;
-	if (viewDistance > 1.0)
-		viewDistance = 1.0;
+	viewDistance = glm::clamp<float>(viewDistance, 0.0f, 1.0f);
 
 	//Fog has to end before view distance
 	//because view distance is not perfect

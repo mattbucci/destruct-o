@@ -23,7 +23,7 @@ protected:
 	//Options Menu Elements
 	Window optsRect;
 	Label optsViewDistanceLabel;
-	Slider<int> optsViewDistance;
+	Slider<float> optsViewDistance;
 	Label optsHUDTransparencyLabel;
 	Slider<float> optsHUDTransparency;
 	Button optsClose;

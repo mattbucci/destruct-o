@@ -228,11 +228,11 @@ void BaseFrame::Draw(double width, double height)
     Actors.Player()->WeaponCamera().UpdateViewSize(viewPortSize);
 	//Update the texture caching system
 	Textures.Refresh();
-
-	float fogDistance = 0;
-	//Apply view distance
-	ViewDistance.CalculateAndApply(fogDistance,fpsCount.GetFps());
-
+    
+	// Apply view distance (based on the stored slider)
+    ViewDistance.viewDistance = VoxEngine::AccountOptions.ViewDistance;
+    float fogDistance = ViewDistance.GetViewDistance() * 0.9f;
+	//ViewDistance.CalculateAndApply(fogDistance,fpsCount.GetFps());
 
 	//We add 1.5 to ground level. This assumes the person is 5ft between the ground
 	//and his eye line

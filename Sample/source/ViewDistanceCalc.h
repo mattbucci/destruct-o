@@ -10,10 +10,12 @@ class GL3DProgram;
 #define MIN_DRAW_DISTANCE 30
 
 class ViewDistanceCalc {
-	//Clamped/Scaled between 0.0 and 1.0
+public:
+    //Clamped/Scaled between 0.0 and 1.0
 	//Where 0 is MIN_DRAW_DISTANCE
 	//and 1 is MAX_DRAW_DISTANCE
 	float viewDistance;
+private:
 	int framesDrawn;
 
 	//Retrieve a pair of coordinates representing the appropriate draw section

@@ -103,13 +103,17 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 	optsViewDistance.SetValue(&VoxEngine::AccountOptions.ViewDistance);
 	optsRect.AddControl(&optsViewDistanceLabel);
 	optsRect.AddControl(&optsViewDistance);
-
-	intOption viewDistOpts[] = {
-		intOption("Short", 0),
-		intOption("Normal", 1),
-		intOption("Far", 2)
-	};
-	vector<intOption> viewDistance(viewDistOpts, viewDistOpts + sizeof(viewDistOpts) / sizeof(viewDistOpts[0]));
+    
+    // View distance options
+    floatOption viewDistanceOptions[] =
+    {
+        floatOption("TI-84", 0.20f),
+        floatOption("Mobile", 0.40f),
+        floatOption("Laptop", 0.60f),
+        floatOption("Desktop", 0.80f),
+        floatOption("$oopah Us3r", 1.0f),
+    };
+    vector<floatOption> viewDistance(viewDistanceOptions, viewDistanceOptions + (sizeof(viewDistanceOptions) / sizeof(viewDistanceOptions[0])));
 	optsViewDistance.SetElements(viewDistance);
 
 	//Option HUD Transparency
