@@ -10,10 +10,19 @@
 
 #define SIMULATION_DELTA .01f
 
+// Callback on iOS to set the render flag
+void iOSAnimationCallback(void *context);
+
+// Callback from the event system to allow filtering (sniff for app events)
+int EventFilter(void *context, SDL_Event *event);
+
 class VoxEngine {
 	//Entry point for the game engine
 	static void Start();
 
+    // Make sure its safe to render
+    static void WaitForSafeRender();
+    
 	//Build an SDL context
 	static SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion, float requiredGLSLVersion);
 
@@ -48,6 +57,8 @@ class VoxEngine {
 	static AsyncTask * task;
 
 	friend int main(int argc, char** argv);
+    
+    friend void iOSAnimationCallback(void *context);
 public:
 	//Run an async task before the next frame switch
 	static void SetAsyncTask(AsyncTask * task);

@@ -12,6 +12,10 @@
 
 SDL_Renderer* displayRenderer;
 
+// Should we be rendering?
+bool renderingIsSafe = true;
+bool iOSRenderRequested = false;
+
 //A variable which at runtime can be used to figure out what version is running
 int OpenglVersion;
 //Used to determine the GLSL version used
@@ -143,9 +147,18 @@ void VoxEngine::Start() {
 	//re-enable for performance reasons after voxel system complete
 	glDisable(GL_CULL_FACE);
 
-	//Attempt to enable vsync (fails on mobile)
-	SDL_GL_SetSwapInterval(1);
 	
+#if (defined __IPHONEOS__)
+    // Setup the animation callback for iOS
+    SDL_iPhoneSetAnimationCallback(displayWindow, 1, &iOSAnimationCallback, NULL);
+#else
+    // Attempt to enable vsync (fails on mobile)
+	SDL_GL_SetSwapInterval(1);
+#endif
+    
+    // Add the event filter for application events such as pause
+    SDL_AddEventWatch(EventFilter, NULL);
+    
 	/* Print information about attached joysticks (actually works on iOS WOOHOO)*/
 	printf("There are %d joystick(s) attached\n", SDL_NumJoysticks());
 	for (int i = 0; i < SDL_NumJoysticks(); ++i) {
@@ -193,9 +206,11 @@ void VoxEngine::Start() {
 
 	//Start up game
 	continueGameLoop = true;
+    
 	//Get the current window size
 	SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
 	ResizeWindow();
+    glViewport(0, 0, curWidth, curHeight);
 
 	//Mark the simulation starting time
 	//Start the simulation one update loop into the past
@@ -208,36 +223,48 @@ void VoxEngine::Start() {
 	VoxEngine::task = new AsyncTask([]() {Game()->Build();});
 
 	//The game loop begins
-	while (continueGameLoop) {
-		if(VoxEngine::task != NULL) {
+	while (continueGameLoop)
+    {
+        // Wait until its safe to render
+        VoxEngine::WaitForSafeRender();
+        
+        // If we have a task needing completed (mostly frame switched)
+        if(VoxEngine::task != NULL)
+        {
 			//Start the task
 			VoxEngine::task->Start();
 
-			LoadingScreen load;
 			//Assume one of the frames constructed the 2d shader
 			GL2DProgram * shader = (GL2DProgram*)Frames::shaders->GetShader("2d");
+			LoadingScreen load;
 
 			glActiveTexture(GL_TEXTURE0);
 			SynchronousTask.PollingThreadStart();
 
-			while(!VoxEngine::task->IsDone()) {
-				//Run the frame draw
-				glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-				//Pump events even though we ignore them
-				SDL_PumpEvents();
-				//Check window size
-				SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
-				ResizeWindow();
-				//render the loading screen
-				glViewport(0, 0, curWidth, curHeight);
-				load.Draw(curWidth,curHeight,shader);
-				SDL_GL_SwapWindow(displayWindow);
-
+			while(!VoxEngine::task->IsDone())
+            {
+				// Wait until its safe to render
+                VoxEngine::WaitForSafeRender();
+                
+#if (defined __IPHONEOS__)
+                // Only render if we have a render requested on iOS
+                if(iOSRenderRequested)
+                {
+#endif
+                    // Draw the loading screen
+                    glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+                    load.Draw(curWidth,curHeight,shader);
+                    SDL_GL_SwapWindow(displayWindow);
+#if (defined __IPHONEOS__)
+                    // Clear the render request
+                    iOSRenderRequested = false;
+                }
+#endif
 				//If there's a sync task, execute it now
 				SynchronousTask.PollingThreadPoll();
 
 				//Sleep softly and use no cpu power
-				OS::SleepTime(.05);
+				OS::SleepTime(1.0/60.0);
 			}
 
 			SynchronousTask.PollingThreadStop();
@@ -263,6 +290,7 @@ void VoxEngine::Start() {
 		//we continue anyways, so that frames are drawn sometimes
 		//even if they fall behind a bit
 		double timeDifference = (OS::Now()+gameEventDelta)-globalTime;
+        double physicsFrameTime = OS::Now();
 		while (timeDifference >= SIMULATION_DELTA) {
 			timeDifference -= SIMULATION_DELTA;
 			//Run the simulation
@@ -276,14 +304,35 @@ void VoxEngine::Start() {
 			CurrentSystem->simTime += SIMULATION_DELTA;
 		}
 
-		//Run the frame draw
-		glClear ( CurrentSystem->ClearBits() );
-		//Draw
-		CurrentSystem->Draw(scaledSize.x,scaledSize.y);
-
-		/* Swap our back buffer to the front */
-		SDL_GL_SwapWindow(displayWindow);
-	
+        // If rendering is safe
+        if(renderingIsSafe)
+        {
+#if (defined __IPHONEOS__)
+            // Only render if we have a render requested on iOS
+            if(iOSRenderRequested)
+            {
+#endif
+                //Run the frame draw
+                glClear ( CurrentSystem->ClearBits() );
+                
+                //Draw
+                CurrentSystem->Draw(scaledSize.x,scaledSize.y);
+                
+                /* Swap our back buffer to the front */
+                SDL_GL_SwapWindow(displayWindow);
+#if (defined __IPHONEOS__)
+                // Clear the render request
+                iOSRenderRequested = false;
+            }
+            
+            // Only sleep if we had the time
+            else if(SIMULATION_DELTA - (OS::Now() - physicsFrameTime) > 0)
+            {
+                // Sleep for 1 millisecond
+                OS::SleepTime(0.001);
+            }
+#endif
+        }
 
 		//Update the current system selection
 		//if a swap was requested during one of the updates
@@ -296,7 +345,24 @@ void VoxEngine::Start() {
 	
 	SDL_Quit();
 }
-void VoxEngine::ResizeWindow() {
+
+// Wait until its safe to render (pumps events and returns if safe)
+void VoxEngine::WaitForSafeRender()
+{
+    // Process events
+    SDL_PumpEvents();
+    
+    // Loop if rendering is not safe
+    while(!renderingIsSafe)
+    {
+        // Wait a frame and pump events
+        SDL_PumpEvents();
+        OS::SleepTime(1.0/60.0);
+    }
+}
+
+void VoxEngine::ResizeWindow()
+{
 	const static vec2 targetResolution = vec2(800,600);
 
 	vec2 newSize = vec2((float)curWidth,(float)curHeight);
@@ -332,13 +398,14 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 			SDL_Event event;
 			int eventPolled = SDL_PollEvent(&event);
 		
-			if (eventPolled) {
+			if (eventPolled)
+            {
 				//Convert sdl event to InputEvent
 				switch (event.type)
 				{
 					// Handle input events
 #ifdef __MOBILE__
-					// Mobile only responds to finger events
+                    // Mobile only responds to finger events
 					case SDL_FINGERMOTION:
 						//cout << "MOVED (" << event.tfinger.fingerId << ") : " << event.tfinger.x << "," << event.tfinger.y << "\n";
 						eventQueue.push_back(InputEvent(InputEvent::MouseMove,OS::Now(),scaleFactor.x*event.tfinger.x*curWidth,scaleFactor.y*event.tfinger.y*curHeight,(int) event.tfinger.fingerId));
@@ -484,4 +551,37 @@ void VoxEngine::SetAsyncTask(AsyncTask * task) {
 	}
 	//Otherwise set it to your new task
 	VoxEngine::task = task;
+}
+
+// Called by the iOS animation callback
+void iOSAnimationCallback(void *context)
+{
+    iOSRenderRequested = true;
+}
+
+// Called by SDL to analyze pumped events
+int EventFilter(void *context, SDL_Event *event)
+{
+    // Figure out what input event this is
+    switch (event->type)
+    {
+#ifdef __MOBILE__
+        // If the application will enter the background, it is no longer safe to render
+        case SDL_APP_WILLENTERBACKGROUND:
+            renderingIsSafe = false;
+            return 0;
+            break;
+            
+        // If the application has resumed, it is again safe to render
+        case SDL_APP_WILLENTERFOREGROUND:
+            renderingIsSafe = true;
+            return 0;
+            break;
+#endif
+        default:
+            break;
+    }
+    
+    // If we don't handle the event, return 1
+    return 1;
 }

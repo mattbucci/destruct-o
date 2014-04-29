@@ -5,19 +5,19 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>2E6380E6-69AE-4A05-883D-4D50B0B4FA12</string>
+	<string>EB115187-0237-4502-8DAC-379F317B386F</string>
 	<key>IDESourceControlProjectName</key>
 	<string>Destructo</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>724BD9B9-95A7-4704-B424-74D3B6E00435</key>
+		<key>3846C977-5222-4178-923A-D70F6072EFF4</key>
 		<string>https://bitbucket.org/destructo_game/main-client.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Sample/iosproject/Destructo.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>724BD9B9-95A7-4704-B424-74D3B6E00435</key>
+		<key>3846C977-5222-4178-923A-D70F6072EFF4</key>
 		<string>../../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
@@ -25,14 +25,14 @@
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>724BD9B9-95A7-4704-B424-74D3B6E00435</string>
+	<string>3846C977-5222-4178-923A-D70F6072EFF4</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>724BD9B9-95A7-4704-B424-74D3B6E00435</string>
+			<string>3846C977-5222-4178-923A-D70F6072EFF4</string>
 			<key>IDESourceControlWCCName</key>
 			<string>main-client</string>
 		</dict>
