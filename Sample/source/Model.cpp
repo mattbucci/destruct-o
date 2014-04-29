@@ -318,7 +318,8 @@ void Model::Upload()
         for(Material::texture_store::const_iterator it = mIt->second->Textures().begin(); it != mIt->second->Textures().end(); it++)
         {
             // Upload the texture
-            textureCache.GetTexture<GLTexture>(it->second);
+            //textureCache.GetTexture<GLTexture>(it->second);
+            textureCache.PermaCacheTexture<GLTexture>(it->second);
         }
     }
     
