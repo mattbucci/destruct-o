@@ -29,7 +29,7 @@ void TextureCache::Refresh()
 		for (auto it = cachedTextures.begin(); it != cachedTextures.end(); ) {
 			//Textures without expiration have an expiration of < 0 so check
 			//for that first
-			if ((it->second.second > 0) && (it->second.second > frameTime)) {
+			if ((it->second.second > 0) && (it->second.second < frameTime)) {
 				//Uncache
 				delete it->second.first;
 				it = cachedTextures.erase(it);
