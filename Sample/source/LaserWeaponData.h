@@ -20,6 +20,9 @@ class LaserWeaponData : public WeaponData {
 	//Whether or not the laser continues to follow the muzzle after firing
 	bool LaserFollowMuzzle;
 
+    //Clone the laser weapon data
+    virtual WeaponData * Copy() override;
+
 	//Laser weapon save data
 	CLASS_DECLARATION(LaserWeaponData)
 		INHERITS_FROM(WeaponData)

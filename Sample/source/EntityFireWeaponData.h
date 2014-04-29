@@ -11,6 +11,10 @@ class EntityFireWeaponData : public WeaponData {
 	//The velocity to impart on fired actors
 	float Velocity;
 
+    //Clone the laser weapon data
+    virtual WeaponData * Copy() override;
+
+
 	//Entity weapon save data
 	CLASS_DECLARATION(EntityFireWeaponData)
 		INHERITS_FROM(WeaponData)

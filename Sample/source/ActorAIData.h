@@ -25,6 +25,9 @@ public:
 	//Whether or not this AI flies
 	bool Flies;
 
+    //The max health of this AI
+    float MaxLife;
+
 	//The time it takes to target after finding the enemy
 	double TargetTime;
 
@@ -44,12 +47,11 @@ public:
 	//The fastest this aircraft can correct its altitude
 	float AltitudeChangeRate;
 
+    //The size of this actor's physics box
+    vec3 Size;
+
 	//The amount of time the body of this actor "rots" before despawning
 	float RottingTime;
-
-	//How close the ai's body must face the target before turning their wasit is sufficient to face the target
-	//in radians
-	float WaistTurnRange;
 
 	//If this actor has two muzzles
 	//use both of them
@@ -69,13 +71,22 @@ public:
 	vec3 MuzzleOffsetB;
 
 	//Whether or not the user can rotate his spine up,down
-	bool SpineCanRotateUp;
-
-	//The bone to use to rotate the spine
-	string SpineBone;
+	bool SpineCanRotateUpDown;
 
 	//The amount the spine can rotate up/down in radians
 	float SpineUpDownAngleMax;
+
+    //Whether or not the user can rotate his spine left,right
+    bool SpineCanRotateLeftRight;
+
+    //The amount the spine can rotate left/right in radians
+    //even if SpineCanRotateLeftRight
+    //is false, this should be about 1 degree
+    //so the target can be a little off, and the ai can still fire
+    float SpineLeftRightAngleMax;
+
+    //The bone to use to rotate the spine
+    string SpineBone;
 
 	//The name of the weapon employed by this actor
 	string WeaponName;
@@ -96,6 +107,10 @@ public:
 	//The particle effect attached to death
 	string DeathParticles;
 	
+
+    //Clone the actor ai data
+    virtual ActorAIData * Copy();
+
 	//All actor ai data
 	CLASS_DECLARATION(ActorAIData)
 		CLASS_MEMBER(ActorName,ReflectionData::SAVE_STRING)
@@ -105,22 +120,25 @@ public:
 		CLASS_MEMBER(TargetTime,ReflectionData::SAVE_DOUBLE)
 		CLASS_MEMBER(DeathDamage, ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(DeathDamageRadius,ReflectionData::SAVE_FLOAT)
+        CLASS_MEMBER(MaxLife, ReflectionData::SAVE_FLOAT)
 		
 		CLASS_MEMBER(BaseMovementSpeed,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(SightDistance,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(TurnSpeed,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(FlyHeight,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(AltitudeChangeRate,ReflectionData::SAVE_FLOAT)
+        CLASS_MEMBER(Size, ReflectionData::SAVE_VEC3)
 
 		CLASS_MEMBER(RottingTime,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(Model, ReflectionData::SAVE_STRING)
 		CLASS_CONTAINER_MEMBER(AnimationLookupTable,ReflectionData::SAVE_VECTOR,ReflectionData::SAVE_STRING)
 		CLASS_MEMBER(DeathParticles, ReflectionData::SAVE_STRING);
 
-		CLASS_MEMBER(WaistTurnRange,ReflectionData::SAVE_FLOAT)
-		CLASS_MEMBER(SpineCanRotateUp,ReflectionData::SAVE_BOOL)
-		CLASS_MEMBER(SpineBone,ReflectionData::SAVE_STRING)
+		CLASS_MEMBER(SpineCanRotateUpDown,ReflectionData::SAVE_BOOL)
 		CLASS_MEMBER(SpineUpDownAngleMax,ReflectionData::SAVE_FLOAT)
+        CLASS_MEMBER(SpineCanRotateLeftRight, ReflectionData::SAVE_BOOL)
+        CLASS_MEMBER(SpineLeftRightAngleMax, ReflectionData::SAVE_FLOAT)
+        CLASS_MEMBER(SpineBone, ReflectionData::SAVE_STRING)
 
 		CLASS_MEMBER(UseDualMuzzles,ReflectionData::SAVE_BOOL)
 		CLASS_MEMBER(MuzzleBoneA,ReflectionData::SAVE_STRING)

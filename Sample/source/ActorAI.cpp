@@ -10,13 +10,10 @@
 
 unsigned int ActorAI::currentAIID = 0;
 
-ActorAI::ActorAI(Weapon * actorWeapon, float maxLife, vec3 size) : 
-	PhysicsActor(size,maxLife, GameFactions::FACTION_ENEMY),
-	weapon(actorWeapon),
+//Used only by the save system to create an actorai loaded
+ActorAI::ActorAI() : 
+	PhysicsActor(GameFactions::FACTION_ENEMY),
 	enemyPosition(100,5) {
-	//Use a default weapon for now
-	setModel(weapon->LookupAnimation(Weapon::ANIMATION_MODELNAME));
-	playAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
 	//AI starts with nothing
 	state = AI_SCANNING;
 	//Max out the energy pool
@@ -26,18 +23,34 @@ ActorAI::ActorAI(Weapon * actorWeapon, float maxLife, vec3 size) :
 	aiID = currentAIID = (currentAIID+1) % 10;
 }
 
+//Load data into this actor class, do not apply more than once
+void ActorAI::ApplyData(ActorAIData * dataToLoad) {
+    this->data = dataToLoad->Copy();
+
+    //Construct the specified weapon
+    //weapon(actorWeapon);
+    setModel(data->Model);
+    playAnimation(data->AnimationLookupTable[Weapon::ANIMATION_AIM]);
+    //Apply physics paramters
+    Size = data->Size;
+    maxLife = data->MaxLife;
+    flying = data->Flies;
+    //Rest is applied automatically
+}
 
 ActorAI::~ActorAI() {
 	//If you had any requests with AIDS
 	//cancel them
 	Actors().Aids()->CancelRequests(this);
-
+    //cleanup the weapon
 	delete weapon;
+    //cleanup the ai data
+    delete data;
 }
 
 //Attempt to find a close nearby enemy you can see right now
 PhysicsActor * ActorAI::sightNearbyEnemy() {
-	vector<PhysicsActor*> actors(Actors().GetEnemiesInRadius(Position,sightDistance(),faction));
+	vector<PhysicsActor*> actors(Actors().GetEnemiesInRadius(Position,data->SightDistance,faction));
 	for (auto actor : actors) {
 		//Check if you can see the physics actor
 		PhysicsActor * hit;
@@ -63,7 +76,7 @@ bool ActorAI::applyFacingDirection(float desiredFacingDirection) {
 	float absDifferenceA = abs(differenceA);
 
 	//Check that error is greater than one update cycle
-	if (absDifferenceA < (SIMULATION_DELTA*turnSpeed())) {
+	if (absDifferenceA < (SIMULATION_DELTA*data->TurnSpeed)) {
 		facingDirection = desiredFacingDirection;
 		return true;
 	}
@@ -73,16 +86,16 @@ bool ActorAI::applyFacingDirection(float desiredFacingDirection) {
 	if (differenceA > 0) {
 		//Determine turn direction
 		if (absDifferenceA > M_PI)
-			facingDirection += SIMULATION_DELTA*turnSpeed();
+            facingDirection += SIMULATION_DELTA*data->TurnSpeed;
 		else
-			facingDirection -= SIMULATION_DELTA*turnSpeed();
+            facingDirection -= SIMULATION_DELTA*data->TurnSpeed;
 	}
 	else {
 		//Determine turn direction
 		if (absDifferenceA > M_PI)
-			facingDirection -= SIMULATION_DELTA*turnSpeed();
+            facingDirection -= SIMULATION_DELTA*data->TurnSpeed;
 		else
-			facingDirection += SIMULATION_DELTA*turnSpeed();
+            facingDirection += SIMULATION_DELTA*data->TurnSpeed;
 	}
 
 	//Keep facing direction between 0 and 360
@@ -116,7 +129,7 @@ bool ActorAI::checkEnemyValid() {
 	}
 
 	//Check if you're not too far away
-	if (glm::distance(targetEnemy->GetPosition(), Position) > sightDistance()*1.5f && !flying)
+	if (glm::distance(targetEnemy->GetPosition(), Position) > data->SightDistance*1.5f && !flying)
 		return false;
 
 	return true;
@@ -175,11 +188,11 @@ void ActorAI::statePathing(bool & holdingTrigger) {
 	bool touchingGround = false;
 	if (OnGround() && Velocity.z < .2) {
 		touchingGround = true;
-		setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_RUN));
+		setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_RUN]);
 				
 	}
 	else if (!animationRunning())
-		setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
+		setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_AIM]);
 				
 
 			
@@ -203,7 +216,7 @@ void ActorAI::statePathing(bool & holdingTrigger) {
 					//Playing some kind of jump animation would be A+
 					Velocity.z += min(15*(upcomingHeight-feetHeight),20.0f);
 					//jump!
-					setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_JUMP));
+					setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_JUMP]);
 				}
 				
 			}
@@ -223,14 +236,14 @@ void ActorAI::stateWaitingForPath(bool & holdingTrigger) {
 }
 
 void ActorAI::stateScanning(bool & holdingTrigger) {
-	setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
+	setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_AIM]);
 
 	//Not a turret find the closest enemy and try to walk to them
 	targetEnemy = Actors().GetClosestEnemy(Position,faction);
 	//Check if there is anything to do
 	if (targetEnemy == NULL)
 		return;
-	if (baseMovementSpeed() <= 0) {
+	if (data->BaseMovementSpeed <= 0) {
 		state = AI_TARGETING_ENEMY;
 	}
 	else {
@@ -249,13 +262,13 @@ void ActorAI::stateTargeting(bool & holdingTrigger) {
 	faceEnemy();
 
 	//Check if you're done looking
-	if ((targetAcquiredAt+targetTime()) < Game()->Now()) {
+	if ((targetAcquiredAt+data->TargetTime) < Game()->Now()) {
 		state = AI_ENGAGING_ENEMY;
 		return;
 	}
 
 	//Hang out and wait
-	setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
+	setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_AIM]);
 }
 void ActorAI::stateEngaging(bool & holdingTrigger) {
 	if (!checkEnemyValid())
@@ -272,10 +285,10 @@ void ActorAI::stateEngaging(bool & holdingTrigger) {
 	weapon->Update(getFireVector(),muzzlePositionA,muzzlePositionB);
 	if (weapon->HoldingTrigger(true))
 		//If the weapon fired, play the fired animation
-		setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_FIRE));
+		setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_FIRE]);
 	else if (!animationRunning())
 		//Otherwise aim at the target
-		setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_AIM));
+		setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_AIM]);
 }
 void ActorAI::stateDying(bool & holdingTrigger) {
 	if (actorCrashing) {
@@ -291,7 +304,7 @@ void ActorAI::stateDying(bool & holdingTrigger) {
 	}
 	else if (!animationRunning()) {
 		state = AI_ROTTING;
-		finishRotting = Game()->Now()+AI_ROT_TIME;
+        finishRotting = Game()->Now() + data->RottingTime;
 	}
 }
 void ActorAI::stateRotting(bool & holdingTrigger) {
@@ -320,12 +333,12 @@ void ActorAI::expensiveUpdate() {
 	bool pullingTrigger = false;
 	//If you fly, try to maintain correct attitude, unless you're dying
 	if (flying && (state != AI_DYING) && (state != AI_ROTTING)) {
-		float correction = (Game()->Voxels.GetPositionHeight(vec2(Position))+flyHeight()) - Position.z;
+		float correction = (Game()->Voxels.GetPositionHeight(vec2(Position))+data->FlyHeight) - Position.z;
 		//Convert error to velocity
 		correction *= .5f;
 		//limit to max correction rates
-		correction = max(correction,-altitudeChangeRate());
-		correction = min(correction,altitudeChangeRate());
+		correction = max(correction,-data->AltitudeChangeRate);
+        correction = min(correction, data->AltitudeChangeRate);
 		//Correct directly without fooling with velocity
 		//there is probably a better way
 		Position.z += correction * SIMULATION_DELTA;
@@ -383,7 +396,7 @@ void ActorAI::cheapUpdate() {
 			
 			applyFacingDirection(atan2f(diff.y,diff.x));
 			//Apply some velocity in the direction you want to move
-			vec2 moveVelocity = glm::normalize(diff)*baseMovementSpeed();
+			vec2 moveVelocity = glm::normalize(diff)*data->BaseMovementSpeed;
 			Velocity = vec3(moveVelocity,Velocity.z);
 		}
 		break;
@@ -447,7 +460,7 @@ void ActorAI::onDeath() {
 		actorCrashing = true;
 		flying = false;
 		state = AI_DYING;
-		setAnimation(weapon->LookupAnimation(Weapon::ANIMATION_DEATH));
+		setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_DEATH]);
 	}
 }
 
@@ -457,16 +470,6 @@ void ActorAI::PathingReady(vector<vec2> path) {
 	state = AI_PATHING;
 }
 
-
-//The altitude to hover at normally
-float ActorAI::flyHeight() {
-	return 40;
-}
-
-//The fastest this aircraft can correct its altitude
-float ActorAI::altitudeChangeRate() {
-	return 5;
-}
 
 //Change the allegiance of this AI
 void ActorAI::SetFaction(FactionId newFaction) {
@@ -479,6 +482,63 @@ void ActorAI::SetFaction(FactionId newFaction) {
 void ActorAI::Draw(GLEffectProgram * effectShader)  {
 	if (targetEnemy != NULL)
 		weapon->DrawWeapon(effectShader,getFireVector(),muzzlePositionA,muzzlePositionB);
+}
+
+//Attempts to snap the user's spine to face the enemy
+//returns true if successful
+//Check if your spine can face the enemy right now
+bool ActorAI::checkSpineLimits() {
+    //Since you can move vertically pretty well
+    //just check if the horizontal is very close to 0
+    vec2 diff = vec2(targetEnemy->GetPosition()) - vec2(Position);
+
+    float desired = atan2f(diff.y, diff.x);
+    float horizontalDiff = abs(fmodf(desired - facingDirection, (float)M_PI));
+    //Check against a tight angle check
+    return horizontalDiff < data->SpineLeftRightAngleMax;
+}
+
+//Snap the model's skeleton to face the enemy
+void ActorAI::snapSpineToEnemy() {
+    if (data->SpineCanRotateLeftRight || data->SpineCanRotateUpDown) {
+        Node * spineNode = model->Animation().Skeleton()->FindNode(data->SpineBone);
+        //Apply up/down spine correction
+        //TODO: Missing up/down range max
+        if (data->SpineCanRotateUpDown) {
+            //Take a guess at the correction in 2d only
+            float distance = glm::length(targetEnemy->GetPosition() - Position);
+            vec3 correctVector = glm::normalize(vec3(0, distance, targetEnemy->GetPosition().z - 1.5f - Position.z));
+            //Get angle between them
+            float angle = atan2(-correctVector.z, correctVector.y);
+
+            vec3 axis = vec3(1, 0, 0);
+
+            spineNode->LocalTransform().Rotation() = glm::rotate(spineNode->LocalTransform().Rotation(), angle / (float)M_PI*180.0f, axis);
+            spineNode->Recalculate();
+        }
+        //Apply left/right spine correction
+        //TODO: Missing implementation
+    }
+}
+
+void ActorAI::findMuzzlePosition() {
+    //Find the first muzzle
+    const Node * nA = model->Skeleton()->FindNode(data->MuzzleBoneA);
+    _ASSERTE(nA != NULL);
+
+    mat4 globalTransformA = model->GetTransform().TransformMatrix() * nA->TransformMatrix();
+
+    muzzlePositionA= vec3(globalTransformA * vec4(data->MuzzleOffsetA, 1.0));
+
+    if (data->UseDualMuzzles) {
+        //Find the second muzzle
+        const Node * nB = model->Skeleton()->FindNode(data->MuzzleBoneB);
+        _ASSERTE(nB != NULL);
+
+        mat4 globalTransformB = model->GetTransform().TransformMatrix() * nB->TransformMatrix();
+
+        muzzlePositionB = vec3(globalTransformB * vec4(data->MuzzleOffsetB, 1.0));
+    }
 }
 
 

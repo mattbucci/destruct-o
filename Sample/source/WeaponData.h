@@ -47,6 +47,9 @@ public:
 	//The particles which represent the wepaon firing
 	string MuzzleFlashParticles;
 
+    //Copy this weapon data instance
+    virtual WeaponData * Copy();
+
 	//All actor ai data
 	CLASS_DECLARATION(WeaponData)
 		CLASS_MEMBER(Behavior,ReflectionData::SAVE_INT32)

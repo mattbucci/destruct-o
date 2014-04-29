@@ -23,3 +23,8 @@ void WeaponData::SaveDefault() {
 	vector<unsigned char> fileData = Savable::Serialize(&data,false);
 	lodepng::save_file(fileData,"defaultweapon.json");
 }
+
+//Copy this weapon data instance
+WeaponData * WeaponData::Copy() {
+    return new WeaponData(*this);
+}

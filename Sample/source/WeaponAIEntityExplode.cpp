@@ -31,17 +31,17 @@ float BombExplodeEffectWeapon::JitterAmount() {
 
 //Simulate a gun shot (or laser pulse or whatever)
 void BombExplodeEffectWeapon::Fire() {
-	//Fire appropriate events and calculate jitter
-	Weapon::Fire();
-	//Apply jitter
-	Weapon::updateFinalFireVectors();
+    //Fire appropriate events and calculate jitter
+    Weapon::Fire();
+    //Apply jitter
+    Weapon::updateFinalFireVectors();
 
-	//Blow up where you stand
-	weaponImpact(firePointA);
-	
- 	Universal::Concuss(firePointA,3,30,(PhysicsActor*)this->weaponOwner);
+    //Blow up where you stand
+    weaponImpact(firePointA);
 
-	Weapon::Fire();
+    Universal::Concuss(firePointA, data->Radius, data->Damage, (PhysicsActor*)this->weaponOwner);
+
+    Weapon::Fire();
 }
 
 

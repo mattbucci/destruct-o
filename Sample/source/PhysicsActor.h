@@ -61,7 +61,7 @@ protected:
 	//Override to prevent immediate death
 	virtual void onDeath();
 public:
-	PhysicsActor(vec3 size, float maxLife, FactionId faction);
+	PhysicsActor(FactionId faction);
 	virtual ~PhysicsActor();
 
 	//Get the current life of this actor

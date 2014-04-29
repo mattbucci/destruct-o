@@ -237,10 +237,15 @@ FILE(GLOB ActorFiles
 )
 source_group(Actors FILES ${ActorFiles})
 
-FILE(GLOB AidsFiles
-	"source/AidsAction*"
+FILE(GLOB AIFiles
+	source/AidsAction*
+	source/AIDataCache.*
+	source/WeaponData.*
+	source/LaserWeaponData.*
+	source/AIWeaponCache.*
+	source/EntityFireWeaponData.*
 )
-source_group(AIDS FILES ${AidsFiles})
+source_group(AI FILES ${AIFiles})
 
 #audio
 FILE(GLOB AudioFiles
@@ -415,6 +420,9 @@ FILE(GLOB UtilityFiles
 	source/IntRect.cpp
 	source/Network.cpp
 	source/Network.h
+	source/Autocacher.h
+	source/AsyncTask.*
+	source/SyncTask.*
 )
 source_group(Utilities FILES ${UtilityFiles})
 
@@ -463,10 +471,9 @@ FILE(GLOB CoreFiles
 source_group(Core FILES ${CoreFiles})
 
 FILE(GLOB GenFiles
-	source/TerrainGen.h
-	source/TerrainGen.cpp
-	source/CityGen.h
-	source/CityGen.cpp
+	source/TerrainGen.*
+	source/CityGen.*
+	source/SavableCityData.*
 )
 source_group(Procedural FILES ${GenFiles})
 
@@ -477,8 +484,12 @@ FILE(GLOB EffectFiles
 source_group(Effects FILES ${EffectFiles})
 
 FILE(GLOB WeaponFiles
-	"source/Weapon*"
-	"source/*AIWeapon*"
+	source/Weapon.*
+	source/WeaponPulseLaser.*
+	source/WeaponLaserCannon.*
+	source/WeaponAILaser.*
+	source/WeaponAIEntityFire.*
+	source/WeaponAIEntityExplode.*
 )
 source_group(Weapons FILES ${WeaponFiles})
 

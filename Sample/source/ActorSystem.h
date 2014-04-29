@@ -9,7 +9,6 @@
 #include "AIDataCache.h"
 #include "PhysicsSystem.h"
 
-
 class ShaderGroup;
 class Actor;
 class PhysicsActor;
@@ -17,6 +16,8 @@ class ActorPlayer;
 class ActorAids;
 class Weapon;
 class PhysicsSystem;
+class ActorAI;
+class WeaponAI;
 
 class ActorSystem : public Savable {
 	//All actors are updated and drawn
@@ -45,6 +46,12 @@ class ActorSystem : public Savable {
 	//goes against the new Game() policy, but such is life
 	PhysicsSystem * physics;
 
+    //Retrieve ai actor data, loaded during Load()
+    AIDataCache AIProfiles;
+
+    //Retrieve weapon data, loaded during Load()
+    AIWeaponCache Weapons;
+
 	//Cleanup actors in a safe manner
 	void cleanActorList();
 protected:
@@ -71,6 +78,13 @@ public:
 		return actor;	
 	}
 
+    //Construct a new AI at position from file
+    //do not call during physics events (sorry)
+    ActorAI * BuildAI(vec3 position, string filename);
+    
+    //Build an AI weapon from the filename of the weapon
+    WeaponAI * BuildWeapon(string filename);
+
 	//All factions/Teams handled here
 	GameFactions Factions;
 
@@ -85,12 +99,6 @@ public:
 
 	//Get the AIDS
 	ActorAids * Aids();
-
-	//Retrieve ai actor data, loaded during Load()
-	AIDataCache AIProfiles;
-
-	//Retrieve weapon data, loaded during Load()
-	AIWeaponCache Weapons;
 
 	//Do AOE damage
 	//to actors

@@ -3,9 +3,7 @@
 #include "PhysicsActor.h"
 #include "EffectLaser.h"
 #include "MovingAverage.h"
-
-//How long before the body disappears after death
-#define AI_ROT_TIME 10
+#include "ActorAIData.h"
 
 class Weapon;
 
@@ -73,7 +71,7 @@ protected:
 	//Retrieve the muzzle position after a draw calculate
 	//and save in muzzlePositionA
 	//and in muzzlePositionB if appropriate
-	virtual void findMuzzlePosition() = 0;
+	virtual void findMuzzlePosition();
 
 	//Attempt to find a close nearby enemy you can see right now
 	virtual PhysicsActor * sightNearbyEnemy();
@@ -96,10 +94,10 @@ protected:
 	bool faceEnemy();
 
 	//Check if your spine can face the enemy right now
-	virtual bool checkSpineLimits() = 0;
+	virtual bool checkSpineLimits();
 
 	//Snap the model's skeleton to face the enemy
-	virtual void snapSpineToEnemy() = 0;
+	virtual void snapSpineToEnemy();
 
 	//The smarts, ray traces and all that should go here
 	//planning etc.
@@ -114,34 +112,20 @@ protected:
 
 
 	//AI settings
-	//override these functions
-	//to customize the AI
+	ActorAIData * data;
 
-	//The time it takes to target after finding the enemy
-	virtual double targetTime() = 0;
-
-	//The movement speed of this enemy
-	//should be tuned to walk animation speed
-	virtual float baseMovementSpeed() = 0;
-
-	//How far can enemies spot each other
-	virtual float sightDistance() = 0;
-
-	//How many radians per second this actor can rotate
-	virtual float turnSpeed() = 0;
-
-	//The altitude to hover at normally
-	virtual float flyHeight();
-
-	//The fastest this aircraft can correct its altitude
-	virtual float altitudeChangeRate();
 
 	//Overrode to prevent immediate death
 	virtual void onDeath() override;
 public:
-	//Takes ownership of the weapon automatically
-	ActorAI(Weapon * actorWeapon, float maxLife, vec3 size);
+    //Used only by the save system to create an actorai loaded
+	ActorAI();
+
 	virtual ~ActorAI();
+
+    //Load data into this actor class, do not apply more than once
+    virtual void ApplyData(ActorAIData * dataToLoad);
+
 
 	//Update the state of this AI
 	virtual bool Update() override;
@@ -168,6 +152,7 @@ public:
 
 	CLASS_DECLARATION(ActorAI)
 		INHERITS_FROM(PhysicsActor)
+        CLASS_MEMBER(data, ReflectionData::SAVE_OWNEDHANDLE)
 		CLASS_MEMBER(weapon,ReflectionData::SAVE_OWNEDHANDLE)
 		CLASS_MEMBER(targetEnemy,ReflectionData::SAVE_HANDLE)
 		CLASS_MEMBER(targetAcquiredAt,ReflectionData::SAVE_DOUBLE)
