@@ -222,6 +222,7 @@
 		F13C860C190CEB97006A91AB /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F13C8567190CEB97006A91AB /* Window.cpp */; };
 		F13C860F190CECEC006A91AB /* SaveDirectory.mm in Sources */ = {isa = PBXBuildFile; fileRef = F13C860E190CECEC006A91AB /* SaveDirectory.mm */; };
 		F13C8612190CED1C006A91AB /* NSFileManager+ApplicationSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = F13C8611190CED1C006A91AB /* NSFileManager+ApplicationSupport.m */; };
+		F16FAA82191046920089AEE1 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = F16FAA81191046920089AEE1 /* shaders */; };
 		F1989FD818A58C3900A5165E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1989FD718A58C3900A5165E /* Foundation.framework */; };
 		F1989FDC18A58C3900A5165E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1989FDB18A58C3900A5165E /* UIKit.framework */; };
 		F1989FE218A58C3900A5165E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F1989FE018A58C3900A5165E /* InfoPlist.strings */; };
@@ -625,6 +626,7 @@
 		F13C860E190CECEC006A91AB /* SaveDirectory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SaveDirectory.mm; sourceTree = "<group>"; };
 		F13C8610190CED1C006A91AB /* NSFileManager+ApplicationSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+ApplicationSupport.h"; sourceTree = "<group>"; };
 		F13C8611190CED1C006A91AB /* NSFileManager+ApplicationSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+ApplicationSupport.m"; sourceTree = "<group>"; };
+		F16FAA81191046920089AEE1 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; name = shaders; path = ../game/shaders; sourceTree = "<group>"; };
 		F1989FD418A58C3900A5165E /* Destructo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Destructo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1989FD718A58C3900A5165E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F1989FD918A58C3900A5165E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -1127,6 +1129,7 @@
 			isa = PBXGroup;
 			children = (
 				F13C8401190CEB81006A91AB /* loading.png */,
+				F16FAA81191046920089AEE1 /* shaders */,
 				F13C83FE190CEB81006A91AB /* effects */,
 				F13C83FF190CEB81006A91AB /* hud */,
 				F13C8400190CEB81006A91AB /* Interface */,
@@ -1199,6 +1202,7 @@
 				F13C8409190CEB81006A91AB /* effects in Resources */,
 				F13C840E190CEB81006A91AB /* meshes in Resources */,
 				F13C8411190CEB81006A91AB /* sounds in Resources */,
+				F16FAA82191046920089AEE1 /* shaders in Resources */,
 				F13C840B190CEB81006A91AB /* Interface in Resources */,
 				F13C840F190CEB81006A91AB /* particles in Resources */,
 				F1989FE218A58C3900A5165E /* InfoPlist.strings in Resources */,

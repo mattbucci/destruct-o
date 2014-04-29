@@ -291,7 +291,7 @@ public:
 		autoreduceCapacity = reduce;
 	}
 	
-	unsigned int size() {
+	unsigned int size() const {
 		return listSize;
 	}
 	unsigned int capacity() {

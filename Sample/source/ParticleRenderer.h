@@ -17,7 +17,8 @@ class Particle;
 class ParticleRenderer {
 	GLuint vertexArray;
 	GLuint stripedBuffer;
-
+    GLuint indexBuffer;
+    
 	PACK(
 	struct particleChunk {
 		Utilities::PODVec4 vertex;
@@ -26,8 +27,9 @@ class ParticleRenderer {
 		unsigned char vertNumber;
 	});
 
-	particleChunk vertices[PARTICLE_RENDER_SWEEP*6];
-
+	particleChunk vertices[PARTICLE_RENDER_SWEEP*4];
+    GLushort      indices[PARTICLE_RENDER_SWEEP*6];
+    
 	//Render one sweep of particles
 	void renderSweep(GLParticleProgram * shader, int particleCount);
 public:

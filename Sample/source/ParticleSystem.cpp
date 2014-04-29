@@ -106,4 +106,9 @@ void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shade
 	texture->Bind();
 	//Call the renderer to render all the particles
 	renderer->Render(shader,&particleList[0],particleList.size());
-} 
+}
+
+size_t ParticleSystem::ParticleCount() const
+{
+    return particleList.size();
+}

@@ -15,6 +15,7 @@ SDL_Renderer* displayRenderer;
 // Should we be rendering?
 bool renderingIsSafe = true;
 bool iOSRenderRequested = false;
+double iOSRenderTime = 0.0;
 
 //A variable which at runtime can be used to figure out what version is running
 int OpenglVersion;
@@ -304,6 +305,9 @@ void VoxEngine::Start() {
 			CurrentSystem->simTime += SIMULATION_DELTA;
 		}
 
+        // Pump Events (iOS vsync is scheduled on the event pump)
+        SDL_PumpEvents();
+        
         // If rendering is safe
         if(renderingIsSafe)
         {
@@ -326,10 +330,16 @@ void VoxEngine::Start() {
             }
             
             // Only sleep if we had the time
-            else if(SIMULATION_DELTA - (OS::Now() - physicsFrameTime) > 0)
+            else
             {
-                // Sleep for 1 millisecond
-                OS::SleepTime(0.001);
+                // Get whichever is shorter (remaining time until next frame render or physics cycle, 1/60 should be replaced with target framerate)
+                double sleepTime = glm::min(SIMULATION_DELTA - (OS::Now() - physicsFrameTime), (1.0/60.0) - (OS::Now() - iOSRenderTime));
+                
+                // Sleep for the minimum amount of time
+                if(sleepTime > 0.0)
+                {
+                    OS::SleepTime(sleepTime);
+                }
             }
 #endif
         }
@@ -557,6 +567,7 @@ void VoxEngine::SetAsyncTask(AsyncTask * task) {
 void iOSAnimationCallback(void *context)
 {
     iOSRenderRequested = true;
+    iOSRenderTime = OS::Now();
 }
 
 // Called by SDL to analyze pumped events

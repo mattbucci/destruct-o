@@ -139,11 +139,17 @@ void ParticleCloud::Draw(ShaderGroup * shaders) {
 	shaderParticles->ApplyCamera(shader3d->Camera);
 
     vec3 cameraZ = shader3d->Camera.GetZAxis();
-
+    //size_t particleCount = 0;
+    
 	//Draw each particle system
 	for (auto system : particles)
+    {
+        //particleCount += system->ParticleCount();
         system->Draw(&renderer, shaderParticles, cameraZ);
+    }
 
+    //cout << particleCount << " particles in " << particles.size() << " systems" << endl;
+    
 	//Some particle systems disable depth
 	//re-enable it before continuing
 	glDepthMask(GL_TRUE);
