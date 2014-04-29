@@ -3,10 +3,13 @@
 #include "GLTerrainProgram.h"
 #include "TerrainChunk.h"
 
-TerrainChunkRenderer::TerrainChunkRenderer() {
+TerrainChunkRenderer::TerrainChunkRenderer()
+{
 	cout << "Chunk vertex data size: " << sizeof(TerrainChunk::ChunkVertexData) << "\n";
 }
-TerrainChunkRenderer::~TerrainChunkRenderer() {
+
+TerrainChunkRenderer::~TerrainChunkRenderer()
+{
 	//Destroy all the render slots
 	for (auto slot : renderSlots) 
 		delete slot.second;
@@ -14,30 +17,32 @@ TerrainChunkRenderer::~TerrainChunkRenderer() {
 		delete slot;
 }
 	
-TerrainChunkRenderer::HotChunk::HotChunk() {
+TerrainChunkRenderer::HotChunk::HotChunk()
+{
 	glGenBuffers(1,&vertexData);
     glGenBuffers(1,&indexData);
 	glGenVertexArrays(1,&vertexArrayBuffer);
 }
-TerrainChunkRenderer::HotChunk::~HotChunk() {
+
+TerrainChunkRenderer::HotChunk::~HotChunk()
+{
 	glDeleteBuffers(1,&vertexData);
     glDeleteBuffers(1,&indexData);
 	glDeleteVertexArrays(1,&vertexArrayBuffer);
 }
+
 //Render the set chunk
-void TerrainChunkRenderer::HotChunk::Render(GLTerrainProgram * shader) {
+void TerrainChunkRenderer::HotChunk::Render(GLTerrainProgram * shader)
+{
 	glBindVertexArray ( vertexArrayBuffer );
-	/*glBindBuffer ( GL_ARRAY_BUFFER, vertexData );
-	glVertexAttribPointer ( shader->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,Vertex) );
-	glVertexAttribPointer ( shader->AttributeTexture(), 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,TextureCoordinateX) );
-	glVertexAttribPointer ( shader->AttributeShading(), 1, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,Shading) );*/
-	//glDrawArrays( GL_TRIANGLES, 0, (GLsizei) vertexCount);
     glDrawElements(GL_TRIANGLES, (GLsizei) indexCount, GL_UNSIGNED_SHORT, 0);
     
     // Don't fuck the VAOs
     glBindVertexArray( 0 );
 }
-void TerrainChunkRenderer::HotChunk::Set(TerrainChunk * chunk, GLTerrainProgram * shader) {
+
+void TerrainChunkRenderer::HotChunk::Set(TerrainChunk * chunk, GLTerrainProgram * shader)
+{
 	vertexCount = chunk->VertexDataSize;
     indexCount = chunk->VertexIndicesSize;
     
@@ -62,7 +67,8 @@ void TerrainChunkRenderer::HotChunk::Set(TerrainChunk * chunk, GLTerrainProgram 
     glBindVertexArray( 0 );
 }
 
-void TerrainChunkRenderer::StartRendering(GLTerrainProgram * shader) {
+void TerrainChunkRenderer::StartRendering(GLTerrainProgram * shader)
+{
 
 }
 

@@ -2,6 +2,21 @@
 #include "TerrainChunk.h"
 #include "GameTile.h"
 
+struct PODVec3Comparator
+{
+    bool operator() (const Utilities::PODVec3 a, const Utilities::PODVec3 b) const
+    {
+        float aL = sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
+        float bL = sqrt(b.x*b.x + b.y*b.y + b.z*b.z);
+        return aL < bL;
+    }
+};
+
+static bool operator== (const Utilities::PODVec3& a, const Utilities::PODVec3& b)
+{
+    return (a.x == b.x) && (a.y == b.y) && (a.z == b.z);
+}
+
 TerrainChunk::TerrainChunk(GameTile * owningTile, int chunkx, int chunky) {
 	this->owner = owningTile;
 	X = (float)chunkx;
@@ -199,6 +214,11 @@ void TerrainChunk::Reconstruct() {
 	VertexData = new ChunkVertexData[VertexDataSize];
     VertexIndices = new GLushort[VertexIndicesSize];
 	int vcount = 0, icount = 0;
+    typedef std::map<Utilities::PODVec3, int, PODVec3Comparator> chunkmap;
+    chunkmap chunks;
+    chunkmap::iterator it;
+    ChunkVertexData vertex;
+    
 	for (unsigned int i = 0; i < quads.size(); i++) {
 		//Lighting is currently broken
 		//set every surface to be fully lit
@@ -244,42 +264,50 @@ void TerrainChunk::Reconstruct() {
 		terY = materialWithMostVotes / 4;
         
         // Generate interleaved data for each vertex of each found quad
-		VertexData[vcount].TextureCoordinateX = 0;
-		VertexData[vcount].TextureCoordinateY = 0;
-		VertexData[vcount].TextureCoordinateSX = terX;
-		VertexData[vcount].TextureCoordinateSY = terY;
-		VertexData[vcount].Shading = shading;
-		VertexData[vcount++].Vertex = toPOD(quads[i].a1);
+        GLushort a1 = vcount;
+		vertex.TextureCoordinateX = 0;
+		vertex.TextureCoordinateY = 0;
+		vertex.TextureCoordinateSX = terX;
+		vertex.TextureCoordinateSY = terY;
+		vertex.Shading = shading;
+		vertex.Vertex = toPOD(quads[i].a1);
+        VertexData[vcount++] = vertex;
         
-		VertexData[vcount].TextureCoordinateX = 0;
-		VertexData[vcount].TextureCoordinateY = (uint8_t)quads[i].BSize;
-		VertexData[vcount].TextureCoordinateSX = terX;
-		VertexData[vcount].TextureCoordinateSY = terY;
-		VertexData[vcount].Shading = shading;
-		VertexData[vcount++].Vertex = toPOD(quads[i].b1);
+        GLushort a2 = vcount;
+		vertex.TextureCoordinateX = 0;
+		vertex.TextureCoordinateY = (uint8_t)quads[i].BSize;
+		vertex.TextureCoordinateSX = terX;
+		vertex.TextureCoordinateSY = terY;
+		vertex.Shading = shading;
+		vertex.Vertex = toPOD(quads[i].b1);
+        VertexData[vcount++] = vertex;
         
-		VertexData[vcount].TextureCoordinateX = (uint8_t)quads[i].ASize;
-		VertexData[vcount].TextureCoordinateY = 0;
-		VertexData[vcount].TextureCoordinateSX = terX;
-		VertexData[vcount].TextureCoordinateSY = terY;
-		VertexData[vcount].Shading = shading;
-		VertexData[vcount++].Vertex = toPOD(quads[i].a2);
+        GLushort b1 = vcount;
+		vertex.TextureCoordinateX = (uint8_t)quads[i].ASize;
+		vertex.TextureCoordinateY = 0;
+		vertex.TextureCoordinateSX = terX;
+		vertex.TextureCoordinateSY = terY;
+		vertex.Shading = shading;
+		vertex.Vertex = toPOD(quads[i].a2);
+        VertexData[vcount++] = vertex;
         
-		VertexData[vcount].TextureCoordinateX = (uint8_t)quads[i].ASize;
-		VertexData[vcount].TextureCoordinateY = (uint8_t)quads[i].BSize;
-		VertexData[vcount].TextureCoordinateSX = terX;
-		VertexData[vcount].TextureCoordinateSY = terY;
-		VertexData[vcount].Shading = shading;
-		VertexData[vcount++].Vertex = toPOD(quads[i].b2);
+        GLushort b2 = vcount;
+		vertex.TextureCoordinateX = (uint8_t)quads[i].ASize;
+		vertex.TextureCoordinateY = (uint8_t)quads[i].BSize;
+		vertex.TextureCoordinateSX = terX;
+		vertex.TextureCoordinateSY = terY;
+		vertex.Shading = shading;
+		vertex.Vertex = toPOD(quads[i].b2);
+        VertexData[vcount++] = vertex;
         
         // Generate the indices (first triangle)
-        VertexIndices[icount++] = vcount - 4;
-        VertexIndices[icount++] = vcount - 3;
-        VertexIndices[icount++] = vcount - 2;
+        VertexIndices[icount++] = a1;
+        VertexIndices[icount++] = a2;
+        VertexIndices[icount++] = b1;
 
         // second triangle
-        VertexIndices[icount++] = vcount - 3;
-        VertexIndices[icount++] = vcount - 2;
-        VertexIndices[icount++] = vcount - 1;
+        VertexIndices[icount++] = a2;
+        VertexIndices[icount++] = b1;
+        VertexIndices[icount++] = b2;
 	}
 }
