@@ -17,7 +17,7 @@
 #include "WeaponPulseLaser.h"
 
 //Register particle events
-ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) {
+ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) : Autocacher("particles/","particlemanifest.json") {
 
 	//VOXEL DISINTEGRATE EVENT
 	static const vec4 materialColors[16] = {
@@ -31,7 +31,7 @@ ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) {
 		vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),
 	};
 	Subscribe<void(PhysicsVoxel*)>(&physics->VoxelDisintegrating,[this](PhysicsVoxel * voxel) {
-		ParticleData particlePuff = Game()->Particles.GetParticleData("physicsDisintegrate.vpart");
+		ParticleData particlePuff = Game()->Particles.GetCached("physicsDisintegrate.vpart");
 		//disintegrate voxel
 		particlePuff.Color.ClearValues();
 		particlePuff.Color.AddValue(0,materialColors[voxel->MaterialId]);
@@ -42,13 +42,13 @@ ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) {
 	Subscribe<void(Actor*,Weapon*,vec3)>(&actors->ActorWeaponImpact,[this](Actor * firingActor, Weapon * firedWeapon, vec3 hitPos) {
 		//Mosquito weapon
 		if (dynamic_cast<MosquitoAIWeapon*>(firedWeapon) != NULL) {
-			ParticleData & particlePuff = Game()->Particles.GetParticleData("bulletLand.vpart");
+			ParticleData & particlePuff = Game()->Particles.GetCached("bulletLand.vpart");
 			ParticleSystem * testSystem = BuildParticleSystem(particlePuff, .2f);
 			testSystem->Position = hitPos;
 		}
 		//pulse laser
 		else if (dynamic_cast<WeaponPulseLaser*>(firedWeapon) != NULL) {
-			ParticleData & particlePuff = Game()->Particles.GetParticleData("laserLand.vpart");
+			ParticleData & particlePuff = Game()->Particles.GetCached("laserLand.vpart");
 			particlePuff.Color.ClearValues();
 			particlePuff.Color.AddValue(0,vec4(.1,.4,1,1));
 			ParticleSystem * testSystem = BuildParticleSystem(particlePuff, .2f);
@@ -56,7 +56,7 @@ ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) {
 		}
 		//laser cannon
 		else if (dynamic_cast<WeaponLaserCannon*>(firedWeapon) != NULL) {
-			ParticleData & particlePuff = Game()->Particles.GetParticleData("laserLand.vpart");
+			ParticleData & particlePuff = Game()->Particles.GetCached("laserLand.vpart");
 			particlePuff.Color.ClearValues();
 			particlePuff.Color.AddValue(0,vec4(1,.5,.1,1));
 			ParticleSystem * testSystem = BuildParticleSystem(particlePuff, .3f);
@@ -70,31 +70,9 @@ ParticleCloud::~ParticleCloud() {
 }
 
 
-
-//Load particle systems
-//call once per build
-void ParticleCloud::LoadParticles() {
-	//Load the particle manifest
-	cout << "Loading particles:\n";
-	//First load the file
-	vector<unsigned char> fileData;
-	lodepng::load_file(fileData,"particles/particlemanifest.json");
-	//Parse json
-	Json::Value root;
-	Json::Reader reader;
-	reader.parse(string((char*)fileData.data(),fileData.size()),root,false);
-	//Load all the particle files listed
-	for (auto file : root) {
-		string fileName = file.asString();
-		cout << "Loading: " << fileName << "\n";
-		loadedParticleData[fileName] = ParticleData::LoadParticleData(string("particles/") + fileName);
-	}
-	cout << "Done particles\n";
-}
-
-ParticleData & ParticleCloud::GetParticleData(string systemFileName) {
-	_ASSERTE(loadedParticleData.find(systemFileName) != loadedParticleData.end());
-	return loadedParticleData[systemFileName];
+//Cache particle data
+ParticleData ParticleCloud::cacheItem(string path) {
+	return  ParticleData::LoadParticleData(path);
 }
 
 //Updates the contents of the particle cloud automatically

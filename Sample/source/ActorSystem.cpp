@@ -42,13 +42,13 @@ void ActorSystem::cleanActorList() {
 }
 
 void ActorSystem::Load(Json::Value & parentValue, LoadData & loadData) {
-	//Clean actor list saftely
+	//Clean actor list safely
 	cleanActorList();
 	//Keep loading
 	Savable::Load(parentValue,loadData);
 }
 
-	
+
 //Update the actors, called by base frame
 void ActorSystem::Update() {
 	//Swap these like a double buffer

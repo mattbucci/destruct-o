@@ -7,8 +7,6 @@ PhysicsActor::PhysicsActor(vec3 size, float maxLife, FactionId faction)
 {
 
 	//Save settings
-	this->size = size;
-	this->maxLife = maxLife;
 	this->faction = faction;
 	//Apply defaults
 	onGround = false;

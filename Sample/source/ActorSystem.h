@@ -5,7 +5,10 @@
 
 #include "ContiguousList.h"
 #include "GameFactions.h"
+#include "AIWeaponCache.h"
+#include "AIDataCache.h"
 #include "PhysicsSystem.h"
+
 
 class ShaderGroup;
 class Actor;
@@ -13,6 +16,7 @@ class PhysicsActor;
 class ActorPlayer;
 class ActorAids;
 class Weapon;
+class PhysicsSystem;
 
 class ActorSystem : public Savable {
 	//All actors are updated and drawn
@@ -44,6 +48,7 @@ class ActorSystem : public Savable {
 	//Cleanup actors in a safe manner
 	void cleanActorList();
 protected:
+
 	//Overload Load so that the actor list is cleaned safely
 	virtual void Load(Json::Value & parentValue, LoadData & loadData) override;
 public:
@@ -69,6 +74,9 @@ public:
 	//All factions/Teams handled here
 	GameFactions Factions;
 
+	//Cache ai data
+	void Load();
+
 	//Update the actors, called by base frame
 	void Update();
 
@@ -77,6 +85,12 @@ public:
 
 	//Get the AIDS
 	ActorAids * Aids();
+
+	//Retrieve ai actor data, loaded during Load()
+	AIDataCache AIProfiles;
+
+	//Retrieve weapon data, loaded during Load()
+	AIWeaponCache Weapons;
 
 	//Do AOE damage
 	//to actors

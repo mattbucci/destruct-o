@@ -33,7 +33,7 @@ protected:
 	vec3 & Velocity;
 	vec3 & Position;
 	vec3 & Acceleration;
-	const vec3 & Size;
+	vec3 & Size;
 	//Whether or not this actor flies
 	//(doesn't experience gravity)
 	bool flying;
