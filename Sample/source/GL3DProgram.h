@@ -18,7 +18,7 @@ class GL3DProgram : public GLProgram {
 	GLint attributeIndexVertex;
 	GLint attributeIndexNormal;
 	GLint attributeIndexPosition;
-
+    GLint uniformMaterialReflectivity;
 
 	GLCombinedMatrix cmatrix;
 public:
@@ -39,4 +39,5 @@ public:
 	const GLint AttributeTexture();
 	const GLint AttributeVertex();
 	const GLint AttributeNormal();
+    const GLint UniformMaterialReflectivity();
 };

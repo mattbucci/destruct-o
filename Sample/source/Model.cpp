@@ -457,10 +457,9 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         // Pass the texture count through (anything more than zero means skinned)
         glUniform1i(program->UniformTextured(), (GLint)(*renderable)->material->Textures().size());
         
-        
         // Set the reflectivity (should pull this from the material right??)
         glm::vec2 specular = glm::vec2(0.5, 0.5);
-        glUniform2f(glGetUniformLocation(program->GetId(), "material_reflectivity"), specular.x, specular.y);
+        glUniform2f(program->UniformMaterialReflectivity(), specular.x, specular.y);
         
         // Set the color
         glm::vec3 ambient = (*renderable)->material->ColorAmbient();

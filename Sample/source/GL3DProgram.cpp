@@ -9,12 +9,13 @@ GL3DProgram::GL3DProgram(GLCommonShaderFile * commonShader, string vertexShaderP
 	Camera(&cmatrix),
 	Fog(programId),
 	Acid(glGetUniformLocation(programId,"uCurrentTime"),glGetUniformLocation(programId,"uAcidFactor")) 
-	{
+{
 
 	attributeIndexTexture = glGetAttribLocation(programId,"vTex");
 	attributeIndexPosition = glGetAttribLocation(programId,"vPos");
 	attributeIndexVertex = glGetAttribLocation(programId,"vVert");
 	attributeIndexNormal = glGetAttribLocation(programId,"vNorm");
+    uniformMaterialReflectivity = glGetUniformLocation(programId, "material_reflectivity");
 };
 
 const GLint GL3DProgram::AttributePosition() {
@@ -28,4 +29,8 @@ const GLint GL3DProgram::AttributeVertex() {
 }
 const GLint GL3DProgram::AttributeNormal() {
 	return attributeIndexNormal;
+}
+const GLint GL3DProgram::UniformMaterialReflectivity()
+{
+    return uniformMaterialReflectivity;
 }

@@ -625,7 +625,7 @@
 		F13C860E190CECEC006A91AB /* SaveDirectory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SaveDirectory.mm; sourceTree = "<group>"; };
 		F13C8610190CED1C006A91AB /* NSFileManager+ApplicationSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+ApplicationSupport.h"; sourceTree = "<group>"; };
 		F13C8611190CED1C006A91AB /* NSFileManager+ApplicationSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+ApplicationSupport.m"; sourceTree = "<group>"; };
-		F1989FD418A58C3900A5165E /* VoxEngine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = VoxEngine.app; path = Destructo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1989FD418A58C3900A5165E /* Destructo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Destructo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1989FD718A58C3900A5165E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F1989FD918A58C3900A5165E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		F1989FDB18A58C3900A5165E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -741,7 +741,7 @@
 		F1989FD518A58C3900A5165E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F1989FD418A58C3900A5165E /* VoxEngine.app */,
+				F1989FD418A58C3900A5165E /* Destructo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1158,7 +1158,7 @@
 			);
 			name = Destructo;
 			productName = VoxEngine;
-			productReference = F1989FD418A58C3900A5165E /* VoxEngine.app */;
+			productReference = F1989FD418A58C3900A5165E /* Destructo.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
