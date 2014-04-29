@@ -25,10 +25,6 @@ include_directories("includes/json")
 # Are we compiling on Window?
 IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
-	file(COPY ${PROJECT_SOURCE_DIR}/game/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
-	file(COPY ${PROJECT_SOURCE_DIR}/libs/windows/_alldlls/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
-	file(COPY ${PROJECT_SOURCE_DIR}/libs/windows/_alldlls/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
-
 	# Destructo Executable
 	add_executable(Destructo ${Destructo_SRC})
 
@@ -47,13 +43,28 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_link_libraries(Destructo "../libs/windows/libnoise/libnoise")
     target_link_libraries(Destructo "opengl32.lib")
 
-    # Windows cURL things.  Are these correct (no they werent)
-    target_link_libraries(Destructo optimized "../libs/windows/curl/libcurl_imp")
-	target_link_libraries(Destructo debug "../libs/windows/curl/libcurld_imp")
+    # Windows cURL things.  Now does 2013 and 2012
+	if (${CMAKE_CXX_COMPILER} MATCHES "11")	
+		target_link_libraries(Destructo optimized "../libs/windows/curl/11/libcurl_imp")
+		target_link_libraries(Destructo debug "../libs/windows/curl/11/libcurld_imp")
+		file(COPY ${PROJECT_SOURCE_DIR}/libs/windows/curl/11/dlls/ DESTINATION ${PROJECT_SOURCE_DIR}/libs/windows/_alldlls/)
+	ELSEIF (${CMAKE_CXX_COMPILER} MATCHES "12")
+		target_link_libraries(Destructo optimized "../libs/windows/curl/12/libcurl_imp")
+		target_link_libraries(Destructo debug "../libs/windows/curl/12/libcurld_imp")
+		file(COPY ${PROJECT_SOURCE_DIR}/libs/windows/curl/12/dlls/ DESTINATION ${PROJECT_SOURCE_DIR}/libs/windows/_alldlls/)
+	ELSE ()
+		message("Warning: unsupported MSVC, curl not linked.")
+	ENDIF ()	
 
 	#enable Multiprocessor build
 	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /MP" )
+	
+	#copy game and dlls
+	file(COPY ${PROJECT_SOURCE_DIR}/game/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+	file(COPY ${PROJECT_SOURCE_DIR}/libs/windows/_alldlls/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
+	file(COPY ${PROJECT_SOURCE_DIR}/libs/windows/_alldlls/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
 
+	
 ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 # Are we compiling on Mac OS X?
