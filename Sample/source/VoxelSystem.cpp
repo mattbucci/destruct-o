@@ -13,9 +13,26 @@
 #include "ShaderGroup.h"
 
 #include "PhysicsUtilities.h"
+#include "Polygon.h"
 
-
-VoxelSystem::VoxelSystem() {
+VoxelSystem::VoxelSystem()
+{
+    // Perform a test of the polygon system
+    /*Polygon<4> a;
+    a.vertices[0] = vec2(0.0f, 0.0f);
+    a.vertices[1] = vec2(1.0f, 0.0f);
+    a.vertices[2] = vec2(1.0f, 1.0f);
+    a.vertices[3] = vec2(0.0f, 1.0f);
+    a.compute_edges();
+    
+    Polygon<3> b;
+    b.vertices[0] = vec2(-1.0f, 0.75f);
+    b.vertices[1] = vec2(-1.0f, 0.25f);
+    b.vertices[2] = vec2(0.1f, 0.5f);
+    b.compute_edges();
+    
+    std::cout << "intersects => " << (a.Intersects(b) ? "yes" : "no") << std::endl;*/
+    
 	cellRenderer = VoxelDrawSystem::BuildAppropriateSystem();
 
 	//Load the tile textures
