@@ -120,7 +120,7 @@ void EffectLaser::Draw(GLEffectProgram * program) {
 	//Make pretty laser blending
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_COLOR, GL_ONE);
+	glBlendFunc(GL_ONE, GL_ONE);
 	glDisable(GL_CULL_FACE);
 
 

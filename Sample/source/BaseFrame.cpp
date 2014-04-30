@@ -222,28 +222,28 @@ bool BaseFrame::Update(vector<InputEvent> inputEvents) {
 
 void BaseFrame::Draw(double width, double height)
 {
-	vec2 viewPortSize = vec2((float)width,(float)height);
-	//Save size in camera as well (for unprojection)
-	Camera.UpdateViewSize(viewPortSize);
-    Actors.Player()->WeaponCamera().UpdateViewSize(viewPortSize);
-	//Update the texture caching system
+	// Update the texture caching system
 	Textures.Refresh();
     
 	// Apply view distance (based on the stored slider)
     ViewDistance.viewDistance = VoxEngine::AccountOptions.ViewDistance;
     float fogDistance = ViewDistance.GetViewDistance() * 0.9f;
-	//ViewDistance.CalculateAndApply(fogDistance,fpsCount.GetFps());
+    
+    // Compute the view for size vector
+	vec2 viewPortSize = vec2((float)width,(float)height);
+    
+	//Save size in camera as well (for unprojection)
+	Camera.UpdateViewSize(viewPortSize);
+    Actors.Player()->WeaponCamera().UpdateViewSize(viewPortSize);
 
-	//We add 1.5 to ground level. This assumes the person is 5ft between the ground
-	//and his eye line
+	//We add 1.5 to ground level. This assumes the person is 5ft between the ground and his eye line
 	vec3 pos = Actors.Player()->GetPosition();
 
-
-	//Draw the frame
-	//camera draw also sets up world light
+	// Draw the frame
+	// camera draw also sets up world light
 	Camera.SetCameraView(pos,FirstPerson->GetLookVector());
 
-	//Apply properties to each shader
+	// Apply properties to each shader
 	SetupShader<GLTerrainProgram>("terrain",fogDistance);
 	Camera.Apply((GLTerrainProgram*)shaders->GetShader("terrain"));
 	SetupShader<GLParticleProgram>("particles",fogDistance);
@@ -277,7 +277,7 @@ void BaseFrame::Draw(double width, double height)
     
     // Setup the skybox's camera
     skyboxShader->Camera.SetCameraPosition(vec3(0,0,0), FirstPerson->GetLookVector());
-    skyboxShader->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25,1000); //width/height
+    skyboxShader->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25, ViewDistance.GetViewDistance()); //width/height
     skyboxShader->Camera.Apply();
     
     // Apply the model transform (identity transform =/)
@@ -287,7 +287,7 @@ void BaseFrame::Draw(double width, double height)
     skybox->Draw(skyboxShader);
 	
 	// Draw voxels
-	Voxels.Draw(shaders,pos,ViewDistance.GetDrawRegion(vec2(pos),FirstPerson->GetAngleVector().x/180.0f*(float)M_PI));
+	Voxels.Draw(shaders, pos, ViewDistance.GetDrawRegion(vec2(pos), FirstPerson->GetAngleVector().x/180.0f*(float)M_PI));
     
 	//The physics system uses the same texture that the voxels above binds every time it draws
 	//so it must always immediately follow Voxels.draw()
