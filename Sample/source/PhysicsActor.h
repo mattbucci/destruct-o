@@ -33,7 +33,7 @@ protected:
 	vec3 & Velocity;
 	vec3 & Position;
 	vec3 & Acceleration;
-	const vec3 & Size;
+	vec3 & Size;
 	//Whether or not this actor flies
 	//(doesn't experience gravity)
 	bool flying;
@@ -61,7 +61,7 @@ protected:
 	//Override to prevent immediate death
 	virtual void onDeath();
 public:
-	PhysicsActor(vec3 size, float maxLife, FactionId faction);
+	PhysicsActor(FactionId faction);
 	virtual ~PhysicsActor();
 
 	//Get the current life of this actor
@@ -85,6 +85,9 @@ public:
 	//Access to the energy pool for weapons
 	//kind of hacky
 	float & EnergyPool();
+
+	//Change the faction of this actor
+	void SetFaction(FactionId faction);
 
 	CLASS_DECLARATION(PhysicsActor)
 		INHERITS_FROM(Actor)

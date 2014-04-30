@@ -7,9 +7,6 @@
 #include "ReflectionStore.h"
 #include "LoadData.h"
 
-//Disable this to disable compression
-#define COMPRESS_SAVES
-
 void Savable::SaveValue(ReflectionData::savable valueData,Json::Value & value) {
 	switch (valueData.dataType) {
 	case ReflectionData::SAVE_VEC2:
@@ -350,7 +347,7 @@ static vector<unsigned char> inflateArray(vector<unsigned char> toInflate) {
 
 
 //Serialize data
-vector<unsigned char> Savable::Serialize(Savable * classToSerialize) {
+vector<unsigned char> Savable::Serialize(Savable * classToSerialize, bool compressed) {
 	Json::Value root;
 	//Serialize the class into the root value
 	classToSerialize->Save(root);
@@ -365,9 +362,9 @@ vector<unsigned char> Savable::Serialize(Savable * classToSerialize) {
 		rawData[i] = json[i];
 
 	//Deflate the vector
-#ifdef COMPRESS_SAVES
-	rawData = deflateArray(rawData);
-#endif
+	if (compressed)
+		rawData = deflateArray(rawData);
+
 
 	return rawData;
 }
@@ -381,14 +378,13 @@ void Savable::DeserializeJson(Json::Value & root, Savable * loadInto) {
 }
 
 //Deserialize data into a new class and return it
-Savable * Savable::Deserialize(vector<unsigned char> serializedData) {
+Savable * Savable::Deserialize(vector<unsigned char> serializedData, bool compressed) {
 	Json::Reader reader;
 	Json::Value root;
 
 	//Compress data
-#ifdef COMPRESS_SAVES
-	serializedData = inflateArray(serializedData);
-#endif
+	if (compressed)
+		serializedData = inflateArray(serializedData);
 
 	//parse the json object 
 	reader.parse(string((char*)&serializedData[0],serializedData.size()),root);
@@ -401,14 +397,13 @@ Savable * Savable::Deserialize(vector<unsigned char> serializedData) {
 }
 	
 //Deserialize data into an existing class
-void Savable::Deserialize(vector<unsigned char> serializedData, Savable * saveInto) {
+void Savable::Deserialize(vector<unsigned char> serializedData, Savable * saveInto, bool compressed) {
 	Json::Reader reader;
 	Json::Value root;
 
 	//Decompress data
-#ifdef COMPRESS_SAVES
-	serializedData = inflateArray(serializedData);
-#endif
+	if (compressed)
+		serializedData = inflateArray(serializedData);
 
 	//parse the json object 
 	reader.parse(string((char*)&serializedData[0],serializedData.size()),root);

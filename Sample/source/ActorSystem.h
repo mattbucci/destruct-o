@@ -5,6 +5,8 @@
 
 #include "ContiguousList.h"
 #include "GameFactions.h"
+#include "AIWeaponCache.h"
+#include "AIDataCache.h"
 #include "PhysicsSystem.h"
 
 class ShaderGroup;
@@ -13,6 +15,9 @@ class PhysicsActor;
 class ActorPlayer;
 class ActorAids;
 class Weapon;
+class PhysicsSystem;
+class ActorAI;
+class WeaponAI;
 
 class ActorSystem : public Savable {
 	//All actors are updated and drawn
@@ -41,9 +46,16 @@ class ActorSystem : public Savable {
 	//goes against the new Game() policy, but such is life
 	PhysicsSystem * physics;
 
+    //Retrieve ai actor data, loaded during Load()
+    AIDataCache AIProfiles;
+
+    //Retrieve weapon data, loaded during Load()
+    AIWeaponCache Weapons;
+
 	//Cleanup actors in a safe manner
 	void cleanActorList();
 protected:
+
 	//Overload Load so that the actor list is cleaned safely
 	virtual void Load(Json::Value & parentValue, LoadData & loadData) override;
 public:
@@ -66,8 +78,24 @@ public:
 		return actor;	
 	}
 
+	//Builds an actor by name
+	//this only works with actors specially designed for it to work
+	//AI will NOT work through this call
+	//but simple physics actors should
+	Actor * BuildActorFromName(string name);
+
+    //Construct a new AI at position from file
+    //do not call during physics events (sorry)
+    ActorAI * BuildAI(vec3 position, string filename);
+    
+    //Build an AI weapon from the filename of the weapon
+    WeaponAI * BuildWeapon(string filename, PhysicsActor * owner);
+
 	//All factions/Teams handled here
 	GameFactions Factions;
+
+	//Cache ai data
+	void Load();
 
 	//Update the actors, called by base frame
 	void Update();
