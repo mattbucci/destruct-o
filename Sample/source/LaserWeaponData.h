@@ -20,6 +20,12 @@ public:
 	//Whether or not the laser continues to follow the muzzle after firing
 	bool LaserFollowMuzzle;
 
+	//whether or not to tint hit particles
+	bool LaserTintWeaponHitParticles;
+
+	//Whether or not to tint muzzle flash particles
+	bool LaserTintMuzzleFlashParticles;
+
     //Clone the laser weapon data
     virtual WeaponData * Copy() override;
 
@@ -31,5 +37,7 @@ public:
 		CLASS_MEMBER(LaserWarmUpTime,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(LaserCooldownTime,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(LaserFollowMuzzle,ReflectionData::SAVE_BOOL)
+		CLASS_MEMBER(LaserTintWeaponHitParticles,ReflectionData::SAVE_BOOL)
+		CLASS_MEMBER(LaserTintMuzzleFlashParticles,ReflectionData::SAVE_BOOL)
 	END_DECLARATION
 };

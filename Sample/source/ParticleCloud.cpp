@@ -34,8 +34,7 @@ ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) : Au
 		//disintegrate voxel
 		particlePuff.Color.ClearValues();
 		particlePuff.Color.AddValue(0,materialColors[voxel->MaterialId]);
-		ParticleSystem * testSystem = BuildParticleSystem(particlePuff, Utilities::random(.3f,.5f));
-		testSystem->Position = voxel->Position;
+		ParticleSystem * testSystem = BuildParticleSystem(particlePuff, voxel->Position, Utilities::random(.3f,.5f));
 	});
 	//WEAPON EVENT HIT EVENTS
 	Subscribe<void(Actor*,Weapon*,vec3)>(&actors->ActorWeaponImpact,[this](Actor * firingActor, Weapon * firedWeapon, vec3 hitPos) {
@@ -50,16 +49,14 @@ ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) : Au
 			ParticleData & particlePuff = Game()->Particles.GetCached("laserLand.vpart");
 			particlePuff.Color.ClearValues();
 			particlePuff.Color.AddValue(0,vec4(.1,.4,1,1));
-			ParticleSystem * testSystem = BuildParticleSystem(particlePuff, .2f);
-			testSystem->Position = hitPos;
+			BuildParticleSystem(particlePuff,hitPos, .2f);
 		}
 		//laser cannon
 		else if (dynamic_cast<WeaponLaserCannon*>(firedWeapon) != NULL) {
 			ParticleData & particlePuff = Game()->Particles.GetCached("laserLand.vpart");
 			particlePuff.Color.ClearValues();
 			particlePuff.Color.AddValue(0,vec4(1,.5,.1,1));
-			ParticleSystem * testSystem = BuildParticleSystem(particlePuff, .3f);
-			testSystem->Position = hitPos;
+			BuildParticleSystem(particlePuff,hitPos, .3f);
 		}
 	});
 }
@@ -93,9 +90,10 @@ void ParticleCloud::UpdateCloud() {
 	}
 }
 
-ParticleSystem * ParticleCloud::BuildParticleSystem(const ParticleData & particleType,float lifeTime) {
+ParticleSystem * ParticleCloud::BuildParticleSystem(const ParticleData & particleType, vec3 pos, float lifeTime) {
 	ParticleSystem * ps = new ParticleSystem(particleType,Game()->Now(),lifeTime);
 	particles.push_back(ps);
+	ps->Position = pos;
 	return ps;
 }
 

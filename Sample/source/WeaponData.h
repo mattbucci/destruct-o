@@ -60,5 +60,7 @@ public:
 		CLASS_MEMBER(JitterAmount,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(Damage,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(Radius,ReflectionData::SAVE_FLOAT)
+		CLASS_MEMBER(WeaponHitParticles,ReflectionData::SAVE_STRING)
+		CLASS_MEMBER(MuzzleFlashParticles,ReflectionData::SAVE_STRING)
 	END_DECLARATION
 };

@@ -22,10 +22,32 @@ void WeaponAILaser::Fire() {
 	
 	weaponImpact(hitPosA);
  	Universal::Concuss(hitPosA,laserData->Radius,laserData->Damage,(PhysicsActor*)this->weaponOwner);
+	//Laser hit
+	if (laserData->WeaponHitParticles.size() > 0) {
+		//Create a laser puff tailored to the culor of the laser
+		ParticleData & particlePuff = Game()->Particles.GetCached(laserData->WeaponHitParticles);
+		if (laserData->LaserTintWeaponHitParticles) {
+			//Tint the particles the color of the laser
+			particlePuff.Color.ClearValues();
+			particlePuff.Color.AddValue(0,laserData->LaserColor);
+		}
+		Game()->Particles.BuildParticleSystem(particlePuff, hitPosA, .25f);
+	}
+	//muzzle flash
+	if (laserData->MuzzleFlashParticles.size() > 0) {
+		//Create a laser puff tailored to the culor of the laser
+		ParticleData & particlePuff = Game()->Particles.GetCached(laserData->WeaponHitParticles);
+		if (laserData->LaserTintMuzzleFlashParticles) {
+			//Tint the particles the color of the laser
+			particlePuff.Color.ClearValues();
+			particlePuff.Color.AddValue(0,laserData->LaserColor);
+		}
+		Game()->Particles.BuildParticleSystem(particlePuff, firePointA, .25f);
+	}
 
-	
+
 	laserA.StartFiring();
-	laserA.Move(firePointB,hitPosB);
+	laserA.Move(firePointA,hitPosA);
 
 
 	//Do second fire point
@@ -35,6 +57,29 @@ void WeaponAILaser::Fire() {
 	
 		weaponImpact(hitPosB);
  		Universal::Concuss(hitPosB,laserData->Radius,laserData->Damage,(PhysicsActor*)this->weaponOwner);
+
+		//Laser hit
+		if (laserData->WeaponHitParticles.size() > 0) {
+			//Create a laser puff tailored to the culor of the laser
+			ParticleData & particlePuff = Game()->Particles.GetCached(laserData->WeaponHitParticles);
+			if (laserData->LaserTintWeaponHitParticles) {
+				//Tint the particles the color of the laser
+				particlePuff.Color.ClearValues();
+				particlePuff.Color.AddValue(0,laserData->LaserColor);
+			}
+			Game()->Particles.BuildParticleSystem(particlePuff, hitPosB, .25f);
+		}
+		//muzzle flash
+		if (laserData->MuzzleFlashParticles.size() > 0) {
+			//Create a laser puff tailored to the culor of the laser
+			ParticleData & particlePuff = Game()->Particles.GetCached(laserData->WeaponHitParticles);
+			if (laserData->LaserTintMuzzleFlashParticles) {
+				//Tint the particles the color of the laser
+				particlePuff.Color.ClearValues();
+				particlePuff.Color.AddValue(0,laserData->LaserColor);
+			}
+			Game()->Particles.BuildParticleSystem(particlePuff, firePointB, .25f);
+		}
 
 		laserB.StartFiring();
 		laserB.Move(firePointB,hitPosB);

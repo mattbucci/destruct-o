@@ -160,7 +160,7 @@ vec3 ActorAI::getFireVector() {
 void ActorAI::statePathing(bool & holdingTrigger) {
 	//Only look for an enemy if you're on the ground
 	//and not moving very fast in the z direction
-	if (OnGround() && (fabs(Velocity.z) < .1f)) {
+	if (flying || (OnGround() && (fabs(Velocity.z) < .1f))) {
 		PhysicsActor * seenEnemy = sightNearbyEnemy();
 		if (seenEnemy != NULL) {
 			//Found an enemy, target and kill
@@ -364,18 +364,6 @@ void ActorAI::expensiveUpdate() {
 		targetEnemy = NULL;
 
 	bool pullingTrigger = false;
-	//If you fly, try to maintain correct attitude, unless you're dying
-	if (flying && (state != AI_DYING) && (state != AI_ROTTING)) {
-		float correction = (Game()->Voxels.GetPositionHeight(vec2(Position))+data->FlyHeight) - Position.z;
-		//Convert error to velocity
-		correction *= .5f;
-		//limit to max correction rates
-		correction = max(correction,-data->AltitudeChangeRate);
-        correction = min(correction, data->AltitudeChangeRate);
-		//Correct directly without fooling with velocity
-		//there is probably a better way
-		Position.z += correction * SIMULATION_DELTA;
-	}
 
 	//AI is a state machine
 	switch (state) {
@@ -423,6 +411,19 @@ void ActorAI::expensiveUpdate() {
 //should go here
 //runs at 100hz
 void ActorAI::cheapUpdate() {
+	//If you fly, try to maintain correct attitude, unless you're dying
+	if (flying && (state != AI_DYING) && (state != AI_ROTTING)) {
+		float correction = (Game()->Voxels.GetPositionHeight(vec2(Position))+data->FlyHeight) - Position.z;
+		//Convert error to velocity
+		correction *= .5f;
+		//limit to max correction rates
+		correction = max(correction,-data->AltitudeChangeRate);
+        correction = min(correction, data->AltitudeChangeRate);
+		//Correct directly without fooling with velocity
+		//there is probably a better way
+		Position.z += correction * SIMULATION_DELTA;
+	}
+
 	//AI is a state machine
 	switch (state) {
 	case AI_WAITINGFORPATH:
@@ -559,6 +560,9 @@ void ActorAI::snapSpineToEnemy() {
 }
 
 void ActorAI::findMuzzlePosition() {
+	//Node::const_flattreemap nodes;
+	//model->Skeleton()->GetFlatNodeTree(nodes);
+
     //Find the first muzzle
     const Node * nA = model->Skeleton()->FindNode(data->MuzzleBoneA);
     _ASSERTE(nA != NULL);

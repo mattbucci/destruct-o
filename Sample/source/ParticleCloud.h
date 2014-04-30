@@ -44,7 +44,7 @@ public:
 
 	//Build a particle system with the given particle data
 	//to last the specified amount of time
-	ParticleSystem * BuildParticleSystem(const ParticleData & particleType, float lifeTime);
+	ParticleSystem * BuildParticleSystem(const ParticleData & particleType, vec3 pos, float lifeTime);
 
 	//Destroy all particle systems that currently exist
 	void Clear();
