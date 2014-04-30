@@ -25,6 +25,9 @@ ActorAI::ActorAI() :
 	actorCrashing = false;
 	//Setup the AI ID
 	aiID = currentAIID = (currentAIID+1) % 10;
+
+	weapon = NULL;
+	data = NULL;
 }
 
 //Load data into this actor class, do not apply more than once
@@ -416,7 +419,7 @@ void ActorAI::expensiveUpdate() {
 		weapon->HoldingTrigger(false);
 
 	/*if (state != oldState)
-		cout << "Switched from " << oldState << " to " << state << "\n";*/
+		cout << "Switched from " << oldState << " to " << state << "\n";//*/
 }
 
 //The simple things, such as moving

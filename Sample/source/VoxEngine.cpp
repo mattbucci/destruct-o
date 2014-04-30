@@ -139,6 +139,10 @@ void VoxEngine::Start() {
 		
 #endif
 
+	//Randomize you're starting time
+	//it's not perfect, but should be sufficient
+	srand (time(NULL));
+
 	//Setup sensible basics for opengl
 	glEnable ( GL_DEPTH_TEST );
 	glDepthFunc(GL_LEQUAL);

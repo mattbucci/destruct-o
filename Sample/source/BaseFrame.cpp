@@ -37,7 +37,8 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
 	instance = this;
 
 	cout << "\t Constructing base frame\n";
-    
+   
+
     // Remove me test
     cout << "Save directory is: " << OS::SaveDirectory() << endl;
     

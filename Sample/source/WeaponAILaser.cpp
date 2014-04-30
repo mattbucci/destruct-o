@@ -7,7 +7,17 @@
 CLASS_SAVE_CONSTRUCTOR(WeaponAILaser);
 
 WeaponAILaser::WeaponAILaser() {
+	laserData = NULL;
+	laserColorsLoaded = false;
 }
+
+//Called to load all the data in this class
+//overload so that the laser effects can be reapplied on load
+void WeaponAILaser::Load(Json::Value & parentValue, LoadData & loadData) {
+	//Load data
+	WeaponAI::Load(parentValue,loadData);
+}
+
 
 //Simulate a gun shot (or laser pulse or whatever)
 void WeaponAILaser::Fire() {
@@ -96,6 +106,10 @@ void WeaponAILaser::Update(vec3 firingVector, vec3 firePointA, vec3 FirePointB) 
 
 //Draw any effects the weapon may own
 void WeaponAILaser::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) {
+	//Reapply laser colors if they haven't been loaded yet
+	if (!laserColorsLoaded)
+		applyDataToLasers();
+
 
 	//Update returns whether or not a draw should take place
 	//Checking one laser should be sufficient
@@ -125,14 +139,8 @@ void WeaponAILaser::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 f
 	}
 }
 
-
-//Apply the given weapon data to this weapon
-void WeaponAILaser::ApplyData(WeaponData * weaponData) {
-	WeaponAI::ApplyData(weaponData);
-	laserData = dynamic_cast<LaserWeaponData*>(data);
-	//Better be laser data
-	_ASSERTE(laserData != NULL);
-
+//Apply the current data to the lasers
+void WeaponAILaser::applyDataToLasers() {
 	//Setup lasers
 	laserA.SetLaserColor(laserData->LaserColor);
 	laserA.SetTiming(laserData->LaserWarmUpTime,laserData->LaserCooldownTime,true);
@@ -140,4 +148,13 @@ void WeaponAILaser::ApplyData(WeaponData * weaponData) {
 	laserB.SetLaserColor(laserData->LaserColor);
 	laserB.SetTiming(laserData->LaserWarmUpTime,laserData->LaserCooldownTime,true);
 
+	laserColorsLoaded = true;
+}
+
+//Apply the given weapon data to this weapon
+void WeaponAILaser::ApplyData(WeaponData * weaponData) {
+	WeaponAI::ApplyData(weaponData);
+	laserData = dynamic_cast<LaserWeaponData*>(data);
+	//Better be laser data
+	_ASSERTE(laserData != NULL);
 }

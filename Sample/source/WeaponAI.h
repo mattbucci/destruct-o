@@ -38,6 +38,7 @@ public:
     virtual void ApplyData(WeaponData * weaponData);
 
     CLASS_DECLARATION(WeaponAI)
+		INHERITS_FROM(Weapon)
         CLASS_MEMBER(data, ReflectionData::SAVE_OWNEDHANDLE)
     END_DECLARATION
 };

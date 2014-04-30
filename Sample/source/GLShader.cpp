@@ -48,7 +48,7 @@ GLShader::GLShader(GLCommonShaderFile * commonShader, string filename,GLenum sha
 	virtualShader.insert(virtualShader.end(),fileContents.begin(),fileContents.end());
 
 	//For debug purposes
-	{
+	/*{
 		//Find only the file part of the filename
 		size_t firstChar = filename.size()-1;
 		for (;firstChar > 0; firstChar--)
@@ -58,7 +58,7 @@ GLShader::GLShader(GLCommonShaderFile * commonShader, string filename,GLenum sha
 		ofstream debugOutput(OS::SaveDirectory() + string("debug_") + filename.substr(firstChar),ios::binary);
 		for (unsigned int i = 0; i < virtualShader.size(); i++)
 			debugOutput << virtualShader[i];
-	}
+	}*/
 
 	char * cstring = &virtualShader.front();
 	glShaderSource(shaderId,1,(const GLchar**)&cstring,NULL);
