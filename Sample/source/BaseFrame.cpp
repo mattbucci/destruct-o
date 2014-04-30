@@ -134,7 +134,6 @@ void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
 	Particles.Clear();
 }
 
-#include "ActorAI.h"
 
 void BaseFrame::OnFrameFocus() {
 	// Enable the first person controller
@@ -164,6 +163,9 @@ void BaseFrame::Build()
     
 	//Attempt to load particles
 	Particles.Load();
+
+	//Load actors and weapons
+	Actors.Load();
 
 	cout << "Loading audio\n";
 	audio = new AudioPlayer(100);

@@ -8,12 +8,15 @@
 
 #define TWO_PI ((float)(M_PI*2.0f))
 
+
+CLASS_SAVE_CONSTRUCTOR(ActorAI);
+
 unsigned int ActorAI::currentAIID = 0;
 
 //Used only by the save system to create an actorai loaded
 ActorAI::ActorAI() : 
 	PhysicsActor(GameFactions::FACTION_ENEMY),
-	enemyPosition(100,5) {
+	enemyPosition(10) {
 	//AI starts with nothing
 	state = AI_SCANNING;
 	//Max out the energy pool

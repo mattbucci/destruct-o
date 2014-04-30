@@ -130,6 +130,11 @@ void ActorSystem::Load(Json::Value & parentValue, LoadData & loadData) {
 	Savable::Load(parentValue,loadData);
 }
 
+//Cache ai data
+void ActorSystem::Load() {
+	AIProfiles.Load();
+	Weapons.Load();
+}
 
 //Update the actors, called by base frame
 void ActorSystem::Update() {

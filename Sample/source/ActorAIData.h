@@ -143,7 +143,7 @@ public:
 		CLASS_MEMBER(UseDualMuzzles,ReflectionData::SAVE_BOOL)
 		CLASS_MEMBER(MuzzleBoneA,ReflectionData::SAVE_STRING)
 		CLASS_MEMBER(MuzzleOffsetA,ReflectionData::SAVE_VEC3)
-		CLASS_MEMBER(MuzzleBoneA,ReflectionData::SAVE_STRING)
+		CLASS_MEMBER(MuzzleBoneB,ReflectionData::SAVE_STRING)
 		CLASS_MEMBER(MuzzleOffsetB,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(WeaponName, ReflectionData::SAVE_STRING)
 	END_DECLARATION

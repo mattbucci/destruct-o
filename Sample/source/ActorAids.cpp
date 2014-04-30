@@ -27,13 +27,13 @@ CLASS_SAVE_CONSTRUCTOR(ActorAids)
 
 ActorAids::ActorAids() :
 	intensityAdded(intensityAveragePeriod) {
-	spawnedNasties = true;
+	spawnedNasties = false;
 
 	//Register possible actions
 	actionList[AidsActionDeploySoldier::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeploySoldier(pos);};
-	actionList[AidsActionDeployMosquito::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeployMosquito(pos);};
-	actionList[AidsActionBomberRun::GetIntensityValue()] = [](vec3 pos) {return new AidsActionBomberRun(pos);};
-	actionList[AidsActionDeployMech::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeployMech(pos);};
+	//actionList[AidsActionDeployMosquito::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeployMosquito(pos);};
+	//actionList[AidsActionBomberRun::GetIntensityValue()] = [](vec3 pos) {return new AidsActionBomberRun(pos);};
+	//actionList[AidsActionDeployMech::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeployMech(pos);};
 
 	//Random offset for the intensity
 	intensityCalculationOffset = Utilities::random(-10.0f,10.0f);
@@ -131,7 +131,10 @@ bool ActorAids::Update() {
 	cycleId++;
 
 	//Update cities
-	populateCities();
+	//populateCities();
+
+	if (spawnedNasties)
+		return Actor::Update();;
 
 	//Calculate the target intensity using magic
 	//Use game time as a modifier
@@ -186,7 +189,7 @@ bool ActorAids::Update() {
 	//Another dumb thing
 	//always find the closest point to the player
 	//should do something smarter than this
-	//actions.push_back(randomAction->second(Game()->Actors.Player()->GetPosition()));
+	actions.push_back(randomAction->second(Game()->Actors.Player()->GetPosition()));
 	spawnedNasties = true;
 
 	//Update the underlying actor
