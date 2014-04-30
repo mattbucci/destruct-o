@@ -1,42 +1,16 @@
 #include "stdafx.h"
-#include "TurretAIWeapon.h"
 #include "Universal.h"
 #include "BaseFrame.h"
+#include "WeaponAILaser.h"
+#include "LaserWeaponData.h"
 
-CLASS_SAVE_CONSTRUCTOR(TurretAIWeapon);
+CLASS_SAVE_CONSTRUCTOR(WeaponAILaser);
 
-TurretAIWeapon::TurretAIWeapon() : Weapon(), laserA(vec4(1,.5,.1,1),.1f),laserB(vec4(1,.5,.1,1),.1f)  {
-	laserA.SetTiming(.05f,2.2f,true);
-	laserB.SetTiming(.05f,2.2f,true);
-}
-
-TurretAIWeapon::TurretAIWeapon(PhysicsActor * weaponOwner) : Weapon(weaponOwner), laserA(vec4(1,.5,.1,1),.1f),laserB(vec4(1,.5,.1,1),.1f)  {
-	laserA.SetTiming(.05f,2.2f,true);
-	laserB.SetTiming(.05f,2.2f,true);
-}
-
-//Whether or not the weapon should repeat firing automatically
-bool TurretAIWeapon::RepeatFireAutomatically() {
-	return true;
-}
-
-//The amount of charge it takes to fire the weapon
-float TurretAIWeapon::WeaponChargeRequired() {
-	return 0;
-}
-
-//Cooldown length for the weapon
-float TurretAIWeapon::WeaponCooldownTime() {
-	return 2;
-}
-
-//The amount of jitter in the weapon
-float TurretAIWeapon::JitterAmount() {
-	return .08f;
+WeaponAILaser::WeaponAILaser() {
 }
 
 //Simulate a gun shot (or laser pulse or whatever)
-void TurretAIWeapon::Fire() {
+void WeaponAILaser::Fire() {
 	//Fire appropriate events and calculate jitter
 	Weapon::Fire();
 	//Apply jitter
@@ -47,60 +21,71 @@ void TurretAIWeapon::Fire() {
 		hitPosA = firePointA+finalFireVectorA*100.0f;
 	
 	weaponImpact(hitPosA);
- 	Universal::Concuss(hitPosA,3,20,(PhysicsActor*)this->weaponOwner);
-	//Do second fire point
-	if (!Universal::TraceIgnoreActor(firePointB,finalFireVectorB,(PhysicsActor*)weaponOwner,&hitPosB))
-		hitPosB = firePointB+finalFireVectorB*100.0f;
+ 	Universal::Concuss(hitPosA,laserData->Radius,laserData->Damage,(PhysicsActor*)this->weaponOwner);
+
 	
-	weaponImpact(hitPosB);
- 	Universal::Concuss(hitPosB,3,20,(PhysicsActor*)this->weaponOwner);
-
-
 	laserA.StartFiring();
 	laserA.Move(firePointB,hitPosB);
 
-	laserB.StartFiring();
-	laserB.Move(firePointB,hitPosB);
-}
+
+	//Do second fire point
+	if (laserData->DualWeapon) {
+		if (!Universal::TraceIgnoreActor(firePointB,finalFireVectorB,(PhysicsActor*)weaponOwner,&hitPosB))
+			hitPosB = firePointB+finalFireVectorB*100.0f;
+	
+		weaponImpact(hitPosB);
+ 		Universal::Concuss(hitPosB,laserData->Radius,laserData->Damage,(PhysicsActor*)this->weaponOwner);
+
+		laserB.StartFiring();
+		laserB.Move(firePointB,hitPosB);
+	}
 
 
-//Weapon firing animation
-string TurretAIWeapon::LookupAnimation(Weapon::HandAnimations animation) {
-    static const string animations[10] = {
-        //ANIMATION_MODELNAME,
-        "turret1",
-        //ANIMATION_AIM,
-        "",
-        //ANIMATION_FIRE,
-        "",
-        //ANIMATION_RELOAD,
-        "",
-        //ANIMATION_RUN,
-        "",
-        //ANIMATION_JUMP,
-        "",
-        //ANIMATION_GRENADE,
-        "",
-		//ANIMATION_DEATH
-		""
-    };
-    return animations[animation];
+
 }
 
 //Update the state of the weapon
-void TurretAIWeapon::Update(vec3 firingVector, vec3 firePointA, vec3 FirePointB) {
+void WeaponAILaser::Update(vec3 firingVector, vec3 firePointA, vec3 FirePointB) {
 	Weapon::Update(firingVector, firePointA, FirePointB);
 }
 
 //Draw any effects the weapon may own
-void TurretAIWeapon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) {
-	//That's right I'm calling raytrace druing draw for the most up-to-date stuff possible
-	//if (!Universal::Trace(firePointB,fireVector,&hitPosB))
-	//	hitPosB = firePointB+fireVector*100.0f;
-
+void WeaponAILaser::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) {
+	if (laserData->LaserFollowMuzzle) {
+		//That's right I'm calling raytrace during draw for the most up-to-date stuff possible
+		if (!Universal::Trace(firePointA,finalFireVectorA,&hitPosA))
+			hitPosA = firePointA+finalFireVectorA*100.0f;
+	}
 	//Now move the laser to its new position and draw
 	laserA.Move(firePointA,hitPosA);
 	laserA.Draw(shader);
-	laserB.Move(firePointB,hitPosB);
-	laserB.Draw(shader);
+
+	if (laserData->DualWeapon) {
+		if (laserData->LaserFollowMuzzle) {
+			//That's right I'm calling raytrace during draw for the most up-to-date stuff possible
+			if (!Universal::Trace(firePointB,finalFireVectorB,&hitPosB))
+				hitPosB = firePointB+finalFireVectorB*100.0f;
+		}
+		//Now move the laser to its new position and draw
+		laserB.Move(firePointB,hitPosB);
+		laserB.Draw(shader);
+	}
+
+}
+
+
+//Apply the given weapon data to this weapon
+void WeaponAILaser::ApplyData(WeaponData * weaponData) {
+	WeaponAI::ApplyData(weaponData);
+	laserData = dynamic_cast<LaserWeaponData*>(data);
+	//Better be laser data
+	_ASSERTE(laserData != NULL);
+
+	//Setup lasers
+	laserA.SetLaserColor(laserData->LaserColor);
+	laserA.SetTiming(laserData->LaserWarmUpTime,laserData->LaserCooldownTime,true);
+
+	laserB.SetLaserColor(laserData->LaserColor);
+	laserB.SetTiming(laserData->LaserWarmUpTime,laserData->LaserCooldownTime,true);
+
 }

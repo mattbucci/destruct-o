@@ -2,7 +2,7 @@
 #include "AidsActionDeployMosquito.h"
 #include "BaseFrame.h"
 
-#include "ActorAIMosquito.h"
+#include "ActorAI.h"
 
 CLASS_SAVE_CONSTRUCTOR(AidsActionDeployMosquito);
 
@@ -17,7 +17,7 @@ AidsActionDeployMosquito::AidsActionDeployMosquito(vec3 actionLocation) : AidsAc
 	//Find a hidden location
 	vec3 deplyLocation = findHiddenLocation(actionLocation,3);
 	//Deploy
-	deployed = Game()->Actors.BuildActor<ActorAIMosquito>(deplyLocation);
+	deployed = Game()->Actors.BuildAI(deplyLocation,"helicopter.json");
 }
 
 //Every subclass should have a static member GetIntensityValue()

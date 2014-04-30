@@ -2,7 +2,7 @@
 #include "AidsActionBomberRun.h"
 #include "BaseFrame.h"
 
-#include "ActorAIBomber.h"
+#include "ActorAI.h"
 
 CLASS_SAVE_CONSTRUCTOR(AidsActionBomberRun);
 
@@ -16,7 +16,7 @@ AidsActionBomberRun::AidsActionBomberRun(vec3 actionLocation) : AidsAction(actio
 	//Find a hidden location
 	vec3 deplyLocation = findHiddenLocation(actionLocation,3);
 	//Deploy
-	deployed = Game()->Actors.BuildActor<ActorAIBomber>(deplyLocation);
+	deployed = Game()->Actors.BuildAI(deplyLocation,"bomber.json");
 }
 
 //Every subclass should have a static member GetIntensityValue()

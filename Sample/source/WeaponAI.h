@@ -21,6 +21,9 @@ protected:
     //also sets the jitter offsets for this pull
     virtual void Fire();
 
+	//AI weapons do not use an animation lookup table
+	string LookupAnimation(HandAnimations animation);
+
     //AI Weapon data
     WeaponData * data;
 public:
@@ -28,8 +31,11 @@ public:
 
     virtual ~WeaponAI();
 
+	//Allow any object to claim control of this weapon
+	void SetOwner(PhysicsActor * owner);
+
     //Apply the given weapon data to this weapon
-    virtual void Apply(WeaponData * weaponData);
+    virtual void ApplyData(WeaponData * weaponData);
 
     CLASS_DECLARATION(WeaponAI)
         CLASS_MEMBER(data, ReflectionData::SAVE_OWNEDHANDLE)

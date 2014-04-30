@@ -86,6 +86,9 @@ public:
 	//kind of hacky
 	float & EnergyPool();
 
+	//Change the faction of this actor
+	void SetFaction(FactionId faction);
+
 	CLASS_DECLARATION(PhysicsActor)
 		INHERITS_FROM(Actor)
 		CLASS_MEMBER(velocity,ReflectionData::SAVE_VEC3)

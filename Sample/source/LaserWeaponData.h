@@ -4,7 +4,7 @@
 #include "WeaponData.h"
 
 class LaserWeaponData : public WeaponData {
-
+public:
 	//The thickness of the laser
 	float LaserRadius;
 

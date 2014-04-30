@@ -25,6 +25,17 @@ void WeaponAI::Fire() {
   
 }
 
+//Allow any object to claim control of this weapon
+void WeaponAI::SetOwner(PhysicsActor * owner) {
+	weaponOwner = owner;
+}
+
+//AI weapons do not use an animation lookup table
+string WeaponAI::LookupAnimation(HandAnimations animation) {
+	_ASSERTE(false);
+	return "";
+}
+
 WeaponAI::WeaponAI() {
     data = NULL;
 }
@@ -34,7 +45,7 @@ WeaponAI::~WeaponAI() {
 }
 
 //Apply the given weapon data to this weapon
-void WeaponAI::Apply(WeaponData * weaponData) {
+void WeaponAI::ApplyData(WeaponData * weaponData) {
     _ASSERTE(data == NULL);
     data = weaponData->Copy();
 }

@@ -5,7 +5,7 @@
 #include "MovingAverage.h"
 #include "ActorAIData.h"
 
-class Weapon;
+class WeaponAI;
 
 class ActorAI : public PhysicsActor {
 	static unsigned int currentAIID;
@@ -15,7 +15,7 @@ class ActorAI : public PhysicsActor {
 protected:
 	//The weapon which characterizes this AI
 	//Do not change!
-	Weapon * weapon;
+	WeaponAI * weapon;
 
 	enum aiStates {
 		//Moving towards an enemy

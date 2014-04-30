@@ -78,12 +78,18 @@ public:
 		return actor;	
 	}
 
+	//Builds an actor by name
+	//this only works with actors specially designed for it to work
+	//AI will NOT work through this call
+	//but simple physics actors should
+	Actor * BuildActorFromName(string name);
+
     //Construct a new AI at position from file
     //do not call during physics events (sorry)
     ActorAI * BuildAI(vec3 position, string filename);
     
     //Build an AI weapon from the filename of the weapon
-    WeaponAI * BuildWeapon(string filename);
+    WeaponAI * BuildWeapon(string filename, PhysicsActor * owner);
 
 	//All factions/Teams handled here
 	GameFactions Factions;

@@ -9,8 +9,7 @@
 #include "AidsActionBomberRun.h"
 #include "AidsActionDeployMech.h"
 
-//For cities
-#include "ActorAITurret.h"
+#include "ActorAI.h"
 
 //500 is 5 seconds
 //this depends on SIMULATION_DELTA
@@ -85,7 +84,7 @@ void ActorAids::populateCities() {
 				for (;turretPosition != city.gunPositions.end(); turretPosition++,turretAlive++) {
 					if (*turretAlive) {
 						//Create a turret
-						ActorAITurret * turret = Game()->Actors.BuildActor<ActorAITurret>(*turretPosition+vec3(0,0,20));
+						ActorAI * turret = (ActorAI*)Game()->Actors.BuildAI(*turretPosition+vec3(0,0,20),"turret.json");
 						//Align to the correct person
 						if (city.ownedByPlayer)
 							turret->SetFaction(GameFactions::FACTION_PLAYERALLY);

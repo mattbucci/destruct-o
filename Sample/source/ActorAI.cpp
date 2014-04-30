@@ -4,7 +4,7 @@
 #include "ActorAids.h"
 #include "Universal.h"
 #include "BaseFrame.h"
-#include "weapon.h"
+#include "WeaponAI.h"
 
 #define TWO_PI ((float)(M_PI*2.0f))
 
@@ -28,7 +28,7 @@ void ActorAI::ApplyData(ActorAIData * dataToLoad) {
     this->data = dataToLoad->Copy();
 
     //Construct the specified weapon
-    //weapon(actorWeapon);
+    weapon = Game()->Actors.BuildWeapon(data->WeaponName,this);
     setModel(data->Model);
     playAnimation(data->AnimationLookupTable[Weapon::ANIMATION_AIM]);
     //Apply physics paramters

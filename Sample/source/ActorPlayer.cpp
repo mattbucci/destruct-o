@@ -17,8 +17,11 @@ static const float energyPerSecond = 5.0f;
 
 // Construct an actor player.  Weapon camera is setup for optimal weapon size
 ActorPlayer::ActorPlayer()
-    : PhysicsActor(vec3(2,2,6),500, GameFactions::FACTION_PLAYER), weaponCamera(GameCamera(40.0f)), currentWeapon(NULL), pulseLaser(NULL), laserCannon(NULL)
+    : PhysicsActor(GameFactions::FACTION_PLAYER), weaponCamera(GameCamera(40.0f)), currentWeapon(NULL), pulseLaser(NULL), laserCannon(NULL)
 {
+	//setup defaults
+	Size = vec3(2,2,6);
+	maxLife = 200;
 	//Start the player off in abouts the center
 	Position = (vec3(34,40,0));
     deltaPosition = 0.0;

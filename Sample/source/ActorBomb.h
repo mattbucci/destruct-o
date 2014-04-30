@@ -1,20 +1,22 @@
 #pragma once
 
 #include "PhysicsActor.h"
-#include "BombExplodeEffectWeapon.h"
+
+class WeaponAI;
 
 class ActorBomb : public PhysicsActor {
-	BombExplodeEffectWeapon bomb;
+	WeaponAI * bomb;
 
 public:
 	ActorBomb();
 
-	void SetFaction(FactionId faction);
+	virtual ~ActorBomb();
+	
 
 	virtual bool Update() override;
 
 	CLASS_DECLARATION(ActorBomb)
 		INHERITS_FROM(PhysicsActor)
-		CLASS_MEMBER(bomb,ReflectionData::SAVE_INSTANCE);
+		CLASS_MEMBER(bomb,ReflectionData::SAVE_OWNEDHANDLE);
 	END_DECLARATION
 };

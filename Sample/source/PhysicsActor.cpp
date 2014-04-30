@@ -47,6 +47,10 @@ float PhysicsActor::GetLife() {
 	return life;
 }
 
+void PhysicsActor::SetFaction(FactionId faction) {
+	this->faction = faction;
+}
+
 //Damage this actor from a particular faction
 void PhysicsActor::Damage(FactionId damagingFaction, float damage) {
 	//Can't take damage if you're invulnerable

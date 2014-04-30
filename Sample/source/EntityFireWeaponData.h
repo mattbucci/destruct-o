@@ -4,7 +4,7 @@
 #include "WeaponData.h"
 
 class EntityFireWeaponData : public WeaponData {
-
+public:
 	//The name of the actor this weapon fires
 	string ActorFired;
 
