@@ -4,10 +4,7 @@
 #include "BaseFrame.h"
 
 //All AI actions
-#include "AidsActionDeploySoldier.h"
-#include "AidsActionDeployMosquito.h"
-#include "AidsActionBomberRun.h"
-#include "AidsActionDeployMech.h"
+#include "AidsActionDeploySingle.h"
 
 #include "ActorAI.h"
 
@@ -23,6 +20,12 @@ const float MaxIntensityGrowRate = 5.0f;
 const float StartGameBreakLength = 100.0f;
 
 
+//Cost of each single deployment
+const float COST_DEPLOY_SOLDIER = 20.0f;
+const float COST_DEPLOY_MECH = 30.0f;
+const float COST_DEPLOY_HELI = 50.0f;
+const float COST_DEPLOY_BOMBER = 60.0f;
+
 CLASS_SAVE_CONSTRUCTOR(ActorAids)
 
 ActorAids::ActorAids() :
@@ -30,10 +33,10 @@ ActorAids::ActorAids() :
 	spawnedNasties = false;
 
 	//Register possible actions
-	actionList[AidsActionDeploySoldier::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeploySoldier(pos);};
-	//actionList[AidsActionDeployMosquito::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeployMosquito(pos);};
-	//actionList[AidsActionBomberRun::GetIntensityValue()] = [](vec3 pos) {return new AidsActionBomberRun(pos);};
-	//actionList[AidsActionDeployMech::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeployMech(pos);};
+	actionList[COST_DEPLOY_SOLDIER] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_SOLDIER,"soldier.json");};
+	actionList[COST_DEPLOY_MECH] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_MECH,"mech.json");};
+	actionList[COST_DEPLOY_HELI] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_HELI,"heli.json");};
+	//actionList[COST_DEPLOY_BOMBER] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_BOMBER,"bomber.json");};
 
 	//Random offset for the intensity
 	intensityCalculationOffset = Utilities::random(-10.0f,10.0f);
