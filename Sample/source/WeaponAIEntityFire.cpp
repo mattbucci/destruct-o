@@ -5,6 +5,7 @@
 #include "ActorBomb.h"
 #include "ActorSystem.h"
 #include "EntityFireWeaponData.h"
+#include "ActorProjectile.h"
 
 CLASS_SAVE_CONSTRUCTOR(WeaponAIEntityFire);
 
@@ -20,18 +21,22 @@ void WeaponAIEntityFire::Fire() {
 	Weapon::updateFinalFireVectors();
 
 	//Create an entity at one or both locations
-	PhysicsActor * bombOne = dynamic_cast<PhysicsActor*>(Game()->Actors.BuildActorFromName(fireData->ActorFired));
-	//Better be a physics actor or how can it be ap rojectile?
+	ActorProjectile * bombOne = dynamic_cast<ActorProjectile*>(Game()->Actors.BuildActorFromName(fireData->ActorFired));
+	//Better be a projectile or how can it be a projectile?
 	_ASSERTE(bombOne != NULL);
+
+	bombOne->FireProjectile(firePointA,finalFireVectorA*fireData->Velocity);
 
 	//Align the bombs to your faction
 	bombOne->SetFaction(weaponOwner->GetFaction());
 
 	if (fireData->DualWeapon) {
 		//Create an entity at one or both locations
-		PhysicsActor * bombTwo = dynamic_cast<PhysicsActor*>(Game()->Actors.BuildActorFromName(fireData->ActorFired));
-		//Better be a physics actor or how can it be ap rojectile?
+		ActorProjectile * bombTwo = dynamic_cast<ActorProjectile*>(Game()->Actors.BuildActorFromName(fireData->ActorFired));
+		//Better be a projectile or how can it be a projectile?
 		_ASSERTE(bombTwo != NULL);
+
+		bombTwo->FireProjectile(firePointB,finalFireVectorB*fireData->Velocity);
 
 		bombTwo->SetFaction(weaponOwner->GetFaction());
 	}

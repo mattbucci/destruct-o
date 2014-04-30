@@ -22,7 +22,7 @@ float WeaponAI::JitterAmount() {
 //Simulate a gun shot (or laser pulse or whatever)
 //also sets the jitter offsets for this pull
 void WeaponAI::Fire() {
-  
+	Weapon::Fire();
 }
 
 //Allow any object to claim control of this weapon

@@ -27,16 +27,16 @@ const float COST_DEPLOY_HELI = 50.0f;
 const float COST_DEPLOY_BOMBER = 60.0f;
 
 CLASS_SAVE_CONSTRUCTOR(ActorAids)
-
+	 
 ActorAids::ActorAids() :
 	intensityAdded(intensityAveragePeriod) {
 	spawnedNasties = false;
 
 	//Register possible actions
-	//actionList[COST_DEPLOY_SOLDIER] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_SOLDIER,"soldier.json");};
+	actionList[COST_DEPLOY_SOLDIER] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_SOLDIER,"soldier.json");};
 	actionList[COST_DEPLOY_MECH] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_MECH,"mech.json");};
-	//actionList[COST_DEPLOY_HELI] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_HELI,"heli.json");};
-	//actionList[COST_DEPLOY_BOMBER] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_BOMBER,"bomber.json");};
+	actionList[COST_DEPLOY_HELI] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_HELI,"heli.json");};
+	actionList[COST_DEPLOY_BOMBER] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_BOMBER,"bomber.json");};
 
 	//Random offset for the intensity
 	intensityCalculationOffset = Utilities::random(-10.0f,10.0f);

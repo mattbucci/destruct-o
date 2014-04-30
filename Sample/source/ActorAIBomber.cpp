@@ -34,14 +34,30 @@ void ActorAIBomber::stateEngaging(bool & holdingTrigger) {
 	}
 
 	//During your run, bomb the hell out of the enemy
-	if (glm::length(vec2(targetEnemy->GetPosition()) - vec2(this->GetPosition())) < data->SightDistance) {
-		weapon->Update(vec3(),muzzlePositionA,muzzlePositionB);
+	vec2 diff = vec2(targetEnemy->GetPosition()) - vec2(this->GetPosition());
+	if (glm::length(diff) < data->SightDistance) {
+		//Make the dropped bombs face the same direction as you
+		vec3 weaponFacingDirection = glm::normalize(vec3(cos(facingDirection),sin(facingDirection),0));
+		weapon->Update(weaponFacingDirection,muzzlePositionA,muzzlePositionB);
 		weapon->HoldingTrigger(true);
 		holdingTrigger = true;
 	}
 }
 
 void ActorAIBomber::cheapUpdate() {
+	//If you fly, try to maintain correct attitude, unless you're dying
+	if (flying && (state != AI_DYING) && (state != AI_ROTTING)) {
+		float correction = (Game()->Voxels.GetPositionHeight(vec2(Position))+data->FlyHeight) - Position.z;
+		//Convert error to velocity
+		correction *= .5f;
+		//limit to max correction rates
+		correction = max(correction,-data->AltitudeChangeRate);
+        correction = min(correction, data->AltitudeChangeRate);
+		//Correct directly without fooling with velocity
+		//there is probably a better way
+		Position.z += correction * SIMULATION_DELTA;
+	}
+
 	//AI is a state machine
 	switch (state) {
 	case AI_WAITINGFORPATH:

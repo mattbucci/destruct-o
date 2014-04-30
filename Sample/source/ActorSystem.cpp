@@ -52,6 +52,10 @@ Actor * ActorSystem::BuildActorFromName(string name) {
     Actor * actor = dynamic_cast<Actor*>(ReflectionStore::Data().RetrieveClassInstance(name));
 	//The actor should be valid
 	_ASSERTE(actor != NULL);
+
+	//The actor is born
+	newlyBornActors.push_back(actor);
+
 	//Note: if BuildActor is called during a physics event
 	//shit goes bad
 	if (dynamic_cast<PhysicsActor*>(actor) != NULL)
