@@ -80,8 +80,8 @@ void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shade
 		break;
 	case ParticleData::ADDITIVE:
 		glDepthMask(GL_FALSE);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_COLOR, GL_ONE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
 		break;
 	case ParticleData::BLEND:
 		glDepthMask(GL_FALSE);

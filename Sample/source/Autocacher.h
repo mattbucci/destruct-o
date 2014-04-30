@@ -29,7 +29,7 @@ public:
 	}
 
 	//Retrieve one item which has been cached
-	T GetCached(string filename) {
+	T& GetCached(string filename) {
 		_ASSERTE(cache.find(filename) != cache.end());
 		return cache[filename];
 	}
