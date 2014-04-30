@@ -20,10 +20,11 @@ void AudioPlayer::SetVolume(Uint8 effectvolume,Uint8 backgroundvolume) {
 
 
 /*
-void AudioPlayer::PlayerInit(ActorPlayer* user) {
+void AudioPlayer::PlayerInit(ActorPlayer* user) 
+ {
     this->user = user;
+ 
 	//FIXME
-	
     GameEventSubscriber::Subscribe<void(ActorPlayer*)>(&user->PlayerJumped,[this](ActorPlayer* Object) {
         event test;
         test.type="player-jump";
@@ -47,11 +48,19 @@ void AudioPlayer::PlayerInit(ActorPlayer* user) {
         test.pos = vec3(0,0,0);
         EffectPlayer.PlayEffect(test);
     });
-
-
-}
 }
 */
+
 void AudioPlayer::Update(){
     MusicPlayer.Update();
+}
+
+void AudioPlayer::Pause()
+{
+    MusicPlayer.Pause();
+}
+
+void AudioPlayer::Resume()
+{
+    MusicPlayer.Resume();
 }

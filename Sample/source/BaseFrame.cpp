@@ -181,6 +181,28 @@ void BaseFrame::Build()
         this->FirstPerson->Enable(!visible);
     });
     
+    // Subscribe to the application state event
+    GameEventSubscriber::Subscribe<void (bool)>(&VoxEngine::ApplicationStateChanged, [this](bool applicationActive)
+    {
+        // If the game is going inactive
+        if(!applicationActive)
+        {
+            // Pause the audio
+            audio->Pause();
+            
+            // Save the game
+            this->Save(Game()->GetSaveLocation() + "data.json.compressed");
+            
+            // Pause
+            //pauseWindow->SetVisible(true);
+        } else
+        {
+            // Resume audio
+            audio->Resume();
+        }
+    });
+    
+    // Build the skybox
     VoxEngine::SynchronousTask.RequestTask([this] ()
     {
         // Build the skybox (upload to GPU)
