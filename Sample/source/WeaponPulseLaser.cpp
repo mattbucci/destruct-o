@@ -94,5 +94,6 @@ void WeaponPulseLaser::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec
 
 	//Now move the laser to its new position and draw
 	laser.Move(firePointA,hitPos);
-	laser.Draw(shader);
+	if (laser.Update())
+		laser.Draw(shader);
 }

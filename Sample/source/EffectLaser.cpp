@@ -86,10 +86,8 @@ void EffectLaser::Move(vec3 startingPos, vec3 endingPos) {
 	}
 }
 
-//Draw
-//call always
-//to see laser call StartFiring()
-void EffectLaser::Draw(GLEffectProgram * program) {
+//Update the laser, returns true if the laser is above 0 power and should be drawn
+bool EffectLaser::Update() {
 	if (lastUpdated == 0)
 		lastUpdated = Game()->Now();
 
@@ -119,10 +117,13 @@ void EffectLaser::Draw(GLEffectProgram * program) {
 		break;
 	}
 	lastUpdated = now;
-	//Now do the actual drawing
-	if (laserPower <= 0)
-		return;
+	return laserPower > 0;
+}
 
+//Draw
+//call always
+//to see laser call StartFiring()
+void EffectLaser::Draw(GLEffectProgram * program) {
 	//Reset texture unit 0 to the active texture unit
 	glActiveTexture(GL_TEXTURE0);
 

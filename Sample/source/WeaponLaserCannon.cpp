@@ -86,5 +86,6 @@ void WeaponLaserCannon::Update(vec3 firingVector, vec3 firePointA, vec3 firePoin
 //Draw any effects the weapon may own
 void WeaponLaserCannon::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) {
 	//Draw the laser
-	laser.Draw(shader);
+	if (laser.Update())
+		laser.Draw(shader);
 }

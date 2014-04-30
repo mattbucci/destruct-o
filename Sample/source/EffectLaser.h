@@ -49,6 +49,7 @@ public:
 	//Spin down the laser
 	void StopFiring();
 
+
 	//Must call move after changing these properties
 	void SetLaserColor(vec4 laserColor);
 	void SetLaserWidth(float laserWidth);
@@ -57,8 +58,10 @@ public:
 	//Set firing position
 	void Move(vec3 startingPos, vec3 endPoint);
 
-	//Draw
-	//call always
+	//Update the laser, returns true if the laser is above 0 power and should be drawn
+	bool Update();
+
+	//Draw only necessary when Update() returns true
 	//to see laser call StartFiring()
 	void Draw(GLEffectProgram * program);
 };

@@ -51,26 +51,31 @@ void WeaponAILaser::Update(vec3 firingVector, vec3 firePointA, vec3 FirePointB) 
 
 //Draw any effects the weapon may own
 void WeaponAILaser::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 firePointA, vec3 firePointB) {
-	if (laserData->LaserFollowMuzzle) {
-		//That's right I'm calling raytrace during draw for the most up-to-date stuff possible
-		if (!Universal::Trace(firePointA,finalFireVectorA,&hitPosA))
-			hitPosA = firePointA+finalFireVectorA*100.0f;
-	}
-	//Now move the laser to its new position and draw
-	laserA.Move(firePointA,hitPosA);
-	laserA.Draw(shader);
 
-	if (laserData->DualWeapon) {
+	//Update returns whether or not a draw should take place
+	//Checking one laser should be sufficient
+	laserB.Update();
+	if (laserA.Update())  {
 		if (laserData->LaserFollowMuzzle) {
 			//That's right I'm calling raytrace during draw for the most up-to-date stuff possible
-			if (!Universal::Trace(firePointB,finalFireVectorB,&hitPosB))
-				hitPosB = firePointB+finalFireVectorB*100.0f;
+			if (!Universal::Trace(firePointA,finalFireVectorA,&hitPosA))
+				hitPosA = firePointA+finalFireVectorA*100.0f;
 		}
 		//Now move the laser to its new position and draw
-		laserB.Move(firePointB,hitPosB);
-		laserB.Draw(shader);
-	}
+		laserA.Move(firePointA,hitPosA);
+		laserA.Draw(shader);
 
+		if (laserData->DualWeapon) {
+			if (laserData->LaserFollowMuzzle) {
+				//That's right I'm calling raytrace during draw for the most up-to-date stuff possible
+				if (!Universal::Trace(firePointB,finalFireVectorB,&hitPosB))
+					hitPosB = firePointB+finalFireVectorB*100.0f;
+			}
+			//Now move the laser to its new position and draw
+			laserB.Move(firePointB,hitPosB);
+			laserB.Draw(shader);
+		}
+	}
 }
 
 
