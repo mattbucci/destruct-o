@@ -38,6 +38,15 @@ void EffectLaser::StopFiring() {
 	state = LASER_WINDINGDOWN;
 }
 
+
+//Must call move after changing these properties
+void EffectLaser::SetLaserColor(vec4 laserColor) {
+	this->laserColor = laserColor;
+}
+void EffectLaser::SetLaserWidth(float laserWidth) {
+	this->laserWidth = laserWidth;
+}
+
 //Set firing position
 void EffectLaser::Move(vec3 startingPos, vec3 endingPos) {
 	float anglePart = 180/9.0f;

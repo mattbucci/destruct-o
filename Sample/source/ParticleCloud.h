@@ -6,41 +6,38 @@
 #include "ContiguousList.h"
 #include "ParticleRenderer.h"
 #include "GameEventSubscriber.h"
+#include "Autocacher.h"
+#include "ParticleData.h"
 
 class Particle;
 class ParticleSystem;
-class ParticleData;
 class ShaderGroup;
 
 class ActorSystem;
 class PhysicsSystem;
 
 
-class ParticleCloud : GameEventSubscriber {
+class ParticleCloud : GameEventSubscriber, public Autocacher<ParticleData> {
 	//All the particle systems in the game
 	ContiguousList<ParticleSystem*> particles;
 
 	//Loaded particle data
 	map<string,ParticleData> loadedParticleData;
-
-	//Retrieve a copy of a particle system
-	//private because you're supposed to use subscriptions!
-	ParticleData & GetParticleData(string systemFileName);
-
+	
 	//This is the renderer for particles
 	//similar to the voxel system, it will probably be replaced
 	//with an instanced version for non-android/up-to-date platforms
 	ParticleRenderer renderer;
+
+protected:
+	//Cache particle data
+	ParticleData cacheItem(string path) override;
+
 public:
 	//Register particle events
 	ParticleCloud(ActorSystem * actors, PhysicsSystem * physics);
 	//Cleanup all systems
 	~ParticleCloud();
-
-
-	//Load particle systems
-	//call once per build
-	void LoadParticles();
 
 	//Updates the contents of the particle cloud automatically
 	void UpdateCloud();

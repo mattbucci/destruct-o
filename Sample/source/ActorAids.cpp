@@ -4,13 +4,9 @@
 #include "BaseFrame.h"
 
 //All AI actions
-#include "AidsActionDeploySoldier.h"
-#include "AidsActionDeployMosquito.h"
-#include "AidsActionBomberRun.h"
-#include "AidsActionDeployMech.h"
+#include "AidsActionDeploySingle.h"
 
-//For cities
-#include "ActorAITurret.h"
+#include "ActorAI.h"
 
 //500 is 5 seconds
 //this depends on SIMULATION_DELTA
@@ -24,17 +20,23 @@ const float MaxIntensityGrowRate = 5.0f;
 const float StartGameBreakLength = 100.0f;
 
 
+//Cost of each single deployment
+const float COST_DEPLOY_SOLDIER = 20.0f;
+const float COST_DEPLOY_MECH = 30.0f;
+const float COST_DEPLOY_HELI = 50.0f;
+const float COST_DEPLOY_BOMBER = 60.0f;
+
 CLASS_SAVE_CONSTRUCTOR(ActorAids)
 
 ActorAids::ActorAids() :
 	intensityAdded(intensityAveragePeriod) {
-	spawnedNasties = true;
+	spawnedNasties = false;
 
 	//Register possible actions
-	actionList[AidsActionDeploySoldier::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeploySoldier(pos);};
-	actionList[AidsActionDeployMosquito::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeployMosquito(pos);};
-	actionList[AidsActionBomberRun::GetIntensityValue()] = [](vec3 pos) {return new AidsActionBomberRun(pos);};
-	actionList[AidsActionDeployMech::GetIntensityValue()] = [](vec3 pos) {return new AidsActionDeployMech(pos);};
+	actionList[COST_DEPLOY_SOLDIER] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_SOLDIER,"soldier.json");};
+	//actionList[COST_DEPLOY_MECH] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_MECH,"mech.json");};
+	//actionList[COST_DEPLOY_HELI] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_HELI,"heli.json");};
+	//actionList[COST_DEPLOY_BOMBER] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_BOMBER,"bomber.json");};
 
 	//Random offset for the intensity
 	intensityCalculationOffset = Utilities::random(-10.0f,10.0f);
@@ -85,7 +87,7 @@ void ActorAids::populateCities() {
 				for (;turretPosition != city.gunPositions.end(); turretPosition++,turretAlive++) {
 					if (*turretAlive) {
 						//Create a turret
-						ActorAITurret * turret = Game()->Actors.BuildActor<ActorAITurret>(*turretPosition+vec3(0,0,20));
+						ActorAI * turret = (ActorAI*)Game()->Actors.BuildAI(*turretPosition+vec3(0,0,20),"turret.json");
 						//Align to the correct person
 						if (city.ownedByPlayer)
 							turret->SetFaction(GameFactions::FACTION_PLAYERALLY);
@@ -132,7 +134,10 @@ bool ActorAids::Update() {
 	cycleId++;
 
 	//Update cities
-	populateCities();
+	//populateCities();
+
+	if (spawnedNasties)
+		return Actor::Update();;
 
 	//Calculate the target intensity using magic
 	//Use game time as a modifier
@@ -187,7 +192,7 @@ bool ActorAids::Update() {
 	//Another dumb thing
 	//always find the closest point to the player
 	//should do something smarter than this
-	//actions.push_back(randomAction->second(Game()->Actors.Player()->GetPosition()));
+	actions.push_back(randomAction->second(Game()->Actors.Player()->GetPosition()));
 	spawnedNasties = true;
 
 	//Update the underlying actor

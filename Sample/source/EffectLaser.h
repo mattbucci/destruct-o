@@ -35,7 +35,7 @@ class EffectLaser : GLEffectVertexGroup {
 	bool autoStateChange;
 
 public:
-	EffectLaser(vec4 laserColor, float laserWidth=.1f);
+	EffectLaser(vec4 laserColor = vec4(1,1,1,1), float laserWidth=.1f);
 	~EffectLaser();
 
 	//Set windup/winddown time
@@ -48,6 +48,11 @@ public:
 
 	//Spin down the laser
 	void StopFiring();
+
+	//Must call move after changing these properties
+	void SetLaserColor(vec4 laserColor);
+	void SetLaserWidth(float laserWidth);
+
 
 	//Set firing position
 	void Move(vec3 startingPos, vec3 endPoint);

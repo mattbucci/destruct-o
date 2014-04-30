@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "ActorSystem.h"
 #include "Actor.h"
+#include "ActorAI.h"
 #include "ActorPlayer.h"
 #include "ActorAids.h"
 #include "ShaderGroup.h"
 #include "MaterialProgram.h"
 #include "GLEffectProgram.h"
+#include "WeaponAI.h"
 
 ActorSystem::ActorSystem(PhysicsSystem * physics) {
 	this->physics = physics;
@@ -41,14 +43,99 @@ void ActorSystem::cleanActorList() {
 	delete aids;
 }
 
+//Builds an actor by name
+//this only works with actors specially designed for it to work
+//AI will NOT work through this call
+//but simple physics actors should
+Actor * ActorSystem::BuildActorFromName(string name) {
+    //Abuse the save system to construct an AI with the given name
+    Actor * actor = dynamic_cast<Actor*>(ReflectionStore::Data().RetrieveClassInstance(name));
+	//The actor should be valid
+	_ASSERTE(actor != NULL);
+	//Note: if BuildActor is called during a physics event
+	//shit goes bad
+	if (dynamic_cast<PhysicsActor*>(actor) != NULL)
+		physics->RegisterPhysicsActor((PhysicsActor*)actor);
+
+	return actor;
+}
+
+//Construct a new AI at position from file
+//do not call during physics events (sorry)
+ActorAI * ActorSystem::BuildAI(vec3 position, string filename) {
+    //Use these macros to find the string name
+    //of the class within the same system
+    //this is used to retrieve an instance of the class, by name, through the reflection data
+    //maintained by the save system
+    static const string aiClassLookup[2] = {
+        //BEHAVIOR_GENERIC
+        "ActorAI",
+        //BEHAVIOR_BOMBER
+        "ActorAIBomber"
+    };
+    //Retrieve the ai data
+    ActorAIData * aiData = AIProfiles.GetCached(filename);
+
+    //Abuse the save system to construct an AI with the given name
+    ActorAI * actor = dynamic_cast<ActorAI*>(ReflectionStore::Data().RetrieveClassInstance(aiClassLookup[aiData->Behavior]));
+	//The actor should be valid
+	_ASSERTE(actor != NULL);
+    newlyBornActors.push_back(actor);
+
+    //Note: if BuildActor is called during a physics event
+    //shit goes bad
+    physics->RegisterPhysicsActor((PhysicsActor*)actor);
+
+    //set the actor position
+    actor->position = position;
+
+    //Apply the actor data to the new actor
+    actor->ApplyData(aiData);
+
+    return actor;
+}
+
+//Build an AI weapon from the filename of the weapon
+WeaponAI * ActorSystem::BuildWeapon(string filename, PhysicsActor * owner) {
+    //Use these macros to find the string name
+    //of the class within the same system
+    //this is used to retrieve an instance of the class, by name, through the reflection data
+    //maintained by the save system
+    static const string weaponClassLookup[3] = {
+        //WEAPONBEHAVIOR_LASER
+        "WeaponAILaser",
+        //WEAPONBEHAVIOR_ENTITYFIRE
+        "WeaponAIEntityFire",
+        //WEAPONBEHAVIOR_ENTITYEXPLODE
+        "WeaponAIEntityExplode"
+    };
+    //Retrieve the ai data
+    WeaponData * weaponData = Weapons.GetCached(filename);
+
+    //Abuse the save system to construct an AI with the given name
+    WeaponAI * weapon = dynamic_cast<WeaponAI*>(ReflectionStore::Data().RetrieveClassInstance(weaponClassLookup[weaponData->Behavior]));
+	//The weapon should be valid
+	_ASSERTE(weapon != NULL);
+    //Apply the weapon data to the new actor
+    weapon->ApplyData(weaponData);
+	weapon->SetOwner(owner);
+
+    return weapon;
+}
+
 void ActorSystem::Load(Json::Value & parentValue, LoadData & loadData) {
-	//Clean actor list saftely
+	//Clean actor list safely
 	cleanActorList();
 	//Keep loading
 	Savable::Load(parentValue,loadData);
 }
 
-	
+//Cache ai data
+void ActorSystem::Load() {
+	AIProfiles.Load();
+	Weapons.Load();
+}
+
 //Update the actors, called by base frame
 void ActorSystem::Update() {
 	//Swap these like a double buffer

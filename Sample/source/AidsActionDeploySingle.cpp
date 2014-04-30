@@ -1,34 +1,28 @@
 #include "stdafx.h"
-#include "AidsActionDeployMech.h"
+#include "AidsActionDeploySingle.h"
 #include "BaseFrame.h"
 
-#include "ActorAIMech.h"
+#include "ActorAI.h"
 
-CLASS_SAVE_CONSTRUCTOR(AidsActionDeployMech);
+CLASS_SAVE_CONSTRUCTOR(AidsActionDeploySingle);
 
 //This constructor is /only/ called by the loader
-AidsActionDeployMech::AidsActionDeployMech() : AidsAction(vec3(),0) {
+AidsActionDeploySingle::AidsActionDeploySingle() : AidsAction(vec3(),0) {
 	//Loader runs directly after this
 }
 
 
 //Constructing the action should start it
-AidsActionDeployMech::AidsActionDeployMech(vec3 actionLocation) : AidsAction(actionLocation,GetIntensityValue()) {
+AidsActionDeploySingle::AidsActionDeploySingle(vec3 actionLocation, float actionCost, string actorToDeploy) : AidsAction(actionLocation, actionCost) {
 	//Find a hidden location
 	vec3 deplyLocation = findHiddenLocation(actionLocation,3);
 	//Deploy
-	deployed = Game()->Actors.BuildActor<ActorAIMech>(deplyLocation);
+	deployed = Game()->Actors.BuildAI(deplyLocation,actorToDeploy);
 }
-
-//Every subclass should have a static member GetIntensityValue()
-float AidsActionDeployMech::GetIntensityValue() {
-	return 35.0f;
-}
-
 
 //If this returns true clean up the action
 //the action has ended
-bool AidsActionDeployMech::Update() {
+bool AidsActionDeploySingle::Update() {
 	//If they're dead, they're dead
 	if (deployed->Dead())
 		return true;

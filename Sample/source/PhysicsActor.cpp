@@ -2,13 +2,12 @@
 #include "PhysicsActor.h"
 #include "BaseFrame.h"
 
-PhysicsActor::PhysicsActor(vec3 size, float maxLife, FactionId faction)
-    : Velocity(velocity), Position(position), Acceleration(acceleration), Size(this->size)
+PhysicsActor::PhysicsActor(FactionId faction)
+    : Velocity(velocity), Position(position), Acceleration(acceleration), Size(size)
 {
-
+    size = vec3(1, 1, 1);
+    maxLife = 100;
 	//Save settings
-	this->size = size;
-	this->maxLife = maxLife;
 	this->faction = faction;
 	//Apply defaults
 	onGround = false;
@@ -46,6 +45,10 @@ bool PhysicsActor::BeingDamaged() {
 //Get the current life of this actor
 float PhysicsActor::GetLife() {
 	return life;
+}
+
+void PhysicsActor::SetFaction(FactionId faction) {
+	this->faction = faction;
 }
 
 //Damage this actor from a particular faction

@@ -18,6 +18,7 @@ void ReflectionStore::RegisterConstructableClass(string name, function<Savable*(
 Savable * ReflectionStore::RetrieveClassInstance(string name) {
 	auto iterator = reflectionStore.find(name);
 	//Unable to find an appropriate constructor
+	_ASSERTE(iterator != reflectionStore.end());
 	if (iterator == reflectionStore.end())
 		return NULL;
 
