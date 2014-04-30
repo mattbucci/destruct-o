@@ -7,6 +7,26 @@
 
 class WeaponAI;
 
+enum aiStates {
+	//Moving towards an enemy
+	//Following a given path
+	AI_PATHING,
+	//Waiting for a new path
+	AI_WAITINGFORPATH,
+	//When the AI is looking for an opponent they enter this state
+	AI_SCANNING,
+	//When an AI initially spots an enemy they can't directly engage
+	//they must target for a bit first
+	AI_TARGETING_ENEMY,
+	//When you're done targeting, kill'm
+	AI_ENGAGING_ENEMY,
+	//The AI is dying dead
+	AI_DYING,
+	//The AI is rotting now
+	AI_ROTTING,
+};
+
+
 class ActorAI : public PhysicsActor {
 	static unsigned int currentAIID;
 	//Each AI has a unique ID which decides when the expensive update is done
@@ -16,25 +36,6 @@ protected:
 	//The weapon which characterizes this AI
 	//Do not change!
 	WeaponAI * weapon;
-
-	enum aiStates {
-		//Moving towards an enemy
-		//Following a given path
-		AI_PATHING,
-		//Waiting for a new path
-		AI_WAITINGFORPATH,
-		//When the AI is looking for an opponent they enter this state
-		AI_SCANNING,
-		//When an AI initially spots an enemy they can't directly engage
-		//they must target for a bit first
-		AI_TARGETING_ENEMY,
-		//When you're done targeting, kill'm
-		AI_ENGAGING_ENEMY,
-		//The AI is dying dead
-		AI_DYING,
-		//The AI is rotting now
-		AI_ROTTING,
-	};
 
 	//State implementations which can be overridden if necessary
 	virtual void statePathing(bool & holdingTrigger);
@@ -117,6 +118,8 @@ protected:
 
 	//Overrode to prevent immediate death
 	virtual void onDeath() override;
+
+
 public:
     //Used only by the save system to create an actorai loaded
 	ActorAI();

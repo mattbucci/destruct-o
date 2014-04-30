@@ -159,7 +159,8 @@ vec3 ActorAI::getFireVector() {
 	//State implementations which can be overridden if necessary
 void ActorAI::statePathing(bool & holdingTrigger) {
 	//Only look for an enemy if you're on the ground
-	if (OnGround()) {
+	//and not moving very fast in the z direction
+	if (OnGround() && (fabs(Velocity.z) < .1f)) {
 		PhysicsActor * seenEnemy = sightNearbyEnemy();
 		if (seenEnemy != NULL) {
 			//Found an enemy, target and kill
@@ -316,11 +317,40 @@ void ActorAI::stateRotting(bool & holdingTrigger) {
 	}
 }
 
+//For debug
+ostream & operator<<(ostream & stream, const aiStates & state) {
+	switch (state) {
+	case AI_WAITINGFORPATH:
+		stream << "AI_WAITINGFORPATH";
+		break;
+	case AI_PATHING:
+		stream << "AI_PATHING";
+		break;
+	case AI_SCANNING:
+		stream << "AI_SCANNING";
+		break;
+	case AI_TARGETING_ENEMY:
+		stream << "AI_TARGETING_ENEMY";
+		break;
+	case AI_ENGAGING_ENEMY:
+		stream << "AI_ENGAGING_ENEMY";
+		break;
+	case AI_DYING:
+		stream << "AI_DYING";
+		break;
+	case AI_ROTTING:
+		stream << "AI_ROTTING";
+		break;
+	}
+	return stream;
+}
 
 //The smarts, ray traces and all that should go here
 //planning etc.
 //runs at 10hz
 void ActorAI::expensiveUpdate() {
+	aiStates oldState = state;
+
 	//Update what you know of the enemies position
 	if (targetEnemy != NULL)
 		enemyPosition.AddSample(targetEnemy->GetPosition());
@@ -382,6 +412,10 @@ void ActorAI::expensiveUpdate() {
 
 	if (!pullingTrigger)
 		weapon->HoldingTrigger(false);
+
+	if (state != oldState) {
+		cout << "Switched from " << oldState << " to " << state << "\n";
+	}
 }
 
 //The simple things, such as moving
