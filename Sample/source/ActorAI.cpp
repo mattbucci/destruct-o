@@ -304,7 +304,7 @@ void ActorAI::stateDying(bool & holdingTrigger) {
 			Universal::Concuss(Position,data->DeathDamageRadius,data->DeathDamage,this);
 			//If you have explosion particles use them
 			if (data->DeathParticles.size() > 0) {
-				ParticleData & particlePuff = Game()->Particles.GetCached(data->DeathParticles);
+				ParticleData particlePuff = Game()->Particles.GetCached(data->DeathParticles);
 				Game()->Particles.BuildParticleSystem(particlePuff, Position, .5f);
 			}
 			//Fire the event
@@ -324,7 +324,7 @@ void ActorAI::stateRotting(bool & holdingTrigger) {
 		Universal::Concuss(Position,data->DeathDamageRadius,data->DeathDamage,this);
 		//If you have explosion particles use them
 		if (data->DeathParticles.size() > 0) {
-			ParticleData & particlePuff = Game()->Particles.GetCached(data->DeathParticles);
+			ParticleData particlePuff = Game()->Particles.GetCached(data->DeathParticles);
 			Game()->Particles.BuildParticleSystem(particlePuff, Position, .5f);
 		}
 		Destroy();

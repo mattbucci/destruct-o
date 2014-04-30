@@ -23,12 +23,12 @@ void WeaponAIEntityExplode::Fire() {
  	Universal::Concuss(firePointA,data->Radius,data->Damage,(PhysicsActor*)this->weaponOwner);
 	//exploson
 	if (data->WeaponHitParticles.size() > 0) {
-		ParticleData & particlePuff = Game()->Particles.GetCached(data->WeaponHitParticles);
+		ParticleData particlePuff = Game()->Particles.GetCached(data->WeaponHitParticles);
 		Game()->Particles.BuildParticleSystem(particlePuff, firePointA, .25f);
 	}
 	//muzzle flash
 	if (data->MuzzleFlashParticles.size() > 0) {
-		ParticleData & particlePuff = Game()->Particles.GetCached(data->MuzzleFlashParticles);
+		ParticleData particlePuff = Game()->Particles.GetCached(data->MuzzleFlashParticles);
 		Game()->Particles.BuildParticleSystem(particlePuff, firePointA, .25f);
 	}
 
@@ -39,12 +39,12 @@ void WeaponAIEntityExplode::Fire() {
  		Universal::Concuss(firePointB,data->Radius,data->Damage,(PhysicsActor*)this->weaponOwner);
 		//exploson
 		if (data->WeaponHitParticles.size() > 0) {
-			ParticleData & particlePuff = Game()->Particles.GetCached(data->WeaponHitParticles);
+			ParticleData particlePuff = Game()->Particles.GetCached(data->WeaponHitParticles);
 			Game()->Particles.BuildParticleSystem(particlePuff, firePointB, .25f);
 		}
 		//muzzle flash
 		if (data->MuzzleFlashParticles.size() > 0) {
-			ParticleData & particlePuff = Game()->Particles.GetCached(data->MuzzleFlashParticles);
+			ParticleData particlePuff = Game()->Particles.GetCached(data->MuzzleFlashParticles);
 			Game()->Particles.BuildParticleSystem(particlePuff, firePointB, .25f);
 		}
 	}

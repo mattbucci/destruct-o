@@ -25,7 +25,7 @@ void WeaponAILaser::Fire() {
 	//Laser hit
 	if (laserData->WeaponHitParticles.size() > 0) {
 		//Create a laser puff tailored to the culor of the laser
-		ParticleData & particlePuff = Game()->Particles.GetCached(laserData->WeaponHitParticles);
+		ParticleData particlePuff = Game()->Particles.GetCached(laserData->WeaponHitParticles);
 		if (laserData->LaserTintWeaponHitParticles) {
 			//Tint the particles the color of the laser
 			particlePuff.Color.ClearValues();
@@ -36,7 +36,7 @@ void WeaponAILaser::Fire() {
 	//muzzle flash
 	if (laserData->MuzzleFlashParticles.size() > 0) {
 		//Create a laser puff tailored to the culor of the laser
-		ParticleData & particlePuff = Game()->Particles.GetCached(laserData->WeaponHitParticles);
+		ParticleData particlePuff = Game()->Particles.GetCached(laserData->WeaponHitParticles);
 		if (laserData->LaserTintMuzzleFlashParticles) {
 			//Tint the particles the color of the laser
 			particlePuff.Color.ClearValues();
@@ -61,7 +61,7 @@ void WeaponAILaser::Fire() {
 		//Laser hit
 		if (laserData->WeaponHitParticles.size() > 0) {
 			//Create a laser puff tailored to the culor of the laser
-			ParticleData & particlePuff = Game()->Particles.GetCached(laserData->WeaponHitParticles);
+			ParticleData particlePuff = Game()->Particles.GetCached(laserData->WeaponHitParticles);
 			if (laserData->LaserTintWeaponHitParticles) {
 				//Tint the particles the color of the laser
 				particlePuff.Color.ClearValues();
@@ -72,7 +72,7 @@ void WeaponAILaser::Fire() {
 		//muzzle flash
 		if (laserData->MuzzleFlashParticles.size() > 0) {
 			//Create a laser puff tailored to the culor of the laser
-			ParticleData & particlePuff = Game()->Particles.GetCached(laserData->WeaponHitParticles);
+			ParticleData particlePuff = Game()->Particles.GetCached(laserData->WeaponHitParticles);
 			if (laserData->LaserTintMuzzleFlashParticles) {
 				//Tint the particles the color of the laser
 				particlePuff.Color.ClearValues();

@@ -40,20 +40,20 @@ ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) : Au
 	Subscribe<void(Actor*,Weapon*,vec3)>(&actors->ActorWeaponImpact,[this](Actor * firingActor, Weapon * firedWeapon, vec3 hitPos) {
 		//Mosquito weapon
 		/*if (dynamic_cast<MosquitoAIWeapon*>(firedWeapon) != NULL) {
-			ParticleData & particlePuff = Game()->Particles.GetCached("bulletLand.vpart");
+			ParticleData particlePuff = Game()->Particles.GetCached("bulletLand.vpart");
 			ParticleSystem * testSystem = BuildParticleSystem(particlePuff, .2f);
 			testSystem->Position = hitPos;
 		}
 		//pulse laser
 		else */if (dynamic_cast<WeaponPulseLaser*>(firedWeapon) != NULL) {
-			ParticleData & particlePuff = Game()->Particles.GetCached("laserLand.vpart");
+			ParticleData particlePuff = Game()->Particles.GetCached("laserLand.vpart");
 			particlePuff.Color.ClearValues();
 			particlePuff.Color.AddValue(0,vec4(.1,.4,1,1));
 			BuildParticleSystem(particlePuff,hitPos, .2f);
 		}
 		//laser cannon
 		else if (dynamic_cast<WeaponLaserCannon*>(firedWeapon) != NULL) {
-			ParticleData & particlePuff = Game()->Particles.GetCached("laserLand.vpart");
+			ParticleData particlePuff = Game()->Particles.GetCached("laserLand.vpart");
 			particlePuff.Color.ClearValues();
 			particlePuff.Color.AddValue(0,vec4(1,.5,.1,1));
 			BuildParticleSystem(particlePuff,hitPos, .3f);
