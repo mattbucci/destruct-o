@@ -32,6 +32,9 @@ ActorPlayer::ActorPlayer()
 	//Start the user with full charge
 	energyPool = 100;
 	maxEnergyPool = 100;
+
+	pulseLaser = NULL;
+	laserCannon = NULL;
 }
 
 ActorPlayer::~ActorPlayer()
@@ -42,6 +45,7 @@ ActorPlayer::~ActorPlayer()
         delete laserCannon;
     });*/
 }
+
 
 float ActorPlayer::GetCharge() {
     return energyPool;
@@ -55,8 +59,8 @@ float ActorPlayer::GetMaxCharge() {
 void ActorPlayer::Build()
 {
     // Create the weapons
-    pulseLaser = new WeaponPulseLaser(this);
-    laserCannon = new WeaponLaserCannon(this);
+    pulseLaser = Game()->Actors.BuildWeapon("playerpulselaser.json",this);
+    laserCannon = Game()->Actors.BuildWeapon("playerlasercannon.json",this);
     
     // Set initial weapon to pulse laser
     setWeapon(pulseLaser);

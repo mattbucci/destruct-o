@@ -110,6 +110,8 @@ void WeaponAILaser::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 f
 	if (!laserColorsLoaded)
 		applyDataToLasers();
 
+	this->fireVector = fireVector;
+	Weapon::updateFinalFireVectors();
 
 	//Update returns whether or not a draw should take place
 	//Checking one laser should be sufficient
@@ -157,4 +159,5 @@ void WeaponAILaser::ApplyData(WeaponData * weaponData) {
 	laserData = dynamic_cast<LaserWeaponData*>(data);
 	//Better be laser data
 	_ASSERTE(laserData != NULL);
+	applyDataToLasers();
 }
