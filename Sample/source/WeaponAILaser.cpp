@@ -105,9 +105,10 @@ void WeaponAILaser::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 f
 			//That's right I'm calling raytrace during draw for the most up-to-date stuff possible
 			if (!Universal::Trace(firePointA,finalFireVectorA,&hitPosA))
 				hitPosA = firePointA+finalFireVectorA*100.0f;
+			//Now move the laser to its new position and draw
+			laserA.Move(firePointA,hitPosA);
 		}
-		//Now move the laser to its new position and draw
-		laserA.Move(firePointA,hitPosA);
+		
 		laserA.Draw(shader);
 
 		if (laserData->DualWeapon) {
@@ -115,9 +116,10 @@ void WeaponAILaser::DrawWeapon(GLEffectProgram * shader, vec3 fireVector, vec3 f
 				//That's right I'm calling raytrace during draw for the most up-to-date stuff possible
 				if (!Universal::Trace(firePointB,finalFireVectorB,&hitPosB))
 					hitPosB = firePointB+finalFireVectorB*100.0f;
+				//Now move the laser to its new position and draw
+				laserB.Move(firePointB,hitPosB);
 			}
-			//Now move the laser to its new position and draw
-			laserB.Move(firePointB,hitPosB);
+			
 			laserB.Draw(shader);
 		}
 	}

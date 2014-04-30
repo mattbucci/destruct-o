@@ -73,11 +73,17 @@ public:
 	//Whether or not the user can rotate his spine up,down
 	bool SpineCanRotateUpDown;
 
+	//An offset for the calculated spine angle (radians)
+	float SpineUpDownOffset;
+
 	//The amount the spine can rotate up/down in radians
 	float SpineUpDownAngleMax;
 
     //Whether or not the user can rotate his spine left,right
     bool SpineCanRotateLeftRight;
+
+	//An offset for the calculated spine angle (radians)
+	float SpineLeftRightOffset;
 
     //The amount the spine can rotate left/right in radians
     //even if SpineCanRotateLeftRight
@@ -135,9 +141,11 @@ public:
 		CLASS_MEMBER(DeathParticles, ReflectionData::SAVE_STRING);
 
 		CLASS_MEMBER(SpineCanRotateUpDown,ReflectionData::SAVE_BOOL)
+		CLASS_MEMBER(SpineUpDownOffset,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(SpineUpDownAngleMax,ReflectionData::SAVE_FLOAT)
         CLASS_MEMBER(SpineCanRotateLeftRight, ReflectionData::SAVE_BOOL)
-        CLASS_MEMBER(SpineLeftRightAngleMax, ReflectionData::SAVE_FLOAT)
+		CLASS_MEMBER(SpineLeftRightAngleMax, ReflectionData::SAVE_FLOAT)
+        CLASS_MEMBER(SpineLeftRightOffset, ReflectionData::SAVE_FLOAT)
         CLASS_MEMBER(SpineBone, ReflectionData::SAVE_STRING)
 
 		CLASS_MEMBER(UseDualMuzzles,ReflectionData::SAVE_BOOL)

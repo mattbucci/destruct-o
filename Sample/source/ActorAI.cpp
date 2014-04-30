@@ -22,6 +22,7 @@ ActorAI::ActorAI() :
 	//Max out the energy pool
 	energyPool = 100;
 	targetEnemy = NULL;
+	actorCrashing = false;
 	//Setup the AI ID
 	aiID = currentAIID = (currentAIID+1) % 10;
 }
@@ -249,6 +250,7 @@ void ActorAI::stateScanning(bool & holdingTrigger) {
 		return;
 	if (data->BaseMovementSpeed <= 0) {
 		state = AI_TARGETING_ENEMY;
+		targetAcquiredAt = Game()->Now();
 	}
 	else {
 		//Request a pathing solution to their current position
@@ -299,7 +301,12 @@ void ActorAI::stateDying(bool & holdingTrigger) {
 		if (OnGround()) {
 			//You crashed, blow up and be destroyed
 			Destroy();
-			Universal::Concuss(Position,5,40,this);
+			Universal::Concuss(Position,data->DeathDamageRadius,data->DeathDamage,this);
+			//If you have explosion particles use them
+			if (data->DeathParticles.size() > 0) {
+				ParticleData & particlePuff = Game()->Particles.GetCached(data->DeathParticles);
+				Game()->Particles.BuildParticleSystem(particlePuff, Position, .5f);
+			}
 			//Fire the event
 			Game()->Actors.ActorVehicleCrash.Fire([this](function<void(Actor*)> observer) {
 				observer(this);
@@ -313,6 +320,13 @@ void ActorAI::stateDying(bool & holdingTrigger) {
 }
 void ActorAI::stateRotting(bool & holdingTrigger) {
 	if (Game()->Now() > finishRotting) {
+		//Blow up if that's the sort of thing you do
+		Universal::Concuss(Position,data->DeathDamageRadius,data->DeathDamage,this);
+		//If you have explosion particles use them
+		if (data->DeathParticles.size() > 0) {
+			ParticleData & particlePuff = Game()->Particles.GetCached(data->DeathParticles);
+			Game()->Particles.BuildParticleSystem(particlePuff, Position, .5f);
+		}
 		Destroy();
 	}
 }
@@ -401,9 +415,8 @@ void ActorAI::expensiveUpdate() {
 	if (!pullingTrigger)
 		weapon->HoldingTrigger(false);
 
-	if (state != oldState) {
-		cout << "Switched from " << oldState << " to " << state << "\n";
-	}
+	/*if (state != oldState)
+		cout << "Switched from " << oldState << " to " << state << "\n";*/
 }
 
 //The simple things, such as moving
@@ -551,7 +564,15 @@ void ActorAI::snapSpineToEnemy() {
 
             vec3 axis = vec3(1, 0, 0);
 
-            spineNode->LocalTransform().Rotation() = glm::rotate(spineNode->LocalTransform().Rotation(), angle / (float)M_PI*180.0f, axis);
+			quat rotateFrom;
+			//If this mesh is animated, rotate from the current angle
+			//otherwise rotate from the unit quad
+			if (model->GetModel()->Animations().size() > 1)
+				rotateFrom = spineNode->LocalTransform().Rotation();
+			else
+				rotateFrom = quat();
+
+            spineNode->LocalTransform().Rotation() = glm::rotate(rotateFrom, (angle+data->SpineUpDownOffset) / (float)M_PI*180.0f, axis);
             spineNode->Recalculate();
         }
         //Apply left/right spine correction

@@ -34,8 +34,8 @@ ActorAids::ActorAids() :
 
 	//Register possible actions
 	//actionList[COST_DEPLOY_SOLDIER] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_SOLDIER,"soldier.json");};
-	//actionList[COST_DEPLOY_MECH] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_MECH,"mech.json");};
-	actionList[COST_DEPLOY_HELI] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_HELI,"heli.json");};
+	actionList[COST_DEPLOY_MECH] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_MECH,"mech.json");};
+	//actionList[COST_DEPLOY_HELI] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_HELI,"heli.json");};
 	//actionList[COST_DEPLOY_BOMBER] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_BOMBER,"bomber.json");};
 
 	//Random offset for the intensity
@@ -92,7 +92,7 @@ void ActorAids::populateCities() {
 						if (city.ownedByPlayer)
 							turret->SetFaction(GameFactions::FACTION_PLAYERALLY);
 						else
-							turret->SetFaction(GameFactions::FACTION_HOSTILE);
+							turret->SetFaction(GameFactions::FACTION_ENEMY);
 						city.cityPopulation.push_back(turret);
 					}
 				}
@@ -134,7 +134,7 @@ bool ActorAids::Update() {
 	cycleId++;
 
 	//Update cities
-	//populateCities();
+	populateCities();
 
 	if (spawnedNasties)
 		return Actor::Update();;
