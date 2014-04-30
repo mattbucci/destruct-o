@@ -46,6 +46,8 @@ WeaponAI::~WeaponAI() {
 
 //Apply the given weapon data to this weapon
 void WeaponAI::ApplyData(WeaponData * weaponData) {
-    _ASSERTE(data == NULL);
+    //Remove any previous data
+	delete data;
+	//Establish a copy
     data = weaponData->Copy();
 }

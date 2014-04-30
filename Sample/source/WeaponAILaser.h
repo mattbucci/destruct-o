@@ -19,6 +19,15 @@ protected:
 	EffectLaser laserB;
 	vec3 hitPosA;
 	vec3 hitPosB;
+
+	//Called to load all the data in this class
+	//overload so that the laser effects can be reapplied on load
+	virtual void Load(Json::Value & parentValue, LoadData & loadData) override;
+
+	//Apply the current data to the lasers
+	void applyDataToLasers();
+	//Whether or not the lasers colors are correct
+	bool laserColorsLoaded;
 public:
 	//setup laser
 	WeaponAILaser();
@@ -33,7 +42,8 @@ public:
     virtual void ApplyData(WeaponData * weaponData) override;
 
 	CLASS_DECLARATION(WeaponAILaser)
-		INHERITS_FROM(Weapon)
+		INHERITS_FROM(WeaponAI)
+		CLASS_MEMBER(laserData, ReflectionData::SAVE_HANDLE);
 		CLASS_MEMBER(hitPosA, ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(hitPosB, ReflectionData::SAVE_VEC3)
 	END_DECLARATION

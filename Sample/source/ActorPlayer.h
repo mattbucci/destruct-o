@@ -3,10 +3,7 @@
 #include "PhysicsActor.h"
 #include "GameEvent.h"
 #include "GameCamera.h"
-#include "Weapon.h"
-
-#include "WeaponPulseLaser.h"
-#include "WeaponLaserCannon.h"
+#include "WeaponAI.h"
 
 class ActorPlayer : public PhysicsActor
 {	
@@ -22,8 +19,8 @@ class ActorPlayer : public PhysicsActor
     Weapon          *currentWeapon;
     
     // Standard player weaponry
-	WeaponPulseLaser  *pulseLaser;
-    WeaponLaserCannon *laserCannon;
+	WeaponAI  *pulseLaser;
+    WeaponAI *laserCannon;
     
     //If the player fired the gun
     bool weaponFired;
