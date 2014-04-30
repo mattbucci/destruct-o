@@ -140,3 +140,13 @@ void Music::Update(){
             play_track(ambient_tracks[sceneintensity][track_numbers[sceneintensity]]);
     }
 }
+
+void Music::Pause()
+{
+    Mix_PauseMusic();
+}
+
+void Music::Resume()
+{
+    Mix_ResumeMusic();
+}

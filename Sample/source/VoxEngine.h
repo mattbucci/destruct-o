@@ -7,6 +7,7 @@
 #include "Options.h"
 #include "AsyncTask.h"
 #include "SyncTask.h"
+#include "GameEvent.h"
 
 #define SIMULATION_DELTA .01f
 
@@ -69,6 +70,7 @@ public:
 
 	//Account Options
 	static Options AccountOptions;
-
-
+    
+    // state changed changed event
+    static GameEvent<void (bool)> ApplicationStateChanged;
 };

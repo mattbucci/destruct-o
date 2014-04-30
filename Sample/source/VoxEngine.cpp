@@ -57,6 +57,8 @@ SyncTask VoxEngine::SynchronousTask;
 
 Options VoxEngine::AccountOptions;
 
+GameEvent<void (bool)> VoxEngine::ApplicationStateChanged;
+
 /*
 //For heap testing on windows. Is actually very useful
 int heapHook(int nAllocType, void *pvData,
@@ -580,12 +582,20 @@ int EventFilter(void *context, SDL_Event *event)
         // If the application will enter the background, it is no longer safe to render
         case SDL_APP_WILLENTERBACKGROUND:
             renderingIsSafe = false;
+            VoxEngine::ApplicationStateChanged.Fire([&](function<void (bool)> subscriber)
+            {
+                subscriber(renderingIsSafe);
+            });
             return 0;
             break;
             
         // If the application has resumed, it is again safe to render
-        case SDL_APP_WILLENTERFOREGROUND:
+        case SDL_APP_DIDENTERFOREGROUND:
             renderingIsSafe = true;
+            VoxEngine::ApplicationStateChanged.Fire([&](function<void (bool)> subscriber)
+            {
+                subscriber(renderingIsSafe);
+            });
             return 0;
             break;
 #endif
