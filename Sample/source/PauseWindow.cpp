@@ -91,7 +91,7 @@ PauseWindow::PauseWindow()
 		Frames::SetSystem(Frames::FRAME_MAINMENU);
 	});
 	Subscribe<void(Button*)>(&menuExit.EventClicked, [this](Button * b) {
-		Frames::SetSystem(Frames::FRAME_MAINMENU);
+		Frames::SetSystem(Frames::FRAME_GAME);
 	});
 
 	//Set up Options Menu
