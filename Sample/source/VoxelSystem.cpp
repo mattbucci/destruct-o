@@ -117,22 +117,17 @@ static void intersect1D(int & rangeAStart, int & rangeAEnd, int rangeBStart, int
 }
 
 // Draw the voxels in the triangular region
-void VoxelSystem::Draw(ShaderGroup * shaders, vec3 pos, SimplePolygon<4>& drawRegion)
+void VoxelSystem::Draw(ShaderGroup * shaders, SimplePolygon<4>& drawRegion)
 {
-    // Calculate the longest dimension of the viewing area (how many tiles to search)
-    float largestDimension = 0.0f;
-    for(SimplePolygon<4>::storage_type::iterator edge = drawRegion.edges.begin(); edge != drawRegion.edges.end(); edge++)
-    {
-        float l = glm::length(*edge);
-        largestDimension = (l > largestDimension) ? l : largestDimension;
-    }
+    // Get the bounding box of the viewing area
+    SimplePolygon<4> drawRegionBoundingBox;
+    drawRegion.BoundingRect(drawRegionBoundingBox);
     
-    // Figure out how many tiles we should explore
-    float c = (int) ceil(largestDimension / (float) TILE_SIZE) * (float) TILE_SIZE;
-    
-    // we're on tile
-    float x = floor(pos.x / (float) TILE_SIZE) * (float) TILE_SIZE;
-    float y = floor(pos.y / (float) TILE_SIZE) * (float) TILE_SIZE;
+    // Compute the bounds of the tile set we need to examine
+    float imin = floor(drawRegionBoundingBox.vertices[0].x / (float) TILE_SIZE) * (float) TILE_SIZE;
+    float imax = ceil(drawRegionBoundingBox.vertices[2].x / (float) TILE_SIZE) * (float) TILE_SIZE;
+    float jmin = floor(drawRegionBoundingBox.vertices[0].y / (float) TILE_SIZE) * (float) TILE_SIZE;
+    float jmax = ceil(drawRegionBoundingBox.vertices[2].y / (float) TILE_SIZE) * (float) TILE_SIZE;
     
 	// Enable voxel texture
 	glActiveTexture(GL_TEXTURE0);
@@ -148,13 +143,13 @@ void VoxelSystem::Draw(ShaderGroup * shaders, vec3 pos, SimplePolygon<4>& drawRe
     // Voxel count is zero
     voxelCount = 0;
     
-    // Look at all the tiles
-    for(float j = -c; j <= c; j += (float) TILE_SIZE)
+    // Look at all the tiles 
+    for(float j = jmin; j <= jmax; j += (float) TILE_SIZE)
     {
-        for(float i = -c; i <= c; i += (float) TILE_SIZE)
+        for(float i = imin; i <= imax; i += (float) TILE_SIZE)
         {
             // Calculate the tile world origin and tile index
-            vec2 t(x + i, y + j);
+            vec2 t(i, j);
             vec2 tc = glm::floor(t / (float) TILE_SIZE);
             
             // Calculate the SimplePolygon of the tile

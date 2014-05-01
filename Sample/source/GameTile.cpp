@@ -307,25 +307,38 @@ vector<unsigned char> GameTile::SaveTileToMemory() {
 //the rect should be tile-relative coordinates
 void GameTile::Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, SimplePolygon<4>& drawRegion, int & voxelCount)
 {
+    // Compute the world location of this tile
+    vec2 pos(tile_x * TILE_SIZE, tile_y * TILE_SIZE);
+    
+    // Get the bounding box of the viewing area
+    SimplePolygon<4> drawRegionBoundingBox;
+    drawRegion.BoundingRect(drawRegionBoundingBox);
+    
+    // Adjust the bounding box min and max to this tile's space
+    drawRegionBoundingBox.vertices[0] -= pos;
+    drawRegionBoundingBox.vertices[2] -= pos;
+    
+    // Compute the bounds
+    float imin = glm::clamp<float>(drawRegionBoundingBox.vertices[0].x, 0.0f, TILE_SIZE);
+    float jmin = glm::clamp<float>(drawRegionBoundingBox.vertices[0].y, 0.0f, TILE_SIZE);
+    float imax = glm::clamp<float>(drawRegionBoundingBox.vertices[2].x, 0.0f, TILE_SIZE);
+    float jmax = glm::clamp<float>(drawRegionBoundingBox.vertices[2].y, 0.0f, TILE_SIZE);
+    
 	// Use the terrain shader
 	terrainShader->UseProgram();
     
 	// Offset the tile to the correct location
 	terrainShader->Model.PushMatrix();
-	terrainShader->Model.Translate(vec3(tile_x * TILE_SIZE, tile_y * TILE_SIZE, 0));
+	terrainShader->Model.Translate(vec3(pos, 0));
 	terrainShader->Model.Apply();
     
-    // we're on tile
-    float x = (tile_x * TILE_SIZE);
-    float y = (tile_y * TILE_SIZE);
-    
 	//Draw the tiles in the region specified
-	for (float j = 0; j < TILE_SIZE; j += CHUNK_SIZE)
+	for (float j = jmin; j < jmax; j += CHUNK_SIZE)
     {
-		for (float i = 0; i < TILE_SIZE; i += CHUNK_SIZE)
+		for (float i = imin; i < imax; i += CHUNK_SIZE)
         {
             // Calculate the world coordinate of this chunk
-            vec2 t(x + i, y + j);
+            vec2 t = vec2(i,j) + pos;
             
             // Calculate the SimplePolygon of the tile
             SimplePolygon<4> region;

@@ -65,7 +65,7 @@ public:
 	vector<vec4> Crater(vec3 pos, float size, float damage);
     
     // Draw the voxels in a triangular region of the world
-    void Draw(ShaderGroup * shaders, vec3 pos, SimplePolygon<4>& drawRegion);
+    void Draw(ShaderGroup * shaders, SimplePolygon<4>& drawRegion);
     
 	// Update the voxel system
 	void Update(vec3 player_pos);
