@@ -8,6 +8,9 @@ class Label;
 class DebugWindow : public Window {
 	Label * fps;
 	Label * voxels;
+	Label * drawTime;
+	Label * updateTime;
+	unsigned int curDrawCycle;
 public:
 	DebugWindow();
 	
@@ -16,4 +19,6 @@ public:
 	//Information automatically displayed during draw for the debug window
 	float Fps;
 	int Voxels;
+	float DrawTime;
+	float UpdateTime;
 };
