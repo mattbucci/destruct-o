@@ -41,9 +41,12 @@ class Polygon
     }
 
 public:
+    // Storage type
+    typedef std::array<vec2, N> storage_type;
+    
     // Test data
-    std::array<vec2, N> vertices;
-    std::array<vec2, N> edges;
+    storage_type vertices;
+    storage_type edges;
     
     // Create an empty polygon
     Polygon()
@@ -56,10 +59,10 @@ public:
     {
         // Loop through all the vertices
         size_t eIdx = 0;
-        for(typename std::array<vec2, N>::iterator vertex = vertices.begin(); vertex != vertices.end(); vertex++, eIdx++)
+        for(typename storage_type::iterator vertex = vertices.begin(); vertex != vertices.end(); vertex++, eIdx++)
         {
             // Calculate the next vertex
-            typename std::array<vec2, N>::iterator nVertex = vertex + 1;
+            typename storage_type::iterator nVertex = vertex + 1;
             if(nVertex == vertices.end()) nVertex = vertices.begin();
             
             // Compute and store the edge vector
@@ -74,7 +77,7 @@ public:
         float d = glm::dot(axis, vertices.front());
         min = d;
         max = d;
-        for (typename std::array<vec2, N>::iterator i = vertices.begin(); i != vertices.end(); i++)
+        for (typename storage_type::iterator i = vertices.begin(); i != vertices.end(); i++)
         {
             d = glm::dot(*i, axis);
             if (d < min)
@@ -99,7 +102,7 @@ public:
         float maxB = 0.0f;
         
         // Check the first polygon's edges for intersection
-        for(typename std::array<vec2, N>::iterator edge = edges.begin(); edge != edges.end(); edge++)
+        for(typename storage_type::iterator edge = edges.begin(); edge != edges.end(); edge++)
         {
             // Calculate the perpendicular axis
             vec2 axis = glm::normalize(vec2(-edge->y, edge->x));
@@ -116,7 +119,7 @@ public:
         }
         
         // Check the second polygon's edges for intersection
-        for(typename std::array<vec2, M>::iterator edge = b.edges.begin(); edge != b.edges.end(); edge++)
+        for(typename Polygon<M>::storage_type::iterator edge = b.edges.begin(); edge != b.edges.end(); edge++)
         {
             // Calculate the perpendicular axis
             vec2 axis = glm::normalize(vec2(-edge->y, edge->x));

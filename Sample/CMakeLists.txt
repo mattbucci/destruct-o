@@ -412,8 +412,6 @@ FILE(GLOB UtilityFiles
 	source/Utilities.cpp
 	source/GameSave.h
 	source/GameSave.cpp
-	source/ViewDistanceCalc.h
-	source/ViewDistanceCalc.cpp
 	source/LoadingScreen.h
 	source/LoadingScreen.cpp
 	source/IntRect.h

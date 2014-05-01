@@ -6,7 +6,7 @@
 #include "IntRect.h"
 #include "TerrainChunkRenderer.h"
 #include "Savable.h"
-
+#include "Polygon.h"
 
 class ShaderGroup;
 class GameTile;
@@ -63,11 +63,11 @@ public:
 	//Deforms a region of voxels, punching a crater into the given position
 	//all voxels removed are returned as positions
 	vector<vec4> Crater(vec3 pos, float size, float damage);
-
-	//Draw the voxels in a region
-	//atx,aty and tox, toy define two corners of the rectangle
-	//of voxels which will be rendered
-	void Draw(ShaderGroup * shaders, vec3 drawPos, IntRect drawRegion);
+    
+    // Draw the voxels in a triangular region of the world
+    void Draw(ShaderGroup * shaders, vec3 pos, Polygon<4>& drawRegion);
+    
+	// Update the voxel system
 	void Update(vec3 player_pos);
 
 	//Save relevant information

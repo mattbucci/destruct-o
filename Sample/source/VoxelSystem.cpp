@@ -17,23 +17,7 @@
 
 VoxelSystem::VoxelSystem()
 {
-    // Perform a test of the polygon system
-    /*Polygon<4> a;
-    a.vertices[0] = vec2(0.0f, 0.0f);
-    a.vertices[1] = vec2(1.0f, 0.0f);
-    a.vertices[2] = vec2(1.0f, 1.0f);
-    a.vertices[3] = vec2(0.0f, 1.0f);
-    a.compute_edges();
-    
-    Polygon<3> b;
-    b.vertices[0] = vec2(-1.0f, 0.75f);
-    b.vertices[1] = vec2(-1.0f, 0.25f);
-    b.vertices[2] = vec2(0.1f, 0.5f);
-    b.compute_edges();
-    
-    std::cout << "intersects => " << (a.Intersects(b) ? "yes" : "no") << std::endl;*/
-    
-	cellRenderer = VoxelDrawSystem::BuildAppropriateSystem();
+    cellRenderer = VoxelDrawSystem::BuildAppropriateSystem();
 
 	//Load the tile textures
 	unsigned int textureWidth, textureHeight;
@@ -131,49 +115,69 @@ static void intersect1D(int & rangeAStart, int & rangeAEnd, int rangeBStart, int
 	rangeAEnd = min(rangeAEnd, rangeBEnd);
 }
 
-//Draw the voxels in a region
-void VoxelSystem::Draw(ShaderGroup * shaders, vec3 drawPos, IntRect drawRegion) {
-	//_ASSERTE(tileData != NULL);
-
-	//Enable voxel texture
+// Draw the voxels in the triangular region
+void VoxelSystem::Draw(ShaderGroup * shaders, vec3 pos, Polygon<4>& drawRegion)
+{
+    // Calculate the longest dimension of the viewing area (how many tiles to search)
+    float largestDimension = 0.0f;
+    for(Polygon<3>::storage_type::iterator edge = drawRegion.edges.begin(); edge != drawRegion.edges.end(); edge++)
+    {
+        float l = glm::length(*edge);
+        largestDimension = (l > largestDimension) ? l : largestDimension;
+    }
+    
+    // Figure out how many tiles we should explore
+    float c = (int) ceil(largestDimension / (float) TILE_SIZE) * (float) TILE_SIZE;
+    
+    // we're on tile
+    float x = floor(pos.x / (float) TILE_SIZE) * (float) TILE_SIZE;
+    float y = floor(pos.y / (float) TILE_SIZE) * (float) TILE_SIZE;
+    
+	// Enable voxel texture
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureId);
-
-	voxelCount = 0;
-
+    
+    // Get the shaders we need
 	GLTerrainProgram * terrainShader = (GLTerrainProgram*)shaders->GetShader("terrain");
 	GL3DProgram * voxelShader = (GL3DProgram*)shaders->GetShader("3d");
-
-
-	//render each viewable rectangle
+    
+	// Begin the rendering context
 	terrainRenderer.StartRendering(terrainShader);
-
-	forTilesInRect(drawRegion,[this,terrainShader,voxelShader,drawRegion](GameTile * tile) {
-		GameTile & current_tile = *tile;
-		//Get the region this tile is in
-		IntRect tileRegion(current_tile.tile_x * TILE_SIZE,current_tile.tile_y * TILE_SIZE,
-			current_tile.tile_x * TILE_SIZE + TILE_SIZE,current_tile.tile_y * TILE_SIZE + TILE_SIZE);
-
-		//Intersect it with the regions you're supposed to be drawing
-		IntRect tileDrawRegion = drawRegion;
-		tileDrawRegion.Intersect(tileRegion);
-		//medium.Intersect(tileRegion);
-		//low.Intersect(tileRegion);
-
-
-		//Now offset the regions by the tile position so that it is relative to the tile
-		vec2 tileOffset = vec2(current_tile.tile_x * TILE_SIZE,current_tile.tile_y * TILE_SIZE);
-		tileDrawRegion -= tileOffset;
-		
-		//Skip zero length segments
-		//Render the given region of the tile in high detail
-		current_tile.Render(voxelShader,terrainShader,&terrainRenderer,cellRenderer,tileDrawRegion,voxelCount);
-
-
-	});
-
+    
+    // Voxel count is zero
+    voxelCount = 0;
+    
+    // Look at all the tiles
+    for(float j = -c; j <= c; j += (float) TILE_SIZE)
+    {
+        for(float i = -c; i <= c; i += (float) TILE_SIZE)
+        {
+            // Calculate the tile world origin and tile index
+            vec2 t(x + i, y + j);
+            vec2 tc = glm::floor(t / (float) TILE_SIZE);
+            
+            // Calculate the polygon of the tile
+            Polygon<4> region;
+            region.vertices[0] = t;
+            region.vertices[1] = t + vec2((float) TILE_SIZE, 0.0f);
+            region.vertices[2] = t + vec2((float) TILE_SIZE, (float) TILE_SIZE);
+            region.vertices[3] = t + vec2(0.0f, (float) TILE_SIZE);
+            region.compute_edges();
+            
+            // If this tile is in the visible set
+            if(drawRegion.Intersects(region))
+            {
+                // Get the tile that the viewing area has intersected
+                GameTile *tile = GetTile(tc);
+                
+                // Render this tile with the visible region
+                tile->Render(voxelShader, terrainShader, &terrainRenderer, cellRenderer, drawRegion, voxelCount);
+            }
+        }
+    }
+    
+    // Finish the terrain rendering context
 	terrainRenderer.FinishRendering(terrainShader);
-
 }
 
 void VoxelSystem::Update(vec3 player_pos){

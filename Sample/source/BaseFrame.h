@@ -7,7 +7,6 @@
 
 #include "VoxelSystem.h"
 #include "GameCamera.h"
-#include "ViewDistanceCalc.h"
 #include "ActorSystem.h"
 #include "FirstPersonModeMobile.h"
 #include "FirstPersonMode.h"
@@ -83,7 +82,6 @@ public:
 	//so it contains all the subsystems
 	GameCamera Camera;
 	VoxelSystem Voxels;
-	ViewDistanceCalc ViewDistance;
 	
 	// First person mode will either be desktop or mobile variant, so use a pointer
 	FirstPersonMode *FirstPerson;
@@ -91,6 +89,9 @@ public:
 	ActorSystem Actors;
 	ParticleCloud Particles;
 
+    // The current view distance
+    float viewDistance;
+    
 	//Private objects which must be initialized after everything else
 	//goes here
 private:

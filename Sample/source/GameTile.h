@@ -6,7 +6,7 @@
 #include "TileCell.h"
 #include "Structure.h"
 #include "IntRect.h"
-
+#include "Polygon.h"
 
 //The width/height of all tiles
 //Must be divisible by 16
@@ -68,10 +68,10 @@ public:
 	//to the removedVoxels value, the first three values are xyz and the forth value
 	//is the material
 	void Crater(IntRect craterRegion, int craterBottomZ, float damageDone, vec3 epicenter, vector<vec4> & removedVoxels);
-
-	//Render the given region using the specified detail level
+    
+    //Render the given region using the specified detail level
 	//the rect should be tile-relative coordinates
-	void Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, IntRect drawRegion, int & voxelCount);
+	void Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, Polygon<4>& drawRegion, int & voxelCount);
 
 	//Loaded tile information is public for fastest access
 	TileCell * Cells;

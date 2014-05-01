@@ -22,7 +22,7 @@ vec3 AidsAction::findHiddenLocation(vec3 startLocation, float desiredAltitude) {
 		lastPos = vec3(twoDGuess,Game()->Voxels.GetPositionHeight(twoDGuess)+desiredAltitude);
 		
 		//Check if you're obscured by fog
-		if (glm::distance(lastPos,player->GetPosition()) > Game()->ViewDistance.GetViewDistance())
+		if (glm::distance(lastPos,player->GetPosition()) > Game()->viewDistance)
 			//This point is in the fog
 			break;
 
