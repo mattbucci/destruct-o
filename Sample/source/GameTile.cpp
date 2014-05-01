@@ -305,7 +305,7 @@ vector<unsigned char> GameTile::SaveTileToMemory() {
 
 //Render the given region using the specified detail level
 //the rect should be tile-relative coordinates
-void GameTile::Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, Polygon<4>& drawRegion, int & voxelCount)
+void GameTile::Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, SimplePolygon<4>& drawRegion, int & voxelCount)
 {
 	// Use the terrain shader
 	terrainShader->UseProgram();
@@ -327,8 +327,8 @@ void GameTile::Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShade
             // Calculate the world coordinate of this chunk
             vec2 t(x + i, y + j);
             
-            // Calculate the polygon of the tile
-            Polygon<4> region;
+            // Calculate the SimplePolygon of the tile
+            SimplePolygon<4> region;
             region.vertices[0] = t;
             region.vertices[1] = t + vec2((float) CHUNK_SIZE, 0.0f);
             region.vertices[2] = t + vec2((float) CHUNK_SIZE, (float) CHUNK_SIZE);

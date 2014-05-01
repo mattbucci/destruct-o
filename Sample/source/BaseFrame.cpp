@@ -12,7 +12,7 @@
 #include "Network.h"
 #include "GLLighting.h"
 #include "Frames.h"
-#include "Polygon.h"
+#include "SimplePolygon.h"
 
 #include "Window.h"
 #include "Button.h"
@@ -298,7 +298,7 @@ void BaseFrame::Draw(double width, double height)
     skybox->Draw(skyboxShader);
 	
 	// Draw the voxels
-    Polygon<4> viewArea;
+    SimplePolygon<4> viewArea;
     Camera.GetViewingArea(viewArea);
     Voxels.Draw(shaders, pos, viewArea);
     

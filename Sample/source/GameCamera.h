@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 #include "GL3DProgram.h"
-#include "Polygon.h"
+#include "SimplePolygon.h"
 
 class GameCamera {
 	vec3 position;
@@ -51,7 +51,7 @@ public:
     float GetDistance();
 
     // Get the viewing area of the camera as a top down triangle
-    void GetViewingArea(Polygon<4>& viewingArea);
+    void GetViewingArea(SimplePolygon<4>& viewingArea);
     
 	//Given a screen coordinate, what 3d vector does that coordinate represent
 	//in game

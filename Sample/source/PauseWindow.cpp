@@ -67,19 +67,11 @@ PauseWindow::PauseWindow()
 
 	//Subscribe Main Menu Buttons to Actions
 	Subscribe<void(Button*)>(&menuSave.EventClicked, [this](Button * b) {
-		if(Game()->Save(Game()->GetSaveLocation() + "data.json.compressed")) {
-			cout << "Save Successful!" << endl;
-		} else {
-			cout << "Save Unsuccessful." << endl;
-		}
+		VoxEngine::SetAsyncTask(new AsyncTask([](){Game()->Save(Game()->GetSaveLocation() + "data.json.compressed");}));
 		Frames::SetSystem(Frames::FRAME_GAME);
 	});
 	Subscribe<void(Button*)>(&menuLoad.EventClicked, [this](Button * b) {
-		if(Game()->Load(Game()->GetSaveLocation() + "data.json.compressed")) {
-			cout << "Load Successful!" << endl;
-		} else {
-			cout << "Load Unsuccessful." << endl;
-		}
+		VoxEngine::SetAsyncTask(new AsyncTask([](){Game()->Load(Game()->GetSaveLocation() + "data.json.compressed");}));
 		Frames::SetSystem(Frames::FRAME_GAME);
 	});
 	Subscribe<void(Button*)>(&menuOptions.EventClicked, [this](Button * b) {
@@ -87,7 +79,8 @@ PauseWindow::PauseWindow()
 	});
 	Subscribe<void(Button*)>(&menuSaveAndQuit.EventClicked, [this](Button * b) {
 		cout << "\'Save & Quit\' Button Clicked" << endl;
-		Game()->Save(Game()->GetSaveLocation() + "data.json.compressed");
+		VoxEngine::SetAsyncTask(new AsyncTask([](){Game()->Save(Game()->GetSaveLocation() + "data.json.compressed");}));
+		
 		Frames::SetSystem(Frames::FRAME_MAINMENU);
 	});
 	Subscribe<void(Button*)>(&menuExit.EventClicked, [this](Button * b) {
