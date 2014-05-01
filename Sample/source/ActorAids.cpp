@@ -29,7 +29,8 @@ const float COST_DEPLOY_BOMBER = 60.0f;
 CLASS_SAVE_CONSTRUCTOR(ActorAids)
 	 
 ActorAids::ActorAids() :
-	intensityAdded(intensityAveragePeriod) {
+	intensityAdded(intensityAveragePeriod),
+	intensity(500,20){
 	spawnedNasties = false;
 
 	//Register possible actions
@@ -41,7 +42,7 @@ ActorAids::ActorAids() :
 	//Random offset for the intensity
 	intensityCalculationOffset = Utilities::random(-10.0f,10.0f);
 
-	currentIntensity = 0;
+	baseIntensity = 0;
 	targetIntensity = 0;
 	cycleId = 0;
 }
@@ -136,9 +137,6 @@ bool ActorAids::Update() {
 	//Update cities
 	populateCities();
 
-	if (spawnedNasties)
-		return Actor::Update();;
-
 	//Calculate the target intensity using magic
 	//Use game time as a modifier
 	float timeModifier = (float)(min(Game()->Now(),(double)StartGameBreakLength))/StartGameBreakLength;
@@ -151,7 +149,7 @@ bool ActorAids::Update() {
 	for (auto it = actions.begin(); it != actions.end(); ) {
 		if ((*it)->Update()) {
 			//cleanup time
-			currentIntensity -= (*it)->GetIntensityCost();
+			baseIntensity -= (*it)->GetIntensityCost();
 			delete *it;
 			//remove the action
 			it = actions.erase(it);
@@ -160,9 +158,18 @@ bool ActorAids::Update() {
 			it++;
 	}
 
+	//Calculate the current intensity right now
+	float currentIntensity = baseIntensity;
+
+	//Modify by the player's vital stats
+	currentIntensity *= .5f+.5f*(1.0f - Game()->Actors.Player()->GetLifePercentage());
+
+	//Add the instant intensity to the sample
+	intensity.AddSample(currentIntensity);
+
 	//If the current intensity is higher than the target
 	//nothing to do
-	if (currentIntensity > targetIntensity) {
+	if (intensity.GetAverage() > targetIntensity) {
 		intensityAdded.AddSample(0);
 		return Actor::Update();
 	}
@@ -186,7 +193,7 @@ bool ActorAids::Update() {
 	advance(randomAction,randChoice);
 	
 	//Perform the selected action
-	currentIntensity += randomAction->first;
+	baseIntensity += randomAction->first;
 	intensityAdded.AddSample(randomAction->first);
 	cout << "AI Taking action[" << randChoice << "] with cost: " << randomAction->first << "\n";
 	//Another dumb thing

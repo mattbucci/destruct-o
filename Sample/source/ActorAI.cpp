@@ -374,11 +374,6 @@ void ActorAI::expensiveUpdate() {
 	else
 		enemyPosition.Clear();
 
-	//Check if the target enemy is still alive
-	//If their actor is about to be destroyed
-	//erase the reference
-	if ((targetEnemy != NULL) && targetEnemy->Dead())
-		targetEnemy = NULL;
 
 	bool pullingTrigger = false;
 
@@ -473,6 +468,15 @@ void ActorAI::cheapUpdate() {
 
 
 bool ActorAI::Update() {
+	//Must be done every single update
+	//before everything else
+
+	//Check if the target enemy is still alive
+	//If their actor is about to be destroyed
+	//erase the reference
+	if ((targetEnemy != NULL) && targetEnemy->Dead())
+		targetEnemy = NULL;
+
 	//Do expensive updates at 10hz
 	if (Game()->Actors.Aids()->DoHeavyCycle(aiID))
 		expensiveUpdate();
@@ -594,6 +598,9 @@ void ActorAI::findMuzzlePosition() {
     mat4 globalTransformA = model->GetTransform().TransformMatrix() * nA->TransformMatrix();
 
     muzzlePositionA= vec3(globalTransformA * vec4(data->MuzzleOffsetA, 1.0));
+	//Check for NaN
+	_ASSERTE(muzzlePositionA.x == muzzlePositionA.x);
+	
 
     if (data->UseDualMuzzles) {
         //Find the second muzzle

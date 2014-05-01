@@ -51,15 +51,16 @@ GameTile * VoxelSystem::GetTile(vec2 pos) {
 TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
 	GameTile * tileData = GetTile(vec2(floor(pos.x / TILE_SIZE), floor(pos.y / TILE_SIZE)));
 
+	//Floor here to eliminate occasional rounding error
+	pos = glm::floor(pos);
+
 	//Convert to relative position
 	pos.x -= tileData->tile_x*TILE_SIZE;
 	pos.y -= tileData->tile_y*TILE_SIZE;
 
-	if ((pos.x < 0) || (pos.y < 0))
-		return NULL;
-	
-	if ((pos.x >= TILE_SIZE) || (pos.y >= TILE_SIZE))
-		return NULL;
+	//ensure basic assumptions
+	_ASSERTE ((pos.x >= 0) && (pos.y >= 0));
+	_ASSERTE ((pos.x < TILE_SIZE) && (pos.y < TILE_SIZE));
 
 	return tileData->GetTileCell(pos);
 }

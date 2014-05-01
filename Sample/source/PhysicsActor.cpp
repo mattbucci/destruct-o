@@ -47,6 +47,10 @@ float PhysicsActor::GetLife() {
 	return life;
 }
 
+float PhysicsActor::GetLifePercentage() {
+	return life/maxLife;
+}
+
 void PhysicsActor::SetFaction(FactionId faction) {
 	this->faction = faction;
 }
