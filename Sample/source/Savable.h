@@ -238,13 +238,13 @@ protected:
 
 public:
 	//Serialize data
-	static vector<unsigned char> Serialize(Savable * classToSerialize, bool compressed = true);
+	static vector<unsigned char> Serialize(Savable * classToSerialize, bool compressed = false);
 
 	//Deserialize data into a new class and return it
-	static Savable * Deserialize(vector<unsigned char> serializedData, bool compressed = true);
+	static Savable * Deserialize(vector<unsigned char> serializedData, bool compressed = false);
 	
 	//Deserialize data into an existing class
-	static void Deserialize(vector<unsigned char> serializedData, Savable * saveInto, bool compressed = true);
+	static void Deserialize(vector<unsigned char> serializedData, Savable * saveInto, bool compressed = false);
 
 
 	virtual string Name() = 0;

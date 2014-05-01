@@ -85,7 +85,7 @@ void GameTile::readImageData(const vector<unsigned char> & imageData) {
 		//Stack height must be calculated separately
 		Cells[i/4].stackHeight = 0;
 		Cells[i/4].cellHealth = imageData[i+2];
-		Cells[i/4].cellMaxHealth = Cells[i/4].cellHealth;
+		Cells[i/4].cellMaxHealth = imageData[i+3];
 	}
 
 	UpdateTileSection(0,0,TILE_SIZE,TILE_SIZE);
@@ -274,8 +274,8 @@ vector<unsigned char> GameTile::recode() {
 			int cellIndex = (x+y*TILE_SIZE);
 			rawTileData[cellIndex*4+0] = Cells[cellIndex].height;
 			rawTileData[cellIndex*4+1] = Cells[cellIndex].materialId;
-			rawTileData[cellIndex*4+2] = 0;
-			rawTileData[cellIndex*4+3] = 0;
+			rawTileData[cellIndex*4+2] = Cells[cellIndex].cellHealth;
+			rawTileData[cellIndex*4+3] = Cells[cellIndex].cellMaxHealth;
 		}
 	}
 	return rawTileData;
