@@ -11,16 +11,19 @@ GameCamera::GameCamera(float vFov) : verticalFov(vFov)
 	
 }
 
-void GameCamera::UpdateViewSize(vec2 viewSize) {
+void GameCamera::UpdateViewSize(vec2 viewSize)
+{
 	viewPortSize = viewSize;
+    horizontalFov = (viewSize.x/viewSize.y) * verticalFov;
 }
 
 
 //Move the camera view point
-void GameCamera::SetCameraView(vec3 position, vec3 direction) {
+void GameCamera::SetCameraView(vec3 position, vec3 direction, float distance) {
 	_ASSERTE(direction != vec3());
 	this->position = position;
 	this->direction = direction;
+    this->distance = distance;
 }
 //get camera position
 vec3 GameCamera::GetPosition() {
@@ -29,6 +32,44 @@ vec3 GameCamera::GetPosition() {
 //get camera direction
 vec3 GameCamera::GetDirection() {
 	return direction;
+}
+// get camera distance
+float GameCamera::GetDistance()
+{
+    return distance;
+}
+
+// Get the viewing area of the camera as a top down triangle
+void GameCamera::GetViewingArea(Polygon<4>& viewingArea)
+{
+    // Calculate the looking vector in 2 dimensions
+    vec2 direction = glm::normalize(vec2(this->direction));
+    
+    // Calculate the player's postion
+    vec2 pos = vec2(position) + (vec2(-direction.x, -direction.y) * 16.0f);
+    
+    // Calculate vFov/2 in radians
+    float halfFov = (horizontalFov / 2) * (M_PI / 180.0f);
+    float pcs = cos(halfFov);
+    float ncs = cos(-halfFov);
+    float psn = sin(halfFov);
+    float nsn = sin(-halfFov);
+    
+    // Get the length of the sides of the viewing triangle
+    float sideLength = distance / cos(halfFov);
+    
+    // Calculate the vectors for the far left and right vertices of the viewing triangle
+    vec2 lvec = vec2(direction.x * pcs - direction.y * psn, direction.x * psn + direction.y * pcs);
+    vec2 rvec = vec2(direction.x * ncs - direction.y * nsn, direction.x * nsn + direction.y * ncs);
+    
+    // Calculate the vertices of the viewing triangel
+    viewingArea.vertices[0] = pos + (vec2(-direction.y, direction.x) * 16.0f);
+    viewingArea.vertices[1] = pos + (vec2(direction.y, -direction.x) * 16.0f);
+    viewingArea.vertices[2] = pos + (rvec * sideLength);
+    viewingArea.vertices[3] = pos + (lvec * sideLength);
+    
+    // Compute the edges
+    viewingArea.compute_edges();
 }
 
 //Cut's dependency on gluUnproject

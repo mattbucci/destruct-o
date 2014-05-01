@@ -305,30 +305,48 @@ vector<unsigned char> GameTile::SaveTileToMemory() {
 
 //Render the given region using the specified detail level
 //the rect should be tile-relative coordinates
-void GameTile::Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, IntRect drawRegion, int & voxelCount)
+void GameTile::Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, Polygon<4>& drawRegion, int & voxelCount)
 {
-	_ASSERTE(TILE_SIZE >= drawRegion.EndX);
-	_ASSERTE(TILE_SIZE >= drawRegion.EndY);
-
+	// Use the terrain shader
 	terrainShader->UseProgram();
-
-	//offset rendering for tile location
+    
+	// Offset the tile to the correct location
 	terrainShader->Model.PushMatrix();
 	terrainShader->Model.Translate(vec3(tile_x * TILE_SIZE, tile_y * TILE_SIZE, 0));
-	//Scale for level of detail requested
 	terrainShader->Model.Apply();
-
+    
+    // we're on tile
+    float x = (tile_x * TILE_SIZE);
+    float y = (tile_y * TILE_SIZE);
+    
 	//Draw the tiles in the region specified
-	for (int ry = drawRegion.StartY; ry < drawRegion.EndY; ry+= CHUNK_SIZE) {
-		for (int rx = drawRegion.StartX;rx < drawRegion.EndX; rx+= CHUNK_SIZE) {
-			//Find the chunk the given x,y is in
-			int chunkx = rx/CHUNK_SIZE;
-			int chunky = ry/CHUNK_SIZE;
-
-			//Draw that chunk
-			TerrainChunk * chunk = chunks[chunky*(TILE_SIZE/CHUNK_SIZE)+chunkx];
-			terrainRenderer->RenderTerrainChunk(vec2(tile_x,tile_y)*(float)TILE_SIZE,chunk,terrainShader);
-			voxelCount += chunk->VoxelCount;
+	for (float j = 0; j < TILE_SIZE; j += CHUNK_SIZE)
+    {
+		for (float i = 0; i < TILE_SIZE; i += CHUNK_SIZE)
+        {
+            // Calculate the world coordinate of this chunk
+            vec2 t(x + i, y + j);
+            
+            // Calculate the polygon of the tile
+            Polygon<4> region;
+            region.vertices[0] = t;
+            region.vertices[1] = t + vec2((float) CHUNK_SIZE, 0.0f);
+            region.vertices[2] = t + vec2((float) CHUNK_SIZE, (float) CHUNK_SIZE);
+            region.vertices[3] = t + vec2(0.0f, (float) CHUNK_SIZE);
+            region.compute_edges();
+            
+            // Does this chunk intersect the viewing area
+            if(drawRegion.Intersects(region))
+            {
+                // Compute the coordinate of the chunk and get it
+                size_t cx = i / CHUNK_SIZE;
+                size_t cy = j / CHUNK_SIZE;
+                TerrainChunk * chunk = chunks[cy*(TILE_SIZE/CHUNK_SIZE)+cx];
+                
+                // Render the chunk
+                terrainRenderer->RenderTerrainChunk(vec2(tile_x,tile_y)*(float)TILE_SIZE,chunk,terrainShader);
+                voxelCount += chunk->VoxelCount;
+            }
 		}
 	}
 	//Undo tile translation

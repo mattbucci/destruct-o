@@ -12,6 +12,7 @@
 #include "Network.h"
 #include "GLLighting.h"
 #include "Frames.h"
+#include "Polygon.h"
 
 #include "Window.h"
 #include "Button.h"
@@ -27,6 +28,8 @@
 
 #include "GLTextureCubeMap.h"
 
+#define MAX_DRAW_DISTANCE 300.0f
+#define MIN_DRAW_DISTANCE 30.0f
 
 //Make baseframe a singleton now
 BaseFrame * BaseFrame::instance = NULL;
@@ -233,24 +236,24 @@ void BaseFrame::Draw(double width, double height)
 	// Update the texture caching system
 	Textures.Refresh();
     
-	// Apply view distance (based on the stored slider)
-    ViewDistance.viewDistance = VoxEngine::GlobalSavedData.GameOptions.ViewDistance;
-    float fogDistance = ViewDistance.GetViewDistance() * 0.9f;
+	// Calculate the view and fog distances from the stored slider
+    viewDistance = glm::mix(MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE, VoxEngine::GlobalSavedData.GameOptions.ViewDistance);
+    float fogDistance = viewDistance * 0.9f;
     
     // Compute the view for size vector
 	vec2 viewPortSize = vec2((float)width,(float)height);
     
-	//Save size in camera as well (for unprojection)
+	// Save size in camera as well (for unprojection)
 	Camera.UpdateViewSize(viewPortSize);
     Actors.Player()->WeaponCamera().UpdateViewSize(viewPortSize);
-
-	//We add 1.5 to ground level. This assumes the person is 5ft between the ground and his eye line
+    
+	// We add 1.5 to ground level. This assumes the person is 5ft between the ground and his eye line
 	vec3 pos = Actors.Player()->GetPosition();
 
-	// Draw the frame
-	// camera draw also sets up world light
-	Camera.SetCameraView(pos,FirstPerson->GetLookVector());
-
+	// Setup the camera view for the player
+	Camera.SetCameraView(pos, FirstPerson->GetLookVector(), viewDistance);
+    Actors.Player()->WeaponCamera().SetCameraView(vec3(0,0,0), glm::vec3(0,-1,0), viewDistance); // BAD BUT TEMPORARY
+    
 	// Apply properties to each shader
 	SetupShader<GLTerrainProgram>("terrain",fogDistance);
 	Camera.Apply((GLTerrainProgram*)shaders->GetShader("terrain"));
@@ -285,7 +288,7 @@ void BaseFrame::Draw(double width, double height)
     
     // Setup the skybox's camera
     skyboxShader->Camera.SetCameraPosition(vec3(0,0,0), FirstPerson->GetLookVector());
-    skyboxShader->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25, ViewDistance.GetViewDistance()); //width/height
+    skyboxShader->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25, viewDistance); //width/height
     skyboxShader->Camera.Apply();
     
     // Apply the model transform (identity transform =/)
@@ -294,8 +297,10 @@ void BaseFrame::Draw(double width, double height)
     // Draw the skybox
     skybox->Draw(skyboxShader);
 	
-	// Draw voxels
-	Voxels.Draw(shaders, pos, ViewDistance.GetDrawRegion(vec2(pos), FirstPerson->GetAngleVector().x/180.0f*(float)M_PI));
+	// Draw the voxels
+    Polygon<4> viewArea;
+    Camera.GetViewingArea(viewArea);
+    Voxels.Draw(shaders, pos, viewArea);
     
 	//The physics system uses the same texture that the voxels above binds every time it draws
 	//so it must always immediately follow Voxels.draw()
@@ -340,7 +345,7 @@ void BaseFrame::Draw(double width, double height)
 	//draw the hud
 	hud.DrawAndUpdate(shaders2d,viewPortSize);
 
-		//Call the parent draw to draw interface
+    //Call the parent draw to draw interface
 	GameSystem::Draw(width,height);
 } 
 

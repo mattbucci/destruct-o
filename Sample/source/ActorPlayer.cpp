@@ -26,12 +26,13 @@ ActorPlayer::ActorPlayer()
 	//setup defaults
 	Size = vec3(2,2,6);
 	maxLife = 200;
+    
 	//Start the player off in abouts the center
-	Position = (vec3(34,40,0));
+	Position = (vec3(0,0,0));
     deltaPosition = 0.0;
 	debug = true;
 	debug_target_height = 0;
-    weaponCamera.SetCameraView(vec3(0,0,0), glm::vec3(0,-1,0));
+    weaponCamera.SetCameraView(vec3(0,0,0), glm::vec3(0,-1,0), 1000);
     
 	//Start the user with full charge
 	energyPool = 100;
