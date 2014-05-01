@@ -77,6 +77,8 @@ void GameSystem::OnFrameLeave() {
 	//Send the leave event to the controls
 	InputEvent ie(InputEvent::MouseMove,0,-1,-1);
 	Controls.FireEvent(ie);
+	//Clear out held keys
+	currentlyPressedKeys.clear();
 }
 
 //Set the Width and Height of Frame
