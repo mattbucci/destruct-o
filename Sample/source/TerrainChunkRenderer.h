@@ -60,6 +60,7 @@ class TerrainChunkRenderer {
 	//A list of all possible render slots which are in use
 	map<ComparablePosition,HotChunk*> renderSlots;
 	vector<HotChunk*> openSlots;
+    GLTerrainProgram *previousShader;
 public:
 	TerrainChunkRenderer();
 	~TerrainChunkRenderer();

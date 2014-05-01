@@ -309,7 +309,7 @@ void BaseFrame::Draw(double width, double height)
 
 	//Turn lights back on because I'm not sure if this is necessary
 	shaders3d->Lights.On();
-	shaders3d->Lights.Apply();
+	//shaders3d->Lights.Apply();
     
     // Setup the mesh shader boneless
     MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
@@ -334,6 +334,7 @@ void BaseFrame::Draw(double width, double height)
 
 	//Set up the 2D Shader
 	GL2DProgram * shaders2d = SetWidthHeight(viewPortSize.x,viewPortSize.y);
+    
 	//Enable sensible defaults
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
@@ -341,8 +342,8 @@ void BaseFrame::Draw(double width, double height)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 	// Draw the UI for joysticks
-
 	FirstPerson->Draw(width, height, shaders2d);
+    
 	//draw the hud
 	hud.DrawAndUpdate(shaders2d,viewPortSize);
 

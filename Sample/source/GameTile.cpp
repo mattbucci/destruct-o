@@ -324,9 +324,6 @@ void GameTile::Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShade
     float imax = glm::clamp<float>(drawRegionBoundingBox.vertices[2].x, 0.0f, TILE_SIZE);
     float jmax = glm::clamp<float>(drawRegionBoundingBox.vertices[2].y, 0.0f, TILE_SIZE);
     
-	// Use the terrain shader
-	terrainShader->UseProgram();
-    
 	// Offset the tile to the correct location
 	terrainShader->Model.PushMatrix();
 	terrainShader->Model.Translate(vec3(pos, 0));

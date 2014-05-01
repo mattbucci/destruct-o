@@ -5,6 +5,7 @@
 
 TerrainChunkRenderer::TerrainChunkRenderer()
 {
+    previousShader = NULL;
 	cout << "Chunk vertex data size: " << sizeof(TerrainChunk::ChunkVertexData) << "\n";
 }
 
@@ -69,7 +70,8 @@ void TerrainChunkRenderer::HotChunk::Set(TerrainChunk * chunk, GLTerrainProgram 
 
 void TerrainChunkRenderer::StartRendering(GLTerrainProgram * shader)
 {
-
+	// Use the terrain shader
+	shader->UseProgram();
 }
 
 void TerrainChunkRenderer::RenderTerrainChunk(vec2 tilePos, TerrainChunk * chunk, GLTerrainProgram * shader) {
