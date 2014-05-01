@@ -6,8 +6,8 @@
 class GL3DProgram;
 
 //Learning parameters are within the CalculateAndApply function
-#define MAX_DRAW_DISTANCE 300
-#define MIN_DRAW_DISTANCE 30
+#define MAX_DRAW_DISTANCE 250
+#define MIN_DRAW_DISTANCE 80
 
 class ViewDistanceCalc {
 public:

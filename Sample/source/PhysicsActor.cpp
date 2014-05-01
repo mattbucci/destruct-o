@@ -2,6 +2,10 @@
 #include "PhysicsActor.h"
 #include "BaseFrame.h"
 
+#include "ModelGroup.h"
+#include "ModelInstance.h"
+#include "Model.h"
+
 PhysicsActor::PhysicsActor(FactionId faction)
     : Velocity(velocity), Position(position), Acceleration(acceleration), Size(size)
 {

@@ -128,6 +128,13 @@ void CityGen::construct_city(GameTile * tile, vec3 pos)
 			cell.cellHealth = 25;
 			cell.cellMaxHealth = 25;
 		}
+	}
+
+	//Generate turrets separately
+	for (int p = 0; p < lineCount; p++) {
+		vec2 lineDirection = glm::normalize(vec2(cos(anglePart*p),sin(anglePart*p)));
+		float lineLength = citysize*1.5;
+		float lineSection = lineLength/samples;
 
 		if ((p % turretSkip) == 0) {
 			//Place turret
@@ -147,8 +154,8 @@ void CityGen::construct_city(GameTile * tile, vec3 pos)
 			cityData->gunAlive.push_back(true);
 			cityData->gunPositions.push_back(tileOffset+vec3(spos,newHeight));
 		}
-
 	}
+
 
 	//Different heights in the spire
 	int ringHeights[5] = {

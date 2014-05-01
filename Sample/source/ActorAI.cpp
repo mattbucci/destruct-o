@@ -6,6 +6,10 @@
 #include "BaseFrame.h"
 #include "WeaponAI.h"
 
+#include "ModelGroup.h"
+#include "ModelInstance.h"
+#include "Model.h"
+
 #define TWO_PI ((float)(M_PI*2.0f))
 
 

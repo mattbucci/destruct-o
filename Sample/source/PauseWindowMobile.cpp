@@ -3,11 +3,8 @@
 #include "PauseWindowMobile.h"
 #include "BaseFrame.h"
 
-PauseWindowMobile::PauseWindowMobile(void) {
 
-}
-
-PauseWindowMobile::PauseWindowMobile(BaseFrame* parent) : PauseWindow(parent)
+PauseWindowMobile::PauseWindowMobile()
 {
 	//On Screen Buttons Container
 	onScreenButtonsRect.position = Rect(0, 30, 60, 60);
@@ -15,7 +12,7 @@ PauseWindowMobile::PauseWindowMobile(BaseFrame* parent) : PauseWindow(parent)
 	onScreenButtonsRect.hPin = Control::MAX;
 	onScreenButtonsRect.color = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	onScreenButtonsRect.SetVisible(true);
-	parent->Controls.AddWindow(&onScreenButtonsRect);
+	Game()->Controls.AddWindow(&onScreenButtonsRect);
 
 	//Set up On Screen Buttons
 	menuButton.position = Rect(5, 5, 50, 50);

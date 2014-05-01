@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 #include "InputEvent.h"
-#include "Options.h"
+#include "GameData.h"
 #include "AsyncTask.h"
 #include "SyncTask.h"
 #include "GameEvent.h"
@@ -68,8 +68,11 @@ public:
 	//do so from here
 	static SyncTask SynchronousTask;
 
-	//Account Options
-	static Options AccountOptions;
+	//Saved global game data
+	//A good place for things that are per-device
+	//instead of per-save
+	//Such as options, account data, etc.
+	static GameData GlobalSavedData;
     
     // state changed changed event
     static GameEvent<void (bool)> ApplicationStateChanged;

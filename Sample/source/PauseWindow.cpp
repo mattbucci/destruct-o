@@ -2,18 +2,33 @@
 
 #include "PauseWindow.h"
 #include "BaseFrame.h"
+#include "Slider.h"
 
 typedef pair<string,int> intOption;
-typedef pair<string,float> floatOption;
 
-PauseWindow::PauseWindow(void) {
 
+
+void PauseWindow::AddSliderOption(int sliderNumber, string sliderName, vector<floatOption> options, float * appliesTo) {
+	Label * sliderLabel = new Label();
+	Slider<float> * slider = new Slider<float>();
+
+	//Option View Distance
+	sliderLabel->vPin = slider->vPin = Control::MIN;
+	sliderLabel->hPin = slider->hPin = Control::CENTER;
+	sliderLabel->position = Rect(0, 50 + 80 * sliderNumber, 300, 20);
+	slider->SetPosition(Rect(0, 80 + 80 * sliderNumber, 300, 40));
+	sliderLabel->SetText(sliderName);
+	slider->SetValue(appliesTo);
+	optsRect.AddControl(sliderLabel);
+	optsRect.AddControl(slider);
+    
+
+	slider->SetElements(options);
 }
 
-PauseWindow::PauseWindow(BaseFrame* parent)
+PauseWindow::PauseWindow()
 {
 	w = 0, h = 0;
-	this->p = parent;
 
 	//Set up Self
 	position = Rect(0, 20, 800, 580);
@@ -51,14 +66,14 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 
 	//Subscribe Main Menu Buttons to Actions
 	Subscribe<void(Button*)>(&menuSave.EventClicked, [this](Button * b) {
-		if(this->p->Save(Game()->GetSaveLocation() + "data.json.compressed")) {
+		if(Game()->Save(Game()->GetSaveLocation() + "data.json.compressed")) {
 			cout << "Save Successful!" << endl;
 		} else {
 			cout << "Save Unsuccessful." << endl;
 		}
 	});
 	Subscribe<void(Button*)>(&menuLoad.EventClicked, [this](Button * b) {
-		if(this->p->Load(Game()->GetSaveLocation() + "data.json.compressed")) {
+		if(Game()->Load(Game()->GetSaveLocation() + "data.json.compressed")) {
 			cout << "Load Successful!" << endl;
 		} else {
 			cout << "Load Unsuccessful." << endl;
@@ -69,7 +84,7 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 	});
 	Subscribe<void(Button*)>(&menuSaveAndQuit.EventClicked, [this](Button * b) {
 		cout << "\'Save & Quit\' Button Clicked" << endl;
-		this->p->Save(Game()->GetSaveLocation() + "data.json.compressed");
+		Game()->Save(Game()->GetSaveLocation() + "data.json.compressed");
 		exit(0);
 	});
 	Subscribe<void(Button*)>(&menuExit.EventClicked, [this](Button * b) {
@@ -94,38 +109,7 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 		this->hideOptsMenu();
 	});
 
-	//Option View Distance
-	optsViewDistanceLabel.vPin = optsViewDistance.vPin = Control::MIN;
-	optsViewDistanceLabel.hPin = optsViewDistance.hPin = Control::CENTER;
-	optsViewDistanceLabel.position = Rect(0, 50 + 80 * 0, 300, 20);
-	optsViewDistance.SetPosition(Rect(0, 80 + 80 * 0, 300, 40));
-	optsViewDistanceLabel.SetText("View Distance");
-	optsViewDistance.SetValue(&VoxEngine::AccountOptions.ViewDistance);
-	optsRect.AddControl(&optsViewDistanceLabel);
-	optsRect.AddControl(&optsViewDistance);
-    
-    // View distance options
-    floatOption viewDistanceOptions[] =
-    {
-        floatOption("TI-84", 0.20f),
-        floatOption("Mobile", 0.40f),
-        floatOption("Laptop", 0.60f),
-        floatOption("Desktop", 0.80f),
-        floatOption("$oopah Us3r", 1.0f),
-    };
-    vector<floatOption> viewDistance(viewDistanceOptions, viewDistanceOptions + (sizeof(viewDistanceOptions) / sizeof(viewDistanceOptions[0])));
-	optsViewDistance.SetElements(viewDistance);
-
 	//Option HUD Transparency
-	optsHUDTransparencyLabel.vPin = optsHUDTransparency.vPin = Control::MIN;
-	optsHUDTransparencyLabel.hPin = optsHUDTransparency.hPin = Control::CENTER;
-	optsHUDTransparencyLabel.position = Rect(0, 50 + 80 * 1, 300, 20);
-	optsHUDTransparency.SetPosition(Rect(0, 80 + 80 * 1, 300, 40));
-	optsHUDTransparencyLabel.SetText("HUD Transparency");
-	optsHUDTransparency.SetValue(&VoxEngine::AccountOptions.HUDTransparency);
-	optsRect.AddControl(&optsHUDTransparencyLabel);
-	optsRect.AddControl(&optsHUDTransparency);
-
 	floatOption HUDTransOpts[] = {
 		floatOption("0%", .0f),
 		floatOption("10%", .1f),
@@ -140,7 +124,33 @@ PauseWindow::PauseWindow(BaseFrame* parent)
 		floatOption("100%", 1.0f)
 	};
 	vector<floatOption> HUDTrans(HUDTransOpts, HUDTransOpts + sizeof(HUDTransOpts) / sizeof(HUDTransOpts[0]));
-	optsHUDTransparency.SetElements(HUDTrans);
+	AddSliderOption(0,"HUD Transparency",HUDTrans,&VoxEngine::GlobalSavedData.GameOptions.HUDTransparency);
+    
+    // View distance options
+    floatOption viewDistanceOptions[] =
+    {
+        floatOption("TI-84", 0.00f),
+        floatOption("Mobile", 0.25f),
+        floatOption("Laptop", 0.5f),
+        floatOption("Desktop", 0.75f),
+        floatOption("$oopah Us3r", 1.0f),
+    };
+    vector<floatOption> viewDistance(viewDistanceOptions, viewDistanceOptions + (sizeof(viewDistanceOptions) / sizeof(viewDistanceOptions[0])));
+	AddSliderOption(1,"View Distance",viewDistance,&VoxEngine::GlobalSavedData.GameOptions.ViewDistance);
+
+    // Physics
+    floatOption basicOptions[] =
+    {
+        floatOption("Very Low", 0.00f),
+        floatOption("Low", 0.25f),
+        floatOption("Medium", 0.5f),
+        floatOption("High", 0.75f),
+        floatOption("VeryHigh", 1.0f),
+    };
+	vector<floatOption> basicOptionsVector(basicOptions, basicOptions + (sizeof(basicOptions) / sizeof(basicOptions[0])));
+	AddSliderOption(2,"Physics",basicOptionsVector,&VoxEngine::GlobalSavedData.GameOptions.PhysicsAccuracy);
+	//Particles
+	AddSliderOption(3,"Particles",basicOptionsVector,&VoxEngine::GlobalSavedData.GameOptions.ParticleQuality);
 }
 
 
