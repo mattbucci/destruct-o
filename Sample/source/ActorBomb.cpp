@@ -3,6 +3,10 @@
 #include "BaseFrame.h"
 #include "WeaponAI.h"
 
+#include "ModelGroup.h"
+#include "ModelInstance.h"
+#include "Model.h"
+
 CLASS_SAVE_CONSTRUCTOR(ActorBomb);
 
 ActorBomb::ActorBomb() : ActorProjectile(GameFactions::FACTION_HOSTILE) {

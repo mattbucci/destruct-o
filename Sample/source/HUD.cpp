@@ -52,7 +52,7 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	float px = player->GetPosition().x;
 	float py = player->GetPosition().y;
 	float playerAngle = fps->GetAngleVector().x;
-	float hudOpaque = 1.0f - VoxEngine::AccountOptions.HUDTransparency;
+	float hudOpaque = 1.0f - VoxEngine::GlobalSavedData.GameOptions.HUDTransparency;
 
 	// ---------------------------------
 	// |||||||||| CHARGE BAR |||||||||||

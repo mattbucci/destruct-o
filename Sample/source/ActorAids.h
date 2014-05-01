@@ -24,10 +24,15 @@ class ActorAids : public Actor {
     
 	//Intensity information
 	float targetIntensity;
-	float currentIntensity;
+	//The intensity added by all the enemies deployed
+	float baseIntensity;
     
 	//Current intensity delta
 	MovingAverage<float> intensityAdded;
+
+	//The approximate current intensity
+	//found by averaging all the instant intensities over the last 10 seconds
+	MovingAverage<float> intensity;
     
 	//A list of actions that can be taken by AIDS
     typedef map<float,function<AidsAction*(vec3)>> action_store;
@@ -81,6 +86,7 @@ public:
 		CLASS_CONTAINER_MEMBER(pathingRequests,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_VEC2);
 
 		CLASS_MEMBER(intensityAdded,ReflectionData::SAVE_INSTANCE);
+		CLASS_MEMBER(intensity,ReflectionData::SAVE_INSTANCE);
 		CLASS_MEMBER(intensityCalculationOffset,ReflectionData::SAVE_FLOAT);
 		CLASS_CONTAINER_MEMBER(actions,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE);
 		CLASS_CONTAINER_MEMBER(cities,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE);

@@ -150,6 +150,23 @@ void Slider<T>::SetElements(const vector<pair<string, T>> in) {
 	values = vector<pair<string, T>>(in);
 	max = (in.size() > 0) ? in.size() - 1 : 0;
 	index = 0;
+	//select the index that most closely matches the value we're interested in
+	T curDiff = 100000;
+	int guessedIndex = 0;
+	for (auto choice : values) {
+		T diff = choice.second - *value;
+		//typeless absolute value
+		if (diff < 0)
+			diff = -diff;
+		
+		if (diff < curDiff) {
+			index = guessedIndex;
+			curDiff = diff;
+		}
+
+		guessedIndex++;
+	}
+
 	updateText();
 	updateValue();
 }

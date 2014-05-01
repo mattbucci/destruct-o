@@ -2,6 +2,10 @@
 #include "PhysicsActor.h"
 #include "BaseFrame.h"
 
+#include "ModelGroup.h"
+#include "ModelInstance.h"
+#include "Model.h"
+
 PhysicsActor::PhysicsActor(FactionId faction)
     : Velocity(velocity), Position(position), Acceleration(acceleration), Size(size)
 {
@@ -45,6 +49,10 @@ bool PhysicsActor::BeingDamaged() {
 //Get the current life of this actor
 float PhysicsActor::GetLife() {
 	return life;
+}
+
+float PhysicsActor::GetLifePercentage() {
+	return life/maxLife;
 }
 
 void PhysicsActor::SetFaction(FactionId faction) {

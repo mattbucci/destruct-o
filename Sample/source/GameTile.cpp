@@ -85,7 +85,7 @@ void GameTile::readImageData(const vector<unsigned char> & imageData) {
 		//Stack height must be calculated separately
 		Cells[i/4].stackHeight = 0;
 		Cells[i/4].cellHealth = imageData[i+2];
-		Cells[i/4].cellMaxHealth = Cells[i/4].cellHealth;
+		Cells[i/4].cellMaxHealth = imageData[i+3];
 	}
 
 	UpdateTileSection(0,0,TILE_SIZE,TILE_SIZE);
@@ -198,7 +198,7 @@ TileCell * GameTile::GetTileCell(vec2 pos) {
 
 //Carves a square crater from fx,fy to tox,toy to depth "depth" and adds all removed voxels
 //to the removedVoxels value
-void GameTile::Crater(IntRect craterRegion, int craterBottomZ, float damageDone, vec3 epicenter, vector<vec4> & removedVoxels) {
+void GameTile::Crater(IntRect craterRegion, int craterBottomZ, float damageDone, vec3 epicenter, float radius, vector<vec4> & removedVoxels) {
 	_ASSERTE((craterRegion.StartX >= 0) && (craterRegion.StartY >= 0));
 	_ASSERTE((craterRegion.StartX < (float)TILE_SIZE) && (craterRegion.StartY < (float)TILE_SIZE));	
 	_ASSERTE((craterRegion.StartX <= craterRegion.EndX) && (craterRegion.StartY <= craterRegion.EndY));
@@ -217,8 +217,8 @@ void GameTile::Crater(IntRect craterRegion, int craterBottomZ, float damageDone,
 
 			//Damage the voxel
 			//determine damage scaled with distance from the epicenter
-			float damageScaler = ((craterRegion.EndX - craterRegion.StartX)*1.5f - glm::distance(vec2(x,y),vec2(epicenter)));
-			damageScaler = max(0.0f,min(damageScaler,1.0f));
+			float damageScaler = (radius - glm::distance(vec2(x,y),vec2(epicenter))/radius);
+			damageScaler = max(0.1f,min(damageScaler,1.0f));
 			float damage = damageDone*damageScaler;
 			float originalLife = cell.cellHealth;
 			float newLife = floor(originalLife-damage);
@@ -274,8 +274,8 @@ vector<unsigned char> GameTile::recode() {
 			int cellIndex = (x+y*TILE_SIZE);
 			rawTileData[cellIndex*4+0] = Cells[cellIndex].height;
 			rawTileData[cellIndex*4+1] = Cells[cellIndex].materialId;
-			rawTileData[cellIndex*4+2] = 0;
-			rawTileData[cellIndex*4+3] = 0;
+			rawTileData[cellIndex*4+2] = Cells[cellIndex].cellHealth;
+			rawTileData[cellIndex*4+3] = Cells[cellIndex].cellMaxHealth;
 		}
 	}
 	return rawTileData;

@@ -12,9 +12,8 @@ class PauseWindowMobile : public PauseWindow
 	Button menuButton;
 	Button firingModeButton;
 
-	PauseWindowMobile(void);
 public:
-	PauseWindowMobile(BaseFrame* parent);
+	PauseWindowMobile();
 	~PauseWindowMobile(void);
 };
 

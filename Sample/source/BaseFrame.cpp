@@ -24,6 +24,7 @@
 #include "ParticleData.h"
 
 #include "Building.h"
+#include "ModelGroup.h"
 
 #include "GLTextureCubeMap.h"
 
@@ -48,13 +49,10 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
 	// Create the first person controller depending on the current platform
 #ifdef __MOBILE__
 	FirstPerson = new FirstPersonModeMobile();
-	pauseWindow = new PauseWindowMobile(this);
 #else
 	FirstPerson = new FirstPersonMode();
-	pauseWindow = new PauseWindow(this);
 #endif
 
-	Controls.AddWindow(pauseWindow);
 	Controls.AddWindow(&notification);
     skybox = new GLSkybox("skybox/skybox", Textures);
     
@@ -70,13 +68,6 @@ BaseFrame::~BaseFrame()
 }
 
 
-void BaseFrame::ToggleMenu() {
-	if(pauseWindow->toggle()) {
-		FirstPerson->Enable(false);
-	} else {
-		FirstPerson->Enable(true);
-	}
-}
 
 //synchronously saves the game
 bool BaseFrame::Save(string saveFile) {
@@ -178,13 +169,7 @@ void BaseFrame::Build()
         subscriber(this);
     });
     
-    // Subscribe to the pause window visibility events
-    GameEventSubscriber::Subscribe<void(Control*,bool)>(&pauseWindow->VisibilityChanged, [this](Control *control, bool visible)
-    {
-        // If the pause window is visible, first person is not
-        this->FirstPerson->Enable(!visible);
-    });
-    
+   
     // Subscribe to the application state event
     GameEventSubscriber::Subscribe<void (bool)>(&VoxEngine::ApplicationStateChanged, [this](bool applicationActive)
     {
@@ -228,9 +213,7 @@ bool BaseFrame::Update(vector<InputEvent> inputEvents) {
     
     // Did we want to pause
     if(FirstPerson->GetPauseRequested())
-    {
-        pauseWindow->toggle();
-    }
+		Frames::SetSystem(Frames::FRAME_PAUSEMENU);
     
     // Update the voxels
 	Voxels.Update(Actors.Player()->GetPosition());
@@ -253,8 +236,8 @@ void BaseFrame::Draw(double width, double height)
 	// Update the texture caching system
 	Textures.Refresh();
     
-	// Calculate the view and fog distances
-    viewDistance = glm::mix(MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE, VoxEngine::AccountOptions.ViewDistance);
+	// Calculate the view and fog distances from the stored slider
+    viewDistance = glm::mix(MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE, VoxEngine::GlobalSavedData.GameOptions.ViewDistance);
     float fogDistance = viewDistance * 0.9f;
     
     // Compute the view for size vector

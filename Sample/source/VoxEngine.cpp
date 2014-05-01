@@ -55,7 +55,7 @@ AsyncTask * VoxEngine::task = NULL;
 SyncTask VoxEngine::SynchronousTask;
 
 
-Options VoxEngine::AccountOptions;
+GameData VoxEngine::GlobalSavedData;
 
 GameEvent<void (bool)> VoxEngine::ApplicationStateChanged;
 

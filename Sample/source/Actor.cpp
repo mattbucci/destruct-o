@@ -3,6 +3,10 @@
 #include "BaseFrame.h"
 #include "Frames.h"
 
+#include "ModelGroup.h"
+#include "ModelInstance.h"
+#include "Model.h"
+
 Actor::Actor() {
 	valid = true;
 	model = NULL;

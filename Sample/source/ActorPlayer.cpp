@@ -5,6 +5,10 @@
 #include "PhysicsVoxel.h"
 #include "GLEffectProgram.h"
 
+#include "ModelGroup.h"
+#include "ModelInstance.h"
+#include "Model.h"
+
 
 CLASS_SAVE_CONSTRUCTOR(ActorPlayer);
 

@@ -31,7 +31,8 @@ public:
 	//The list of current systems
 	enum Systems {
 		FRAME_MAINMENU,
-		FRAME_GAME
+		FRAME_GAME,
+		FRAME_PAUSEMENU,
 	};
 	//Change which game system is receiving input and drawing
 	static void SetSystem(Systems system);

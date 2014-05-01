@@ -52,15 +52,16 @@ GameTile * VoxelSystem::GetTile(vec2 pos) {
 TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
 	GameTile * tileData = GetTile(vec2(floor(pos.x / TILE_SIZE), floor(pos.y / TILE_SIZE)));
 
+	//Floor here to eliminate occasional rounding error
+	pos = glm::floor(pos);
+
 	//Convert to relative position
 	pos.x -= tileData->tile_x*TILE_SIZE;
 	pos.y -= tileData->tile_y*TILE_SIZE;
 
-	if ((pos.x < 0) || (pos.y < 0))
-		return NULL;
-	
-	if ((pos.x >= TILE_SIZE) || (pos.y >= TILE_SIZE))
-		return NULL;
+	//ensure basic assumptions
+	_ASSERTE ((pos.x >= 0) && (pos.y >= 0));
+	_ASSERTE ((pos.x < TILE_SIZE) && (pos.y < TILE_SIZE));
 
 	return tileData->GetTileCell(pos);
 }
@@ -233,7 +234,7 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size, float damage) {
 		//adjust the explosion center for the tile
 		vec2 expCenter = vec2(pos)-(vec2(current_tile->tile_x,current_tile->tile_y) * (float)TILE_SIZE);
 
-		current_tile->Crater(IntRect(rectStartX, rectStartY, rectEndX, rectEndY), craterBottom,damage,vec3(expCenter,pos.z), removedVoxels);
+		current_tile->Crater(IntRect(rectStartX, rectStartY, rectEndX, rectEndY), craterBottom,damage,vec3(expCenter,pos.z),size /2.0f, removedVoxels);
 
 	});
 	//Return all removed voxels

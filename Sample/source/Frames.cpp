@@ -5,6 +5,7 @@
 //Frames
 #include "BaseFrame.h"
 #include "MenuFrame.h"
+#include "PauseFrame.h"
 #include <thread>
 
 //The current system
@@ -25,9 +26,8 @@ void Frames::BuildSystemList() {
 
 	//Build each frame
 	systems[FRAME_MAINMENU] = new MenuFrame(shaders);
-	//Set initial frame  
-	//SetSystem(FRAME_MAINMENU);
 	systems[FRAME_GAME] = new BaseFrame(shaders);
+	systems[FRAME_PAUSEMENU] = new PauseFrame(shaders);
 	//SetSystem(FRAME_GAME);
 
 	SetSystem(FRAME_MAINMENU);

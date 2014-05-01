@@ -67,6 +67,10 @@ public:
 	//Get the current life of this actor
 	float GetLife();
 
+	//Get the percentage of life this actor has left
+	//0 = 0%, 1 = 100%
+	float GetLifePercentage();
+
 	//Get the faction of this actor
 	FactionId GetFaction();
 

@@ -10,26 +10,20 @@
 #include "ActorSystem.h"
 #include "FirstPersonModeMobile.h"
 #include "FirstPersonMode.h"
-#include "FirstPersonModeMobile.h"
 #include "PhysicsSystem.h"
 #include "ParticleCloud.h"
 #include "Audio.h"
 #include "Notification.h"
-#include "PauseWindow.h"
-#include "PauseWindowMobile.h"
 #include "Achievements.h"
 #include "HUD.h"
 #include "GLSkybox.h"
-
-#include "Model.h"
-#include "ModelInstance.h"
-#include "ModelGroup.h"
 
 #include "GameEvent.h"
 #include "GameEventSubscriber.h"
 
 class ActorPlayer;
 class ParticleSystem;
+class ModelGroup;
 
 //Retrieve base frame
 BaseFrame * Game();
@@ -41,7 +35,6 @@ class BaseFrame : public GameSystem {
 	AudioPlayer * audio;
 
 	Notification notification;
-	PauseWindow * pauseWindow;
     ModelGroup * models;
 	HUD hud;
     GLSkybox   *skybox;
@@ -113,8 +106,6 @@ public:
 	void OnFrameFocus() override;
 	void OnFrameLeave() override;
 
-	//Toggle Escape Menu
-	void ToggleMenu();
 	//Push Notification
 	void PushNotification(string txt);
 
