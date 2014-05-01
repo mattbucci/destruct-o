@@ -67,7 +67,7 @@ public:
 	//Carves a square crater from fx,fy to tox,toy to depth "depth" and adds all removed voxels
 	//to the removedVoxels value, the first three values are xyz and the forth value
 	//is the material
-	void Crater(IntRect craterRegion, int craterBottomZ, float damageDone, vec3 epicenter, vector<vec4> & removedVoxels);
+	void Crater(IntRect craterRegion, int craterBottomZ, float damageDone, vec3 epicenter, float radius, vector<vec4> & removedVoxels);
 
 	//Render the given region using the specified detail level
 	//the rect should be tile-relative coordinates

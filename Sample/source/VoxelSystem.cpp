@@ -212,7 +212,7 @@ vector<vec4> VoxelSystem::Crater(vec3 pos, float size, float damage) {
 		//adjust the explosion center for the tile
 		vec2 expCenter = vec2(pos)-(vec2(current_tile->tile_x,current_tile->tile_y) * (float)TILE_SIZE);
 
-		current_tile->Crater(IntRect(rectStartX, rectStartY, rectEndX, rectEndY), craterBottom,damage,vec3(expCenter,pos.z), removedVoxels);
+		current_tile->Crater(IntRect(rectStartX, rectStartY, rectEndX, rectEndY), craterBottom,damage,vec3(expCenter,pos.z),size /2.0f, removedVoxels);
 
 	});
 	//Return all removed voxels
