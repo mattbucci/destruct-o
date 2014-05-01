@@ -28,7 +28,7 @@
 
 #include "GLTextureCubeMap.h"
 
-#define MAX_DRAW_DISTANCE 500.0f
+#define MAX_DRAW_DISTANCE 300.0f
 #define MIN_DRAW_DISTANCE 30.0f
 
 //Make baseframe a singleton now
