@@ -19,6 +19,7 @@ PauseFrame::PauseFrame(ShaderGroup * shaders)
 	pauseWindow = new PauseWindow();
 #endif
 	Controls.AddWindow(pauseWindow);
+	pauseWindow->SetVisible(true);
 }
 
 PauseFrame::~PauseFrame()
@@ -32,6 +33,15 @@ void PauseFrame::OnFrameFocus() {
 
 
 bool PauseFrame::Update(vector<InputEvent> inputEvents) {
+	//Pump events into the first person mode to find that escape key
+	// Update the looking direction
+	Game()->FirstPerson->ReadInput(currentlyPressedKeys,inputEvents);
+    
+    // Did we want to unpause
+    if(Game()->FirstPerson->GetPauseRequested())
+		Frames::SetSystem(Frames::FRAME_GAME);
+
+
 	//Pass Update to GameSystem to Handle Control Input
 	return GameSystem::Update(inputEvents);
 }

@@ -107,6 +107,20 @@ void FirstPersonMode::Enable(bool enableFirstPerson) {
 
 //Update the looking direction based off input events
 void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEvent> input) {
+    // Does the user want to pause (or unpause) the game
+    if(pressedKeys.find(SDLK_ESCAPE) != pressedKeys.end())
+    {
+        if(!pauseRequested)
+        {
+            pauseRequested = true;
+            pauseRequestedEvent = true;
+        }
+    } else
+    {
+        pauseRequested = false;
+    }
+
+	//What follows only matters if first person mode is enabled
 	if (!firstPersonEnabled)
 		return;
 
@@ -159,19 +173,6 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
     } else
     {
         weaponModeSwitch = false;
-    }
-    
-    // Does the user want to pause (or unpause) the game
-    if(pressedKeys.find(SDLK_ESCAPE) != pressedKeys.end())
-    {
-        if(!pauseRequested)
-        {
-            pauseRequested = true;
-            pauseRequestedEvent = true;
-        }
-    } else
-    {
-        pauseRequested = false;
     }
     
 	//Sum up the mouse deltas into the current looking vector

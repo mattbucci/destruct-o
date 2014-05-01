@@ -3,6 +3,7 @@
 #include "PauseWindow.h"
 #include "BaseFrame.h"
 #include "Slider.h"
+#include "Frames.h"
 
 typedef pair<string,int> intOption;
 
@@ -33,7 +34,7 @@ PauseWindow::PauseWindow()
 	//Set up Self
 	position = Rect(0, 20, 800, 580);
 	color = vec4(0.33f, 0.33f, 0.33f, 0.75f);
-	SetVisible(false);
+	SetVisible(true);
 
 	//Set up Main Menu
 	menuRect.position = Rect(0, 0, 320, 420);
@@ -62,7 +63,7 @@ PauseWindow::PauseWindow()
 	menuRect.AddControl(&menuOptions);
 	menuRect.AddControl(&menuSaveAndQuit);
 	menuRect.AddControl(&menuExit);
-	menuRect.SetVisible(false);
+	menuRect.SetVisible(true);
 
 	//Subscribe Main Menu Buttons to Actions
 	Subscribe<void(Button*)>(&menuSave.EventClicked, [this](Button * b) {
@@ -71,6 +72,7 @@ PauseWindow::PauseWindow()
 		} else {
 			cout << "Save Unsuccessful." << endl;
 		}
+		Frames::SetSystem(Frames::FRAME_GAME);
 	});
 	Subscribe<void(Button*)>(&menuLoad.EventClicked, [this](Button * b) {
 		if(Game()->Load(Game()->GetSaveLocation() + "data.json.compressed")) {
@@ -78,6 +80,7 @@ PauseWindow::PauseWindow()
 		} else {
 			cout << "Load Unsuccessful." << endl;
 		}
+		Frames::SetSystem(Frames::FRAME_GAME);
 	});
 	Subscribe<void(Button*)>(&menuOptions.EventClicked, [this](Button * b) {
 		this->showOptsMenu();
@@ -85,10 +88,10 @@ PauseWindow::PauseWindow()
 	Subscribe<void(Button*)>(&menuSaveAndQuit.EventClicked, [this](Button * b) {
 		cout << "\'Save & Quit\' Button Clicked" << endl;
 		Game()->Save(Game()->GetSaveLocation() + "data.json.compressed");
-		exit(0);
+		Frames::SetSystem(Frames::FRAME_MAINMENU);
 	});
 	Subscribe<void(Button*)>(&menuExit.EventClicked, [this](Button * b) {
-		this->toggle();
+		Frames::SetSystem(Frames::FRAME_MAINMENU);
 	});
 
 	//Set up Options Menu
