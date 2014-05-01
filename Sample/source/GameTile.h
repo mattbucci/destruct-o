@@ -6,7 +6,7 @@
 #include "TileCell.h"
 #include "Structure.h"
 #include "IntRect.h"
-#include "Polygon.h"
+#include "SimplePolygon.h"
 
 //The width/height of all tiles
 //Must be divisible by 16
@@ -71,7 +71,7 @@ public:
 
 	//Render the given region using the specified detail level
 	//the rect should be tile-relative coordinates
-	void Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, Polygon<4>& drawRegion, int & voxelCount);
+	void Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShader, TerrainChunkRenderer * terrainRenderer, VoxelDrawSystem * cellDrawSystem, SimplePolygon<4>& drawRegion, int & voxelCount);
 
 	//Loaded tile information is public for fastest access
 	TileCell * Cells;

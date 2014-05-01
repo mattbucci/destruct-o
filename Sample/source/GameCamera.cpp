@@ -40,7 +40,7 @@ float GameCamera::GetDistance()
 }
 
 // Get the viewing area of the camera as a top down triangle
-void GameCamera::GetViewingArea(Polygon<4>& viewingArea)
+void GameCamera::GetViewingArea(SimplePolygon<4>& viewingArea)
 {
     // Calculate the looking vector in 2 dimensions
     vec2 direction = glm::normalize(vec2(this->direction));

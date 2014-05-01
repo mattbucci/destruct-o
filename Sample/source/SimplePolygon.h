@@ -20,12 +20,12 @@
 #include "stdafx.h"
 
 /**
- * Arbitrary convex polygon intersection testing algorith called the Separation of Axis method.
- * Based on the solution found here: http://www.codeproject.com/Articles/15573/D-Polygon-Collision-Detection
+ * Arbitrary convex SimplePolygon intersection testing algorith called the Separation of Axis method.
+ * Based on the solution found here: http://www.codeproject.com/Articles/15573/D-SimplePolygon-Collision-Detection
  */
 
 template <int N>
-class Polygon
+class SimplePolygon
 {
     // Return the signed distance between two projections
     static float IntervalDistance(float minA, float maxA, float minB, float maxB)
@@ -48,8 +48,8 @@ public:
     storage_type vertices;
     storage_type edges;
     
-    // Create an empty polygon
-    Polygon()
+    // Create an empty SimplePolygon
+    SimplePolygon()
     {
         
     }
@@ -70,7 +70,7 @@ public:
         }
     }
     
-    // Project the polygon
+    // Project the SimplePolygon
     void Project(vec2 axis, float& min, float& max)
     {
         // To project a point on an axis use the dot product
@@ -91,9 +91,9 @@ public:
         }
     }
     
-    // Check whether this polygon has an arbitrary intersection with another
+    // Check whether this SimplePolygon has an arbitrary intersection with another
     template <int M>
-    bool Intersects(Polygon<M>& b)
+    bool Intersects(SimplePolygon<M>& b)
     {
         // Minimum and maximum storage
         float minA = 0.0f;
@@ -101,34 +101,34 @@ public:
         float maxA = 0.0f;
         float maxB = 0.0f;
         
-        // Check the first polygon's edges for intersection
+        // Check the first SimplePolygon's edges for intersection
         for(typename storage_type::iterator edge = edges.begin(); edge != edges.end(); edge++)
         {
             // Calculate the perpendicular axis
             vec2 axis = glm::normalize(vec2(-edge->y, edge->x));
             
-            // Find the projection of the polygon on the current axis
+            // Find the projection of the SimplePolygon on the current axis
             Project(axis, minA, maxA);
             b.Project(axis, minB, maxB);
             
-            // Check if the polygon projections are currentlty intersecting
+            // Check if the SimplePolygon projections are currentlty intersecting
             if (IntervalDistance(minA, maxA, minB, maxB) > 0)
             {
                 return false;
             }
         }
         
-        // Check the second polygon's edges for intersection
-        for(typename Polygon<M>::storage_type::iterator edge = b.edges.begin(); edge != b.edges.end(); edge++)
+        // Check the second SimplePolygon's edges for intersection
+        for(typename SimplePolygon<M>::storage_type::iterator edge = b.edges.begin(); edge != b.edges.end(); edge++)
         {
             // Calculate the perpendicular axis
             vec2 axis = glm::normalize(vec2(-edge->y, edge->x));
             
-            // Find the projection of the polygon on the current axis
+            // Find the projection of the SimplePolygon on the current axis
             Project(axis, minA, maxA);
             b.Project(axis, minB, maxB);
             
-            // Check if the polygon projections are currentlty intersecting
+            // Check if the SimplePolygon projections are currentlty intersecting
             if (IntervalDistance(minA, maxA, minB, maxB) > 0)
             {
                 return false;

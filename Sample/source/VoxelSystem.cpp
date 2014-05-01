@@ -13,7 +13,7 @@
 #include "ShaderGroup.h"
 
 #include "PhysicsUtilities.h"
-#include "Polygon.h"
+#include "SimplePolygon.h"
 
 VoxelSystem::VoxelSystem()
 {
@@ -117,11 +117,11 @@ static void intersect1D(int & rangeAStart, int & rangeAEnd, int rangeBStart, int
 }
 
 // Draw the voxels in the triangular region
-void VoxelSystem::Draw(ShaderGroup * shaders, vec3 pos, Polygon<4>& drawRegion)
+void VoxelSystem::Draw(ShaderGroup * shaders, vec3 pos, SimplePolygon<4>& drawRegion)
 {
     // Calculate the longest dimension of the viewing area (how many tiles to search)
     float largestDimension = 0.0f;
-    for(Polygon<3>::storage_type::iterator edge = drawRegion.edges.begin(); edge != drawRegion.edges.end(); edge++)
+    for(SimplePolygon<4>::storage_type::iterator edge = drawRegion.edges.begin(); edge != drawRegion.edges.end(); edge++)
     {
         float l = glm::length(*edge);
         largestDimension = (l > largestDimension) ? l : largestDimension;
@@ -157,8 +157,8 @@ void VoxelSystem::Draw(ShaderGroup * shaders, vec3 pos, Polygon<4>& drawRegion)
             vec2 t(x + i, y + j);
             vec2 tc = glm::floor(t / (float) TILE_SIZE);
             
-            // Calculate the polygon of the tile
-            Polygon<4> region;
+            // Calculate the SimplePolygon of the tile
+            SimplePolygon<4> region;
             region.vertices[0] = t;
             region.vertices[1] = t + vec2((float) TILE_SIZE, 0.0f);
             region.vertices[2] = t + vec2((float) TILE_SIZE, (float) TILE_SIZE);
