@@ -133,12 +133,13 @@ void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
 void BaseFrame::OnFrameFocus() {
 	// Enable the first person controller
 	FirstPerson->Enable(true);
-
+	GameSystem::OnFrameFocus();
 	
 }
 
 void BaseFrame::OnFrameLeave() {
 	FirstPerson->Enable(false);
+	GameSystem::OnFrameLeave();
 }
 
 void BaseFrame::NewWorld() {
