@@ -33,7 +33,7 @@ public class SDLActivity extends Activity {
     public static boolean mIsPaused = false, mIsSurfaceReady = false, mHasFocus = true;
 
     // Main components
-    protected static SDLActivity mSingleton;
+    protected static ClearActivity mSingleton;
     protected static SDLSurface mSurface;
     protected static View mTextEdit;
     protected static ViewGroup mLayout;
@@ -62,7 +62,7 @@ public class SDLActivity extends Activity {
         super.onCreate(savedInstanceState);
         
         // So we can call stuff from static callbacks
-        mSingleton = this;
+       // mSingleton = this;
         
         //Copy assets
         //copyFileOrDir("");
@@ -246,6 +246,7 @@ public class SDLActivity extends Activity {
     }
 
     // C functions we call
+    public static native void nativeDrawframe(int curWidth, int curHeight);
     public static native void nativeInit();
     public static native void nativeLowMemory();
     public static native void nativeQuit();
@@ -269,11 +270,13 @@ public class SDLActivity extends Activity {
 
     public static boolean setActivityTitle(String title) {
         // Called from SDLMain() thread and can't directly affect the view
-        return mSingleton.sendCommand(COMMAND_CHANGE_TITLE, title);
+        //return mSingleton.sendCommand(COMMAND_CHANGE_TITLE, title);
+    	return true;
     }
 
     public static boolean sendMessage(int command, int param) {
-        return mSingleton.sendCommand(command, Integer.valueOf(param));
+        //return mSingleton.sendCommand(command, Integer.valueOf(param));
+    	return true;
     }
 
     public static Context getContext() {
@@ -320,7 +323,8 @@ public class SDLActivity extends Activity {
 
     public static boolean showTextInput(int x, int y, int w, int h) {
         // Transfer the task to the main thread as a Runnable
-        return mSingleton.commandHandler.post(new ShowTextInputTask(x, y, w, h));
+     //   return mSingleton.commandHandler.post(new ShowTextInputTask(x, y, w, h));
+    	return true;
     }
             
     public static Surface getNativeSurface() {
@@ -471,6 +475,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         // Some arbitrary defaults to avoid a potential division by zero
         mWidth = 1.0f;
         mHeight = 1.0f;
+        
+   
     }
     
     public Surface getNativeSurface() {
@@ -481,7 +487,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Log.v("SDL", "surfaceCreated()");
-        holder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
+        setWillNotDraw(false);
+        //holder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
     }
 
     // Called when we lose the surface
@@ -491,7 +498,7 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         // Call this *before* setting mIsSurfaceReady to 'false'
         SDLActivity.handlePause();
         SDLActivity.mIsSurfaceReady = false;
-        SDLActivity.onNativeSurfaceDestroyed();
+        //SDLActivity.onNativeSurfaceDestroyed();
     }
 
     // Called when the surface is resized
@@ -552,22 +559,24 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
 
         // Set mIsSurfaceReady to 'true' *before* making a call to handleResume
         SDLActivity.mIsSurfaceReady = true;
-        SDLActivity.onNativeSurfaceChanged();
+        //SDLActivity.onNativeSurfaceChanged();
 
 
-        if (SDLActivity.mSDLThread == null) {
+       /* if (SDLActivity.mSDLThread == null) {
             // This is the entry point to the C app.
             // Start up the C app thread and enable sensor input for the first time
 
             SDLActivity.mSDLThread = new Thread(new SDLMain(), "SDLThread");
             enableSensor(Sensor.TYPE_ACCELEROMETER, true);
             SDLActivity.mSDLThread.start();
-        }
+        }*/
     }
 
     // unused
     @Override
-    public void onDraw(Canvas canvas) {}
+    public void onDraw(Canvas canvas) {
+    	Log.e("SDLX","draw plz");
+    }
 
 
     // Key events

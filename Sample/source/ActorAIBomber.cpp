@@ -4,6 +4,7 @@
 #include "BaseFrame.h"
 #include "WeaponAI.h"
 
+
 CLASS_SAVE_CONSTRUCTOR(ActorAIBomber);
 
 ActorAIBomber::ActorAIBomber() : ActorAI()  {

@@ -78,57 +78,18 @@ int heapHook(int nAllocType, void *pvData,
 int main(int argc, char** argv)
 {
 	//_CrtSetAllocHook(heapHook);
-	VoxEngine::Start();
+	//VoxEngine::Start(640,480);
+	VoxEngine::DoInit();
 	return 0;
 }
 
-//Game entry point
-void VoxEngine::Start() {
-	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK);
+bool initialized = false;
 
-	SDL_Window * displayWindow = NULL;
+void doFrame(int width, int height) {
+	VoxEngine::Start(width,height);
+}
 
-#ifndef __MOBILE__
-	//Build us a state of the art context
-	displayWindow = BuildSDLContext(3,2,1.4f);
-	OpenglVersion = 31;
-	GLSLVersion = 140;
-#endif
-	//If that fails, try for something less state of the art
-	if (displayWindow == NULL) {
-		displayWindow = BuildSDLContext(2,0,0.0f);
-		GLSLVersion = 110;
-#ifdef __IPHONEOS__
-		//For iOS, globally force the newer opengl version
-		OpenglVersion = 31;
-#else
-		OpenglVersion = 20;
-#endif
-	}
-
-	if (displayWindow == NULL) {
-		cout << "Failed to open any opengl context on this device. Your device is too out dated, sorry.\n";
-		SDL_Quit();
-		return;
-	}
-	
-	//Start GLEW for windows/linux/OSX
-#ifndef __MOBILE__
-	glewExperimental = GL_TRUE;
-	GLenum res = glewInit();
-	if (res != GLEW_OK) {
-		cout << glewGetString(GLEW_VERSION) << ", Error: " << glewGetErrorString(res) << "\n";
-		SDL_Quit();
-		return;
-	}
-
-	//Copied from some glue initiation code
-	fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
-
-	if (GLEW_VERSION_3_1)
-		cout << "Glew says opengl 3.1 is supported\n";
-
-#endif
+void VoxEngine::DoInit() {
 
 	//Start our version of GLEW for android
 #ifdef __ANDROID__
@@ -143,7 +104,7 @@ void VoxEngine::Start() {
 	}
 		
 #endif
-
+	cout << "Rendering one frame with size: " << curWidth << "," << curHeight << "\n";
 	//Randomize you're starting time
 	//it's not perfect, but should be sufficient
 	srand (time(NULL));
@@ -160,57 +121,19 @@ void VoxEngine::Start() {
 	glDisable(GL_CULL_FACE);
 
 	
-#if (defined __IPHONEOS__)
-    // Setup the animation callback for iOS
-    SDL_iPhoneSetAnimationCallback(displayWindow, 1, &iOSAnimationCallback, NULL);
-#else
-    // Attempt to enable vsync (fails on mobile)
-	SDL_GL_SetSwapInterval(1);
-#endif
+   
+	// Add the event filter for application events such as pause
+	//SDL_AddEventWatch(EventFilter, NULL);
     
-    // Add the event filter for application events such as pause
-    SDL_AddEventWatch(EventFilter, NULL);
-    
-	/* Print information about attached joysticks (actually works on iOS WOOHOO)*/
-	printf("There are %d joystick(s) attached\n", SDL_NumJoysticks());
-	for (int i = 0; i < SDL_NumJoysticks(); ++i) {
-		const char *name = SDL_JoystickNameForIndex(i);
-		printf("Joystick %d: %s\n", i, name ? name : "Unknown Joystick");
-		joystick = SDL_JoystickOpen(i);
-		if (joystick == NULL) {
-			fprintf(stderr, "SDL_JoystickOpen(%d) failed: %s\n", i,
-					SDL_GetError());
-		} else {
-			char guid[64];
-			SDL_JoystickGetGUIDString(SDL_JoystickGetGUID(joystick),
-									  guid, sizeof (guid));
-			printf("       axes: %d\n", SDL_JoystickNumAxes(joystick));
-			printf("      balls: %d\n", SDL_JoystickNumBalls(joystick));
-			printf("       hats: %d\n", SDL_JoystickNumHats(joystick));
-			printf("    buttons: %d\n", SDL_JoystickNumButtons(joystick));
-			printf("instance id: %d\n", SDL_JoystickInstanceID(joystick));
-			printf("       guid: %s\n", guid);
-			SDL_JoystickClose(joystick);
-		}
-	}
-	
-	// For now, need a selector for mobile since joystick #0 is the built in accelerometer
-#if !(defined __MOBILE__)
-	if(SDL_NumJoysticks() > 0)
-	{
-		joystick = SDL_JoystickOpen(0);
-		printf("Using joystick = %s\n", SDL_JoystickName(joystick));
-	}
-#endif
-
-	/*cout << "TESTING[0]: " << (unsigned int)eglGetProcAddress("glGenBuffers") << "\n";
-	cout << "TESTING[1]: " << (unsigned int)eglGetProcAddress("glDrawElementsInstanced") << "\n";
-	cout << "TESTING[2]: " << (unsigned int)eglGetProcAddress("glGenVertexArraysOES") << "\n";
-	cout << "TESTING[3]: " << (unsigned int)eglGetProcAddress("glGenVertexArrays") << "\n";*/
 
 	cout << "Using an external opengl version of: " << (char*)glGetString(GL_VERSION) << "\n";
 	cout << "Using internal opengl version of: " << OpenglVersion << "\n";
+	vector<unsigned char> test;
+	lodepng::load_file(test,"loading.png");
+	if (test.size() > 0)
+		cout << "LOADING LOADED\n";
 
+	cout << "READ FINISHED\n";
 	//Initialze the dialog constants
 	VisualInterface.init();
 	//Populate the list of game systems
@@ -220,9 +143,11 @@ void VoxEngine::Start() {
 	continueGameLoop = true;
     
 	//Get the current window size
-	SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
+	//SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
+	curWidth = 640;
+	curHeight = 480;
 	ResizeWindow();
-    glViewport(0, 0, curWidth, curHeight);
+	glViewport(0, 0, curWidth, curHeight);
 
 	//Mark the simulation starting time
 	//Start the simulation one update loop into the past
@@ -230,15 +155,32 @@ void VoxEngine::Start() {
 	globalTime = 0;
 	gameEventDelta = globalTime-OS::Now();
 	globalTime = -SIMULATION_DELTA;
-	
+
 	//First task is to build the game
 	VoxEngine::task = new AsyncTask([]() {Game()->Build();});
+	
+	
+}
+
+//Game entry point
+void VoxEngine::Start(int width, int height) {
+	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	//return;
+
+
+	if (width != curWidth || height != curHeight) {
+		curWidth = width;
+		curHeight = height;
+		ResizeWindow();
+		glViewport(0, 0, curWidth, curHeight);
+	}
+
 
 	//The game loop begins
-	while (continueGameLoop)
-    {
+	//while (continueGameLoop)
+    //{
         // Wait until its safe to render
-        VoxEngine::WaitForSafeRender();
+        //VoxEngine::WaitForSafeRender();
         
         // If we have a task needing completed (mostly frame switched)
         if(VoxEngine::task != NULL)
@@ -258,20 +200,10 @@ void VoxEngine::Start() {
 				// Wait until its safe to render
                 VoxEngine::WaitForSafeRender();
                 
-#if (defined __IPHONEOS__)
-                // Only render if we have a render requested on iOS
-                if(iOSRenderRequested)
-                {
-#endif
                     // Draw the loading screen
                     glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
                     load.Draw(curWidth,curHeight,shader);
-                    SDL_GL_SwapWindow(displayWindow);
-#if (defined __IPHONEOS__)
-                    // Clear the render request
-                    iOSRenderRequested = false;
-                }
-#endif
+                    //SDL_GL_SwapWindow(displayWindow);
 				//If there's a sync task, execute it now
 				SynchronousTask.PollingThreadPoll();
 
@@ -322,16 +254,12 @@ void VoxEngine::Start() {
 		UpdateTime.AddSample(OS::Now()-updateStartTime);
 
         // Pump Events (iOS vsync is scheduled on the event pump)
-        SDL_PumpEvents();
+        //SDL_PumpEvents();
         
         // If rendering is safe
         if(renderingIsSafe)
         {
-#if (defined __IPHONEOS__)
-            // Only render if we have a render requested on iOS
-            if(iOSRenderRequested)
-            {
-#endif
+
 				//For debug profiling
 				double drawStartTime = OS::Now();
 
@@ -345,37 +273,14 @@ void VoxEngine::Start() {
 				DrawTime.AddSample(OS::Now() - drawStartTime);
 
                 /* Swap our back buffer to the front */
-                SDL_GL_SwapWindow(displayWindow);
-#if (defined __IPHONEOS__)
-                // Clear the render request
-                iOSRenderRequested = false;
-            }
-            
-            // Only sleep if we had the time
-            else
-            {
-                // Get whichever is shorter (remaining time until next frame render or physics cycle, 1/60 should be replaced with target framerate)
-                double sleepTime = glm::min(SIMULATION_DELTA - (OS::Now() - physicsFrameTime), (1.0/60.0) - (OS::Now() - iOSRenderTime));
-                
-                // Sleep for the minimum amount of time
-                if(sleepTime > 0.0)
-                {
-                    OS::SleepTime(sleepTime);
-                }
-            }
-#endif
+                //SDL_GL_SwapWindow(displayWindow);
         }
 
 		//Update the current system selection
 		//if a swap was requested during one of the updates
 		//it will happen now
 		Frames::UpdateAliveFrame();
-	}
-
-	// close joystick
-	if(joystick) SDL_JoystickClose(joystick);
-	
-	SDL_Quit();
+	//}
 }
 
 // Wait until its safe to render (pumps events and returns if safe)
@@ -395,6 +300,7 @@ void VoxEngine::WaitForSafeRender()
 
 void VoxEngine::ResizeWindow()
 {
+	cout << "Resized to: " << curWidth << "," << curHeight << "\n";
 	const static vec2 targetResolution = vec2(800,600);
 
 	vec2 newSize = vec2((float)curWidth,(float)curHeight);

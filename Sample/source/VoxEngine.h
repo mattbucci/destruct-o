@@ -10,8 +10,6 @@
 #include "GameEvent.h"
 #include "MovingAverage.h"
 
-#define SIMULATION_DELTA .01f
-
 // Callback on iOS to set the render flag
 void iOSAnimationCallback(void *context);
 
@@ -19,8 +17,10 @@ void iOSAnimationCallback(void *context);
 int EventFilter(void *context, SDL_Event *event);
 
 class VoxEngine {
+	static void DoInit();
+
 	//Entry point for the game engine
-	static void Start();
+	static void Start(int width, int height);
 
     // Make sure its safe to render
     static void WaitForSafeRender();
@@ -61,6 +61,7 @@ class VoxEngine {
 	friend int main(int argc, char** argv);
     
     friend void iOSAnimationCallback(void *context);
+	friend void doFrame(int width, int height);
 public:
 	//Run an async task before the next frame switch
 	static void SetAsyncTask(AsyncTask * task);

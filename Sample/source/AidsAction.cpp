@@ -2,6 +2,7 @@
 #include "AidsAction.h"
 #include "Universal.h"
 #include "BaseFrame.h"
+#include "ActorPlayer.h"
 
 vec3 AidsAction::findHiddenLocation(vec3 startLocation, float desiredAltitude) {
 	const static float anglePart = (float)M_PI/4.0f;
