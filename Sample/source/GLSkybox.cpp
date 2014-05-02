@@ -100,6 +100,10 @@ void GLSkybox::Draw(GL3DProgram * program)
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     }
     
+    // Center the skybox
+    program->Model.Reset();
+    program->Model.Apply();
+    
     // Bind the texture
     glActiveTexture(GL_TEXTURE0);
     textureCache.GetTexture<GLTextureCubeMap>(skyboxName)->Bind();

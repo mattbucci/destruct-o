@@ -28,7 +28,7 @@
 
 #include "GLTextureCubeMap.h"
 
-#define MAX_DRAW_DISTANCE 300.0f
+#define MAX_DRAW_DISTANCE 600.0f
 #define MIN_DRAW_DISTANCE 30.0f
 
 //Make baseframe a singleton now
@@ -239,7 +239,7 @@ void BaseFrame::Draw(double width, double height)
     
 	// Calculate the view and fog distances from the stored slider
     viewDistance = glm::mix(MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE, VoxEngine::GlobalSavedData.GameOptions.ViewDistance);
-    float fogDistance = viewDistance * 0.9f;
+    float fogDistance = viewDistance * 0.8f;
     
     // Compute the view for size vector
 	vec2 viewPortSize = vec2((float)width,(float)height);
@@ -252,7 +252,7 @@ void BaseFrame::Draw(double width, double height)
 	vec3 pos = Actors.Player()->GetPosition();
 
 	// Setup the camera view for the player
-	Camera.SetCameraView(pos, FirstPerson->GetLookVector(), viewDistance);
+	Camera.SetCameraView(pos, FirstPerson->GetLookVector(), viewDistance/2);
     Actors.Player()->WeaponCamera().SetCameraView(vec3(0,0,0), glm::vec3(0,-1,0), viewDistance); // BAD BUT TEMPORARY
     
 	// Apply properties to each shader
@@ -266,6 +266,11 @@ void BaseFrame::Draw(double width, double height)
     SetupShader<GLEffectProgram>("effects", fogDistance);
     Camera.Apply((GLEffectProgram*)shaders->GetShader("effects"));
     
+	// Enable sensible defaults
+	glDisable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+    
 	//Startup 3d rendering
 	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
 	shaders3d->UseProgram();
@@ -274,32 +279,8 @@ void BaseFrame::Draw(double width, double height)
     
 	//Setup sun here for now
 	//translate it to follow world coordinates
-	shaders3d->Lights.Off();
+	shaders3d->Lights.On();
 	shaders3d->Lights.Apply();
-    
-	//Enable sensible defaults
-	//glEnable(GL_BLEND);
-	glDisable(GL_BLEND);
-	glDisable(GL_CULL_FACE);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
-    // Re-enable the depth test
-	glEnable(GL_DEPTH_TEST);
-    
-    // Use the skybox shader
-    /*GL3DProgram * skyboxShader = (GL3DProgram *) shaders->GetShader("skybox");
-    skyboxShader->UseProgram();
-    
-    // Setup the skybox's camera
-    skyboxShader->Camera.SetCameraPosition(vec3(0,0,0), FirstPerson->GetLookVector());
-    skyboxShader->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25, viewDistance); //width/height
-    skyboxShader->Camera.Apply();
-    
-    // Apply the model transform (identity transform =/)
-    skyboxShader->Model.Apply();
-    
-    // Draw the skybox
-    skybox->Draw(skyboxShader);*/
 	
 	// Draw the voxels
     SimplePolygon<4> viewArea;
@@ -308,29 +289,45 @@ void BaseFrame::Draw(double width, double height)
     
 	//The physics system uses the same texture that the voxels above binds every time it draws
 	//so it must always immediately follow Voxels.draw()
-	/*Physics.Draw(shaders);
+	Physics.Draw(shaders);
+    
+    // Use the skybox shader
+    GL3DProgram * skyboxShader = (GL3DProgram *) shaders->GetShader("skybox");
+    skyboxShader->UseProgram();
+    
+    // Setup the skybox's camera
+    skyboxShader->Camera.SetCameraPosition(vec3(0,0,0), FirstPerson->GetLookVector());
+    skyboxShader->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25, viewDistance); //width/height
+    skyboxShader->Camera.Apply();
+    
+    // Draw the skybox
+    skybox->Draw(skyboxShader);
 
 	//Turn lights back on because I'm not sure if this is necessary
-	shaders3d->Lights.On();
-	//shaders3d->Lights.Apply();
+	//shaders3d->Lights.On();
     
     // Setup the mesh shader boneless
     MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
     modelShader->UseProgram();
     modelShader->Lights.Enable(1);
+    modelShader->Lights.Off();
     modelShader->Lights.Apply();
     
     // Draw the actors
 	Actors.Draw(shaders);
-
-    // Draw the player weapon
+    
+    // Draw the weapon
     modelShader->UseProgram();
+    modelShader->Lights.On();
     modelShader->Lights.Apply();
     
+    // Model materials should specify that they have transparency or not
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     Actors.Player()->DrawWeapon(modelShader);
     
 	//The particle system will use a different shader entirely soon
-	Particles.Draw(shaders);*/
+	Particles.Draw(shaders);
 	
 	//Update the voxel debug counter
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();

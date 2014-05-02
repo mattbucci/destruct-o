@@ -46,11 +46,14 @@ class BaseFrame : public GameSystem {
     {
 		T * shader = (T*)shaders->GetShader(shaderName);
 		shader->UseProgram();
+        
 		//Setup fog
 		shader->Fog.SetFogColor(vec4(.65,.70,.76,1));
 		shader->Fog.SetFogDistance(fogDistance);
+        
 		//Setup acid shader
 		shader->Acid.SetCurrentTime(Game()->Now());
+        
 		//Acid factor currently managed by the demo system
 		//this will be moved to a more powerful game logic system in the future
 		shader->Acid.SetAcidFactor(0);

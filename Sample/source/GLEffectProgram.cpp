@@ -3,10 +3,9 @@
 
 GLEffectProgram::GLEffectProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath) :
 	GLProgram(commonShader, vertexShaderPath,fragmentShaderPath),
-	cmatrix(glGetUniformLocation(programId,"vView"),glGetUniformLocation(programId,"MV"),glGetUniformLocation(programId,"MVP")),
 	Fog(programId),
 	Acid(glGetUniformLocation(programId,"uCurrentTime"),glGetUniformLocation(programId,"uAcidFactor")),
-	Model(&cmatrix),
+	Model(glGetUniformLocation(programId,"M")),
 	Camera(glGetUniformLocation(programId,"P"),glGetUniformLocation(programId,"V"),glGetUniformLocation(programId,"VP"))
 	{
 

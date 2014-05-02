@@ -4,8 +4,7 @@
 #include "GLProgram.h"
 #include "MaxDistanceFog.h"
 #include "GLAcidTab.h"
-#include "GLCombinedModel.h"
-#include "GLCombinedMatrix.h"
+#include "GLModel.h"
 
 
 class GLEffectProgram : public GLProgram {
@@ -15,13 +14,12 @@ class GLEffectProgram : public GLProgram {
 
 	GLint uniformTint;
 	GLint uniformTexturesEnabled;
-	GLCombinedMatrix cmatrix;
 public:
 	GLEffectProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath);
 
 	MaxDistanceFog Fog;
 	GLAcidTab Acid;
-	GLCombinedModel Model;
+	GLModel Model;
 	GLCamera Camera;
 	
 	void SetTint(vec4 tint);

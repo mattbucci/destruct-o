@@ -27,7 +27,8 @@ public:
 
 	//Apply the camera and global lighting
 	template<class T>
-	void Apply(T * shaders) {
+	void Apply(T * shaders)
+    {
 		shaders->Camera.SetCameraPosition(position,position+direction,vec3(0,0,1));
 		//IF YOU CHANGE NEAR/FAR CLIPPING PLANE, PLEASE CHANGE UNPROJECT (below) AS WELL
 		shaders->Camera.SetFrustrum(verticalFov,viewPortSize.x/viewPortSize.y,.25,distance); //width/height

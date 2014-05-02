@@ -157,7 +157,7 @@ void VoxEngine::Start() {
 	
 #if (defined __IPHONEOS__)
     // Setup the animation callback for iOS
-    //SDL_iPhoneSetAnimationCallback(displayWindow, 1, &iOSAnimationCallback, NULL);
+    SDL_iPhoneSetAnimationCallback(displayWindow, 1, &iOSAnimationCallback, NULL);
 #else
     // Attempt to enable vsync (fails on mobile)
 	SDL_GL_SetSwapInterval(1);
@@ -233,7 +233,7 @@ void VoxEngine::Start() {
 	while (continueGameLoop)
     {
         // Wait until its safe to render
-        //VoxEngine::WaitForSafeRender();
+        VoxEngine::WaitForSafeRender();
         
         // If we have a task needing completed (mostly frame switched)
         if(VoxEngine::task != NULL)
@@ -255,8 +255,8 @@ void VoxEngine::Start() {
                 
 #if (defined __IPHONEOS__)
                 // Only render if we have a render requested on iOS
-                //if(iOSRenderRequested)
-                //{
+                if(iOSRenderRequested)
+                {
 #endif
                     // Draw the loading screen
                     glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -264,8 +264,8 @@ void VoxEngine::Start() {
                     SDL_GL_SwapWindow(displayWindow);
 #if (defined __IPHONEOS__)
                     // Clear the render request
-                    //iOSRenderRequested = false;
-                //}
+                    iOSRenderRequested = false;
+                }
 #endif
 				//If there's a sync task, execute it now
 				SynchronousTask.PollingThreadPoll();
@@ -312,15 +312,15 @@ void VoxEngine::Start() {
 		}
 
         // Pump Events (iOS vsync is scheduled on the event pump)
-        //SDL_PumpEvents();
+        SDL_PumpEvents();
         
         // If rendering is safe
         if(renderingIsSafe)
         {
 #if (defined __IPHONEOS__)
             // Only render if we have a render requested on iOS
-            //if(iOSRenderRequested)
-            //{
+            if(iOSRenderRequested)
+            {
 #endif
                 //Run the frame draw
                 glClear ( CurrentSystem->ClearBits() );
@@ -332,7 +332,7 @@ void VoxEngine::Start() {
                 SDL_GL_SwapWindow(displayWindow);
 #if (defined __IPHONEOS__)
                 // Clear the render request
-            /*    iOSRenderRequested = false;
+                iOSRenderRequested = false;
             }
             
             // Only sleep if we had the time
@@ -346,7 +346,7 @@ void VoxEngine::Start() {
                 {
                     OS::SleepTime(sleepTime);
                 }
-            }*/
+            }
 #endif
         }
 

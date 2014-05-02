@@ -222,9 +222,7 @@ void ActorPlayer::DrawWeapon(MaterialProgram *materialShader)
     // If we have a weapon
     if (model != NULL)
     {
-		//testWeapon.Update(Game()->FirstPerson->GetLookVector(),Position);
-
-        // Update the shader
+		// Update the shader
         weaponCamera.Apply(materialShader);
         
         // Draw the model

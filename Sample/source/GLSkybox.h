@@ -48,6 +48,7 @@ public:
     
     // Draw the skybox
     void Draw(GL3DProgram * program);
+    void Draw(GL3DProgram * program, float distance);
 };
 
 #endif

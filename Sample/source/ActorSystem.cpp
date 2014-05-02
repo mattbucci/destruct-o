@@ -214,8 +214,8 @@ void ActorSystem::DoAOEDamage(vec3 at, float radius, float damage, PhysicsActor 
 }
 
 //Draw all the actors
-void ActorSystem::Draw(ShaderGroup * shaders) {
-
+void ActorSystem::Draw(ShaderGroup * shaders)
+{
 	// Setup the mesh shader
 	MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
 	modelShader->UseProgram();
@@ -225,11 +225,13 @@ void ActorSystem::Draw(ShaderGroup * shaders) {
 
 	//Reset texture unit 0 to the active texture unit
 	glActiveTexture(GL_TEXTURE0);
-
+    
 	//setup the effect shader
 	GLEffectProgram * effectShader = (GLEffectProgram*) shaders->GetShader("effects");
 	effectShader->UseProgram();
-
+    effectShader->Model.Reset();
+    effectShader->Model.Apply();
+    
 	for (unsigned int i = 0; i < allActors.size(); i++) 
 		allActors[i]->Draw(effectShader);
 }
