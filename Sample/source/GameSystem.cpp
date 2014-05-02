@@ -3,6 +3,7 @@
 #include "GL2DProgram.h"
 #include "ShaderGroup.h"
 #include "OS.h"
+#include "VoxEngine.h"
 
 GameSystem::GameSystem(ShaderGroup * _shaders)
     : shaders(_shaders)
@@ -59,9 +60,12 @@ void GameSystem::Draw(double width, double height) {
 
 	//Update debug data before draw
 	Controls.Debug.Fps = fpsCount.GetFps();
+	//and profiling debug data
+	Controls.Debug.UpdateTime = VoxEngine::UpdateTime.GetAverage();
+	Controls.Debug.DrawTime = VoxEngine::DrawTime.GetAverage();
 
 	//Draw the window
-	Controls.Draw(shaders2d,Rect(0,0,(float)width,(float)height));
+	//Controls.Draw(shaders2d,Rect(0,0,(float)width,(float)height));
 
 	//Keep track of fps
 	fpsCount.MarkFrameRendered();//*/

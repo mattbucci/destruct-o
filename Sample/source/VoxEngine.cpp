@@ -54,7 +54,12 @@ AsyncTask * VoxEngine::task = NULL;
 //do so from here
 SyncTask VoxEngine::SynchronousTask;
 
+//Get the average update and draw times
+MovingAverage<float> VoxEngine::DrawTime(20);
+MovingAverage<float> VoxEngine::UpdateTime(20);
 
+
+//Save data to keep across all games
 GameData VoxEngine::GlobalSavedData;
 
 GameEvent<void (bool)> VoxEngine::ApplicationStateChanged;
@@ -292,6 +297,9 @@ void VoxEngine::Start() {
 			cout << " to " << gameEventDelta << "\n";
 		}
 
+		//For profile debugging
+		double updateStartTime = OS::Now();
+
 		//While you're behind on physics frames catch up
 		//If you become more behind during calculation
 		//we continue anyways, so that frames are drawn sometimes
@@ -311,6 +319,8 @@ void VoxEngine::Start() {
 			CurrentSystem->simTime += SIMULATION_DELTA;
 		}
 
+		UpdateTime.AddSample(OS::Now()-updateStartTime);
+
         // Pump Events (iOS vsync is scheduled on the event pump)
         SDL_PumpEvents();
         
@@ -322,12 +332,18 @@ void VoxEngine::Start() {
             if(iOSRenderRequested)
             {
 #endif
+				//For debug profiling
+				double drawStartTime = OS::Now();
+
                 //Run the frame draw
                 glClear ( CurrentSystem->ClearBits() );
                 
                 //Draw
                 CurrentSystem->Draw(scaledSize.x,scaledSize.y);
                 
+				//Time measured
+				DrawTime.AddSample(OS::Now() - drawStartTime);
+
                 /* Swap our back buffer to the front */
                 SDL_GL_SwapWindow(displayWindow);
 #if (defined __IPHONEOS__)

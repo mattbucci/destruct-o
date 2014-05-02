@@ -8,6 +8,7 @@
 #include "AsyncTask.h"
 #include "SyncTask.h"
 #include "GameEvent.h"
+#include "MovingAverage.h"
 
 #define SIMULATION_DELTA .01f
 
@@ -73,6 +74,12 @@ public:
 	//instead of per-save
 	//Such as options, account data, etc.
 	static GameData GlobalSavedData;
+
+
+	//Get the average update and draw times
+	static MovingAverage<float> DrawTime;
+	static MovingAverage<float> UpdateTime;
+
     
     // state changed changed event
     static GameEvent<void (bool)> ApplicationStateChanged;
