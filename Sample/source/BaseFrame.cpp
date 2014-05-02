@@ -28,7 +28,7 @@
 
 #include "GLTextureCubeMap.h"
 
-#define MAX_DRAW_DISTANCE 600.0f
+#define MAX_DRAW_DISTANCE 300.0f
 #define MIN_DRAW_DISTANCE 30.0f
 
 //Make baseframe a singleton now
@@ -252,7 +252,7 @@ void BaseFrame::Draw(double width, double height)
 	vec3 pos = Actors.Player()->GetPosition();
 
 	// Setup the camera view for the player
-	Camera.SetCameraView(pos, FirstPerson->GetLookVector(), viewDistance/2);
+	Camera.SetCameraView(pos, FirstPerson->GetLookVector(), viewDistance);
     Actors.Player()->WeaponCamera().SetCameraView(vec3(0,0,0), glm::vec3(0,-1,0), viewDistance); // BAD BUT TEMPORARY
     
 	// Apply properties to each shader
@@ -266,8 +266,7 @@ void BaseFrame::Draw(double width, double height)
     SetupShader<GLEffectProgram>("effects", fogDistance);
     Camera.Apply((GLEffectProgram*)shaders->GetShader("effects"));
     
-	// Enable sensible defaults
-	glDisable(GL_BLEND);
+    // Sensible defaults
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
     
@@ -281,15 +280,11 @@ void BaseFrame::Draw(double width, double height)
 	//translate it to follow world coordinates
 	shaders3d->Lights.On();
 	shaders3d->Lights.Apply();
-	
-	// Draw the voxels
-    SimplePolygon<4> viewArea;
-    Camera.GetViewingArea(viewArea);
-    Voxels.Draw(shaders, viewArea);
     
-	//The physics system uses the same texture that the voxels above binds every time it draws
-	//so it must always immediately follow Voxels.draw()
-	Physics.Draw(shaders);
+#if !(defined __MOBILE__)
+    // Desktop settings, render skybox behind everything
+	glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     // Use the skybox shader
     GL3DProgram * skyboxShader = (GL3DProgram *) shaders->GetShader("skybox");
@@ -302,7 +297,35 @@ void BaseFrame::Draw(double width, double height)
     
     // Draw the skybox
     skybox->Draw(skyboxShader);
-
+#else
+    // Mobile settings
+	glDisable(GL_BLEND);
+#endif
+	
+	// Draw the voxels
+    SimplePolygon<4> viewArea;
+    Camera.GetViewingArea(viewArea);
+    Voxels.Draw(shaders, viewArea);
+    
+	//The physics system uses the same texture that the voxels above binds every time it draws
+	//so it must always immediately follow Voxels.draw()
+	Physics.Draw(shaders);
+    
+#if (defined __MOBILE__)
+    // On mobile, render the skybox later
+    // Use the skybox shader
+    GL3DProgram * skyboxShader = (GL3DProgram *) shaders->GetShader("skybox");
+    skyboxShader->UseProgram();
+    
+    // Setup the skybox's camera
+    skyboxShader->Camera.SetCameraPosition(vec3(0,0,0), FirstPerson->GetLookVector());
+    skyboxShader->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25, viewDistance); //width/height
+    skyboxShader->Camera.Apply();
+    
+    // Draw the skybox
+    skybox->Draw(skyboxShader);
+#endif
+    
 	//Turn lights back on because I'm not sure if this is necessary
 	//shaders3d->Lights.On();
     
