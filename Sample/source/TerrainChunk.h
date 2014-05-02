@@ -40,7 +40,7 @@ public:
 	//The interleaved data structure
 	//Use packing to insure everything is in contiguous memory
 	//and does not have padding
-	PACK(
+
 	struct ChunkVertexData {
 		Utilities::PODVec3 Vertex;
 		uint8_t TextureCoordinateX;
@@ -48,7 +48,8 @@ public:
 		uint8_t TextureCoordinateSX;
 		uint8_t TextureCoordinateSY;
 		uint8_t Shading;
-	});
+        uint8_t pad[3];
+	};
 
 	//Array of interleaved vertex data
 	ChunkVertexData * VertexData;
