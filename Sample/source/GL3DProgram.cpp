@@ -3,10 +3,9 @@
 
 GL3DProgram::GL3DProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath) :
 	GLProgram(commonShader, vertexShaderPath,fragmentShaderPath),
-	cmatrix(glGetUniformLocation(programId,"vView"),glGetUniformLocation(programId,"MV"),glGetUniformLocation(programId,"MVP")),
 	Lights(programId),
-	Model(&cmatrix),
-	Camera(&cmatrix),
+	Model(glGetUniformLocation(programId,"M")),
+	Camera(glGetUniformLocation(programId,"P"),glGetUniformLocation(programId,"V"),glGetUniformLocation(programId,"VP")),
 	Fog(programId),
 	Acid(glGetUniformLocation(programId,"uCurrentTime"),glGetUniformLocation(programId,"uAcidFactor")) 
 {

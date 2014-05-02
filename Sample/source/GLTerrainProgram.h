@@ -1,29 +1,25 @@
 
 #pragma once
+
 #include "GLCamera.h"
 #include "GLProgram.h"
-#include "GLCombinedModel.h"
+#include "GLModel.h"
 #include "GLLighting.h"
 #include "MaxDistanceFog.h"
 #include "GLCombinedMatrix.h"
 #include "GLAcidTab.h"
-//#include "GLMaterialManager.h"
 
-class GLTerrainProgram : public GLProgram {
-
-	//All the attributes used for drawing voxels
-	//Not all are valid on all platforms
-	
+class GLTerrainProgram : public GLProgram
+{
+	// Vertex attributes for the terrain program
 	GLint attributeIndexTexture;
 	GLint attributeIndexVertex;
 	GLint attributeIndexShading;
 
-
-	GLCombinedMatrix cmatrix;
 public:
 	GLTerrainProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath);
 
-	GLCombinedModel Model;
+	GLModel Model;
 	GLCamera Camera;
 	MaxDistanceFog Fog;
 	GLAcidTab Acid;

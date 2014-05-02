@@ -4,13 +4,22 @@
 
 class GLCombinedMatrix;
 
-class GLCamera {
+class GLCamera
+{
+    // Camera related matrices
 	mat4 viewMatrix;
 	mat4 projectionMatrix;
+    
+    // Up vector
 	vec3 cameraZAxis;
-	GLCombinedMatrix * cmatrix;
+	
+    // OpenGL uniforms for matrices
+    GLint uniformMatrixProjection;
+    GLint uniformMatrixView;
+    GLint uniformMatrixCombined;
+    
 public:
-	GLCamera(GLCombinedMatrix * cmatrix);
+	GLCamera(GLint uniformMatrixProjection, GLint uniformMatrixView, GLint uniformMatrixCombined);
 	
 	//Copy the view or projection matrices the camera is using
 	//point may be NULL to not copy that value

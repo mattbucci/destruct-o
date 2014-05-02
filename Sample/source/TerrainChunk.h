@@ -5,7 +5,7 @@
 
 #include "Utilities.h"
 
-#define CHUNK_SIZE 16
+#define CHUNK_SIZE 32
 
 class GameTile;
 

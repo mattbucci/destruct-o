@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "GLModel.h"
 
-GLModel::GLModel(GLint cameraUniformId) {
-	model = cameraUniformId;
+GLModel::GLModel(GLint uniformMatrixModel) {
+	this->uniformMatrixModel = uniformMatrixModel;
 	Reset();
 }
 
@@ -13,7 +13,10 @@ void GLModel::Reset() {
 void GLModel::Apply(){
 	// Setting a non-existant uniform causes no issues, shader may take a precalculated matrix series and not need this parameter
 	//_ASSERTE(model >= 0);
-	glUniformMatrix4fv(model,1,false,(float*)&modelMatrix[stackPosition]);
+    if(uniformMatrixModel >= 0)
+    {
+        glUniformMatrix4fv(uniformMatrixModel,1,false,(float*)&modelMatrix[stackPosition]);
+    }
 }
 
 mat4 GLModel::GetMatrix(void){
@@ -66,6 +69,11 @@ GLModel & GLModel::Scale(vec3 scale){
 }
 GLModel & GLModel::Scale(float xScale, float yScale, float zScale){
 	modelMatrix[stackPosition] *= glm::scale(vec3(xScale,yScale,zScale));
+	return *this;
+}
+
+GLModel & GLModel::Combine(mat4 matrix) {
+	modelMatrix[stackPosition] *= matrix;
 	return *this;
 }
 

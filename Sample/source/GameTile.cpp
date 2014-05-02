@@ -327,7 +327,6 @@ void GameTile::Render(GL3DProgram * voxelShader, GLTerrainProgram * terrainShade
 	// Offset the tile to the correct location
 	terrainShader->Model.PushMatrix();
 	terrainShader->Model.Translate(vec3(pos, 0));
-	terrainShader->Model.Apply();
     
 	//Draw the tiles in the region specified
 	for (float j = jmin; j < jmax; j += CHUNK_SIZE)

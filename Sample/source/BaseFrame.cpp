@@ -271,20 +271,23 @@ void BaseFrame::Draw(double width, double height)
 	shaders3d->UseProgram();
 	shaders3d->Model.Reset();
 	shaders3d->Model.Apply();
+    
 	//Setup sun here for now
 	//translate it to follow world coordinates
 	shaders3d->Lights.Off();
 	shaders3d->Lights.Apply();
+    
 	//Enable sensible defaults
-	glEnable(GL_BLEND);
+	//glEnable(GL_BLEND);
+	glDisable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     // Re-enable the depth test
 	glEnable(GL_DEPTH_TEST);
     
     // Use the skybox shader
-    GL3DProgram * skyboxShader = (GL3DProgram *) shaders->GetShader("skybox");
+    /*GL3DProgram * skyboxShader = (GL3DProgram *) shaders->GetShader("skybox");
     skyboxShader->UseProgram();
     
     // Setup the skybox's camera
@@ -296,7 +299,7 @@ void BaseFrame::Draw(double width, double height)
     skyboxShader->Model.Apply();
     
     // Draw the skybox
-    skybox->Draw(skyboxShader);
+    skybox->Draw(skyboxShader);*/
 	
 	// Draw the voxels
     SimplePolygon<4> viewArea;
@@ -305,7 +308,7 @@ void BaseFrame::Draw(double width, double height)
     
 	//The physics system uses the same texture that the voxels above binds every time it draws
 	//so it must always immediately follow Voxels.draw()
-	Physics.Draw(shaders);
+	/*Physics.Draw(shaders);
 
 	//Turn lights back on because I'm not sure if this is necessary
 	shaders3d->Lights.On();
@@ -327,7 +330,7 @@ void BaseFrame::Draw(double width, double height)
     Actors.Player()->DrawWeapon(modelShader);
     
 	//The particle system will use a different shader entirely soon
-	Particles.Draw(shaders);
+	Particles.Draw(shaders);*/
 	
 	//Update the voxel debug counter
 	Controls.Debug.Voxels = Voxels.GetLastVoxelCount();
@@ -378,5 +381,5 @@ HUD* BaseFrame::GetHUD() {
 // As we have the skybox, we only need clear the depth buffer
 GLenum BaseFrame::ClearBits()
 {
-    return GL_DEPTH_BUFFER_BIT;
+    return GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT;
 }

@@ -4,11 +4,11 @@
 #include "stdafx.h"
 
 class GLModel {
-	GLint model;
+	GLint uniformMatrixModel;
 	mat4 modelMatrix[256];
 	int stackPosition;
 public:
-	GLModel(GLint cameraUniformId);
+	GLModel(GLint uniformMatrixModel);
 
 	//Destroys matrix stack and sets matrix to identity
 	void Reset();
@@ -29,6 +29,7 @@ public:
 	GLModel & Rotate(float angle, float axisX, float axisY, float axisZ);
 	GLModel & Scale(vec3 scale);
 	GLModel & Scale(float xScale, float yScale, float zScale);
+	GLModel & Combine(mat4 matrix);
 	
 	//Extra handy functions
 	GLModel & Project(vec3 direction, vec3 pointOnPlane, vec3 planeNormal);

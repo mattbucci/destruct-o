@@ -2,12 +2,16 @@
 #include "GLCamera.h"
 #include "GLCombinedMatrix.h"
 
-GLCamera::GLCamera(GLCombinedMatrix * cmatrix) {
-	this->cmatrix = cmatrix;
+GLCamera::GLCamera(GLint uniformMatrixProjection, GLint uniformMatrixView, GLint uniformMatrixCombined)
+{
+	this->uniformMatrixProjection = uniformMatrixProjection;
+    this->uniformMatrixView = uniformMatrixView;
+    this->uniformMatrixCombined = uniformMatrixCombined;
 }
 	
 
-void GLCamera::CopyMatricies(mat4 * viewMatrix, mat4 * projectionMatrix) const {
+void GLCamera::CopyMatricies(mat4 * viewMatrix, mat4 * projectionMatrix) const
+{
 	if (viewMatrix != NULL)
 		*viewMatrix = this->viewMatrix;
 	if (projectionMatrix != NULL)
@@ -19,11 +23,26 @@ void GLCamera::SetViewMatrix(mat4 viewMatrix) {
 }
 
 //Apply the camera projection/view matrix
-void GLCamera::Apply() {
-	//Apply the matrices to the shaders
-	cmatrix->View = viewMatrix;
-	cmatrix->Projection = projectionMatrix;
-	cmatrix->Apply();
+void GLCamera::Apply()
+{
+    // Apply the project matrix
+    if(uniformMatrixProjection >= 0)
+    {
+        glUniformMatrix4fv(uniformMatrixProjection, 1, GL_FALSE, &projectionMatrix[0][0]);
+    }
+    
+    // Apply the view matrix
+    if(uniformMatrixView >= 0)
+    {
+        glUniformMatrix4fv(uniformMatrixView, 1, GL_FALSE, &viewMatrix[0][0]);
+    }
+    
+    // Apply the precomputed matrix if required
+    if(uniformMatrixCombined >= 0)
+    {
+        mat4 combined = projectionMatrix * viewMatrix;
+        glUniformMatrix4fv(uniformMatrixCombined, 1, GL_FALSE, &combined[0][0]);
+    }
 }
 
 //Reset the view and projection matrix to the identity matrix

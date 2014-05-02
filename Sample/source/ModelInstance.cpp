@@ -78,7 +78,7 @@ void ModelInstance::Draw(MaterialProgram *program)
     // Push the model transform onto the program's matrix stack
     program->Model.PushMatrix();
     program->Model.SetMatrix(transform.TransformMatrix());
-    program->Model.Apply();
+    //program->Model.Apply();
     
     // DUCT TAPE SOLUTON WARNING
     if(controller->Layers().size())

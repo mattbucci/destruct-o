@@ -7,7 +7,7 @@ GLEffectProgram::GLEffectProgram(GLCommonShaderFile * commonShader, string verte
 	Fog(programId),
 	Acid(glGetUniformLocation(programId,"uCurrentTime"),glGetUniformLocation(programId,"uAcidFactor")),
 	Model(&cmatrix),
-	Camera(&cmatrix)
+	Camera(glGetUniformLocation(programId,"P"),glGetUniformLocation(programId,"V"),glGetUniformLocation(programId,"VP"))
 	{
 
 

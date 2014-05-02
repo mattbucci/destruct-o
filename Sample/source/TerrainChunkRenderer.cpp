@@ -37,9 +37,6 @@ void TerrainChunkRenderer::HotChunk::Render(GLTerrainProgram * shader)
 {
 	glBindVertexArray ( vertexArrayBuffer );
     glDrawElements(GL_TRIANGLES, (GLsizei) indexCount, GL_UNSIGNED_SHORT, 0);
-    
-    // Don't fuck the VAOs
-    glBindVertexArray( 0 );
 }
 
 void TerrainChunkRenderer::HotChunk::Set(TerrainChunk * chunk, GLTerrainProgram * shader)
@@ -72,6 +69,7 @@ void TerrainChunkRenderer::StartRendering(GLTerrainProgram * shader)
 {
 	// Use the terrain shader
 	shader->UseProgram();
+    shader->Camera.Apply();
 }
 
 void TerrainChunkRenderer::RenderTerrainChunk(vec2 tilePos, TerrainChunk * chunk, GLTerrainProgram * shader) {
@@ -134,4 +132,7 @@ void TerrainChunkRenderer::FinishRendering(GLTerrainProgram * shader) {
 			it = renderSlots.erase(it);
 		}
 	}
+    
+    // Unbind VAO (we know that internal to the renderer, it won't screw them up, but the outside is a wild place...)
+    glBindVertexArray( 0 );
 }
