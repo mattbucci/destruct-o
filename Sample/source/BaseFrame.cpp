@@ -301,7 +301,7 @@ void BaseFrame::Draw(double width, double height)
 	// Draw the voxels
     SimplePolygon<4> viewArea;
     Camera.GetViewingArea(viewArea);
-    Voxels.Draw(shaders, pos, viewArea);
+    Voxels.Draw(shaders, viewArea);
     
 	//The physics system uses the same texture that the voxels above binds every time it draws
 	//so it must always immediately follow Voxels.draw()

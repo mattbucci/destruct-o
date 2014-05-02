@@ -20,7 +20,7 @@
 #include "stdafx.h"
 
 /**
- * Arbitrary convex SimplePolygon intersection testing algorith called the Separation of Axis method.
+ * Arbitrary convex Polygon intersection testing algorithm called the Separation of Axis method.
  * Based on the solution found here: http://www.codeproject.com/Articles/15573/D-SimplePolygon-Collision-Detection
  */
 
@@ -89,6 +89,29 @@ public:
                 max = d;
             }
         }
+    }
+    
+    // Compute the axis aligned bounding rectange
+    void BoundingRect(SimplePolygon<4>& b)
+    {
+        // Compute the minimum x and y, and the maximum x and y
+        vec2 minimum = vec2(std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity());
+        vec2 maximum = vec2(-std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity());
+        
+        // Loop through all the points
+        for(typename storage_type::iterator vertex = vertices.begin(); vertex != vertices.end(); vertex++)
+        {
+            minimum.x = (vertex->x < minimum.x) ? vertex->x : minimum.x;
+            minimum.y = (vertex->y < minimum.y) ? vertex->y : minimum.y;
+            maximum.x = (vertex->x > maximum.x) ? vertex->x : maximum.x;
+            maximum.y = (vertex->y > maximum.y) ? vertex->y : maximum.y;
+        }
+        
+        // Build the polygon
+        b.vertices[0] = minimum;
+        b.vertices[1] = vec2(maximum.x, minimum.y);
+        b.vertices[2] = maximum;
+        b.vertices[3] = vec2(minimum.x, maximum.y);
     }
     
     // Check whether this SimplePolygon has an arbitrary intersection with another
