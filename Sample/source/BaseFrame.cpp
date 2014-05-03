@@ -242,7 +242,7 @@ void BaseFrame::Draw(double width, double height)
 	Textures.Refresh();
     
 	// Calculate the view and fog distances from the stored slider
-    viewDistance = glm::mix(MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE, VoxEngine::GlobalSavedData.GameOptions.ViewDistance);
+    viewDistance = 125;//glm::mix(MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE, VoxEngine::GlobalSavedData.GameOptions.ViewDistance);
     float fogDistance = viewDistance * 0.8f;
     
     // Compute the view for size vector

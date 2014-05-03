@@ -9,6 +9,8 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 
 public class ClearActivity extends Activity {
 	public ClearActivity() {
@@ -53,11 +55,18 @@ public class ClearActivity extends Activity {
     */
     private GLSurfaceView mGLView;
 }
-class MyGLSurfaceView extends GLSurfaceView {
-
+class MyGLSurfaceView extends GLSurfaceView implements View.OnTouchListener {
     public MyGLSurfaceView(Context context){
         super(context);
-
+        
+        //Handle touch events
+        setOnTouchListener(this); 
+        
+        //Set appropriate settings to handle touch events
+        setFocusable(true);
+        setFocusableInTouchMode(true);
+        requestFocus();
+        
         // Create an OpenGL ES 2.0 context
         setEGLContextClientVersion(2);
         
@@ -67,6 +76,35 @@ class MyGLSurfaceView extends GLSurfaceView {
         // Set the Renderer for drawing on the GLSurfaceView
         setRenderer(new ClearRenderer());
     }
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+        final int touchDevId = event.getDeviceId();
+        final int pointerCount = event.getPointerCount();
+        // touchId, pointerId, action, x, y, pressure
+        int actionPointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_ID_MASK) >> MotionEvent.ACTION_POINTER_ID_SHIFT; /* API 8: event.getActionIndex(); */
+        int pointerFingerId = event.getPointerId(actionPointerIndex);
+        int action = (event.getAction() & MotionEvent.ACTION_MASK); /* API 8: event.getActionMasked(); */
+
+        float x = event.getX(actionPointerIndex) / (float)this.getWidth();
+        float y = event.getY(actionPointerIndex) / (float)this.getHeight();
+        float p = event.getPressure(actionPointerIndex);
+
+        if (action == MotionEvent.ACTION_MOVE && pointerCount > 1) {
+           // TODO send motion to every pointer if its position has
+           // changed since prev event.
+           for (int i = 0; i < pointerCount; i++) {
+               pointerFingerId = event.getPointerId(i);
+               x = event.getX(i) / (float)this.getWidth();
+               y = event.getY(i) / (float)this.getHeight();
+               p = event.getPressure(i);
+               SDLActivity.onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
+           }
+        } else {
+           SDLActivity.onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
+        }
+        return true;
+	}
 }
 class ClearRenderer implements GLSurfaceView.Renderer {
 	private boolean ranOnce = false;
