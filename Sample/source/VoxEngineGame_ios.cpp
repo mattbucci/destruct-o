@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "VoxEngine.h"
-
+#include "OS.h"
 
 #ifdef __IPHONEOS__
 
@@ -26,16 +26,12 @@ void VoxEngine::BuildRenderContext() {
 	SDL_GetWindowSize(displayWindow,&curWidth,&curHeight);
 }
 
-
-
-
 // Called by the iOS animation callback
 void iOSAnimationCallback(void *context)
 {
-    iOSRenderRequested = true;
-    iOSRenderTime = OS::Now();
+    VoxEngine::iOSRenderRequested = true;
+    VoxEngine::iOSRenderTime = OS::Now();
 }
-
 
 //returns NULL if that context couldn't be constructed
 SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVersion, float requiredGLSLVersion) {
@@ -68,8 +64,5 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 	
 	return displayWindow;
 }
-
-
-
 
 #endif

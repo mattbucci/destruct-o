@@ -7,9 +7,12 @@
 #include "LoadingScreen.h"
 #include "BaseFrame.h"
 
+double physicsFrameTime = 0.0;
+
 //Entry point for the program
 //should be called once
-void VoxEngine::ProgramEntryPoint() {
+void VoxEngine::ProgramEntryPoint()
+{
 	cout << "Program entry point\n";
 	//curWidth/curHeight should be set by android /before/ this point
 	//and set by everyone else during BuildRenderContext()
@@ -28,10 +31,6 @@ void VoxEngine::ProgramEntryPoint() {
 
 	//Exit is handled as an event
 }
-
-
-
-
 
 //Setup the game
 //one time setup which requires
@@ -166,7 +165,7 @@ void VoxEngine::RenderLoop() {
 	//we continue anyways, so that frames are drawn sometimes
 	//even if they fall behind a bit
 	double timeDifference = (OS::Now()+gameEventDelta)-globalTime;
-    double physicsFrameTime = OS::Now();
+    physicsFrameTime = OS::Now();
 	while (timeDifference >= SIMULATION_DELTA) {
 		timeDifference -= SIMULATION_DELTA;
 		//Run the simulation
