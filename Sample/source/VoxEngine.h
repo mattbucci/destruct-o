@@ -17,13 +17,33 @@ void iOSAnimationCallback(void *context);
 int EventFilter(void *context, SDL_Event *event);
 
 class VoxEngine {
-	static void DoInit();
+	//Entry point for the program
+	//should be called once
+	static void ProgramEntryPoint();
 
-	//Entry point for the game engine
-	static void Start(int width, int height);
+
+	//Do anything necessary to build the render context
+	static void BuildRenderContext();
+
+	//Setup the game
+	//one time setup which requires
+	//an opengl context to be setup
+	static void Start();
+
+	//Start the render loop
+	//on most platforms
+	static void StartRenderLoop();
+
+	//Called over and over while rendering
+	static void RenderLoop();
+
+	//Close up and clean up at this point
+	static void Exit();
 
     // Make sure its safe to render
-    static void WaitForSafeRender();
+	//if it can't be made safe, returns false to indicate
+	//rendering should be skipped
+    static bool WaitForSafeRender();
     
 	//Build an SDL context
 	static SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion, float requiredGLSLVersion);
@@ -50,6 +70,11 @@ class VoxEngine {
 	static int curWidth;
 	static int curHeight;
 
+	//IOS values
+	static bool renderingIsSafe;
+	static bool iOSRenderRequested;
+	static double iOSRenderTime;
+
 	//The scaled size of the 2d interface over the window
 	static vec2 scaledSize;
 	//The scaling applied to the mouse positions
@@ -58,8 +83,11 @@ class VoxEngine {
 	//An async operation to execute before the next frame
 	static AsyncTask * task;
 
+	//Some things require an sdl window
+	static SDL_Window * displayWindow;
+
 	friend int main(int argc, char** argv);
-    
+    friend int EventFilter(void *context, SDL_Event *event);
     friend void iOSAnimationCallback(void *context);
 	friend void doFrame(int width, int height);
 public:

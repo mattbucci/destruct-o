@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "HUD.h"
 #include "GL2DProgram.h"
-#include "VoxEngine.h"
 #include "BaseFrame.h"
 #include "ActorPlayer.h"
+#include "VoxEngine.h"
 
 #define MINIMAP_SIZE 200
 #define MINIMAP_DOT_SIZE 20

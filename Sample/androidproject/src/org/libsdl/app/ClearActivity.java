@@ -22,19 +22,35 @@ public class ClearActivity extends Activity {
         mGLView = new MyGLSurfaceView(this);
         setContentView(mGLView);
     }
-
+ // Events
     @Override
     protected void onPause() {
+        Log.v("SDL", "onPause()");
         super.onPause();
+        SDLActivity.handlePause();
         mGLView.onPause();
     }
 
     @Override
     protected void onResume() {
+        Log.v("SDL", "onResume()");
         super.onResume();
+        SDLActivity.handleResume();
         mGLView.onResume();
     }
 
+/*
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        Log.v("SDL", "onWindowFocusChanged(): " + hasFocus);
+
+        SDLActivity.mHasFocus = hasFocus;
+        if (hasFocus) {
+            SDLActivity.handleResume();
+        }
+    }
+    */
     private GLSurfaceView mGLView;
 }
 class MyGLSurfaceView extends GLSurfaceView {
@@ -42,8 +58,11 @@ class MyGLSurfaceView extends GLSurfaceView {
     public MyGLSurfaceView(Context context){
         super(context);
 
-     // Create an OpenGL ES 2.0 context
+        // Create an OpenGL ES 2.0 context
         setEGLContextClientVersion(2);
+        
+        //Preserve the context as best as possible
+        setPreserveEGLContextOnPause(true);
         
         // Set the Renderer for drawing on the GLSurfaceView
         setRenderer(new ClearRenderer());
@@ -52,21 +71,22 @@ class MyGLSurfaceView extends GLSurfaceView {
 class ClearRenderer implements GLSurfaceView.Renderer {
 	private boolean ranOnce = false;
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-    	/*if (ranOnce) {
+    	Log.v("_SDL", "onSurfaceCreated");
+    	if (!ranOnce) {
     	   	 // Set the background frame color
         	Log.v("_SDL", "Surface constructed");
         	SDLActivity.nativeInit();		
-    	}*/
-    	SDLActivity.nativeInit();	
+    	}
     	ranOnce = true;
 
     }
     public int myWidth;
     public int myHeight;
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-    	GLES20.glViewport(0, 0, width, height);
+    	Log.v("_SDL", "onSurfaceChanged");
     	myWidth = width;
     	myHeight = height;
+    	SDLActivity.onNativeResize(width, height, 0x16462004);
     }
 
     public void onDrawFrame(GL10 gl) {

@@ -2,7 +2,6 @@
 #include "ActorAids.h"
 #include "ActorSystem.h"
 #include "BaseFrame.h"
-#include "VoxEngine.h"
 #include "ActorPlayer.h"
 
 //All AI actions

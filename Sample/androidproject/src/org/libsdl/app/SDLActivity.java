@@ -157,10 +157,10 @@ public class SDLActivity extends Activity {
      *  to 'true' during the call to onPause (in a usual scenario).
      */
     public static void handlePause() {
-        if (!SDLActivity.mIsPaused && SDLActivity.mIsSurfaceReady) {
+        if (!SDLActivity.mIsPaused/* && SDLActivity.mIsSurfaceReady*/) {
             SDLActivity.mIsPaused = true;
             SDLActivity.nativePause();
-            mSurface.enableSensor(Sensor.TYPE_ACCELEROMETER, false);
+           // mSurface.enableSensor(Sensor.TYPE_ACCELEROMETER, false);
         }
     }
 
@@ -169,10 +169,10 @@ public class SDLActivity extends Activity {
      * every time we get one of those events, only if it comes after surfaceDestroyed
      */
     public static void handleResume() {
-        if (SDLActivity.mIsPaused && SDLActivity.mIsSurfaceReady && SDLActivity.mHasFocus) {
+        if (SDLActivity.mIsPaused/* && SDLActivity.mIsSurfaceReady && SDLActivity.mHasFocus*/) {
             SDLActivity.mIsPaused = false;
             SDLActivity.nativeResume();
-            mSurface.enableSensor(Sensor.TYPE_ACCELEROMETER, true);
+           // mSurface.enableSensor(Sensor.TYPE_ACCELEROMETER, true);
         }
     }
 
