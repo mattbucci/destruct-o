@@ -26,3 +26,8 @@ void AsyncTask::Start() {
 bool AsyncTask::IsDone() {
 	return finished;
 }
+
+//Check if the task has been started
+bool AsyncTask::IsStarted() {
+	return started;
+}

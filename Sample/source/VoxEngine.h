@@ -16,11 +16,16 @@ void iOSAnimationCallback(void *context);
 // Callback from the event system to allow filtering (sniff for app events)
 int EventFilter(void *context, SDL_Event *event);
 
+class LoadingScreen;
+
 class VoxEngine {
 	//Entry point for the program
 	//should be called once
 	static void ProgramEntryPoint();
 
+	//The loading screen for when its needed
+	//Constructed during Start()
+	static LoadingScreen * load;
 
 	//Do anything necessary to build the render context
 	static void BuildRenderContext();
@@ -47,6 +52,11 @@ class VoxEngine {
     
 	//Build an SDL context
 	static SDL_Window* BuildSDLContext(int openglMajorVersion, int openglMinorVersion, float requiredGLSLVersion);
+
+	//Post a frame
+	//on most platform this does buffer swap
+	static void PostFrame();
+
 
 	//From a given size find a good size for the 2d interface
 	//which mostly fills the screen

@@ -15,6 +15,8 @@ bool VoxEngine::renderingIsSafe = true;
 bool VoxEngine::iOSRenderRequested = false;
 double VoxEngine::iOSRenderTime = 0.0;
 
+LoadingScreen * VoxEngine::load;
+
 //A variable which at runtime can be used to figure out what version is running
 int OpenglVersion;
 //Used to determine the GLSL version used

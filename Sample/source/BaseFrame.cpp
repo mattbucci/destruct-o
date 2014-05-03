@@ -203,6 +203,8 @@ void BaseFrame::Build()
     
 	//Build the reset save
 	resetSave = Savable::Serialize(this);
+
+	cout << "Finished BaseFrame::Build()\n";
 }
 
 bool BaseFrame::Update(vector<InputEvent> inputEvents) {

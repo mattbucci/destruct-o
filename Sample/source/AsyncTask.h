@@ -17,4 +17,7 @@ public:
 	//Check if it finished
 	bool IsDone();
 
+	//Check if the task has been started
+	bool IsStarted();
+
 };

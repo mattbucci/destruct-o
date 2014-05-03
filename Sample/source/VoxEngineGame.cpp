@@ -81,6 +81,8 @@ void VoxEngine::Start() {
 	//First task is to build the game
 	VoxEngine::task = new AsyncTask([]() {Game()->Build();});
 
+	//Setup load
+	load = new LoadingScreen();
 }
 
 void VoxEngine::StartRenderLoop() {
@@ -93,44 +95,56 @@ void VoxEngine::StartRenderLoop() {
 }
 
 
+//Post a frame
+//on most platform this does buffer swap
+void VoxEngine::PostFrame() {
+#ifndef __ANDROID__
+	SDL_GL_SwapWindow(displayWindow);
+#endif
+}
+
+
 //Called over and over while rendering
 void VoxEngine::RenderLoop() {
     // If we have a task needing completed (mostly frame switched)
-    if(VoxEngine::task != NULL)
-    {
-		//Start the task
-		VoxEngine::task->Start();
+    if (VoxEngine::task != NULL) {
+		if (!VoxEngine::task->IsStarted()) {
+			//Start the task
+			VoxEngine::task->Start();
 
-		//Assume one of the frames constructed the 2d shader
-		GL2DProgram * shader = (GL2DProgram*)Frames::shaders->GetShader("2d");
-		LoadingScreen load;
-
-		glActiveTexture(GL_TEXTURE0);
-		SynchronousTask.PollingThreadStart();
-
-		while(!VoxEngine::task->IsDone())
-        {
-			// Wait until its safe to render
-            if(VoxEngine::WaitForSafeRender())
-            {
-                // Draw the loading screen
-                glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-                load.Draw(curWidth,curHeight,shader);
-                SDL_GL_SwapWindow(displayWindow);
-            }
-
-			//If there's a sync task, execute it now
-			SynchronousTask.PollingThreadPoll();
-
-			//Sleep softly and use no cpu power
-			OS::SleepTime(1.0/60.0);
+			glActiveTexture(GL_TEXTURE0);
+			SynchronousTask.PollingThreadStart();
 		}
+		else {
+			if (!VoxEngine::task->IsDone()) {
+				// Wait until its safe to render
+				if(VoxEngine::WaitForSafeRender())
+				{
+					//Assume one of the frames constructed the 2d shader
+					GL2DProgram * shader = (GL2DProgram*)Frames::shaders->GetShader("2d");
+					// Draw the loading screen
+					glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+					load->Draw(curWidth,curHeight,shader);
+					//Draw the frame
+					PostFrame();
+				}
 
-		SynchronousTask.PollingThreadStop();
+				//If there's a sync task, execute it now
+				SynchronousTask.PollingThreadPoll();
 
-		//Cleanup the task
-		delete VoxEngine::task;
-		VoxEngine::task = NULL;
+				//Sleep softly and use no cpu power
+				OS::SleepTime(1.0/60.0);
+			}
+			else {
+				//Finish the task
+				SynchronousTask.PollingThreadStop();
+
+				//Cleanup the task
+				delete VoxEngine::task;
+				VoxEngine::task = NULL;
+			}
+		}
+		return;
 	}
 	//Jump ahead detection, if the simulation loop
 	//is behind more than 2 seconds, assume the application
@@ -185,8 +199,8 @@ void VoxEngine::RenderLoop() {
 		//Time measured
 		DrawTime.AddSample(OS::Now() - drawStartTime);
 
-        /* Swap our back buffer to the front */
-        SDL_GL_SwapWindow(displayWindow);
+		//Draw the frame
+		PostFrame();
     }
 
 	//Update the current system selection
