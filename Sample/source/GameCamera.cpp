@@ -39,6 +39,7 @@ float GameCamera::GetDistance()
     return distance;
 }
 
+#define CHUNK_SIZE 32.0f
 // Get the viewing area of the camera as a top down triangle
 void GameCamera::GetViewingArea(SimplePolygon<4>& viewingArea)
 {
@@ -46,7 +47,7 @@ void GameCamera::GetViewingArea(SimplePolygon<4>& viewingArea)
     vec2 direction = glm::normalize(vec2(this->direction));
     
     // Calculate the player's postion
-    vec2 pos = vec2(position) + (vec2(-direction.x, -direction.y) * 16.0f);
+    vec2 pos = vec2(position) + (vec2(-direction.x, -direction.y) * CHUNK_SIZE);
     
     // Calculate vFov/2 in radians
     float halfFov = (horizontalFov / 2) * (M_PI / 180.0f);
@@ -63,8 +64,8 @@ void GameCamera::GetViewingArea(SimplePolygon<4>& viewingArea)
     vec2 rvec = vec2(direction.x * ncs - direction.y * nsn, direction.x * nsn + direction.y * ncs);
     
     // Calculate the vertices of the viewing triangel
-    viewingArea.vertices[0] = pos + (vec2(-direction.y, direction.x) * 16.0f);
-    viewingArea.vertices[1] = pos + (vec2(direction.y, -direction.x) * 16.0f);
+    viewingArea.vertices[0] = pos + (vec2(-direction.y, direction.x) * CHUNK_SIZE);
+    viewingArea.vertices[1] = pos + (vec2(direction.y, -direction.x) * CHUNK_SIZE);
     viewingArea.vertices[2] = pos + (rvec * sideLength);
     viewingArea.vertices[3] = pos + (lvec * sideLength);
     
