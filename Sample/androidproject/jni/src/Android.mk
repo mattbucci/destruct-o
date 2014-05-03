@@ -14,7 +14,7 @@ FILE_LIST += $(wildcard $(LOCAL_PATH)/noise/*.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/noise/model/*.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/noise/module/*.cpp)
 
-LOCAL_SRC_FILES := SDL_android_main.cpp $(FILE_LIST:$(LOCAL_PATH)/%=%)
+LOCAL_SRC_FILES := SDL_android_main.cpp android_bridge.cpp $(FILE_LIST:$(LOCAL_PATH)/%=%)
 
 LOCAL_STATIC_LIBRARIES := curl
 

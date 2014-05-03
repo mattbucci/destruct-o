@@ -27,6 +27,8 @@
 #include "ModelGroup.h"
 
 #include "GLTextureCubeMap.h"
+#include "GLSkybox.h"
+#include "Audio.h"
 
 #define MAX_DRAW_DISTANCE 300.0f
 #define MIN_DRAW_DISTANCE 30.0f
@@ -201,6 +203,8 @@ void BaseFrame::Build()
     
 	//Build the reset save
 	resetSave = Savable::Serialize(this);
+
+	cout << "Finished BaseFrame::Build()\n";
 }
 
 bool BaseFrame::Update(vector<InputEvent> inputEvents) {
@@ -238,7 +242,7 @@ void BaseFrame::Draw(double width, double height)
 	Textures.Refresh();
     
 	// Calculate the view and fog distances from the stored slider
-    viewDistance = glm::mix(MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE, VoxEngine::GlobalSavedData.GameOptions.ViewDistance);
+    viewDistance = 125;//glm::mix(MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE, VoxEngine::GlobalSavedData.GameOptions.ViewDistance);
     float fogDistance = viewDistance * 0.8f;
     
     // Compute the view for size vector

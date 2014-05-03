@@ -35,6 +35,7 @@ void android_egl_context_restore();
 void 
 android_egl_context_restore() 
 {
+return;
     SDL_WindowData *data = (SDL_WindowData *) Android_Window->driverdata;
     if (SDL_GL_MakeCurrent(Android_Window, (SDL_GLContext) data->egl_context) < 0) {
         /* The context is no longer valid, create a new one */
@@ -47,6 +48,7 @@ android_egl_context_restore()
 void 
 android_egl_context_backup() 
 {
+return;
     /* Keep a copy of the EGL Context so we can try to restore it when we resume */
     SDL_WindowData *data = (SDL_WindowData *) Android_Window->driverdata;
     data->egl_context = SDL_GL_GetCurrentContext();
@@ -67,7 +69,7 @@ Android_PumpEvents(_THIS)
      * Android_ResumeSem and Android_PauseSem are signaled from Java_org_libsdl_app_SDLActivity_nativePause and Java_org_libsdl_app_SDLActivity_nativeResume
      * When the pause semaphore is signaled, if SDL_ANDROID_BLOCK_ON_PAUSE is defined the event loop will block until the resume signal is emitted.
      */
-
+	return;
 #if SDL_ANDROID_BLOCK_ON_PAUSE
     if (isPaused && !isPausing) {
         /* Make sure this is the last thing we do before pausing */

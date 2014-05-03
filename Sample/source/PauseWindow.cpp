@@ -4,6 +4,7 @@
 #include "BaseFrame.h"
 #include "Slider.h"
 #include "Frames.h"
+#include "VoxEngine.h"
 
 typedef pair<string,int> intOption;
 
