@@ -107,6 +107,8 @@ void VoxEngine::ResizeWindow()
 	cout << "XXX Internal resize: " << finalResolution.x << "," << finalResolution.y << "\n";
 }
 
+extern bool doOnce;
+
 void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 		//You can poll up to 20 events per frame
 		//we don't want to take all day though
@@ -118,7 +120,6 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 
 			if (eventPolled)
             {
-				cout << "XXXXXXXXXXXXXX EVENT XXXXXXXXXXXXX\n";
 				//Convert sdl event to InputEvent
 				switch (event.type)
 				{
@@ -174,6 +175,8 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 						continueGameLoop = false;
 						break;
 				}
+				cout << "Finished processing event:" << event.type << "-" << (int)event.window.event << "\n";
+				doOnce = true;
 			}
 			else
 				//No more events

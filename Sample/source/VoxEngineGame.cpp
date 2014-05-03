@@ -103,6 +103,7 @@ void VoxEngine::PostFrame() {
 #endif
 }
 
+bool doOnce = true;
 
 //Called over and over while rendering
 void VoxEngine::RenderLoop() {
@@ -187,6 +188,8 @@ void VoxEngine::RenderLoop() {
         
     // If rendering is safe
     if(VoxEngine::WaitForSafeRender()) {
+		if (doOnce)
+			cout << "Starting safe render\n";
 		//For debug profiling
 		double drawStartTime = OS::Now();
 
@@ -201,12 +204,18 @@ void VoxEngine::RenderLoop() {
 
 		//Draw the frame
 		PostFrame();
+
+		if (doOnce)
+			cout << "Finished safe frame\n";
     }
 
 	//Update the current system selection
 	//if a swap was requested during one of the updates
 	//it will happen now
 	Frames::UpdateAliveFrame();
+	if (doOnce)
+		cout << "Exiting render loop\n";
+	doOnce = false;
 }
 
 //Close up and clean up at this point

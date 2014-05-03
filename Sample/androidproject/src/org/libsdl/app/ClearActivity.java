@@ -83,7 +83,7 @@ class ClearRenderer implements GLSurfaceView.Renderer {
     public int myWidth;
     public int myHeight;
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-    	Log.v("_SDL", "onSurfaceChanged");
+    	Log.v("_SDL", "onSurfaceChanged [" + width + "," + height + "]");
     	myWidth = width;
     	myHeight = height;
     	SDLActivity.onNativeResize(width, height, 0x16462004);

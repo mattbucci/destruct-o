@@ -265,7 +265,8 @@ public class SDLActivity extends Activity {
     public static native void nativeFlipBuffers();
 
     public static void flipBuffers() {
-        SDLActivity.nativeFlipBuffers();
+    	Log.v("_SDL", "SDL tried to swap buffers that naughty asshole");
+        //SDLActivity.nativeFlipBuffers();
     }
 
     public static boolean setActivityTitle(String title) {

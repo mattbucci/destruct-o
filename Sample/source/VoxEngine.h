@@ -10,6 +10,12 @@
 #include "GameEvent.h"
 #include "MovingAverage.h"
 
+#undef SDL_PumpEvents
+#undef SDL_PollEvents
+
+#define SDL_PumpEvents()
+#define SDL_PollEvents
+
 // Callback on iOS to set the render flag
 void iOSAnimationCallback(void *context);
 

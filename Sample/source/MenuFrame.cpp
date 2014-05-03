@@ -73,8 +73,8 @@ bool MenuFrame::Load(string saveFile) {
 
 void MenuFrame::OnFrameFocus() {
 		//Tell the engine to load a new game
-		VoxEngine::SetAsyncTask(new AsyncTask([]() {Game()->NewWorld();}));
-		Frames::SetSystem(Frames::FRAME_GAME);
+		//VoxEngine::SetAsyncTask(new AsyncTask([]() {Game()->NewWorld();}));
+		//Frames::SetSystem(Frames::FRAME_GAME);
 }
 
 
