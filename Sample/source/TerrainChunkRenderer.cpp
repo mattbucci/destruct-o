@@ -6,7 +6,6 @@
 TerrainChunkRenderer::TerrainChunkRenderer()
 {
     previousShader = NULL;
-	cout << "Chunk vertex data size: " << sizeof(TerrainChunk::ChunkVertexData) << "\n";
 }
 
 TerrainChunkRenderer::~TerrainChunkRenderer()

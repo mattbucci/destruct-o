@@ -270,16 +270,11 @@ void BaseFrame::Draw(double width, double height)
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
     
-	//Startup 3d rendering
+	// Voxel shader
 	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
 	shaders3d->UseProgram();
 	shaders3d->Model.Reset();
 	shaders3d->Model.Apply();
-    
-	//Setup sun here for now
-	//translate it to follow world coordinates
-	shaders3d->Lights.On();
-	shaders3d->Lights.Apply();
     
 #if !(defined __MOBILE__)
     // Desktop settings, render skybox behind everything
@@ -325,9 +320,6 @@ void BaseFrame::Draw(double width, double height)
     // Draw the skybox
     skybox->Draw(skyboxShader);
 #endif
-    
-	//Turn lights back on because I'm not sure if this is necessary
-	//shaders3d->Lights.On();
     
     // Setup the mesh shader boneless
     MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
