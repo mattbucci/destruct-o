@@ -219,9 +219,14 @@ void ActorSystem::Draw(ShaderGroup * shaders)
 	// Setup the mesh shader
 	MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
 	modelShader->UseProgram();
-
-	for (unsigned int i = 0; i < allActors.size(); i++) 
+    
+	glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+	for (unsigned int i = 0; i < allActors.size(); i++)
+    {
 		allActors[i]->Draw(modelShader);
+    }
+    glDisable(GL_CULL_FACE);
 
 	//Reset texture unit 0 to the active texture unit
 	glActiveTexture(GL_TEXTURE0);

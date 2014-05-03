@@ -81,7 +81,7 @@ void TerrainChunkRenderer::RenderTerrainChunk(vec2 tilePos, TerrainChunk * chunk
 	//Draw the chunk relative to itself
 	shader->Model.PushMatrix();
 	shader->Model.Translate(chunk->X,chunk->Y,0);
-	shader->Model.Apply();
+	shader->Apply();
 
 	//Check if this chunk is already buffered
 	vec2 chunkPosition = tilePos+vec2(chunk->X,chunk->Y);

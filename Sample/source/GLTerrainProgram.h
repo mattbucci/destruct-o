@@ -16,6 +16,10 @@ class GLTerrainProgram : public GLProgram
 	GLint attributeIndexVertex;
 	GLint attributeIndexShading;
 
+    // Modelview uniform
+    GLint uniformMatrixModelView;
+    GLint uniformMatrixModelViewProjection;
+    
 public:
 	GLTerrainProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath);
 
@@ -28,4 +32,7 @@ public:
 	const GLint AttributeTexture();
 	const GLint AttributeVertex();
 	const GLint AttributeShading();
+    
+    // Apply combined matrices
+    void Apply();
 };

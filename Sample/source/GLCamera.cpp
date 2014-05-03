@@ -81,3 +81,15 @@ void GLCamera::SetFrustrum(float verticalFOV, float aspectRatio, float nearDista
 	projectionMatrix[3].z = -(2.0f*farDistance*nearDistance)/(farDistance-nearDistance);
 	projectionMatrix[2].w = -1;
 }
+
+// Get the view matrix
+const mat4& GLCamera::ViewMatrix() const
+{
+    return viewMatrix;
+}
+
+// Get the projection matrix
+const mat4& GLCamera::ProjectionMatrix() const
+{
+    return projectionMatrix;
+}

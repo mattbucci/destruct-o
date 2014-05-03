@@ -321,25 +321,20 @@ void BaseFrame::Draw(double width, double height)
     skybox->Draw(skyboxShader);
 #endif
     
-    // Setup the mesh shader boneless
-    MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
-    modelShader->UseProgram();
-    modelShader->Lights.Enable(1);
-    modelShader->Lights.Off();
-    modelShader->Lights.Apply();
-    
     // Draw the actors
 	Actors.Draw(shaders);
-    
-    // Draw the weapon
-    modelShader->UseProgram();
-    modelShader->Lights.On();
-    modelShader->Lights.Apply();
     
     // Model materials should specify that they have transparency or not
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    // Draw the player's weapon
+    MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
+    modelShader->UseProgram();
+	glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
     Actors.Player()->DrawWeapon(modelShader);
+	glDisable(GL_CULL_FACE);
     
 	//The particle system will use a different shader entirely soon
 	Particles.Draw(shaders);

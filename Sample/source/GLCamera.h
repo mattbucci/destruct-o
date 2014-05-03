@@ -41,4 +41,10 @@ public:
 
 	//Change the frustrum matrix to the given values
 	void SetFrustrum(float verticleFOV, float aspectRatio, float nearDistance, float farDistance);
+    
+    // Get the view matrix
+    const mat4& ViewMatrix() const;
+    
+    // Get the projection matrix
+    const mat4& ProjectionMatrix() const;
 };

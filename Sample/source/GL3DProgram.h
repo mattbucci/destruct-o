@@ -16,6 +16,10 @@ class GL3DProgram : public GLProgram {
 	GLint attributeIndexNormal;
 	GLint attributeIndexPosition;
     GLint uniformMaterialReflectivity;
+    
+    // Modelview uniform
+    GLint uniformMatrixModelView;
+    GLint uniformMatrixModelViewProjection;
 
 public:
 	GL3DProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath);
@@ -37,4 +41,7 @@ public:
 	const GLint AttributeVertex();
 	const GLint AttributeNormal();
     const GLint UniformMaterialReflectivity();
+    
+    // Apply combined matrices
+    void Apply();
 };

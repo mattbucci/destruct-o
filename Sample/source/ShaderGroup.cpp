@@ -19,10 +19,10 @@ ShaderGroup::ShaderGroup() {
     AddShader(shaders2d,"2d");
     
     // Build the voxel shader
-    GL3DProgram * shaders3d = new GL3DProgram(&commonShader,"shaders/vsh_3d.glsl","shaders/fsh_3d.glsl");
-    if (!shaders3d->Valid()) 
+    GL3DProgram * shadersVoxel = new GL3DProgram(&commonShader,"shaders/vsh_voxel.glsl","shaders/fsh_voxel.glsl");
+    if (!shadersVoxel->Valid())
         cout << "Failed to build opengl program\n";
-    AddShader(shaders3d,"3d");
+    AddShader(shadersVoxel,"3d");
 	
 	// Build Particle Shader
 	GLParticleProgram * shadersP = new GLParticleProgram(&commonShader,"shaders/vsh_particle.glsl","shaders/fsh_particle.glsl");
