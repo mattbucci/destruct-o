@@ -1,8 +1,6 @@
 #pragma once
 
-#include "VoxEngine.h"
 #include "ShaderGroup.h"
-
 #include "GameSystem.h"
 
 #include "VoxelSystem.h"
@@ -12,11 +10,9 @@
 #include "FirstPersonMode.h"
 #include "PhysicsSystem.h"
 #include "ParticleCloud.h"
-#include "Audio.h"
 #include "Notification.h"
 #include "Achievements.h"
 #include "HUD.h"
-#include "GLSkybox.h"
 
 #include "GameEvent.h"
 #include "GameEventSubscriber.h"
@@ -24,6 +20,8 @@
 class ActorPlayer;
 class ParticleSystem;
 class ModelGroup;
+class AudioPlayer;
+class GLSkybox;
 
 //Retrieve base frame
 BaseFrame * Game();

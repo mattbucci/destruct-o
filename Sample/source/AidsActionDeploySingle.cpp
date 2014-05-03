@@ -2,6 +2,7 @@
 #include "AidsActionDeploySingle.h"
 #include "BaseFrame.h"
 
+#include "ActorPlayer.h"
 #include "ActorAI.h"
 
 CLASS_SAVE_CONSTRUCTOR(AidsActionDeploySingle);

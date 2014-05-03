@@ -27,6 +27,8 @@
 #include "ModelGroup.h"
 
 #include "GLTextureCubeMap.h"
+#include "GLSkybox.h"
+#include "Audio.h"
 
 #define MAX_DRAW_DISTANCE 300.0f
 #define MIN_DRAW_DISTANCE 30.0f
@@ -201,6 +203,8 @@ void BaseFrame::Build()
     
 	//Build the reset save
 	resetSave = Savable::Serialize(this);
+
+	cout << "Finished BaseFrame::Build()\n";
 }
 
 bool BaseFrame::Update(vector<InputEvent> inputEvents) {

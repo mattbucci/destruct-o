@@ -9,6 +9,7 @@
 #include "stdafx.h"
 
 #include "BaseFrame.h"
+#include "ActorPlayer.h"
 #include "Achievements.h"
 #include "Achievement.h"
 

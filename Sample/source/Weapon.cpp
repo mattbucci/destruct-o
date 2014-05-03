@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Weapon.h"
 #include "BaseFrame.h"
+#include "PhysicsActor.h"
 
 Weapon::Weapon() {
 	lastHoldingTrigger = false;

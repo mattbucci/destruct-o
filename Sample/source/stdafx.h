@@ -112,6 +112,9 @@ using glm::quat;
 #include "Savable.h"
 #include "ReflectionStore.h"
 
+//Simulation delta
+#define SIMULATION_DELTA .01f
+
 //Useful defines
 #define ADDSUFFIX_2(x,y) x ## y
 #define ADDSUFFIX_1(x,y) ADDSUFFIX_2(x,y)
