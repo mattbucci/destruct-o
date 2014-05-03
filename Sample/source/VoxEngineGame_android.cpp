@@ -6,6 +6,17 @@
 
 #ifdef __ANDROID__ 
 
+//Android's entry point
+//Different only because android supplies initial size here
+//instead of elsewhere
+void android_entrypoint(int initialWidth, int initialHeight) {
+	VoxEngine::curWidth = initialWidth;
+	VoxEngine::curHeight = initialHeight;
+
+	cout << "Entering android application [" << initialWidth << "," << initialHeight << "]\n";
+	VoxEngine::ProgramEntryPoint();
+}
+
 //Android's render loop is external, so this function is called from java
 void doFrame(int width, int height) {
 	VoxEngine::RenderLoop();

@@ -74,7 +74,7 @@ class MyGLSurfaceView extends GLSurfaceView implements View.OnTouchListener {
         setPreserveEGLContextOnPause(true);
         
         // Set the Renderer for drawing on the GLSurfaceView
-        setRenderer(new ClearRenderer());
+        setRenderer(new ClearRenderer(this.getWidth(),this.getHeight()));
     }
 
 	@Override
@@ -108,19 +108,29 @@ class MyGLSurfaceView extends GLSurfaceView implements View.OnTouchListener {
 }
 class ClearRenderer implements GLSurfaceView.Renderer {
 	private boolean ranOnce = false;
+	
+	public ClearRenderer(int startWidth, int startHeight) {
+		myWidth = startWidth;
+		myHeight = startHeight;
+	}
+	
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
     	Log.v("_SDL", "onSurfaceCreated");
-    	if (!ranOnce) {
-    	   	 // Set the background frame color
-        	Log.v("_SDL", "Surface constructed");
-        	SDLActivity.nativeInit();		
-    	}
-    	ranOnce = true;
+    	ranOnce = false;
 
     }
     public int myWidth;
     public int myHeight;
     public void onSurfaceChanged(GL10 gl, int width, int height) {
+    	//Check if the app has started up, if not start it up with the correct size
+    	if (!ranOnce) {
+	   	   	 // Set the background frame color
+	       	Log.v("_SDL", "Surface constructed with size[" + width + "," + height + "]");
+	       	SDLActivity.nativeInit(width,height);	
+	       	ranOnce = true;
+    	}
+    	
+    	
     	Log.v("_SDL", "onSurfaceChanged [" + width + "," + height + "]");
     	myWidth = width;
     	myHeight = height;

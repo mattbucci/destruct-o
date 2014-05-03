@@ -11,9 +11,8 @@
 //should be called once
 void VoxEngine::ProgramEntryPoint() {
 	cout << "Program entry point\n";
-	//If nobody sets anything, set 800,600
-	curWidth = 800;
-	curHeight = 600;
+	//curWidth/curHeight should be set by android /before/ this point
+	//and set by everyone else during BuildRenderContext()
 
 
 	//You need a render context

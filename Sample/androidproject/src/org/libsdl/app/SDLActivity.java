@@ -247,7 +247,7 @@ public class SDLActivity extends Activity {
 
     // C functions we call
     public static native void nativeDrawframe(int curWidth, int curHeight);
-    public static native void nativeInit();
+    public static native void nativeInit(int initialWidth, int initialHeight);
     public static native void nativeLowMemory();
     public static native void nativeQuit();
     public static native void nativePause();
@@ -436,7 +436,7 @@ class SDLMain implements Runnable {
     @Override
     public void run() {
         // Runs SDL_main()
-        SDLActivity.nativeInit();
+        SDLActivity.nativeInit(0,0);
 
         //Log.v("SDL", "SDL thread terminated");
     }

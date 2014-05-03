@@ -1,4 +1,6 @@
 
+void android_entrypoint(int initialWidth, int initialHeight);
+
 extern "C" {
 
 	#include "SDL2/SDL_config.h"
@@ -17,7 +19,7 @@ extern "C" {
 	extern void SDL_Android_Init(JNIEnv* env, jclass cls);
 
 	/* Start up the SDL app */
-	void Java_org_libsdl_app_SDLActivity_nativeInit(JNIEnv* env, jclass cls, jobject obj)
+	void Java_org_libsdl_app_SDLActivity_nativeInit(JNIEnv* env, jclass cls, jint initialWidth, jint initialHeight)
 	{
 		/* This interface could expand with ABI negotiation, calbacks, etc. */
 		SDL_Android_Init(env, cls);
@@ -29,7 +31,7 @@ extern "C" {
 		char *argv[2];
 		argv[0] = SDL_strdup("SDL_app");
 		argv[1] = NULL;
-		status = SDL_main(1, argv);
+		android_entrypoint(initialWidth, initialHeight);
 
 		/* Do not issue an exit or the whole application will terminate instead of just the SDL thread */
 		/* exit(status); */

@@ -102,10 +102,14 @@ class VoxEngine {
 	//Some things require an sdl window
 	static SDL_Window * displayWindow;
 
+	//Lol so many friends
+	//this is not such a great design
+	//oh well
 	friend int main(int argc, char** argv);
     friend int EventFilter(void *context, SDL_Event *event);
     friend void iOSAnimationCallback(void *context);
 	friend void doFrame(int width, int height);
+	friend void android_entrypoint(int initialWidth, int initialHeight);
 public:
 	//Run an async task before the next frame switch
 	static void SetAsyncTask(AsyncTask * task);

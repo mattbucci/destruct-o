@@ -108,7 +108,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 }
 
 /* Called before SDL_main() to initialize JNI bindings */
-void SDL_Android_Init(JNIEnv* mEnv, jclass cls, jint initialWidth, jint initialHeight)
+void SDL_Android_Init(JNIEnv* mEnv, jclass cls)
 {
     __android_log_print(ANDROID_LOG_INFO, "SDL", "SDL_Android_Init()");
 
