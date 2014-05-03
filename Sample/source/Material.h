@@ -60,6 +60,9 @@ private:
     vec3 colorDiffuse;
     vec3 colorAmbient;
     
+    // Is this material opaque
+    bool opaque;
+    
 public:
     // Standard constructor - create an empty material
     Material();
@@ -76,6 +79,9 @@ public:
     // Get the material colors
     const vec3& ColorDiffuse() const;
     const vec3& ColorAmbient() const;
+    
+    // Get if the material is opaque
+    const bool& Opaque() const;
 };
 
 #endif

@@ -33,14 +33,14 @@ const static std::string TextureTypeKeys[] =
 
 // Standard constructor - create an empty material
 Material::Material()
-    : id(""), textures(Material::texture_store()), colorDiffuse(glm::vec3(1.0, 1.0, 1.0)), colorAmbient(glm::vec3(1.0, 1.0, 1.0))
+    : id(""), textures(Material::texture_store()), colorDiffuse(glm::vec3(1.0, 1.0, 1.0)), colorAmbient(glm::vec3(1.0, 1.0, 1.0)), opaque(true)
 {
     
 }
 
 // Deserialization constructor - load from a Json serialized blob
 Material::Material(const Json::Value& value, const std::string directory)
-    : id(""), textures(Material::texture_store())
+    : id(""), textures(Material::texture_store()), opaque(true)
 {
     // We first need to validate that this a Json object
     if(!value.isObject())
@@ -97,6 +97,10 @@ Material::Material(const Json::Value& value, const std::string directory)
         colorAmbient = colorDiffuse;
     }
     
+    // Search for opaque/transparent settings
+    Json::Value opaque_default = true;
+    opaque = value.get("opaque", opaque_default).asBool();
+    
 #if (defined __MATERIAL_PRINT_LOGS__)
     cout << "Loaded Material (" << id << "): ";
     cout << "Ambient => {" << colorAmbient.r << " " << colorAmbient.g << " " << colorAmbient.b << "} ";
@@ -126,4 +130,9 @@ const vec3& Material::ColorDiffuse() const
 const vec3& Material::ColorAmbient() const
 {
     return colorAmbient;
+}
+
+const bool& Material::Opaque() const
+{
+    return opaque;
 }

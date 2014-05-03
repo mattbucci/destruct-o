@@ -354,6 +354,9 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         return;
     }
     
+    // Use standard blending
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     // Iterate through all the renderables
     for(std::vector<Model::MeshPartRenderData *>::iterator renderable = renderables.begin(); renderable != renderables.end(); renderable++)
     {
@@ -462,6 +465,15 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         glm::vec3 diffuse = (*renderable)->material->ColorDiffuse();
         glUniform3f(program->UniformColorAmbient(), ambient.r, ambient.g, ambient.b);
         glUniform3f(program->UniformColorDiffuse(), diffuse.r, diffuse.g, diffuse.b);
+        
+        // Should we use blending
+        if((*renderable)->material->Opaque())
+        {
+            glDisable(GL_BLEND);
+        } else
+        {
+            glEnable(GL_BLEND);
+        }
         
         // Finally, we can draw the god damn mesh
         glDrawElements(GL_TRIANGLES, (GLsizei) (*renderable)->meshpart->indices.size(), GL_UNSIGNED_SHORT, NULL);

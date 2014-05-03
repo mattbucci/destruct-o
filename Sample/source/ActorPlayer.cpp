@@ -68,7 +68,7 @@ void ActorPlayer::Build()
     laserCannon = Game()->Actors.BuildWeapon("playerlasercannon.json",this);
     
     // Set initial weapon to pulse laser
-    setWeapon(pulseLaser);
+    setWeapon(laserCannon);
 }
 
 void ActorPlayer::setWeapon(Weapon * weapon)
