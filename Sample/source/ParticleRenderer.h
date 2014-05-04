@@ -18,14 +18,14 @@ class ParticleRenderer {
 	GLuint vertexArray;
 	GLuint stripedBuffer;
     GLuint indexBuffer;
-    
-	PACK(
+
 	struct particleChunk {
 		Utilities::PODVec4 vertex;
 		Utilities::PODVec2 textureCoordinate;
 		Utilities::PODVec4 color;
 		unsigned char vertNumber;
-	});
+        unsigned char padding[3];
+	};
 
 	particleChunk vertices[PARTICLE_RENDER_SWEEP*4];
     GLushort      indices[PARTICLE_RENDER_SWEEP*6];
