@@ -99,6 +99,9 @@ void VoxEngine::PostFrame() {
 #ifndef __ANDROID__
 	SDL_GL_SwapWindow(displayWindow);
 #endif
+#ifdef __IPHONEOS__
+    iOSRenderRequested = false;
+#endif
 }
 
 bool doOnce = true;

@@ -33,62 +33,116 @@ GLSkydome::~GLSkydome()
 }
 
 // Build the skybox
-void GLSkydome::Build(unsigned int divisions)
+void GLSkydome::Build(GLushort divisions)
 {
-    // Calculate the divisions for the sphere
-    GLfloat dAzimuth = (GLfloat) M_2_PI / (GLfloat) (divisions * 2);
-    GLfloat dInclination = (GLfloat) M_PI / (GLfloat) (divisions);
-    
     // Generate the vertex data
     std::vector<vec3> vertices;
+    std::vector<GLushort> indices;
     
-    // Iterate through all the latitudes
-    for(int i = 0; i < divisions; i++)
+    // Calculate the divisions for the sphere
+    GLfloat dAzimuth = (GLfloat) M_PI / (GLfloat) (divisions);
+    GLfloat dInclination = (GLfloat) M_PI / (GLfloat) (divisions);
+    
+    // Reserve space for the sphere's vertices
+    vertices.reserve(2 + (divisions * 2)*(divisions - 1));
+    
+    // Push the top of the sphere vertex
+    vertices.push_back(vec3(0,0,1));
+    
+    // Iterate through all the divisions of the inclination
+    for(int i = 1; i < divisions; i++)
     {
-        // Calculate the next latitude
+        // Calculate the inclination
         GLfloat inclination = dInclination * (GLfloat) i;
-        GLfloat nInclination = inclination + dInclination;
         
-        // Iterate through all the longitudes
+        // Iterate through all divisions of the azimuth
         for(int j = 0; j < (divisions * 2); j++)
         {
             // Calculate the next longitude
             GLfloat azimuth = dAzimuth * (GLfloat) j;
-            GLfloat nAzimuth = azimuth + dAzimuth;
             
-            // Calculate the vertices
-            vec3 v1, v2, v3, v4;
+            // We're generating the vertex of this point
+            vec3 v;
             
-            // Calculate the base point
-            v1.x = sin(inclination) * cos(azimuth);
-            v1.y = sin(inclination) * sin(azimuth);
-            v1.z = cos(inclination);
-            
-            // Calculate the next point along the inclination
-            v2.x = sin(nInclination) * cos(azimuth);
-            v2.y = sin(nInclination) * sin(azimuth);
-            v2.z = cos(nInclination);
-            
-            // Calculate the next point along the azimuth & inclination
-            v3.x = sin(nInclination) * cos(nAzimuth);
-            v3.y = sin(nInclination) * sin(nAzimuth);
-            v3.z = cos(nInclination);
-            
-            // Calculate the next point along the azimuth
-            v4.x = sin(inclination) * cos(nAzimuth);
-            v4.y = sin(inclination) * sin(nAzimuth);
-            v4.z = cos(inclination);
+            // Calculate the vertex
+            v.x = sin(inclination) * cos(azimuth);
+            v.y = sin(inclination) * sin(azimuth);
+            v.z = cos(inclination);
             
             // Push back the first triangle
-            vertices.push_back(v1);
-            vertices.push_back(v2);
-            vertices.push_back(v3);
-            vertices.push_back(v1);
-            vertices.push_back(v3);
-            vertices.push_back(v4);
+            vertices.push_back(v);
         }
     }
-    vertexCount = vertices.size();
+    
+    // Push the bottom of the sphere vertex
+    vertices.push_back(vec3(0,0,-1));
+    
+    // Generate the indices for the top of the sphere (special case)
+    for(GLushort i = 0; i < (divisions * 2); i++ )
+    {
+        indices.push_back(i + 1);
+        indices.push_back(0);
+        
+        // Handle wrapping
+        if(i + 1 == (divisions * 2))
+            indices.push_back(1);
+        else
+            indices.push_back(i + 2);
+    }
+    
+    // Generate the indices for each rung of the sphere
+    for(GLushort j = 0; j < divisions - 2; j++)
+    {
+        // Calculate the offset to this row
+        GLushort offset = 1 + (j * (2 * divisions));
+        
+        // Calculate the offset to the next row
+        GLushort noffset = 1 + ((j+1) * (2 * divisions));
+        
+        // Generate the indices
+        for(GLushort i = 0; i < (divisions * 2); i++)
+        {
+            // Calculate the indices of each quad
+            GLushort v0 = noffset + i;
+            GLushort v1 = offset + i;
+            GLushort v2 = 0, v3 = 0;
+            
+            // Do we need to wrap
+            if(i + 1 == (divisions * 2))
+            {
+                // Loop to row beginning indices
+                v2 = noffset;
+                v3 = offset;
+            } else
+            {
+                // Normal indices
+                v2 = noffset + i + 1;
+                v3 = offset + i + 1;
+            }
+            
+            // Queue these triangles
+            indices.push_back(v0);
+            indices.push_back(v1);
+            indices.push_back(v2);
+            indices.push_back(v1);
+            indices.push_back(v2);
+            indices.push_back(v3);
+        }
+    }
+    
+    // Generate the indices for the bottom of the sphere (special case)
+    GLushort offset = 1 + ((divisions-2) * (2 * divisions));
+    for(int i = 0; i < (divisions * 2); i++)
+    {
+        indices.push_back(offset + i);
+        indices.push_back(vertices.size() - 1);
+        
+        // Handle wrapping
+        if(i + 1 == (divisions * 2))
+            indices.push_back(offset);
+        else
+            indices.push_back(offset + i + 1);
+    }
     
     // Generate the storage for the vertex data of the skybox
     glGenVertexArrays(1, &vertexArrayObject);
@@ -99,9 +153,10 @@ void GLSkydome::Build(unsigned int divisions)
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 3 * vertices.size(), (GLvoid *) vertices.data(), GL_STATIC_DRAW);
     
     // Upload the index data
-    /*glGenBuffers(1, &indexBuffer);
+    glGenBuffers(1, &indexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_indices), cube_indices, GL_STATIC_DRAW);*/
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLushort) * indices.size(), (GLvoid *) indices.data(), GL_STATIC_DRAW);
+    indexCount = indices.size();
     
     // Load the skybox texture
     textureCache.GetTexture<GLTextureCubeMap>(skyboxName);
@@ -135,6 +190,5 @@ void GLSkydome::Draw(GL3DProgram * program, float distance)
     textureCache.GetTexture<GLTextureCubeMap>(skyboxName)->Bind();
     
     // Draw the skybox (at the most distant distance)
-    //glDrawElements(GL_TRIANGLES, sizeof(cube_indices) / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
-    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+    glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_SHORT, 0);
 }

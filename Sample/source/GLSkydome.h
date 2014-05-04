@@ -28,7 +28,7 @@ class GLSkydome
     GLuint vertexArrayObject;
     GLuint vertexBuffer;
     GLuint indexBuffer;
-    GLuint vertexCount;
+    size_t indexCount;
     
     // The name of the skybox texture
     std::string skyboxName;
@@ -45,7 +45,7 @@ public:
     ~GLSkydome();
     
     // Build the skybox
-    void Build(unsigned int divisions);
+    void Build(GLushort divisions);
     
     // Draw the skydome
     void Draw(GL3DProgram * program, float distance);

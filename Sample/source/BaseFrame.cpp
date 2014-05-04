@@ -27,7 +27,6 @@
 #include "ModelGroup.h"
 
 #include "GLTextureCubeMap.h"
-#include "GLSkybox.h"
 #include "GLSkydome.h"
 #include "Audio.h"
 
@@ -57,7 +56,6 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
 #endif
 
 	Controls.AddWindow(&notification);
-    //skybox = new GLSkybox("skybox/skybox", Textures);
     skydome = new GLSkydome("skybox/skybox", Textures);
     
 	//Not a unique save. Should be altered in the future
@@ -200,7 +198,6 @@ void BaseFrame::Build()
     VoxEngine::SynchronousTask.RequestTask([this] ()
     {
         // Build the skybox (upload to GPU)
-        //skybox->Build();
         skydome->Build(8);
     });
     
@@ -273,36 +270,36 @@ void BaseFrame::Draw(double width, double height)
     SetupShader<GLEffectProgram>("effects", fogDistance);
     Camera.Apply((GLEffectProgram*)shaders->GetShader("effects"));
     
-    // Sensible defaults
-	glDisable(GL_CULL_FACE);
+    // Enable depth test
 	glEnable(GL_DEPTH_TEST);
+    
+    // Disable backface culling
+	glDisable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    
+    // Disable blending
+    glDisable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    // Use the skybox shader
+    GL3DProgram * skyboxShader = (GL3DProgram *) shaders->GetShader("skybox");
+    
+    // Setup the skybox's camera
+    skyboxShader->Camera.SetCameraPosition(vec3(0,0,0), FirstPerson->GetLookVector());
+    skyboxShader->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25, viewDistance); //width/height
+    
+#if !(defined __MOBILE__)
+    // Draw the skybox
+    skyboxShader->UseProgram();
+    skydome->Draw(skyboxShader, fogDistance);
+    glEnable(GL_BLEND);
+#endif
     
 	// Voxel shader
 	GL3DProgram * shaders3d = (GL3DProgram*)shaders->GetShader("3d");
 	shaders3d->UseProgram();
 	shaders3d->Model.Reset();
 	shaders3d->Model.Apply();
-    
-/*#if !(defined __MOBILE__)
-    // Desktop settings, render skybox behind everything
-	glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
-    // Use the skybox shader
-    GL3DProgram * skyboxShader = (GL3DProgram *) shaders->GetShader("skybox");
-    skyboxShader->UseProgram();
-    
-    // Setup the skybox's camera
-    skyboxShader->Camera.SetCameraPosition(vec3(0,0,0), FirstPerson->GetLookVector());
-    skyboxShader->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25, viewDistance); //width/height
-    skyboxShader->Camera.Apply();
-    
-    // Draw the skybox
-    skybox->Draw(skyboxShader);
-#else*/
-    // Mobile settings
-	glDisable(GL_BLEND);
-//#endif
 	
 	// Draw the voxels
     SimplePolygon<4> viewArea;
@@ -313,33 +310,21 @@ void BaseFrame::Draw(double width, double height)
 	//so it must always immediately follow Voxels.draw()
 	Physics.Draw(shaders);
     
-//#if (defined __MOBILE__)
-    // On mobile, render the skybox later
-    // Use the skybox shader
-    GL3DProgram * skyboxShader = (GL3DProgram *) shaders->GetShader("skybox");
-    skyboxShader->UseProgram();
-    
-    // Setup the skybox's camera
-    skyboxShader->Camera.SetCameraPosition(vec3(0,0,0), FirstPerson->GetLookVector());
-    skyboxShader->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25, viewDistance); //width/height
-    
+#if (defined __MOBILE__)
     // Draw the skybox
-    //skybox->Draw(skyboxShader, viewDistance / 1.75);
+    skyboxShader->UseProgram();
     skydome->Draw(skyboxShader, fogDistance);
-//#endif
+#endif
     
     // Draw the actors
 	Actors.Draw(shaders);
     
-    // Model materials should specify that they have transparency or not
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
-    // Draw the player's weapon
+    // Find the shader for skinned/unskinned models
     MaterialProgram * modelShader = (MaterialProgram *) shaders->GetShader("model");
     modelShader->UseProgram();
+    
+    // Render the player's weapon will cull face enabled
 	glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
     Actors.Player()->DrawWeapon(modelShader);
 	glDisable(GL_CULL_FACE);
     
