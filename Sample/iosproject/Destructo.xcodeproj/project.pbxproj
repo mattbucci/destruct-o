@@ -234,6 +234,7 @@
 		F1F1BAB21915B96D0003FC76 /* WeaponAILaser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F1BA0C1915B96D0003FC76 /* WeaponAILaser.cpp */; };
 		F1F1BAB31915B96D0003FC76 /* WeaponData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F1BA0E1915B96D0003FC76 /* WeaponData.cpp */; };
 		F1F1BAB41915B96D0003FC76 /* Window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F1BA101915B96D0003FC76 /* Window.cpp */; };
+		F1F1BAB71915F8EA0003FC76 /* GLSkydome.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1F1BAB51915F8EA0003FC76 /* GLSkydome.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -643,6 +644,8 @@
 		F1F1BA0F1915B96D0003FC76 /* WeaponData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WeaponData.h; path = ../../source/WeaponData.h; sourceTree = "<group>"; };
 		F1F1BA101915B96D0003FC76 /* Window.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Window.cpp; path = ../../source/Window.cpp; sourceTree = "<group>"; };
 		F1F1BA111915B96D0003FC76 /* Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Window.h; path = ../../source/Window.h; sourceTree = "<group>"; };
+		F1F1BAB51915F8EA0003FC76 /* GLSkydome.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLSkydome.cpp; path = ../../source/GLSkydome.cpp; sourceTree = "<group>"; };
+		F1F1BAB61915F8EA0003FC76 /* GLSkydome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLSkydome.h; path = ../../source/GLSkydome.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -945,6 +948,8 @@
 				F1F1B9661915B96C0003FC76 /* GLShader.h */,
 				F1F1B9671915B96C0003FC76 /* GLSkybox.cpp */,
 				F1F1B9681915B96C0003FC76 /* GLSkybox.h */,
+				F1F1BAB51915F8EA0003FC76 /* GLSkydome.cpp */,
+				F1F1BAB61915F8EA0003FC76 /* GLSkydome.h */,
 				F1F1B9691915B96C0003FC76 /* GLTerrainProgram.cpp */,
 				F1F1B96A1915B96C0003FC76 /* GLTerrainProgram.h */,
 				F1F1B96B1915B96D0003FC76 /* GLTexture.cpp */,
@@ -1231,6 +1236,7 @@
 				F11C7EF818A8A7F9004BC84B /* latlon.cpp in Sources */,
 				F1F1BAAD1915B96D0003FC76 /* VoxEngineHelpers.cpp in Sources */,
 				F11C7EF918A8A7F9004BC84B /* noisegen.cpp in Sources */,
+				F1F1BAB71915F8EA0003FC76 /* GLSkydome.cpp in Sources */,
 				F1F1BA241915B96D0003FC76 /* AnimationClip.cpp in Sources */,
 				F1F1BA521915B96D0003FC76 /* GLCamera.cpp in Sources */,
 				F1F1BA1D1915B96D0003FC76 /* AIDataCache.cpp in Sources */,

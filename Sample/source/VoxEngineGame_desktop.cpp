@@ -100,7 +100,7 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 #ifdef WIN32
 	SDL_RendererInfo displayRendererInfo;
 	SDL_Renderer * displayRenderer;
-	SDL_CreateWindowAndRenderer(800,600,SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE,&displayWindow,&displayRenderer);
+	SDL_CreateWindowAndRenderer(1136,640,SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE,&displayWindow,&displayRenderer);
 	SDL_GetRendererInfo(displayRenderer, &displayRendererInfo);
 	if ((displayRendererInfo.flags & SDL_RENDERER_ACCELERATED) == 0 ||
 		(displayRendererInfo.flags & SDL_RENDERER_TARGETTEXTURE) == 0) {
@@ -109,7 +109,7 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 		return NULL;
 	}
 #else
-	displayWindow = SDL_CreateWindow("Destructo",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	displayWindow = SDL_CreateWindow("Destructo",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, 1136, 640, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 #endif
 	
 	cout << "Built context with opengl version: " << openglMajorVersion << "." << openglMinorVersion << "\n";

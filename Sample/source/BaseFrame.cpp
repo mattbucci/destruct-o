@@ -28,6 +28,7 @@
 
 #include "GLTextureCubeMap.h"
 #include "GLSkybox.h"
+#include "GLSkydome.h"
 #include "Audio.h"
 
 #define MAX_DRAW_DISTANCE 300.0f
@@ -56,7 +57,8 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
 #endif
 
 	Controls.AddWindow(&notification);
-    skybox = new GLSkybox("skybox/skybox", Textures);
+    //skybox = new GLSkybox("skybox/skybox", Textures);
+    skydome = new GLSkydome("skybox/skybox", Textures);
     
 	//Not a unique save. Should be altered in the future
 	SaveName = "Default_Save";
@@ -198,7 +200,8 @@ void BaseFrame::Build()
     VoxEngine::SynchronousTask.RequestTask([this] ()
     {
         // Build the skybox (upload to GPU)
-        skybox->Build();
+        //skybox->Build();
+        skydome->Build(8);
     });
     
 	//Build the reset save
@@ -280,7 +283,7 @@ void BaseFrame::Draw(double width, double height)
 	shaders3d->Model.Reset();
 	shaders3d->Model.Apply();
     
-#if !(defined __MOBILE__)
+/*#if !(defined __MOBILE__)
     // Desktop settings, render skybox behind everything
 	glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -296,10 +299,10 @@ void BaseFrame::Draw(double width, double height)
     
     // Draw the skybox
     skybox->Draw(skyboxShader);
-#else
+#else*/
     // Mobile settings
 	glDisable(GL_BLEND);
-#endif
+//#endif
 	
 	// Draw the voxels
     SimplePolygon<4> viewArea;
@@ -310,7 +313,7 @@ void BaseFrame::Draw(double width, double height)
 	//so it must always immediately follow Voxels.draw()
 	Physics.Draw(shaders);
     
-#if (defined __MOBILE__)
+//#if (defined __MOBILE__)
     // On mobile, render the skybox later
     // Use the skybox shader
     GL3DProgram * skyboxShader = (GL3DProgram *) shaders->GetShader("skybox");
@@ -319,11 +322,11 @@ void BaseFrame::Draw(double width, double height)
     // Setup the skybox's camera
     skyboxShader->Camera.SetCameraPosition(vec3(0,0,0), FirstPerson->GetLookVector());
     skyboxShader->Camera.SetFrustrum(60,viewPortSize.x/viewPortSize.y,.25, viewDistance); //width/height
-    skyboxShader->Camera.Apply();
     
     // Draw the skybox
-    skybox->Draw(skyboxShader);
-#endif
+    //skybox->Draw(skyboxShader, viewDistance / 1.75);
+    skydome->Draw(skyboxShader, fogDistance);
+//#endif
     
     // Draw the actors
 	Actors.Draw(shaders);

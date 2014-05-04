@@ -21,7 +21,8 @@ class ActorPlayer;
 class ParticleSystem;
 class ModelGroup;
 class AudioPlayer;
-class GLSkybox;
+
+class GLSkydome;
 
 //Retrieve base frame
 BaseFrame * Game();
@@ -35,7 +36,8 @@ class BaseFrame : public GameSystem {
 	Notification notification;
     ModelGroup * models;
 	HUD hud;
-    GLSkybox   *skybox;
+    //GLSkybox   *skybox;
+    GLSkydome   *skydome;
     
 	//Setup all the global values for shaders
 	//Sets up, acid shader and fog

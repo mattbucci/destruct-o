@@ -102,7 +102,7 @@ void GLSkybox::Draw(GL3DProgram * program)
     
     // Center the skybox
     program->Model.Reset();
-    program->Model.Apply();
+    program->Apply();
     
     // Bind the texture
     glActiveTexture(GL_TEXTURE0);
@@ -112,4 +112,35 @@ void GLSkybox::Draw(GL3DProgram * program)
     glDepthRangef(1, 1);
     glDrawElements(GL_TRIANGLES, sizeof(cube_indices) / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
     glDepthRangef(0, 1);
+}
+
+// Draw the skybox
+void GLSkybox::Draw(GL3DProgram * program, float distance)
+{
+    // Bind the vertex array object
+    glBindVertexArray(vertexArrayObject);
+    
+    // If the program has changed
+    if(program != previousProgram)
+    {
+        // Bind the vertices to the VAO
+        glEnableVertexAttribArray(program->AttributeVertex());
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        glVertexAttribPointer(program->AttributeVertex(), 3, GL_FLOAT, GL_FALSE, 0, 0);
+        
+        // Bind the indices to the VAO
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    }
+    
+    // Center the skybox
+    program->Model.Reset();
+    program->Model.Scale(distance, distance, distance);
+    program->Apply();
+    
+    // Bind the texture
+    glActiveTexture(GL_TEXTURE0);
+    textureCache.GetTexture<GLTextureCubeMap>(skyboxName)->Bind();
+    
+    // Draw the skybox (at the most distant distance)
+    glDrawElements(GL_TRIANGLES, sizeof(cube_indices) / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
 }
