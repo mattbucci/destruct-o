@@ -12,7 +12,11 @@
 #include "PhysicsVoxel.h"
 
 //Register particle events
-ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) : Autocacher("particles/","particlemanifest.json") {
+ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics)
+	: Autocacher("particles/","particlemanifest.json"),
+	//Trackers not used yet
+	updateTracker(SIMULATION_DELTA*.5f,SIMULATION_DELTA*.75f),
+	drawTracker(1.0f/60.0f*.15f,1.0f/60.0f*.75f){
 
 	//VOXEL DISINTEGRATE EVENT
 	static const vec4 materialColors[16] = {

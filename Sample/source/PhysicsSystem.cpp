@@ -19,9 +19,6 @@
 #include "GameSystem.h"
 #include "BaseFrame.h"
 
-//This will limit the number of voxels-to-voxel collision which are calculated on a section by section basis
-const static unsigned int MaxSectionSize = 30;
-
 PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	//Build a voxel renderer
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
@@ -113,8 +110,8 @@ void PhysicsSystem::updatePhysicsActors() {
 		//Always decrease the total energy in the system
 		actor->velocity *= .99;
 		//Apply forces!
-		actor->velocity += actor->acceleration*(float)SIMULATION_DELTA;
-		actor->position += actor->velocity*(float)SIMULATION_DELTA;
+		actor->velocity += actor->acceleration*(float)simulationDelta;
+		actor->position += actor->velocity*(float)simulationDelta;
 
 		//Clear forces
 		actor->acceleration = vec3();
@@ -197,13 +194,18 @@ void PhysicsSystem::updatePhysicsVoxels() {
 		//Always decrease the total energy in the system
 		voxel->Velocity *= .99;
 		//Apply forces!
-		voxel->Velocity += voxel->Acceleration*(float)SIMULATION_DELTA;
-		voxel->Position += voxel->Velocity*(float)SIMULATION_DELTA;
+		voxel->Velocity += voxel->Acceleration*(float)simulationDelta;
+		voxel->Position += voxel->Velocity*(float)simulationDelta;
 	}
 }
 void PhysicsSystem::collideVoxelsToVoxels() {
 	unsigned int largestSection = 0;
 
+	//Calculate a max-section-size
+	//which is the largest n for the O(n^2) operation
+	unsigned int MaxSectionSize = (unsigned int)(10.0f+30.0f*VoxEngine::GlobalSavedData.GameOptions.PhysicsAccuracy);
+
+	//Sort using insertion sort as the list rarely moves much
 	allVoxels.sort([](PhysicsVoxel * a, PhysicsVoxel * b) -> bool {
 		return a->Position.x < b->Position.x;
 	});
@@ -365,6 +367,9 @@ void PhysicsSystem::collideActorsToActors() {
 
 //Update the actors, called by base frame
 void PhysicsSystem::Update() {
+	//For most operations the delta is always SIMULATION_DELTA
+	simulationDelta = SIMULATION_DELTA;
+
 	//Set all voxels to have no forces
 	//And check if any voxels should expire
 	for (auto it = allVoxels.begin(); it != allVoxels.end();){
@@ -389,12 +394,28 @@ void PhysicsSystem::Update() {
 		actor->onGround = false;
 	
 	//Now check for collisions between everything that can experience them
-	collideVoxelsToVoxels();
-	collideVoxelsToActors();
+	//Physics voxel physics may be skipped periodically
+	if (skipCount <= 0) {
+		//Determine new skip count
+		if (VoxEngine::GlobalSavedData.GameOptions.PhysicsAccuracy <= .26f)
+			skipCount = 4;
+		else if (VoxEngine::GlobalSavedData.GameOptions.PhysicsAccuracy <= .51f) 
+			skipCount = 2;
+		else
+			skipCount = 1;
+		//Delta depends on how many updates we skip
+		simulationDelta = SIMULATION_DELTA*skipCount;
+
+		//Do expensive collisions now
+		collideVoxelsToVoxels();
+		collideVoxelsToActors();
+		//All remaining operations use
+		simulationDelta = SIMULATION_DELTA;
+	}
 	collideActorsToActors();
 	//There are two missing
-	//collideVoxelsToBuildings((float)SIMULATION_DELTA);
-	//collideActorsToBuildings((float)SIMULATION_DELTA);
+	//collideVoxelsToBuildings((float)simulationDelta);
+	//collideActorsToBuildings((float)simulationDelta);
 
 	//Now collide voxels and actors with the ground
 	//then apply the accumulated acceleration on each

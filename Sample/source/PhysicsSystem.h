@@ -49,6 +49,10 @@ class PhysicsSystem : public Savable {
 	//A tie to the voxel system used to lookup the terrain height at various points
 	VoxelSystem * voxelSystem;
 
+	//The timestep can be manipulated, so the current delta is listed here
+	float simulationDelta;
+	//How many more updates to skip before a full update cycle is run again
+	int skipCount;
 public:
 	PhysicsSystem(VoxelSystem * system);
 	~PhysicsSystem();
