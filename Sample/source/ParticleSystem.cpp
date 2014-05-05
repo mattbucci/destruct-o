@@ -80,13 +80,13 @@ void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shade
 		break;
 	case ParticleData::ADDITIVE:
 		glDepthMask(GL_FALSE);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
 		break;
 	case ParticleData::BLEND:
 		glDepthMask(GL_FALSE);
 		glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		break;
 	case ParticleData::SCREEN:
 		glDepthMask(GL_FALSE);
@@ -94,13 +94,13 @@ void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shade
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
 		break;
 	}
-    //Sort if necessary
-    if (particleSystemDescription.MaterialStyle == ParticleData::BLEND) {
-        particleList.sort([cameraZAxis](Particle * a, Particle * b) {
-            return glm::dot(a->Position, cameraZAxis) < glm::dot(b->Position, cameraZAxis);
-        });
-    }
-    
+	//Sort if necessary
+	if (particleSystemDescription.MaterialStyle == ParticleData::BLEND) {
+		particleList.sort([cameraZAxis](Particle * a, Particle * b) {
+			return glm::dot(a->Position, cameraZAxis) < glm::dot(b->Position, cameraZAxis);
+		});
+	}
+	
 	//Enable the texture used for this particle system
 	GLTexture * texture = CurrentSystem->Textures.GetTexture<GLTexture>(particleSystemDescription.MaterialTexture);
 	texture->Bind();
@@ -110,5 +110,5 @@ void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shade
 
 size_t ParticleSystem::ParticleCount() const
 {
-    return particleList.size();
+	return particleList.size();
 }

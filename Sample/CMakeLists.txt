@@ -434,6 +434,7 @@ FILE(GLOB UtilityFiles
 	source/SyncTask.*
 	source/MovingAverage.*
 	source/SimplePolygon.*
+	source/TimeStep*
 )
 source_group(Utilities FILES ${UtilityFiles})
 
