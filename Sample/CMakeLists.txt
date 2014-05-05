@@ -234,6 +234,7 @@ source_group(OpenGL FILES ${GLFiles})
 #actors
 FILE(GLOB ActorFiles
 	"source/Actor*"
+	
 )
 source_group(Actors FILES ${ActorFiles})
 
@@ -288,14 +289,6 @@ FILE(GLOB InterfaceFiles
 	source/Control.cpp
 	source/ControlBase.h
 	source/ControlBase.cpp
-	source/DebugWindow.h
-	source/DebugWindow.cpp
-	source/ErrorWindow.h
-	source/ErrorWindow.cpp
-	source/PauseWindow.h
-	source/PauseWindow.cpp
-	source/PauseWindowMobile.h
-	source/PauseWindowMobile.cpp
 	source/Font.h
 	source/Font.cpp
 	source/InputEvent.h
@@ -316,11 +309,26 @@ FILE(GLOB InterfaceFiles
 	source/RasterizedText.cpp
 	source/Shape.h
 	source/Shape.cpp
-	source/Notification.h
-	source/Notification.cpp
 	source/Slider.h
 )
-source_group(Interface FILES ${InterfaceFiles})
+source_group(InterfaceLibrary FILES ${InterfaceFiles})
+
+#Dialog Implementations
+FILE(GLOB GameInterfaceFiles
+	source/DebugWindow.h
+	source/DebugWindow.cpp
+	source/ErrorWindow.h
+	source/ErrorWindow.cpp
+	source/PauseWindow.h
+	source/PauseWindow.cpp
+	source/PauseWindowMobile.h
+	source/PauseWindowMobile.cpp
+	source/Notification.h
+	source/Notification.cpp
+	source/HUD.*
+)
+source_group(UserInterface FILES ${GameInterfaceFiles})
+
 
 FILE(GLOB PhysicsFiles
 	source/Demo.h
@@ -374,6 +382,9 @@ FILE(GLOB GameplayFiles
 	source/Achievements.cpp
 	source/Achievement.h
 	source/Achievement.cpp
+	source/GameData.*
+	source/Options.*
+	source/GameFactions.*
 )
 source_group(Achievements FILES ${GameplayFiles})
 
@@ -421,6 +432,8 @@ FILE(GLOB UtilityFiles
 	source/Autocacher.h
 	source/AsyncTask.*
 	source/SyncTask.*
+	source/MovingAverage.*
+	source/SimplePolygon.*
 )
 source_group(Utilities FILES ${UtilityFiles})
 
@@ -447,12 +460,13 @@ FILE(GLOB VoxelFiles
 	source/Building.cpp
 	source/Structure.h
 	source/Structure.cpp
+	source/LoadingScreen.h
+	source/LoadingScreen.cpp
 )
 source_group(Voxels FILES ${VoxelFiles})
 
 FILE(GLOB CoreFiles
-	source/VoxEngine.h
-	source/VoxEngine.cpp
+	source/VoxEngine*
 	source/GameSystem.h
 	source/GameSystem.cpp
 	source/Frames.h
@@ -461,6 +475,7 @@ FILE(GLOB CoreFiles
 	source/BaseFrame.cpp
 	source/MenuFrame.h
 	source/MenuFrame.cpp
+	source/PauseFrame.*
 	source/stdafx.h
 	source/stdafx.cpp
 	source/Universal.h
@@ -485,9 +500,7 @@ FILE(GLOB WeaponFiles
 	source/Weapon.*
 	source/WeaponPulseLaser.*
 	source/WeaponLaserCannon.*
-	source/WeaponAILaser.*
-	source/WeaponAIEntityFire.*
-	source/WeaponAIEntityExplode.*
+	source/WeaponAI*
 )
 source_group(Weapons FILES ${WeaponFiles})
 
@@ -496,8 +509,6 @@ FILE(GLOB ControlFiles
 	source/FirstPersonMode.cpp
 	source/FirstPersonModeMobile.h
 	source/FirstPersonModeMobile.cpp
-	source/LoadingScreen.h
-	source/LoadingScreen.cpp
 	source/GameCamera.h
 	source/GameCamera.cpp
 )
