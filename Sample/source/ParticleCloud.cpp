@@ -30,7 +30,7 @@ ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics) : Au
 		//disintegrate voxel
 		particlePuff.Color.ClearValues();
 		particlePuff.Color.AddValue(0,materialColors[voxel->MaterialId]);
-		ParticleSystem * testSystem = BuildParticleSystem(particlePuff, voxel->Position, Utilities::random(.3f,.5f));
+		BuildParticleSystem(particlePuff, voxel->Position, Utilities::random(.3f,.5f));
 	});
 }
 //Cleanup all systems
@@ -63,11 +63,10 @@ void ParticleCloud::UpdateCloud() {
 	}
 }
 
-ParticleSystem * ParticleCloud::BuildParticleSystem(const ParticleData & particleType, vec3 pos, float lifeTime) {
+void ParticleCloud::BuildParticleSystem(const ParticleData & particleType, vec3 pos, float lifeTime) {
 	ParticleSystem * ps = new ParticleSystem(particleType,Game()->Now(),lifeTime);
 	particles.push_back(ps);
 	ps->Position = pos;
-	return ps;
 }
 
 void ParticleCloud::Clear() {
@@ -87,7 +86,6 @@ void ParticleCloud::Draw(ShaderGroup * shaders) {
 	shaderParticles->ApplyCamera(shader3d->Camera);
 
     vec3 cameraZ = shader3d->Camera.GetZAxis();
-    //size_t particleCount = 0;
     
 	//Draw each particle system
 	for (auto system : particles)

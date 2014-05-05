@@ -41,7 +41,10 @@ Particle::Particle(double gameTime, float systemLifeFactor, ParticleSystem * own
 
 	//Save the scale variation that applies to you
 	float possibleVariation = systemData->ScaleVariation.ValueAtSequence(systemLifeFactor);
-	scaleVariation = 1+Utilities::random(-possibleVariation,possibleVariation);;
+	scaleVariation = 1+Utilities::random(-possibleVariation,possibleVariation);
+	//Modify the scale using the particle system settings
+	//lower settings make particles bigger to compensate (50% bigger)
+	scaleVariation *= (1.0f-VoxEngine::GlobalSavedData.GameOptions.ParticleQuality)*.5f+1.0f;
 
 	//Set your spawn time to right now
 	spawnedAt = gameTime;

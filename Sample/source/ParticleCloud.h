@@ -8,6 +8,7 @@
 #include "GameEventSubscriber.h"
 #include "Autocacher.h"
 #include "ParticleData.h"
+#include "TimeStepTracker.h"
 
 class Particle;
 class ParticleSystem;
@@ -29,6 +30,10 @@ class ParticleCloud : GameEventSubscriber, public Autocacher<ParticleData> {
 	//with an instanced version for non-android/up-to-date platforms
 	ParticleRenderer renderer;
 
+	//Track the update,draw times of particles
+	TimeStepTracker updateTracker;
+	TimeStepTracker drawTracker;
+
 protected:
 	//Cache particle data
 	ParticleData cacheItem(string path) override;
@@ -44,7 +49,7 @@ public:
 
 	//Build a particle system with the given particle data
 	//to last the specified amount of time
-	ParticleSystem * BuildParticleSystem(const ParticleData & particleType, vec3 pos, float lifeTime);
+	void BuildParticleSystem(const ParticleData & particleType, vec3 pos, float lifeTime);
 
 	//Destroy all particle systems that currently exist
 	void Clear();
