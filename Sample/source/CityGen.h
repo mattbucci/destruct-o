@@ -4,9 +4,12 @@
 #include "GameTile.h"
 #include "Building.h"
 
+class SavableCityData;
+
 class CityGen {
+	vector<function<SavableCityData*(GameTile* tile, vec3 pos)>> generationFunctions;
 public:
-	CityGen(){}; 
+	CityGen();
 
 	void GenerateCities(GameTile* tile);
 	void construct_city(GameTile * tile, vec3 pos);

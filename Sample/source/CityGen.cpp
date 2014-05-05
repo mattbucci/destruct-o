@@ -14,6 +14,276 @@ const int citysize = 150;
 //the space between each city
 const int cityspacing = 250;
 
+CityGen::CityGen() {
+	//Setup city generation functions here
+
+	//Line generation algorithm
+	//generates a bunch of lines pointing towards the city center
+	//decreasing in height as they get closer
+	generationFunctions.push_back([](GameTile * tile, vec3 pos){
+		TileCell * cells = tile->Cells;
+		vec3 tileOffset = vec3(tile->tile_x,tile->tile_y,0) * vec3(TILE_SIZE,TILE_SIZE,1.0);
+
+		//create savable city data here
+		SavableCityData * cityData = new SavableCityData();
+		cityData->cityPosition = pos+tileOffset;
+		cityData->ownedByPlayer = false;
+
+		float originalCityHeight = cells[int((pos.y)*TILE_SIZE + pos.x)].height;
+
+		//Generate lines
+		//set<vec2> usedSpace;
+		static const int lineCount = 30;
+		static const int turretSkip = 6;
+		static const int samples = 200;
+		static const float anglePart = (float)(M_PI*2.0f/lineCount);
+    
+		//flatten terrain
+		//generate roads
+	
+		for (int y = -citysize / 2; y < citysize / 2; y++) {
+			for (int x = -citysize / 2; x < citysize / 2; x++) {
+				cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 2;
+			}
+		}
+    
+		for (int p = 0; p < lineCount; p++) {
+			vec2 lineDirection = glm::normalize(vec2(cos(anglePart*p),sin(anglePart*p)));
+			float lineLength = citysize*1.5;
+			float lineSection = lineLength/samples;
+
+			//Generate the line by sampling along it
+		
+			for (int i = 0; i < samples; i++) {
+				//Find the position
+				vec2 spos = lineDirection*(-lineLength/2.0f+i*lineSection);
+				spos = glm::floor(spos);
+				//check that the position is within city limits
+				if ((spos.x < -citysize/2.0) || (spos.y < -citysize/2.0))
+					continue;
+				if ((spos.x > citysize/2.0) || (spos.y > citysize/2.0))
+					continue;
+				//check that the position isn't too close to the center
+				float len = glm::length(spos);
+				if (len < 16)
+					continue;
+				//Place a line here
+				float height = (float)((len*len-15*15)*.0008+2);
+				vec2 absPos = glm::floor(vec2(pos)+spos);
+				TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
+				cell.height += (unsigned char)height;
+				//City is stronger than surrounding terrain
+				cell.cellHealth = 25;
+				cell.cellMaxHealth = 25;
+			}
+		}
+
+		//Generate turrets separately
+		for (int p = 0; p < lineCount; p++) {
+			vec2 lineDirection = glm::normalize(vec2(cos(anglePart*p),sin(anglePart*p)));
+			float lineLength = citysize*1.5;
+			float lineSection = lineLength/samples;
+
+			if ((p % turretSkip) == 0) {
+				//Place turret
+				vec2 spos = glm::floor(lineDirection*(-lineLength/2.0f+samples/4*lineSection)) + vec2(pos);
+
+				//raise the height around the turrent
+				float newHeight = originalCityHeight +10.0f;
+				for (int x = -1; x <= 0; x++) {
+					for (int y = -1; y <= 0; y++) {
+						vec2 absPos = spos+vec2(x,y);
+						TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
+						cell.height = (unsigned char)newHeight;
+					}
+				}
+
+
+				cityData->gunAlive.push_back(true);
+				cityData->gunPositions.push_back(tileOffset+vec3(spos,newHeight));
+			}
+		}
+
+
+		//Different heights in the spire
+		int ringHeights[5] = {
+			30,
+			28,
+			24,
+			18,
+			10
+		};
+
+
+		//Place the spire
+		//create spire materials
+		for (float x = -5; x <= 5; x++) {
+			for (float y = -5; y <= 5; y++) {
+				float ring = max(abs(x),abs(y));
+				vec2 spos = vec2(x,y)+vec2(pos);
+				TileCell & cell = cells[int((spos.y)*TILE_SIZE + spos.x)];
+				cell.materialId = 3;
+			}
+		}
+		//Build spire heights
+		for (float x = -4; x <= 4; x++) {
+			for (float y = -4; y <= 4; y++) {
+				float ring = max(abs(x),abs(y));
+				vec2 spos = vec2(x,y)+vec2(pos);
+				TileCell & cell = cells[int((spos.y)*TILE_SIZE + spos.x)];
+				cell.height += ringHeights[(int)ring]*3/2;
+				//The tower is made of tough stuff
+				cell.cellHealth = 50;
+				cell.cellMaxHealth = 50;
+				//Register the center
+				if (ring == 0) {
+					cityData->cityCenterVoxel = spos+vec2(tileOffset);
+					cityData->originalCityCenterVoxel = cell.height;
+				}
+				
+			} 
+		}
+
+		return cityData;
+	});
+
+	//Circle city generation
+	//produces a series of arcs around the central tower
+	generationFunctions.push_back([](GameTile * tile, vec3 pos){
+		TileCell * cells = tile->Cells;
+		vec3 tileOffset = vec3(tile->tile_x,tile->tile_y,0) * vec3(TILE_SIZE,TILE_SIZE,1.0);
+
+		//create savable city data here
+		SavableCityData * cityData = new SavableCityData();
+		cityData->cityPosition = pos+tileOffset;
+		cityData->ownedByPlayer = false;
+
+		float originalCityHeight = cells[int((pos.y)*TILE_SIZE + pos.x)].height;
+
+		//Turn the city a different color
+		for (int y = -citysize / 2; y < citysize / 2; y++) {
+			for (int x = -citysize / 2; x < citysize / 2; x++) {
+				cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 2;
+			}
+		}
+
+		//Generate arcs
+		static const int arcCount = 20;
+		static const int turretSkip = 6;
+		static const float samplesPerRadian = 50.0f;
+		//The closest arcs get to the center
+		static const float innerRadius = 12;
+   
+    
+		//Create a number of arcs
+		for (int p = 0; p < arcCount; p++) {
+			//Build an arc
+			float arcAngleStart = (float)Utilities::random(0.0,M_PI*2.0);
+			float arcLength = (float)Utilities::random(0.0,M_PI);
+			//The amount of times to sample along the arc
+			int samples = (int)(arcLength*samplesPerRadian);
+			float anglePart = arcLength/(float)samples;
+			//calculate the distance of the arc from the center
+			float arcDistance = ((citysize/2.0)-innerRadius)*((float)p/(float)arcCount)+innerRadius;
+
+
+
+			//Generate the arc by sampling along it and raising that terrain
+		
+			for (int i = 0; i < samples; i++) {
+				//Find the position
+				float angle = arcAngleStart+i*anglePart;
+				vec2 spos(cos(angle)*arcDistance,sin(angle)*arcDistance);
+				spos = glm::floor(spos);
+				//check that the position is within city limits
+				if ((spos.x < -citysize/2.0) || (spos.y < -citysize/2.0))
+					continue;
+				if ((spos.x > citysize/2.0) || (spos.y > citysize/2.0))
+					continue;
+				//check that the position isn't too close to the center
+				float len = glm::length(spos);
+				if (len < innerRadius)
+					continue;
+				//Place a part of the arc here
+				float height = (float)((len*len-15*15)*.0008+2);
+				vec2 absPos = glm::floor(vec2(pos)+spos);
+				TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
+				cell.height = (unsigned char)(height*2+innerRadius);
+				//City is stronger than surrounding terrain
+				cell.cellHealth = 25;
+				cell.cellMaxHealth = 25;
+			}
+		}
+
+		//Generate turrets separately
+		/*for (int p = 0; p < lineCount; p++) {
+			vec2 lineDirection = glm::normalize(vec2(cos(anglePart*p),sin(anglePart*p)));
+			float lineLength = citysize*1.5;
+			float lineSection = lineLength/samples;
+
+			if ((p % turretSkip) == 0) {
+				//Place turret
+				vec2 spos = glm::floor(lineDirection*(-lineLength/2.0f+samples/4*lineSection)) + vec2(pos);
+
+				//raise the height around the turrent
+				float newHeight = originalCityHeight +10.0f;
+				for (int x = -1; x <= 0; x++) {
+					for (int y = -1; y <= 0; y++) {
+						vec2 absPos = spos+vec2(x,y);
+						TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
+						cell.height = (unsigned char)newHeight;
+					}
+				}
+
+
+				cityData->gunAlive.push_back(true);
+				cityData->gunPositions.push_back(tileOffset+vec3(spos,newHeight));
+			}
+		}*/
+
+
+		//Different heights in the spire
+		int ringHeights[5] = {
+			30,
+			28,
+			24,
+			18,
+			10
+		};
+
+
+		//Place the spire
+		//create spire materials
+		for (float x = -5; x <= 5; x++) {
+			for (float y = -5; y <= 5; y++) {
+				float ring = max(abs(x),abs(y));
+				vec2 spos = vec2(x,y)+vec2(pos);
+				TileCell & cell = cells[int((spos.y)*TILE_SIZE + spos.x)];
+				cell.materialId = 3;
+			}
+		}
+		//Build spire heights
+		for (float x = -4; x <= 4; x++) {
+			for (float y = -4; y <= 4; y++) {
+				float ring = max(abs(x),abs(y));
+				vec2 spos = vec2(x,y)+vec2(pos);
+				TileCell & cell = cells[int((spos.y)*TILE_SIZE + spos.x)];
+				cell.height += ringHeights[(int)ring]*3/2;
+				//The tower is made of tough stuff
+				cell.cellHealth = 50;
+				cell.cellMaxHealth = 50;
+				//Register the center
+				if (ring == 0) {
+					cityData->cityCenterVoxel = spos+vec2(tileOffset);
+					cityData->originalCityCenterVoxel = cell.height;
+				}
+				
+			} 
+		}
+
+		return cityData;
+	});
+}
 
 
 int CityGen::BufferIndex(GameTile* tile,int x, int y) {
@@ -67,137 +337,13 @@ void CityGen::construct_building(GameTile* tile, vec3 pos)
 
 }
 
-void CityGen::construct_city(GameTile * tile, vec3 pos)
-{
-	ContiguousList<Rect> buildingPlacements;
-	
-	TileCell * cells = tile->Cells;
-
-	vec3 tileOffset = vec3(tile->tile_x,tile->tile_y,0) * vec3(TILE_SIZE,TILE_SIZE,1.0);
-
-	//Warning HACK
-	//create savable city data here
-	SavableCityData * cityData = new SavableCityData();
-	cityData->cityPosition = pos+tileOffset;
-	cityData->ownedByPlayer = false;
-
-	float originalCityHeight = cells[int((pos.y)*TILE_SIZE + pos.x)].height;
-
-	//Generate lines
-	//set<vec2> usedSpace;
-	static const int lineCount = 30;
-	static const int turretSkip = 6;
-	static const int samples = 200;
-	static const float anglePart = (float)(M_PI*2.0f/lineCount);
-    
-    //flatten terrain
-	//generate roads
-	
-	for (int y = -citysize / 2; y < citysize / 2; y++) {
-		for (int x = -citysize / 2; x < citysize / 2; x++) {
-			cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 2;
-		}
-	}
-    
-	for (int p = 0; p < lineCount; p++) {
-		vec2 lineDirection = glm::normalize(vec2(cos(anglePart*p),sin(anglePart*p)));
-		float lineLength = citysize*1.5;
-		float lineSection = lineLength/samples;
-
-		//Generate the line by sampling along it
-		
-		for (int i = 0; i < samples; i++) {
-			//Find the position
-			vec2 spos = lineDirection*(-lineLength/2.0f+i*lineSection);
-			spos = glm::floor(spos);
-			//check that the position is within city limits
-			if ((spos.x < -citysize/2.0) || (spos.y < -citysize/2.0))
-				continue;
-			if ((spos.x > citysize/2.0) || (spos.y > citysize/2.0))
-				continue;
-			//check that the position isn't too close to the center
-			float len = glm::length(spos);
-			if (len < 16)
-				continue;
-			//Place a line here
-			float height = (float)((len*len-15*15)*.0008+2);
-			vec2 absPos = glm::floor(vec2(pos)+spos);
-			TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
-			cell.height += (unsigned char)height;
-			//City is stronger than surrounding terrain
-			cell.cellHealth = 25;
-			cell.cellMaxHealth = 25;
-		}
-	}
-
-	//Generate turrets separately
-	for (int p = 0; p < lineCount; p++) {
-		vec2 lineDirection = glm::normalize(vec2(cos(anglePart*p),sin(anglePart*p)));
-		float lineLength = citysize*1.5;
-		float lineSection = lineLength/samples;
-
-		if ((p % turretSkip) == 0) {
-			//Place turret
-			vec2 spos = glm::floor(lineDirection*(-lineLength/2.0f+samples/4*lineSection)) + vec2(pos);
-
-			//raise the height around the turrent
-			float newHeight = originalCityHeight +10.0f;
-			for (int x = -1; x <= 0; x++) {
-				for (int y = -1; y <= 0; y++) {
-					vec2 absPos = spos+vec2(x,y);
-					TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
-					cell.height = (unsigned char)newHeight;
-				}
-			}
-
-
-			cityData->gunAlive.push_back(true);
-			cityData->gunPositions.push_back(tileOffset+vec3(spos,newHeight));
-		}
-	}
-
-
-	//Different heights in the spire
-	int ringHeights[5] = {
-		30,
-		28,
-		24,
-		18,
-		10
-	};
-
-
-	//Place the spire
-	//create spire materials
-	for (float x = -5; x <= 5; x++) {
-		for (float y = -5; y <= 5; y++) {
-			float ring = max(abs(x),abs(y));
-			vec2 spos = vec2(x,y)+vec2(pos);
-			TileCell & cell = cells[int((spos.y)*TILE_SIZE + spos.x)];
-			cell.materialId = 3;
-		}
-	}
-	//Build spire heights
-	for (float x = -4; x <= 4; x++) {
-		for (float y = -4; y <= 4; y++) {
-			float ring = max(abs(x),abs(y));
-			vec2 spos = vec2(x,y)+vec2(pos);
-			TileCell & cell = cells[int((spos.y)*TILE_SIZE + spos.x)];
-			cell.height += ringHeights[(int)ring]*3/2;
-			//The tower is made of tough stuff
-			cell.cellHealth = 50;
-			cell.cellMaxHealth = 50;
-			//Register the center
-			if (ring == 0) {
-				cityData->cityCenterVoxel = spos+vec2(tileOffset);
-				cityData->originalCityCenterVoxel = cell.height;
-			}
-				
-		} 
-	}
-
-	//Super hack, transfer city data to ai
-	Game()->Actors.Aids()->RegisterNewCity(cityData);
+void CityGen::construct_city(GameTile * tile, vec3 pos) {
+	//Randomly select a generation algorithm
+	int selectedAlgorithm = 1; //rand() % generationFunctions.size();
+	//and generate a city
+	SavableCityData * city = generationFunctions[selectedAlgorithm](tile,pos);
+	//Transfer city data to ai
+	Game()->Actors.Aids()->RegisterNewCity(city);
 
 }
 
