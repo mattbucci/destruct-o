@@ -87,6 +87,32 @@ bool MenuFrame::Update(vector<InputEvent> inputEvents) {
 
 void MenuFrame::Draw(double width, double height)
 {
+	float w = (float)width;
+	float h = (float)height;
+	//retrieve the texture
+	GLTexture * texture = Textures.GetTexture<GLTexture>("menu/background.png");
+	//Determine which dimension are constraints
+	float widthRatio = w/texture->GetWidth();
+	float heightRatio = h/texture->GetHeight();
+	float aspectRatio = texture->GetWidth()/texture->GetHeight();
+	float widthScale, heightScale;
+	if (widthRatio < heightRatio) {
+		//Stretch width to fit and size height appropriately
+		widthScale = widthRatio;
+		heightScale = widthScale/aspectRatio;
+	}
+	else {
+		//stretch height to fit and size width appropriately
+		heightScale = heightRatio;
+		widthScale = heightScale*aspectRatio;
+	}
+	//Resize the image
+	float imageWidth = widthScale * texture->GetWidth();
+	float imageHeight = heightScale * texture->GetHeight();
+	//Center the image
+	Rect imageRect(w/2.0f-imageWidth/2.0f,h/2.0f-imageHeight/2.0f,imageWidth,imageHeight);
+	background.SetRect(imageRect);
+
 	GL2DProgram * shaders2d = SetWidthHeight((float)width, (float)height);
 
 	shaders2d->Model.Reset();
