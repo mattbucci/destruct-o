@@ -96,7 +96,7 @@ void MenuFrame::Draw(double width, double height)
 	float heightRatio = h/texture->GetHeight();
 	float aspectRatio = texture->GetWidth()/texture->GetHeight();
 	float widthScale, heightScale;
-	if (widthRatio < heightRatio) {
+	if (widthRatio > heightRatio) {
 		//Stretch width to fit and size height appropriately
 		widthScale = widthRatio;
 		heightScale = widthScale/aspectRatio;
