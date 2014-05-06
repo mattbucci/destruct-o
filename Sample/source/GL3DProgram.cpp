@@ -21,7 +21,7 @@ GL3DProgram::GL3DProgram(GLCommonShaderFile * commonShader, string vertexShaderP
 };
 
 void GL3DProgram::UseProgram(void) {
-	GL3DProgram::UseProgram();
+	GLProgram::UseProgram();
 	colors.Apply();
 }
 
