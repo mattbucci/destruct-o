@@ -159,6 +159,7 @@ public:
 		CLASS_MEMBER(weapon,ReflectionData::SAVE_OWNEDHANDLE)
 		CLASS_MEMBER(targetEnemy,ReflectionData::SAVE_HANDLE)
 		CLASS_MEMBER(targetAcquiredAt,ReflectionData::SAVE_DOUBLE)
+		CLASS_MEMBER(sawEnemyLast,ReflectionData::SAVE_DOUBLE);
 		CLASS_MEMBER(finishRotting,ReflectionData::SAVE_DOUBLE)
 		CLASS_CONTAINER_MEMBER(path,ReflectionData::SAVE_VECTOR,ReflectionData::SAVE_VEC2)
 		CLASS_MEMBER(pathIndex,ReflectionData::SAVE_INT32)
