@@ -82,9 +82,13 @@ public:
 
 	GameTile * getTile(vec2i pos);
 
+	//Generates all the tiles in the given radius synchronously
+	void UpdateSync(vec2 pos, int radius);
+
 	//Use a radius around the player position to spawn new tiles
 	//right now radius is 1 tile
-	void Update(vec2i playerPos);
+	//radius is in tiles, player pos is world coordinates
+	void Update(vec2 playerPos, int radius = 1);
 
 	//Save relevant information
 	CLASS_DECLARATION(TileHandler)

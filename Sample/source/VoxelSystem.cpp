@@ -178,7 +178,7 @@ void VoxelSystem::Draw(ShaderGroup * shaders, SimplePolygon<4>& drawRegion)
 
 void VoxelSystem::Update(vec3 player_pos){
 	//Pass to TileHandler
-	tiles.getTile(vec2i((int)floor(player_pos.x / TILE_SIZE), (int)floor(player_pos.y / TILE_SIZE)));
+	tiles.Update(vec2(player_pos));
 }
 
 int VoxelSystem::GetLastVoxelCount() {
@@ -316,6 +316,6 @@ bool VoxelSystem::RaytraceToTerrain(vec3 from, vec3 direction, float & rayLength
 
 void VoxelSystem::NewWorld(int seed) {
 	tiles.setSeed(seed);
-	//Build at least the tile will be standing on
-	tiles.getTile(vec2i());
+	//Predict tiles around the starting position
+	tiles.UpdateSync(vec2(),2);
 }

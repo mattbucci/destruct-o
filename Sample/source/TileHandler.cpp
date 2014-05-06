@@ -199,8 +199,7 @@ int TileHandler::getSeed() {
 
 GameTile * TileHandler::getTile(vec2i pos) {
 	//Obtain Lock on World Set
-	unique_lock<mutex> worldLck(worldMtx,defer_lock);
-	worldLck.lock();
+	unique_lock<mutex> worldLck(worldMtx);
 
 	//Search World Set for Tile
 	GameTile* tile = findCachedTile(pos);
@@ -259,10 +258,41 @@ GameTile * TileHandler::getTile(vec2i pos) {
 	return tile;
 }
 
+//Generates all the tiles in the given radius synchronously
+void TileHandler::UpdateSync(vec2 pos, int radius) {
+	//First predict all the tiles
+	Update(pos,radius);
+	//Next sleep until the gen queue is empty
+	while (1) {
+		//Obtain Lock on World Set
+		unique_lock<mutex> worldLck(worldMtx);
+		//Wait for a tile to finish, and then check if all the tiles are done
+		//Ensure Generator is Running (We aren't waiting for nothing!)
+		genCv.notify_all();
+		//Wait for World Update
+		worldCv.wait(worldLck);
+		//Check if all the tiles finished
+		{
+			//Grab Lock
+			lock_guard<mutex> locked(genMtx);
+			if (genQueue.size() <= 0)
+				//done
+				return;
+		}
+	}
+}
+
 //Use a radius around the player position to spawn new tiles
 //right now radius is 1 tile
-void TileHandler::Update(vec2i playerPos) {
-
+//radius is in tiles, player pos is world coordinates
+void TileHandler::Update(vec2 playerPos, int radius) {
+	vec2i playerTile = vec2i(floor(playerPos.x / TILE_SIZE), floor(playerPos.y / TILE_SIZE));
+	//predict tiles around player
+	for (int x = -radius; x<=radius; x++) {
+		for (int y = -radius; y<=radius;y++) {
+			predictTile(vec2i(x,y)+playerTile);
+		}
+	}
 }
 
 //Retrieve a tile pointer safely if the tile is cached

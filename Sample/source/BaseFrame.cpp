@@ -215,17 +215,19 @@ bool BaseFrame::Update(vector<InputEvent> inputEvents) {
 
 	// Update the looking direction
 	FirstPerson->ReadInput(currentlyPressedKeys,inputEvents);
-    
+
     // Did we want to pause
     if(FirstPerson->GetPauseRequested())
 		Frames::SetSystem(Frames::FRAME_PAUSEMENU);
     
     // Update the voxels
+	//predict necessary tiles
 	Voxels.Update(Actors.Player()->GetPosition());
 
 	//Update actors
 	Actors.Update();
 
+	//update music/audio
     audio->Update();
 
 	//Update physics/Particles
