@@ -28,6 +28,7 @@ ActorAIData::ActorAIData() {
 	AnimationLookupTable = vector<string>();
 	DeathParticles = "";
 	//Targeting
+	TargeterOffsetFromCenter = vec3();
 	SpineCanRotateUpDown = false;
 	SpineUpDownAngleMax = 20.0f;
     SpineCanRotateLeftRight = false;

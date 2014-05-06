@@ -58,6 +58,12 @@ public:
 	//otherwise only uses A
 	bool UseDualMuzzles;
 
+	//The offset from center
+	//of the targeting device (head,eye,etc.)
+	//if this position can see the player
+	//the whole entity can
+	vec3 TargeterOffsetFromCenter;
+
 	//The muzzle bone of the gun
 	string MuzzleBoneA;
 
@@ -139,7 +145,8 @@ public:
 		CLASS_MEMBER(Model, ReflectionData::SAVE_STRING)
 		CLASS_CONTAINER_MEMBER(AnimationLookupTable,ReflectionData::SAVE_VECTOR,ReflectionData::SAVE_STRING)
 		CLASS_MEMBER(DeathParticles, ReflectionData::SAVE_STRING);
-
+	
+		CLASS_MEMBER(TargeterOffsetFromCenter,ReflectionData::SAVE_VEC3);
 		CLASS_MEMBER(SpineCanRotateUpDown,ReflectionData::SAVE_BOOL)
 		CLASS_MEMBER(SpineUpDownOffset,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(SpineUpDownAngleMax,ReflectionData::SAVE_FLOAT)

@@ -66,7 +66,8 @@ PhysicsActor * ActorAI::sightNearbyEnemy() {
 	for (auto actor : actors) {
 		//Check if you can see the physics actor
 		PhysicsActor * hit;
-		if (Universal::Trace(Position,glm::normalize(actor->GetPosition()-Position),NULL,&hit)) {
+		vec3 targeter = Position+data->TargeterOffsetFromCenter;
+		if (Universal::Trace(targeter,glm::normalize(actor->GetPosition()-targeter),NULL,&hit)) {
 			if (hit == actor) {
 				//We have a winner
 				return hit;
@@ -132,7 +133,8 @@ bool ActorAI::checkEnemyValid() {
 		
 	//Check if you can see the enemy
 	PhysicsActor * hit;
-	if (Universal::Trace(Position,glm::normalize(targetEnemy->GetPosition()-Position),NULL,&hit)) {
+	vec3 targeter = Position+data->TargeterOffsetFromCenter;
+	if (Universal::Trace(targeter,glm::normalize(targetEnemy->GetPosition()-targeter),NULL,&hit)) {
 		if (hit != targetEnemy) {
 			//Can't see that enemy any more
 			state = AI_SCANNING;
