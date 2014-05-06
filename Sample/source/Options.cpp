@@ -5,7 +5,7 @@ Options::Options() {
 	//Defaults depend on the platform
 	HUDTransparency = .25f;
 
-#ifdef __MOBILE
+#ifdef __MOBILE__
 	ViewDistance = .25f;
 	ParticleQuality = .25f;
 	PhysicsAccuracy = .25f;
