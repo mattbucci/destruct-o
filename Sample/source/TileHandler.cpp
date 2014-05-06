@@ -29,6 +29,8 @@ TileHandler::TileHandler()  {
 
 	//Create & Run Handler Thread
 	handlerThread = new std::thread([this](){handlerLoop(); });
+	//Mark no tile as cached
+	getTileCacheLastTilePos = vec2i(-10000,10000);
 }
 
 void TileHandler::handlerLoop() {
@@ -100,6 +102,11 @@ void TileHandler::handlerLoop() {
 				vec2i tilePos = vec2i(tile->tile_x,tile->tile_y);
 				//Cache to disk
 				tile->SaveTile(saveDirectory() + tileName(tilePos));
+
+				//If you removed the gettile cached tile, mark it as uncached
+				if (getTileCacheLastTile == tile)
+					//Mark no tile as cached
+					getTileCacheLastTilePos = vec2i(-10000,10000);
 
 				//Erase from the list of tiles in memory
 				cachedTiles.erase(tilePos);
@@ -179,7 +186,7 @@ void TileHandler::predictTile(vec2i pos) {
 }
 
 void TileHandler::forceTile(vec2i pos) {
-		//Grab gen Lock
+	//Grab gen Lock
 	lock_guard<mutex> locked(genMtx);
 
 	//Add to Queue & Notify Handler
@@ -200,6 +207,13 @@ int TileHandler::getSeed() {
 GameTile * TileHandler::getTile(vec2i pos) {
 	//Obtain Lock on World Set
 	unique_lock<mutex> worldLck(worldMtx);
+
+	//Check the cache
+	if (getTileCacheLastTilePos == pos) {
+		//Tile was cached, update expiration and return
+		getTileCacheLastTile->UseByDate = Game()->Now()+TILE_LIFETIME;
+		return getTileCacheLastTile;
+	}
 
 	//Search World Set for Tile
 	GameTile* tile = findCachedTile(pos);
@@ -238,22 +252,21 @@ GameTile * TileHandler::getTile(vec2i pos) {
 		}
 	}
 
-	//Predict Neighboring Tiles
-	/*for(int x_offset = -1; x_offset <= 1; x_offset++) {
-		for(int y_offset = -1; y_offset <= 1; y_offset++) {
-			predictTile(vec2i(pos.x + x_offset, pos.y + y_offset));
-		}
-	}*/
-
 	tile->UseByDate = Game()->Now()+TILE_LIFETIME;
+
+	//Update the cache
+	getTileCacheLastTile = tile;
+	getTileCacheLastTilePos = pos;
 
 	//Release World Set Lock
 	worldLck.unlock();
-
+	
 	//Guarantee a Tile is Returned
 	_ASSERTE(tile != NULL);
 	//Guarantee Tile Returned is Generated
 	_ASSERTE(tile->Cells != NULL);
+
+
 
 	return tile;
 }
@@ -385,6 +398,8 @@ void TileHandler::Load(Json::Value & parentValue, LoadData & loadData) {
 		delete tile.second;
 	worldSet.clear();
 	genQueue.clear();
+	//Mark no tile as cached
+	getTileCacheLastTilePos = vec2i(-10000,10000);
 
 	//Load general data
 	Savable::Load(parentValue,loadData);

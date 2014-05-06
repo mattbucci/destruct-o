@@ -68,6 +68,10 @@ class TileHandler : public Savable
 
 	//The seed of this world
 	int worldSeed;
+
+	//GetTile does caching, the cached values are stored here
+	vec2i getTileCacheLastTilePos;
+	GameTile * getTileCacheLastTile;
 protected:
 	//Package all tiles in save
 	virtual void Save(Json::Value & parentValue);
