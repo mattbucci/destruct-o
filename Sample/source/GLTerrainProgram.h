@@ -8,6 +8,7 @@
 #include "MaxDistanceFog.h"
 #include "GLCombinedMatrix.h"
 #include "GLAcidTab.h"
+#include "GLVoxelColors.h"
 
 class GLTerrainProgram : public GLProgram
 {
@@ -19,9 +20,12 @@ class GLTerrainProgram : public GLProgram
     // Modelview uniform
     GLint uniformMatrixModelView;
     GLint uniformMatrixModelViewProjection;
-    
+
+	GLVoxelColors colors;
 public:
 	GLTerrainProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath);
+
+	void UseProgram(void) override;
 
 	GLModel Model;
 	GLCamera Camera;

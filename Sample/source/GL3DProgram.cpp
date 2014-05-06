@@ -3,6 +3,7 @@
 
 GL3DProgram::GL3DProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath) :
 	GLProgram(commonShader, vertexShaderPath,fragmentShaderPath),
+	colors(glGetUniformLocation(programId,"materials")),
 	Lights(programId),
 	Model(glGetUniformLocation(programId,"M")),
 	Camera(glGetUniformLocation(programId,"P"),glGetUniformLocation(programId,"V"),glGetUniformLocation(programId,"VP")),
@@ -18,6 +19,11 @@ GL3DProgram::GL3DProgram(GLCommonShaderFile * commonShader, string vertexShaderP
     uniformMatrixModelView = glGetUniformLocation(programId, "MV");
     uniformMatrixModelViewProjection = glGetUniformLocation(programId, "MVP");
 };
+
+void GL3DProgram::UseProgram(void) {
+	GL3DProgram::UseProgram();
+	colors.Apply();
+}
 
 const GLint GL3DProgram::AttributePosition() {
 	return attributeIndexPosition;

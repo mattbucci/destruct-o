@@ -3,6 +3,7 @@
 
 GLTerrainProgram::GLTerrainProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath) :
 	GLProgram(commonShader, vertexShaderPath,fragmentShaderPath),
+	colors(glGetUniformLocation(programId,"materials")),
 	Model(glGetUniformLocation(programId, "M")),
 	Camera(glGetUniformLocation(programId, "P"), glGetUniformLocation(programId, "V"), glGetUniformLocation(programId, "VP")),
 	Fog(programId),
@@ -14,6 +15,11 @@ GLTerrainProgram::GLTerrainProgram(GLCommonShaderFile * commonShader, string ver
     uniformMatrixModelView = glGetUniformLocation(programId, "MV");
     uniformMatrixModelViewProjection = glGetUniformLocation(programId, "MVP");
 };
+
+void GLTerrainProgram::UseProgram(void) {
+	GLProgram::UseProgram();
+	colors.Apply();
+}
 
 const GLint GLTerrainProgram::AttributeTexture() {
 	return attributeIndexTexture;

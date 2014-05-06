@@ -6,6 +6,7 @@
 #include "GLLighting.h"
 #include "MaxDistanceFog.h"
 #include "GLAcidTab.h"
+#include "GLVoxelColors.h"
 
 class GL3DProgram : public GLProgram {
 
@@ -21,8 +22,11 @@ class GL3DProgram : public GLProgram {
     GLint uniformMatrixModelView;
     GLint uniformMatrixModelViewProjection;
 
+	GLVoxelColors colors;
 public:
 	GL3DProgram(GLCommonShaderFile * commonShader, string vertexShaderPath, string fragmentShaderPath);
+
+	void UseProgram(void) override;
 
 	GLLighting Lights;
 	GLModel Model;
