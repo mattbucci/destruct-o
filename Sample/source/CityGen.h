@@ -10,6 +10,18 @@ class CityGen {
 	vector<function<SavableCityData*(GameTile* tile, vec3 pos)>> generationFunctions;
 	//Place a turret perch at the given location
 	static void placeTurretPerch(TileCell * cells, float turretHeight, vec3 tileOffset, vec2 turretPos, SavableCityData * city);
+	//Place a spire in the center of the city
+	static void placeCenterSpire(TileCell * cells, float groundHeight, vec3 tileOffset, vec3 cityPos, SavableCityData * city);
+	//Check if a point is within a city centered at 0,0
+	template <class T>
+	static bool pointInCity(T point) {
+		if ((point.x < -citysize/2.0) || (point.y < -citysize/2.0))
+			return false;
+		if ((point.x > citysize/2.0) || (point.y > citysize/2.0))
+			return false;
+		return true;
+	}
+
 public:
 	CityGen();
 

@@ -8,6 +8,8 @@
 #include "BaseFrame.h"
 #include "ActorSystem.h"
 #include "ActorAids.h"
+
+#include "IntegerGlmTypes.h"
 //the size of each city
 const int citysize = 150;
 
@@ -31,6 +33,47 @@ void CityGen::placeTurretPerch(TileCell * cells, float turretHeight, vec3 tileOf
 
 	city->gunAlive.push_back(true);
 	city->gunPositions.push_back(tileOffset+vec3(turretPos,turretHeight));
+}
+//Place a spire in the center of the city
+void CityGen::placeCenterSpire(TileCell * cells, float groundHeight, vec3 tileOffset, vec3 cityPos, SavableCityData * city) {
+	//Different heights in the spire
+	static int ringHeights[5] = {
+		30,
+		28,
+		24,
+		18,
+		10
+	};
+
+
+	//Place the spire
+	//create spire materials
+	for (float x = -5; x <= 5; x++) {
+		for (float y = -5; y <= 5; y++) {
+			float ring = max(abs(x),abs(y));
+			vec2 spos = vec2(x,y)+vec2(cityPos);
+			TileCell & cell = cells[int((spos.y)*TILE_SIZE + spos.x)];
+			cell.materialId = 3;
+		}
+	}
+	//Build spire heights
+	for (float x = -4; x <= 4; x++) {
+		for (float y = -4; y <= 4; y++) {
+			float ring = max(abs(x),abs(y));
+			vec2 spos = vec2(x,y)+vec2(cityPos);
+			TileCell & cell = cells[int((spos.y)*TILE_SIZE + spos.x)];
+			cell.height = groundHeight+ ringHeights[(int)ring]*3/2;
+			//The tower is made of tough stuff
+			cell.cellHealth = 50;
+			cell.cellMaxHealth = 50;
+			//Register the center
+			if (ring == 0) {
+				city->cityCenterVoxel = spos+vec2(tileOffset);
+				city->originalCityCenterVoxel = cell.height;
+			}
+				
+		} 
+	}
 }
 
 CityGen::CityGen() {
@@ -78,9 +121,7 @@ CityGen::CityGen() {
 				vec2 spos = lineDirection*(-lineLength/2.0f+i*lineSection);
 				spos = glm::floor(spos);
 				//check that the position is within city limits
-				if ((spos.x < -citysize/2.0) || (spos.y < -citysize/2.0))
-					continue;
-				if ((spos.x > citysize/2.0) || (spos.y > citysize/2.0))
+				if (!pointInCity(spos))
 					continue;
 				//check that the position isn't too close to the center
 				float len = glm::length(spos);
@@ -113,45 +154,8 @@ CityGen::CityGen() {
 			}
 		}
 
-
-		//Different heights in the spire
-		int ringHeights[5] = {
-			30,
-			28,
-			24,
-			18,
-			10
-		};
-
-
-		//Place the spire
-		//create spire materials
-		for (float x = -5; x <= 5; x++) {
-			for (float y = -5; y <= 5; y++) {
-				float ring = max(abs(x),abs(y));
-				vec2 spos = vec2(x,y)+vec2(pos);
-				TileCell & cell = cells[int((spos.y)*TILE_SIZE + spos.x)];
-				cell.materialId = 3;
-			}
-		}
-		//Build spire heights
-		for (float x = -4; x <= 4; x++) {
-			for (float y = -4; y <= 4; y++) {
-				float ring = max(abs(x),abs(y));
-				vec2 spos = vec2(x,y)+vec2(pos);
-				TileCell & cell = cells[int((spos.y)*TILE_SIZE + spos.x)];
-				cell.height += ringHeights[(int)ring]*3/2;
-				//The tower is made of tough stuff
-				cell.cellHealth = 50;
-				cell.cellMaxHealth = 50;
-				//Register the center
-				if (ring == 0) {
-					cityData->cityCenterVoxel = spos+vec2(tileOffset);
-					cityData->originalCityCenterVoxel = cell.height;
-				}
-				
-			} 
-		}
+		//Place the center spire
+		placeCenterSpire(cells,originalCityHeight,tileOffset,pos,cityData);
 
 		return cityData;
 	});
@@ -179,7 +183,6 @@ CityGen::CityGen() {
 		//Generate arcs
 		static const int ringCount = 10;
 		static const int arcsPerRing = 3;
-		static const int turretSkip = 6;
 		static const float samplesPerRadian = 50.0f;
 		//The closest arcs get to the center
 		static const float innerRadius = 12;
@@ -207,9 +210,7 @@ CityGen::CityGen() {
 					vec2 spos(cos(angle)*arcDistance,sin(angle)*arcDistance);
 					spos = glm::floor(spos);
 					//check that the position is within city limits
-					if ((spos.x < -citysize/2.0) || (spos.y < -citysize/2.0))
-						continue;
-					if ((spos.x > citysize/2.0) || (spos.y > citysize/2.0))
+					if (!pointInCity(spos))
 						continue;
 					//Place a part of the arc here
 
@@ -234,44 +235,183 @@ CityGen::CityGen() {
 		placeTurretPerch(cells,originalCityHeight+15.0f,tileOffset,vec2(pos)+vec2(-10,-10),cityData);
 		placeTurretPerch(cells,originalCityHeight+15.0f,tileOffset,vec2(pos)+vec2(10,10),cityData);
 
-		//Different heights in the spire
-		int ringHeights[5] = {
-			30,
-			28,
-			24,
-			18,
-			10
-		};
+		//Place the center spire
+		placeCenterSpire(cells,originalCityHeight,tileOffset,pos,cityData);
+
+		return cityData;
+	});
 
 
-		//Place the spire
-		//create spire materials
-		for (float x = -5; x <= 5; x++) {
-			for (float y = -5; y <= 5; y++) {
-				float ring = max(abs(x),abs(y));
-				vec2 spos = vec2(x,y)+vec2(pos);
-				TileCell & cell = cells[int((spos.y)*TILE_SIZE + spos.x)];
-				cell.materialId = 3;
+	//Spiral city generation
+	//produces an unbroken spiral moving towards the center
+	//with small doors cut into it
+	generationFunctions.push_back([](GameTile * tile, vec3 pos){
+		TileCell * cells = tile->Cells;
+		vec3 tileOffset = vec3(tile->tile_x,tile->tile_y,0) * vec3(TILE_SIZE,TILE_SIZE,1.0);
+
+		//create savable city data here
+		SavableCityData * cityData = new SavableCityData();
+		cityData->cityPosition = pos+tileOffset;
+		cityData->ownedByPlayer = false;
+
+		float originalCityHeight = cells[int((pos.y)*TILE_SIZE + pos.x)].height;
+
+		//Turn the city a different color
+		for (int y = -citysize / 2; y < citysize / 2; y++) {
+			for (int x = -citysize / 2; x < citysize / 2; x++) {
+				cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 2;
 			}
 		}
-		//Build spire heights
-		for (float x = -4; x <= 4; x++) {
-			for (float y = -4; y <= 4; y++) {
-				float ring = max(abs(x),abs(y));
-				vec2 spos = vec2(x,y)+vec2(pos);
-				TileCell & cell = cells[int((spos.y)*TILE_SIZE + spos.x)];
-				cell.height += ringHeights[(int)ring]*3/2;
-				//The tower is made of tough stuff
-				cell.cellHealth = 50;
-				cell.cellMaxHealth = 50;
-				//Register the center
-				if (ring == 0) {
-					cityData->cityCenterVoxel = spos+vec2(tileOffset);
-					cityData->originalCityCenterVoxel = cell.height;
-				}
+
+		//Generate spiral
+		static const int spiralRings = 5;
+		static const float samples = 300.0f;
+		//The closest arcs get to the center
+		static const float innerRadius = 12;
+		static const float spiralLengthPerRing = (citysize/2.0f-innerRadius)/spiralRings;
+		static const float anglePart = (float)(M_PI*2.0f/samples);
+	
+		//Create a number of arcs
+		for (int s = 0; s < spiralRings; s++) {
+			float spiralBaseLength = spiralLengthPerRing * s;
+			//Build a spiral section
+			//Generate one turn of the spiral
+		
+			for (int i = 0; i < samples; i++) {
+				float rayLength = spiralBaseLength+((float)i/(float)samples)*spiralLengthPerRing;
+				float arcHeight = 5.0f*(float)((rayLength*rayLength-innerRadius*innerRadius)*.0008+2);
+				//Find the position
+				float angle = i*anglePart;
+				vec2 spos(cos(angle)*rayLength,sin(angle)*rayLength);
+				spos = glm::floor(spos);
+				//check that the position is within city limits
+				if (!pointInCity(spos))
+					continue;
+				//Place a part of the spiral here
+
 				
-			} 
+				vec2 absPos = glm::floor(vec2(pos)+spos);
+				TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
+				cell.height = (unsigned char)(arcHeight+originalCityHeight);
+				//City is stronger than surrounding terrain
+				cell.cellHealth = 25;
+				cell.cellMaxHealth = 25;
+			}
 		}
+
+		//Place turrets on each corner, because otherwise corners are boring
+		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(-citysize/2.2f,-citysize/2.2f),cityData);
+		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(citysize/2.2f,-citysize/2.2f),cityData);
+		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(-citysize/2.2f,citysize/2.2f),cityData);
+		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(citysize/2.2f,citysize/2.2f),cityData);
+
+		//Place two around the center
+		placeTurretPerch(cells,originalCityHeight+15.0f,tileOffset,vec2(pos)+vec2(-10,-10),cityData);
+		placeTurretPerch(cells,originalCityHeight+15.0f,tileOffset,vec2(pos)+vec2(10,10),cityData);
+
+		//Place the center spire
+		placeCenterSpire(cells,originalCityHeight,tileOffset,pos,cityData);
+
+		return cityData;
+	});
+
+	//Maze city generation
+	//Constructs a maze using randomized DFS
+	generationFunctions.push_back([](GameTile * tile, vec3 pos){
+		TileCell * cells = tile->Cells;
+		vec3 tileOffset = vec3(tile->tile_x,tile->tile_y,0) * vec3(TILE_SIZE,TILE_SIZE,1.0);
+
+		//create savable city data here
+		SavableCityData * cityData = new SavableCityData();
+		cityData->cityPosition = pos+tileOffset;
+		cityData->ownedByPlayer = false;
+
+		float originalCityHeight = cells[int((pos.y)*TILE_SIZE + pos.x)].height;
+
+		//Turn the city a different color
+		for (int y = -citysize / 2; y < citysize / 2; y++) {
+			for (int x = -citysize / 2; x < citysize / 2; x++) {
+				cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 2;
+			}
+		}
+
+		//constants
+		static const int CorridorSize = 2;
+
+		//Randomized DFS implemented using a vector as a stack
+		vector<vec2i> mazeStack;
+		mazeStack.reserve(1000);
+		//Start in the center
+		mazeStack.push_back(vec2i());
+
+
+		//Neighbors
+		vec2i neighbors[4];
+		int neighborCount;
+
+		while (mazeStack.size() > 0) {
+			//Select the current position
+			vec2i current = mazeStack.back();
+			//Search for applicable neighbors
+			neighborCount = 0;
+			vec2i test;
+
+			//Test that each neighbor isn't part of the maze and is within the city
+			test = current+vec2i(CorridorSize,0);
+			if (pointInCity(test) && (cells[int((pos.y + test.y)*TILE_SIZE + pos.x + test.x)].height == (unsigned char)originalCityHeight))
+				neighbors[neighborCount++] = test;
+			test = current+vec2i(0,CorridorSize);
+			if (pointInCity(test) && (cells[int((pos.y + test.y)*TILE_SIZE + pos.x + test.x)].height == (unsigned char)originalCityHeight))
+				neighbors[neighborCount++] = test;
+			test = current+vec2i(-CorridorSize,0);
+			if (pointInCity(test) && (cells[int((pos.y + test.y)*TILE_SIZE + pos.x + test.x)].height == (unsigned char)originalCityHeight))
+				neighbors[neighborCount++] = test;
+			test = current+vec2i(0,-CorridorSize);
+			if (pointInCity(test) && (cells[int((pos.y + test.y)*TILE_SIZE + pos.x + test.x)].height == (unsigned char)originalCityHeight))
+				neighbors[neighborCount++] = test;
+			
+			//If you have no neighbors, backtrack
+			if (neighborCount <= 0) {
+				mazeStack.pop_back();
+				continue;
+			}
+
+			//Otherwise randomly select one and continue
+			vec2i newMazeSection = neighbors[rand() % neighborCount];
+			//Draw a line between the previous one and the next one
+			vec2i direction = (current-newMazeSection)/CorridorSize;
+
+			for (vec2i it = newMazeSection; it != current; it += direction) {
+				TileCell & cell = cells[int((pos.y + it.y)*TILE_SIZE + pos.x + it.x)];
+				cell.height = originalCityHeight+5;
+				//City is stronger than surrounding terrain
+				cell.cellHealth = 25;
+				cell.cellMaxHealth = 25;
+			}
+
+			mazeStack.push_back(newMazeSection);
+		}
+
+		/*
+				vec2 absPos = glm::floor(vec2(pos)+spos);
+				TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
+				cell.height = (unsigned char)(arcHeight+originalCityHeight);
+				//City is stronger than surrounding terrain
+				cell.cellHealth = 25;
+				cell.cellMaxHealth = 25;
+		
+		//Place turrets on each corner, because otherwise corners are boring
+		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(-citysize/2.2f,-citysize/2.2f),cityData);
+		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(citysize/2.2f,-citysize/2.2f),cityData);
+		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(-citysize/2.2f,citysize/2.2f),cityData);
+		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(citysize/2.2f,citysize/2.2f),cityData);
+
+		//Place two around the center
+		placeTurretPerch(cells,originalCityHeight+15.0f,tileOffset,vec2(pos)+vec2(-10,-10),cityData);
+		placeTurretPerch(cells,originalCityHeight+15.0f,tileOffset,vec2(pos)+vec2(10,10),cityData);*/
+
+		//Place the center spire
+		placeCenterSpire(cells,originalCityHeight,tileOffset,pos,cityData);
 
 		return cityData;
 	});
@@ -331,7 +471,7 @@ void CityGen::construct_building(GameTile* tile, vec3 pos)
 
 void CityGen::construct_city(GameTile * tile, vec3 pos) {
 	//Randomly select a generation algorithm
-	int selectedAlgorithm = rand() % generationFunctions.size();
+	int selectedAlgorithm = 3;//rand() % generationFunctions.size();
 	//and generate a city
 	SavableCityData * city = generationFunctions[selectedAlgorithm](tile,pos);
 	//Transfer city data to ai
