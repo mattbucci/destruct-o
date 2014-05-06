@@ -3,6 +3,7 @@
 
 #include "ReflectionData.h"
 #include "LoadData.h"
+#include "IntegerGlmTypes.h"
 
 class Savable {
 
@@ -89,6 +90,9 @@ class Savable {
 	template <template<class, class> class ContainerType, template<class> class AllocaterType>
 	void LoadContainerValue(ReflectionData::savable valueData,Json::Value & value, LoadData & loadData) {
 		switch (valueData.internalType) {
+		case ReflectionData::SAVE_VEC2I:
+			LoadSpecificContainer<ContainerType,AllocaterType,vec2i>(valueData,value,loadData);
+			break;
 		case ReflectionData::SAVE_VEC2:
 			LoadSpecificContainer<ContainerType,AllocaterType,vec2>(valueData,value,loadData);
 			break;
@@ -169,6 +173,9 @@ class Savable {
 	//Selects the appropriate type argument and calls SaveSpecificContainer
 	void SaveContainerValue(ReflectionData::savable valueData,Json::Value & value) {
 		switch (valueData.internalType) {
+		case ReflectionData::SAVE_VEC2I:
+			SaveSpecificContainer<ContainerType,AllocaterType,vec2i>(valueData,value);
+			break;
 		case ReflectionData::SAVE_VEC2:
 			SaveSpecificContainer<ContainerType,AllocaterType,vec2>(valueData,value);
 			break;

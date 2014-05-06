@@ -9,6 +9,10 @@
 
 void Savable::SaveValue(ReflectionData::savable valueData,Json::Value & value) {
 	switch (valueData.dataType) {
+	case ReflectionData::SAVE_VEC2I:
+		value["x"] = ((vec2i*)valueData.member)->x;
+		value["y"] = ((vec2i*)valueData.member)->y;
+		return;
 	case ReflectionData::SAVE_VEC2:
 		value["x"] = ((vec2*)valueData.member)->x;
 		value["y"] = ((vec2*)valueData.member)->y;
@@ -124,6 +128,10 @@ void Savable::SaveValue(ReflectionData::savable valueData,Json::Value & value) {
 
 void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, LoadData & loadData) {
 	switch (valueData.dataType) {
+	case ReflectionData::SAVE_VEC2I:
+		((vec2i*)valueData.member)->x = value["x"].asInt();
+		((vec2i*)valueData.member)->y = value["y"].asInt();
+		return;
 	case ReflectionData::SAVE_VEC2:
 		((vec2*)valueData.member)->x = value["x"].asFloat();
 		((vec2*)valueData.member)->y = value["y"].asFloat();

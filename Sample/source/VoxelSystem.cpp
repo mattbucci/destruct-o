@@ -46,7 +46,7 @@ VoxelSystem::~VoxelSystem() {
 
 GameTile * VoxelSystem::GetTile(vec2 pos) {
 	//TileHandler Guaranteed to Return Tile
-	return tiles.getTile(pos);
+	return tiles.getTile(vec2i((int)pos.x,(int)pos.y));
 }
 
 TileCell * VoxelSystem::GetTileCellAt(vec2 pos) {
@@ -178,7 +178,7 @@ void VoxelSystem::Draw(ShaderGroup * shaders, SimplePolygon<4>& drawRegion)
 
 void VoxelSystem::Update(vec3 player_pos){
 	//Pass to TileHandler
-	tiles.getTile(vec2(floor(player_pos.x / TILE_SIZE), floor(player_pos.y / TILE_SIZE)));
+	tiles.getTile(vec2i((int)floor(player_pos.x / TILE_SIZE), (int)floor(player_pos.y / TILE_SIZE)));
 }
 
 int VoxelSystem::GetLastVoxelCount() {
@@ -317,5 +317,5 @@ bool VoxelSystem::RaytraceToTerrain(vec3 from, vec3 direction, float & rayLength
 void VoxelSystem::NewWorld(int seed) {
 	tiles.setSeed(seed);
 	//Build at least the tile will be standing on
-	tiles.getTile(vec2());
+	tiles.getTile(vec2i());
 }

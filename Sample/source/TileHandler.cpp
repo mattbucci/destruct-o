@@ -56,7 +56,7 @@ void TileHandler::handlerLoop() {
 		//Get Terrain Generation Work
 		while(genQueue.size() > 0) {
 			//Grab Work from Queue
-			vec2 pos = genQueue.front();
+			vec2i pos = genQueue.front();
 			genQueue.pop_front();
 			genLck.unlock();
 
@@ -68,15 +68,11 @@ void TileHandler::handlerLoop() {
 			listOfGeneratedTiles.push_back(pos);
 			//Add this tile to the list of tiles in memory right now
 			cachedTiles.push_back(pos);
-			int s = worldSet.size();
-			for(int i = 0; i < s; i++) {
-				if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y) {
-					delete worldSet[i];
-					tile->UseByDate = Game()->Now() + TILE_LIFETIME;
-					worldSet[i] = tile;
-					break;
-				}
-			}
+			delete worldSet[pos];
+			worldSet[pos] = tile;
+			//Update the expiration
+			tile->UseByDate = Game()->Now() + TILE_LIFETIME;
+
 			worldLck.unlock();
 			worldCv.notify_all();
 
@@ -98,16 +94,17 @@ void TileHandler::handlerLoop() {
 		worldLck.lock();
 		double now = Game()->Now();
 		for (auto it = worldSet.begin(); it != worldSet.end();) {
-			if (now >= (*it)->UseByDate) {
-				_ASSERTE((*it)->Cells != NULL);
-				vec2 tilePos = vec2((*it)->tile_x,(*it)->tile_y);
+			GameTile * tile = it->second;
+			if (now >= tile->UseByDate) {
+				_ASSERTE(tile->Cells != NULL);
+				vec2i tilePos = vec2i(tile->tile_x,tile->tile_y);
 				//Cache to disk
-				(*it)->SaveTile(saveDirectory() + tileName(tilePos));
+				tile->SaveTile(saveDirectory() + tileName(tilePos));
 
 				//Erase from the list of tiles in memory
 				cachedTiles.erase(tilePos);
 				//Cleanup tile
-				delete *it;
+				delete tile;
 				it = worldSet.erase(it);
 			}
 			else
@@ -124,7 +121,7 @@ void TileHandler::handlerLoop() {
 }
 
 //Construct a new tile, or load one from disk and construct it
-GameTile * TileHandler::genRoutine(vec2 pos) {
+GameTile * TileHandler::genRoutine(vec2i pos) {
  	bool tileOnDisk = false;
 	
 	//Reset the seed to the correct value
@@ -162,19 +159,11 @@ GameTile * TileHandler::genRoutine(vec2 pos) {
 	return newTile;
 }
 
-void TileHandler::predictTile(vec2 pos) {
+void TileHandler::predictTile(vec2i pos) {
 	// Check if Tile Already Exists
-	bool exists = false;
-	int s = worldSet.size();
-	for(int i = 0; i < s; i++) {
-		if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y) {
-			//Still in use maybe	
-			worldSet[i]->UseByDate = Game()->Now()+TILE_LIFETIME;
-			exists = true;
-			break;
-		}
-	}
-	if(exists) {
+	auto it = worldSet.find(pos);
+	if(it != worldSet.end()) {
+		it->second->UseByDate = Game()->Now()+TILE_LIFETIME;
 		// If Exists, Don't Add to Queue
 		return;
 	}
@@ -185,18 +174,18 @@ void TileHandler::predictTile(vec2 pos) {
 	//Add to Queue & Notify Handler
 	genQueue.push_back(pos);
 	//Add Placeholder Tile to WorldSet for Duplicate Prevention
-	worldSet.push_back(GameTile::CreatePlaceholderTile((int)pos.x, (int)pos.y));
+	worldSet[pos] = GameTile::CreatePlaceholderTile((int)pos.x, (int)pos.y);
 	genCv.notify_one();
 }
 
-void TileHandler::forceTile(vec2 pos) {
+void TileHandler::forceTile(vec2i pos) {
 		//Grab gen Lock
 	lock_guard<mutex> locked(genMtx);
 
 	//Add to Queue & Notify Handler
 	genQueue.push_front(pos);
 	//Add Placeholder Tile to WorldSet for Duplicate Prevention
-	worldSet.push_back(GameTile::CreatePlaceholderTile((int)pos.x, (int)pos.y));
+	worldSet[pos] = GameTile::CreatePlaceholderTile((int)pos.x, (int)pos.y);
 	genCv.notify_one();
 }
 
@@ -208,7 +197,7 @@ int TileHandler::getSeed() {
 	return worldSeed;
 }
 
-GameTile * TileHandler::getTile(vec2 pos) {
+GameTile * TileHandler::getTile(vec2i pos) {
 	//Obtain Lock on World Set
 	unique_lock<mutex> worldLck(worldMtx,defer_lock);
 	worldLck.lock();
@@ -244,23 +233,18 @@ GameTile * TileHandler::getTile(vec2 pos) {
 			worldCv.wait(worldLck);
 
 			//Check for Expected Tile
-			int s = worldSet.size();
-			for(int i = 0; i < s; i++) {
-				if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y && worldSet[i]->Cells != NULL) {
-					//On Match, Grab Reference
-					tile = worldSet[i];
-					break;
-				}
-			}
+			auto it = worldSet.find(pos);
+			if ((it != worldSet.end()) && (it->second->Cells != NULL))
+				tile = it->second;
 		}
 	}
 
 	//Predict Neighboring Tiles
-	for(int x_offset = -1; x_offset <= 1; x_offset++) {
+	/*for(int x_offset = -1; x_offset <= 1; x_offset++) {
 		for(int y_offset = -1; y_offset <= 1; y_offset++) {
-			predictTile(vec2(pos.x + x_offset, pos.y + y_offset));
+			predictTile(vec2i(pos.x + x_offset, pos.y + y_offset));
 		}
-	}
+	}*/
 
 	tile->UseByDate = Game()->Now()+TILE_LIFETIME;
 
@@ -275,15 +259,19 @@ GameTile * TileHandler::getTile(vec2 pos) {
 	return tile;
 }
 
+//Use a radius around the player position to spawn new tiles
+//right now radius is 1 tile
+void TileHandler::Update(vec2i playerPos) {
+
+}
+
 //Retrieve a tile pointer safely if the tile is cached
-GameTile * TileHandler::findCachedTile(vec2 pos) {
+GameTile * TileHandler::findCachedTile(vec2i pos) {
 	//Search World Set for Tile
-	int s = worldSet.size();
-	for(int i = 0; i < s; i++) {
-		if(worldSet[i]->tile_x == pos.x && worldSet[i]->tile_y == pos.y) {
-			return worldSet[i];
-		}
-	}
+	auto it = worldSet.find(pos);
+	if (it != worldSet.end())
+		return it->second;
+	//Couldn't find it
 	return NULL;
 }
 
@@ -292,12 +280,12 @@ string TileHandler::saveDirectory() {
 	return Game()->GetSaveLocation() + "tiles/";
 }
 
-string TileHandler::tileName(vec2 pos) {
+string TileHandler::tileName(vec2i pos) {
 	return string("tile_") + Utilities::toString((int)pos.x) + "_" + Utilities::toString((int)pos.y) + ".tile";
 }
 
 //Retrieves a copy of compressed tile data for the given tile
-vector<unsigned char> TileHandler::RetrieveCompressedTileData(vec2 pos) {
+vector<unsigned char> TileHandler::RetrieveCompressedTileData(vec2i pos) {
 
 	GameTile * tile = findCachedTile(pos);
 	//ensure the internal array exists
@@ -364,7 +352,7 @@ void TileHandler::Load(Json::Value & parentValue, LoadData & loadData) {
 	//Clean the state
 	//genRunningMtx guarantees this is safe
 	for (auto tile : worldSet)
-		delete tile;
+		delete tile.second;
 	worldSet.clear();
 	genQueue.clear();
 
@@ -376,7 +364,7 @@ void TileHandler::Load(Json::Value & parentValue, LoadData & loadData) {
 	//Load tiles
 	Json::Value & tiles = parentValue["tiles"];
 	for (auto tile : tiles) {
-		vec2 tilePosition((int)tile["x"].asFloat(),(int)tile["y"].asFloat());
+		vec2i tilePosition((int)tile["x"].asFloat(),(int)tile["y"].asFloat());
 		//Get the tile data
 		string base64Data = tile["base64data"].asString();
 		base64Data += '\0';
@@ -398,7 +386,7 @@ void TileHandler::Load(Json::Value & parentValue, LoadData & loadData) {
 			GameTile * tile = GameTile::LoadCompressedTileFromMemory(tileData);
 			tile->tile_x = (int)tilePosition.x;
 			tile->tile_y = (int)tilePosition.y;
-			worldSet.push_back(tile);
+			worldSet[vec2i(tile->tile_x,tile->tile_y)] = tile;
 		}
 		else {
 			//Dump it to file

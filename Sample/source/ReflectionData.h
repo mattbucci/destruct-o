@@ -27,6 +27,7 @@ namespace ReflectionData {
 		SAVE_VEC2,
 		SAVE_VEC3,
 		SAVE_VEC4,
+		SAVE_VEC2I,
 		//Saves the handle, but does not save what the handle points to
 		SAVE_HANDLE,
 		//Saves the handle, and saves what it points to
