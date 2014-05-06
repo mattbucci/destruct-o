@@ -39,6 +39,13 @@ GLTexture * GLTexture::GenerateErrorTexture() {
 	return err;
 }
 
+//stolen from http://www.geeksforgeeks.org/write-one-line-c-function-to-find-whether-a-no-is-power-of-two/
+/* Function to check if x is power of 2*/
+static bool isPowerOfTwo (int x) {
+  /* First x in the below expression is for the case when x is 0 */
+  return x && (!(x&(x-1)));
+}
+
 //Attempt to cache the texture in graphics memory
 bool GLTexture::CacheTexture(){
 	//Check that you're not already cached
@@ -53,21 +60,32 @@ bool GLTexture::CacheTexture(){
 		return false;
 	}
 
-
+	
 	glGenTextures( 1, &textureId );
 
 	glBindTexture(GL_TEXTURE_2D, textureId);
 
 	//texture mapping type, perhaps elsewhere?
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );	//GL_NEAREST FOR SPEED
-	glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
+	if (isPowerOfTwo(width) && isPowerOfTwo(height)) {
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST );
+		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	
     
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width,
-				height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-				&data[0] );
+		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width,
+					height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+					&data[0] );
 
-	//Decreases load performance substantially. Should be fixed later
-	glGenerateMipmap(GL_TEXTURE_2D);
+		//Decreases load performance substantially. Should be fixed later
+		glGenerateMipmap(GL_TEXTURE_2D);		
+	}
+	else {
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );	//GL_NEAREST FOR SPEED
+		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
+    
+		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width,
+					height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+					&data[0] );
+	}
+
 
 	return textureId > 0;
 }

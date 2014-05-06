@@ -18,9 +18,6 @@ class VoxelSystem : public Savable {
 	//A debug counter for the number of voxels rendered last frame
 	int voxelCount;
 
-	//The voxel texture
-	GLuint textureId;
-
 	//The Tile Handle
 	TileHandler tiles;
 

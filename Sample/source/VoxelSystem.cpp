@@ -15,30 +15,12 @@
 #include "PhysicsUtilities.h"
 #include "SimplePolygon.h"
 
+#include "BaseFrame.h"
+#include "GLTexture.h"
+
 VoxelSystem::VoxelSystem()
 {
     cellRenderer = VoxelDrawSystem::BuildAppropriateSystem();
-
-	//Load the tile textures
-	unsigned int textureWidth, textureHeight;
-	vector<unsigned char> image;
-
-	//A smart system would have multiple res tiles and would automatically select
-	//one appropriate for the system its running on
-	lodepng::decode(image, textureWidth, textureHeight, "terrain/tiles-lowres.png");
-
-	//I should have moved the png->texture into a utility library
-	//later...
-	glGenTextures(1, &textureId);
-	glBindTexture(GL_TEXTURE_2D, textureId);
-
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth,
-		textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-		&image[0]);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
 }
 VoxelSystem::~VoxelSystem() {
 	delete cellRenderer;
@@ -131,7 +113,7 @@ void VoxelSystem::Draw(ShaderGroup * shaders, SimplePolygon<4>& drawRegion)
     
 	// Enable voxel texture
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textureId);
+	Game()->Textures.GetTexture<GLTexture>("terrain/tiles-lowres.png")->Bind();
     
     // Get the shaders we need
 	GLTerrainProgram * terrainShader = (GLTerrainProgram*)shaders->GetShader("terrain");
