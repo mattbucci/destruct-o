@@ -336,7 +336,9 @@ CityGen::CityGen() {
 		}
 
 		//constants
-		static const int CorridorSize = 2;
+		static const int corridorSize = 8;
+		static const int corridorHeight = 8;
+		static const int maxTurrets = 5;
 
 		//Randomized DFS implemented using a vector as a stack
 		vector<vec2i> mazeStack;
@@ -357,16 +359,16 @@ CityGen::CityGen() {
 			vec2i test;
 
 			//Test that each neighbor isn't part of the maze and is within the city
-			test = current+vec2i(CorridorSize,0);
+			test = current+vec2i(corridorSize,0);
 			if (pointInCity(test) && (cells[int((pos.y + test.y)*TILE_SIZE + pos.x + test.x)].height == (unsigned char)originalCityHeight))
 				neighbors[neighborCount++] = test;
-			test = current+vec2i(0,CorridorSize);
+			test = current+vec2i(0,corridorSize);
 			if (pointInCity(test) && (cells[int((pos.y + test.y)*TILE_SIZE + pos.x + test.x)].height == (unsigned char)originalCityHeight))
 				neighbors[neighborCount++] = test;
-			test = current+vec2i(-CorridorSize,0);
+			test = current+vec2i(-corridorSize,0);
 			if (pointInCity(test) && (cells[int((pos.y + test.y)*TILE_SIZE + pos.x + test.x)].height == (unsigned char)originalCityHeight))
 				neighbors[neighborCount++] = test;
-			test = current+vec2i(0,-CorridorSize);
+			test = current+vec2i(0,-corridorSize);
 			if (pointInCity(test) && (cells[int((pos.y + test.y)*TILE_SIZE + pos.x + test.x)].height == (unsigned char)originalCityHeight))
 				neighbors[neighborCount++] = test;
 			
@@ -379,11 +381,11 @@ CityGen::CityGen() {
 			//Otherwise randomly select one and continue
 			vec2i newMazeSection = neighbors[rand() % neighborCount];
 			//Draw a line between the previous one and the next one
-			vec2i direction = (current-newMazeSection)/CorridorSize;
+			vec2i direction = (current-newMazeSection)/corridorSize;
 
 			for (vec2i it = newMazeSection; it != current; it += direction) {
 				TileCell & cell = cells[int((pos.y + it.y)*TILE_SIZE + pos.x + it.x)];
-				cell.height = originalCityHeight+5;
+				cell.height = originalCityHeight+corridorHeight;
 				//City is stronger than surrounding terrain
 				cell.cellHealth = 25;
 				cell.cellMaxHealth = 25;
@@ -392,24 +394,20 @@ CityGen::CityGen() {
 			mazeStack.push_back(newMazeSection);
 		}
 
-		/*
-				vec2 absPos = glm::floor(vec2(pos)+spos);
-				TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
-				cell.height = (unsigned char)(arcHeight+originalCityHeight);
-				//City is stronger than surrounding terrain
-				cell.cellHealth = 25;
-				cell.cellMaxHealth = 25;
+		//Randomly place turrets around city
+		for (int i = 0; i < maxTurrets; i++) {
+			vec2 turretPos(Utilities::random(-citysize/2.0,citysize/2.0),Utilities::random(-citysize/2.0,citysize/2.0));
+			//Check that you're far enough away from the center
+			if (glm::length(turretPos) < 10) {
+				//too close, try again
+				i--;
+				continue;
+			}
+			//Place turret
+			placeTurretPerch(cells,originalCityHeight+20.0f,tileOffset,vec2(pos)+turretPos,cityData);
+		}
+
 		
-		//Place turrets on each corner, because otherwise corners are boring
-		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(-citysize/2.2f,-citysize/2.2f),cityData);
-		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(citysize/2.2f,-citysize/2.2f),cityData);
-		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(-citysize/2.2f,citysize/2.2f),cityData);
-		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(citysize/2.2f,citysize/2.2f),cityData);
-
-		//Place two around the center
-		placeTurretPerch(cells,originalCityHeight+15.0f,tileOffset,vec2(pos)+vec2(-10,-10),cityData);
-		placeTurretPerch(cells,originalCityHeight+15.0f,tileOffset,vec2(pos)+vec2(10,10),cityData);*/
-
 		//Place the center spire
 		placeCenterSpire(cells,originalCityHeight,tileOffset,pos,cityData);
 
@@ -471,7 +469,7 @@ void CityGen::construct_building(GameTile* tile, vec3 pos)
 
 void CityGen::construct_city(GameTile * tile, vec3 pos) {
 	//Randomly select a generation algorithm
-	int selectedAlgorithm = 3;//rand() % generationFunctions.size();
+	int selectedAlgorithm = rand() % generationFunctions.size();
 	//and generate a city
 	SavableCityData * city = generationFunctions[selectedAlgorithm](tile,pos);
 	//Transfer city data to ai

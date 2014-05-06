@@ -24,6 +24,7 @@ PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
 	voxelSystem = system;
 	section.autoredeuce(false);
+	skipCount = 1;
 
 }
 PhysicsSystem::~PhysicsSystem() {
@@ -395,6 +396,7 @@ void PhysicsSystem::Update() {
 	
 	//Now check for collisions between everything that can experience them
 	//Physics voxel physics may be skipped periodically
+	skipCount--;
 	if (skipCount <= 0) {
 		//Determine new skip count
 		if (VoxEngine::GlobalSavedData.GameOptions.PhysicsAccuracy <= .26f)
