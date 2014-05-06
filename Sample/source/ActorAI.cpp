@@ -17,6 +17,8 @@
 CLASS_SAVE_CONSTRUCTOR(ActorAI);
 
 unsigned int ActorAI::currentAIID = 0;
+//How long after losing the target, the AI gives up shooting the target
+static const double LostEnemyTime = 5.0;
 
 //Used only by the save system to create an actorai loaded
 ActorAI::ActorAI() : 
@@ -28,6 +30,7 @@ ActorAI::ActorAI() :
 	energyPool = 100;
 	targetEnemy = NULL;
 	actorCrashing = false;
+	sawEnemyLast = 0;
 	//Setup the AI ID
 	aiID = currentAIID = (currentAIID+1) % 10;
 
@@ -125,26 +128,34 @@ bool ActorAI::Dead() {
 }
 
 bool ActorAI::checkEnemyValid() {
-	//Check you can still see the enemy
+	//Check you can still have an enemy
 	if (!targetEnemy) {
 		state = AI_SCANNING;
 		return false;
 	}
-		
-	//Check if you can see the enemy
-	PhysicsActor * hit;
-	vec3 targeter = Position+data->TargeterOffsetFromCenter;
-	if (Universal::Trace(targeter,glm::normalize(targetEnemy->GetPosition()-targeter),NULL,&hit)) {
-		if (hit != targetEnemy) {
-			//Can't see that enemy any more
-			state = AI_SCANNING;
-			return false;
-		}
+	
+	//Check if you've seen the enemy recently
+	if ((sawEnemyLast+LostEnemyTime) <= Game()->Now()) {
+		state = AI_SCANNING;
+		return false;
 	}
 
 	//Check if you're not too far away
-	if (glm::distance(targetEnemy->GetPosition(), Position) > data->SightDistance*1.5f && !flying)
+	if (glm::distance(targetEnemy->GetPosition(), Position) > data->SightDistance*1.5f && !flying) {
+		state = AI_SCANNING;
 		return false;
+	}
+		
+
+	//Check if you can see the enemy now
+	PhysicsActor * hit;
+	vec3 targeter = Position+data->TargeterOffsetFromCenter;
+	if (Universal::Trace(targeter,glm::normalize(targetEnemy->GetPosition()-targeter),NULL,&hit)) {
+		//If you can still see them record that fact
+		if (hit == targetEnemy)
+			sawEnemyLast = Game()->Now();
+			
+	}
 
 	return true;
 }
@@ -178,6 +189,7 @@ void ActorAI::statePathing(bool & holdingTrigger) {
 			targetEnemy = seenEnemy;
 			state = AI_TARGETING_ENEMY;
 			targetAcquiredAt = Game()->Now();
+			sawEnemyLast = Game()->Now();
 			Game()->Actors.AITargetAcquired.Fire([this](function<void(Actor *, Actor *)> observer) {
 				observer(this,targetEnemy);
 			});
@@ -261,6 +273,7 @@ void ActorAI::stateScanning(bool & holdingTrigger) {
 	if (data->BaseMovementSpeed <= 0) {
 		state = AI_TARGETING_ENEMY;
 		targetAcquiredAt = Game()->Now();
+		sawEnemyLast = Game()->Now();
 	}
 	else {
 		//Request a pathing solution to their current position
