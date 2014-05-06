@@ -33,7 +33,7 @@ class TileHandler : public Savable
 
 	mutex worldMtx;
 	condition_variable worldCv;
-	map<vec2c<vec2i>,GameTile*> worldSet;
+	map<vec2i,GameTile*, vec2comparator_less<int> > worldSet;
 	//Represents the positions of all tiles currently loaded
 	//must have world lock to use
 	ContiguousList<vec2i> cachedTiles;

@@ -4,9 +4,13 @@
 #include "GameTile.h"
 #include "Building.h"
 
+//the size of each city
+const int citysize = 150;
+
 class SavableCityData;
 
-class CityGen {
+class CityGen
+{
 	vector<function<SavableCityData*(GameTile* tile, vec3 pos)>> generationFunctions;
 	//Place a turret perch at the given location
 	static void placeTurretPerch(TileCell * cells, float turretHeight, vec3 tileOffset, vec2 turretPos, SavableCityData * city);

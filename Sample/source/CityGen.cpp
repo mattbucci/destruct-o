@@ -10,8 +10,6 @@
 #include "ActorAids.h"
 
 #include "IntegerGlmTypes.h"
-//the size of each city
-const int citysize = 150;
 
 //the space between each city
 const int cityspacing = 250;
