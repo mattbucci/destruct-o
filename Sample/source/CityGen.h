@@ -8,6 +8,8 @@ class SavableCityData;
 
 class CityGen {
 	vector<function<SavableCityData*(GameTile* tile, vec3 pos)>> generationFunctions;
+	//Place a turret perch at the given location
+	static void placeTurretPerch(TileCell * cells, float turretHeight, vec3 tileOffset, vec2 turretPos, SavableCityData * city);
 public:
 	CityGen();
 

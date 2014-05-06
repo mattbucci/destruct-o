@@ -14,6 +14,25 @@ const int citysize = 150;
 //the space between each city
 const int cityspacing = 250;
 
+
+//Place a turret perch at the given location
+void CityGen::placeTurretPerch(TileCell * cells, float turretHeight, vec3 tileOffset, vec2 turretPos, SavableCityData * city) {
+	turretPos = glm::floor(turretPos);
+	//raise the height around the turret
+	for (int x = -1; x <= 0; x++) {
+		for (int y = -1; y <= 0; y++) {
+			vec2 absPos = turretPos+vec2(x,y);
+			TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
+			cell.height = (unsigned char)turretHeight;
+			cell.cellHealth = cell.cellMaxHealth = 45;
+		}
+	}
+
+
+	city->gunAlive.push_back(true);
+	city->gunPositions.push_back(tileOffset+vec3(turretPos,turretHeight));
+}
+
 CityGen::CityGen() {
 	//Setup city generation functions here
 
@@ -37,7 +56,7 @@ CityGen::CityGen() {
 		static const int turretSkip = 6;
 		static const int samples = 200;
 		static const float anglePart = (float)(M_PI*2.0f/lineCount);
-    
+	
 		//flatten terrain
 		//generate roads
 	
@@ -46,7 +65,7 @@ CityGen::CityGen() {
 				cells[int((pos.y + y)*TILE_SIZE + pos.x + x)].materialId = 2;
 			}
 		}
-    
+	
 		for (int p = 0; p < lineCount; p++) {
 			vec2 lineDirection = glm::normalize(vec2(cos(anglePart*p),sin(anglePart*p)));
 			float lineLength = citysize*1.5;
@@ -88,19 +107,9 @@ CityGen::CityGen() {
 				//Place turret
 				vec2 spos = glm::floor(lineDirection*(-lineLength/2.0f+samples/4*lineSection)) + vec2(pos);
 
-				//raise the height around the turrent
-				float newHeight = originalCityHeight +10.0f;
-				for (int x = -1; x <= 0; x++) {
-					for (int y = -1; y <= 0; y++) {
-						vec2 absPos = spos+vec2(x,y);
-						TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
-						cell.height = (unsigned char)newHeight;
-					}
-				}
-
-
-				cityData->gunAlive.push_back(true);
-				cityData->gunPositions.push_back(tileOffset+vec3(spos,newHeight));
+				//raise the height around the turret
+				//and a place a turret in the city
+				placeTurretPerch(cells,originalCityHeight+10.0f,tileOffset,spos,cityData);
 			}
 		}
 
@@ -168,79 +177,62 @@ CityGen::CityGen() {
 		}
 
 		//Generate arcs
-		static const int arcCount = 20;
+		static const int ringCount = 10;
+		static const int arcsPerRing = 3;
 		static const int turretSkip = 6;
 		static const float samplesPerRadian = 50.0f;
 		//The closest arcs get to the center
 		static const float innerRadius = 12;
    
-    
+	
 		//Create a number of arcs
-		for (int p = 0; p < arcCount; p++) {
-			//Build an arc
-			float arcAngleStart = (float)Utilities::random(0.0,M_PI*2.0);
-			float arcLength = (float)Utilities::random(0.0,M_PI);
-			//The amount of times to sample along the arc
-			int samples = (int)(arcLength*samplesPerRadian);
-			float anglePart = arcLength/(float)samples;
-			//calculate the distance of the arc from the center
-			float arcDistance = ((citysize/2.0)-innerRadius)*((float)p/(float)arcCount)+innerRadius;
+		for (int r = 0; r < ringCount; r++) {
+			for (int a = 0; a < arcsPerRing; a++) {
+				//Build an arc
+				float arcAngleStart = (float)Utilities::random(M_PI*2.0/3.0*a,M_PI*2.0/3.0*(a+1));
+				float arcLength = (float)Utilities::random(0.0,M_PI*2.0/3.0);
+				//The amount of times to sample along the arc
+				int samples = (int)(arcLength*samplesPerRadian);
+				float anglePart = arcLength/(float)samples;
+				//calculate the distance of the arc from the center
+				float arcDistance = ((citysize/2.0)-innerRadius)*((float)r/(float)ringCount)+innerRadius;
+				//Determine the height of the arc
+				float arcHeight = 5.0f*(float)((arcDistance*arcDistance-innerRadius*innerRadius)*.0008+2);
 
-
-
-			//Generate the arc by sampling along it and raising that terrain
+				//Generate the arc by sampling along it and raising that terrain
 		
-			for (int i = 0; i < samples; i++) {
-				//Find the position
-				float angle = arcAngleStart+i*anglePart;
-				vec2 spos(cos(angle)*arcDistance,sin(angle)*arcDistance);
-				spos = glm::floor(spos);
-				//check that the position is within city limits
-				if ((spos.x < -citysize/2.0) || (spos.y < -citysize/2.0))
-					continue;
-				if ((spos.x > citysize/2.0) || (spos.y > citysize/2.0))
-					continue;
-				//check that the position isn't too close to the center
-				float len = glm::length(spos);
-				if (len < innerRadius)
-					continue;
-				//Place a part of the arc here
-				float height = (float)((len*len-15*15)*.0008+2);
-				vec2 absPos = glm::floor(vec2(pos)+spos);
-				TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
-				cell.height = (unsigned char)(height*2+innerRadius);
-				//City is stronger than surrounding terrain
-				cell.cellHealth = 25;
-				cell.cellMaxHealth = 25;
+				for (int i = 0; i < samples; i++) {
+					//Find the position
+					float angle = arcAngleStart+i*anglePart;
+					vec2 spos(cos(angle)*arcDistance,sin(angle)*arcDistance);
+					spos = glm::floor(spos);
+					//check that the position is within city limits
+					if ((spos.x < -citysize/2.0) || (spos.y < -citysize/2.0))
+						continue;
+					if ((spos.x > citysize/2.0) || (spos.y > citysize/2.0))
+						continue;
+					//Place a part of the arc here
+
+				
+					vec2 absPos = glm::floor(vec2(pos)+spos);
+					TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
+					cell.height = (unsigned char)(arcHeight+originalCityHeight);
+					//City is stronger than surrounding terrain
+					cell.cellHealth = 25;
+					cell.cellMaxHealth = 25;
+				}
 			}
 		}
 
-		//Generate turrets separately
-		/*for (int p = 0; p < lineCount; p++) {
-			vec2 lineDirection = glm::normalize(vec2(cos(anglePart*p),sin(anglePart*p)));
-			float lineLength = citysize*1.5;
-			float lineSection = lineLength/samples;
+		//Place turrets on each corner, because otherwise corners are boring
+		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(-citysize/2.2f,-citysize/2.2f),cityData);
+		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(citysize/2.2f,-citysize/2.2f),cityData);
+		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(-citysize/2.2f,citysize/2.2f),cityData);
+		placeTurretPerch(cells,originalCityHeight+6.0f,tileOffset,vec2(pos)+vec2(citysize/2.2f,citysize/2.2f),cityData);
 
-			if ((p % turretSkip) == 0) {
-				//Place turret
-				vec2 spos = glm::floor(lineDirection*(-lineLength/2.0f+samples/4*lineSection)) + vec2(pos);
-
-				//raise the height around the turrent
-				float newHeight = originalCityHeight +10.0f;
-				for (int x = -1; x <= 0; x++) {
-					for (int y = -1; y <= 0; y++) {
-						vec2 absPos = spos+vec2(x,y);
-						TileCell & cell = cells[int((absPos.y)*TILE_SIZE + absPos.x)];
-						cell.height = (unsigned char)newHeight;
-					}
-				}
-
-
-				cityData->gunAlive.push_back(true);
-				cityData->gunPositions.push_back(tileOffset+vec3(spos,newHeight));
-			}
-		}*/
-
+		//Place two around the center
+		placeTurretPerch(cells,originalCityHeight+15.0f,tileOffset,vec2(pos)+vec2(-10,-10),cityData);
+		placeTurretPerch(cells,originalCityHeight+15.0f,tileOffset,vec2(pos)+vec2(10,10),cityData);
 
 		//Different heights in the spire
 		int ringHeights[5] = {
@@ -339,7 +331,7 @@ void CityGen::construct_building(GameTile* tile, vec3 pos)
 
 void CityGen::construct_city(GameTile * tile, vec3 pos) {
 	//Randomly select a generation algorithm
-	int selectedAlgorithm = 1; //rand() % generationFunctions.size();
+	int selectedAlgorithm = rand() % generationFunctions.size();
 	//and generate a city
 	SavableCityData * city = generationFunctions[selectedAlgorithm](tile,pos);
 	//Transfer city data to ai
@@ -353,7 +345,7 @@ void CityGen::generatecitylocations(GameTile* tile){
 	const int blur = 4;
 
 	//analyze the terrain
-	//We Differentiate the terrain and then blur it 4x to achieve the effect of inteligent city placement
+	//We Differentiate the terrain and then blur it 4x to achieve the effect of intelligent city placement
 
 	//this will store the differential blur of the terrain
 	float * analysis = new float[TILE_SIZE*TILE_SIZE];
