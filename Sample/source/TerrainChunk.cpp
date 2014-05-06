@@ -220,10 +220,6 @@ void TerrainChunk::Reconstruct() {
     ChunkVertexData vertex;
     
 	for (unsigned int i = 0; i < quads.size(); i++) {
-		//Lighting is currently broken
-		//set every surface to be fully lit
-		unsigned char shading = 255; 
-		
 		unsigned char terX, terY;
 		int materialVotes[16];
 		memset(materialVotes,0,sizeof(int)*16);
@@ -256,47 +252,33 @@ void TerrainChunk::Reconstruct() {
 			}
 		}
 
-
-		if (materialWithMostVotes != 0)
-			cout << "";
-		//cell.materialId = 1;
-		terX = materialWithMostVotes % 4;
-		terY = materialWithMostVotes / 4;
-        
+		        
         // Generate interleaved data for each vertex of each found quad
         GLushort a1 = vcount;
 		vertex.TextureCoordinateX = 0;
 		vertex.TextureCoordinateY = 0;
-		vertex.TextureCoordinateSX = terX;
-		vertex.TextureCoordinateSY = terY;
-		vertex.Shading = shading;
+		vertex.Material = materialWithMostVotes;
 		vertex.Vertex = toPOD(quads[i].a1);
         VertexData[vcount++] = vertex;
         
         GLushort a2 = vcount;
 		vertex.TextureCoordinateX = 0;
 		vertex.TextureCoordinateY = (uint8_t)quads[i].BSize;
-		vertex.TextureCoordinateSX = terX;
-		vertex.TextureCoordinateSY = terY;
-		vertex.Shading = shading;
+		vertex.Material = materialWithMostVotes;
 		vertex.Vertex = toPOD(quads[i].b1);
         VertexData[vcount++] = vertex;
         
         GLushort b1 = vcount;
 		vertex.TextureCoordinateX = (uint8_t)quads[i].ASize;
 		vertex.TextureCoordinateY = 0;
-		vertex.TextureCoordinateSX = terX;
-		vertex.TextureCoordinateSY = terY;
-		vertex.Shading = shading;
+		vertex.Material = materialWithMostVotes;
 		vertex.Vertex = toPOD(quads[i].a2);
         VertexData[vcount++] = vertex;
         
         GLushort b2 = vcount;
 		vertex.TextureCoordinateX = (uint8_t)quads[i].ASize;
 		vertex.TextureCoordinateY = (uint8_t)quads[i].BSize;
-		vertex.TextureCoordinateSX = terX;
-		vertex.TextureCoordinateSY = terY;
-		vertex.Shading = shading;
+		vertex.Material = materialWithMostVotes;
 		vertex.Vertex = toPOD(quads[i].b2);
         VertexData[vcount++] = vertex;
         

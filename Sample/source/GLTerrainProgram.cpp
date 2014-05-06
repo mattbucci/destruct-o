@@ -10,7 +10,7 @@ GLTerrainProgram::GLTerrainProgram(GLCommonShaderFile * commonShader, string ver
 {
 	attributeIndexTexture = glGetAttribLocation(programId,"vTex");
 	attributeIndexVertex = glGetAttribLocation(programId,"vVert");
-	attributeIndexShading = glGetAttribLocation(programId,"vShading");
+	attributeIndexMaterial = glGetAttribLocation(programId,"vMaterial");
     uniformMatrixModelView = glGetUniformLocation(programId, "MV");
     uniformMatrixModelViewProjection = glGetUniformLocation(programId, "MVP");
 };
@@ -21,8 +21,8 @@ const GLint GLTerrainProgram::AttributeTexture() {
 const GLint GLTerrainProgram::AttributeVertex() {
 	return attributeIndexVertex;
 }
-const GLint GLTerrainProgram::AttributeShading() {
-	return attributeIndexShading;
+const GLint GLTerrainProgram::AttributeMaterial() {
+	return attributeIndexMaterial;
 }
 
 void GLTerrainProgram::Apply()

@@ -14,7 +14,7 @@ class GLTerrainProgram : public GLProgram
 	// Vertex attributes for the terrain program
 	GLint attributeIndexTexture;
 	GLint attributeIndexVertex;
-	GLint attributeIndexShading;
+	GLint attributeIndexMaterial;
 
     // Modelview uniform
     GLint uniformMatrixModelView;
@@ -31,7 +31,7 @@ public:
 	//All the attributes used for drawing terrain
 	const GLint AttributeTexture();
 	const GLint AttributeVertex();
-	const GLint AttributeShading();
+	const GLint AttributeMaterial();
     
     // Apply combined matrices
     void Apply();
