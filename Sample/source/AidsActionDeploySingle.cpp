@@ -19,6 +19,8 @@ AidsActionDeploySingle::AidsActionDeploySingle(vec3 actionLocation, float action
 	vec3 deplyLocation = findHiddenLocation(actionLocation,3);
 	//Deploy
 	deployed = Game()->Actors.BuildAI(deplyLocation,actorToDeploy);
+	//Calculate the appropriate faction for this AI which is being deployed
+
 }
 
 //If this returns true clean up the action

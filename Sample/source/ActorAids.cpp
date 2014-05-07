@@ -91,10 +91,7 @@ void ActorAids::populateCities() {
 						//Create a turret
 						ActorAI * turret = (ActorAI*)Game()->Actors.BuildAI(*turretPosition+vec3(0,0,20),"turret.json");
 						//Align to the correct person
-						if (city.ownedByPlayer)
-							turret->SetFaction(GameFactions::FACTION_PLAYERALLY);
-						else
-							turret->SetFaction(GameFactions::FACTION_ENEMY);
+						turret->SetFaction(FindAIFactionOfPoint(vec2(*turretPosition)));
 						city.cityPopulation.push_back(turret);
 					}
 				}
@@ -217,6 +214,14 @@ void ActorAids::PathingSolutionRequest(PhysicsActor * requestingActor, vec2 toPo
 //An actor (probably one pending destruction) can cancel all requests
 void ActorAids::CancelRequests(PhysicsActor * canclingActor) {
 	//STUB
+}
+
+//Given a position find the appropriate faction to assign to an actor at that position
+//Basic rules:
+//Inside a city, assign to that city
+//Outside a city, assign to the nearest city in the direction of player->point
+FactionId ActorAids::FindAIFactionOfPoint(vec2 point) {
+	return GameFactions::FACTION_HOSTILE;
 }
 
 //Use the AIId

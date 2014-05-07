@@ -22,7 +22,7 @@ static const double LostEnemyTime = 5.0;
 
 //Used only by the save system to create an actorai loaded
 ActorAI::ActorAI() : 
-	PhysicsActor(GameFactions::FACTION_ENEMY),
+	PhysicsActor(GameFactions::FACTION_HOSTILE),
 	enemyPosition(10) {
 	//AI starts with nothing
 	state = AI_SCANNING;

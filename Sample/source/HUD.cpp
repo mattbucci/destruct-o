@@ -19,6 +19,7 @@ HUD::HUD(BaseFrame* baseFrame) :
 #ifdef __MOBILE__
 	damageIndicator(Rect(0,0,MOBILE_DAMAGE_INDICATOR_SIZE,MOBILE_DAMAGE_INDICATOR_SIZE),"hud/arrow.png",vec4(7,.2,.2,.66)),
 	minimapDot(Rect(0,0,MOBILE_MINIMAP_DOT_SIZE,MOBILE_MINIMAP_DOT_SIZE),"hud/dot.png",vec4(1,0,0,1)),
+	minimapFactionDot(Rect(0,0,MINIMAP_DOT_SIZE,MINIMAP_DOT_SIZE),"hud/soliddot.png",vec4(1,0,0,1)),
 	minimapBackground(Rect(0,0,MOBILE_MINIMAP_SIZE,MOBILE_MINIMAP_SIZE),"hud/minimap.png", vec4(1, 1, 1, .66)),
 	chargeBar(Rect(0,0,20,180),"hud/charge.png", vec4(1,1,1,.66)),
     chargeBarBG(Rect(0,0,20,180),"hud/purewhite.png",vec4(0,0,0,.66)),
@@ -26,6 +27,7 @@ HUD::HUD(BaseFrame* baseFrame) :
 #else
 	damageIndicator(Rect(0,0,DAMAGE_INDICATOR_SIZE,DAMAGE_INDICATOR_SIZE),"hud/arrow.png",vec4(7,.2,.2,.66)),
 	minimapDot(Rect(0,0,MINIMAP_DOT_SIZE,MINIMAP_DOT_SIZE),"hud/dot.png",vec4(1,0,0,1)),
+	minimapFactionDot(Rect(0,0,MINIMAP_DOT_SIZE,MINIMAP_DOT_SIZE),"hud/soliddot.png",vec4(1,0,0,1)),
 	minimapBackground(Rect(0,0,MINIMAP_SIZE,MINIMAP_SIZE),"hud/minimap.png", vec4(1, 1, 1, .66)),
 	chargeBar(Rect(0,0,10,180),"hud/charge.png", vec4(1,1,1,.66)),
 	chargeBarBG(Rect(0,0,10,180),"hud/purewhite.png",vec4(0,0,0,.66)),
@@ -165,6 +167,11 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 
 		//Draw the Actor as a Dot on Map
 		minimapDot.Draw(shader);
+		//If they are one of the AI factions, indicate which
+		if (actor->GetFaction() >= actorSystem->Factions.FACTION_AIFACTION) {
+			minimapFactionDot.SetColor(actorSystem->Factions.FactionColor(actor->GetFaction()));
+			minimapFactionDot.Draw(shader);
+		}
 
 		//Reset to Center of Minimap
 		shader->Model.PopMatrix();
