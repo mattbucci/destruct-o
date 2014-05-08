@@ -285,7 +285,7 @@ vector<PhysicsActor*> ActorSystem::GetEnemiesInRadius(vec3 center, float radius,
 
 PhysicsActor * ActorSystem::GetClosestEnemy(vec3 from, FactionId fromFaction) {
 	PhysicsActor* found = NULL;
-	float leastDistanceSquared = 10000;
+	float leastDistanceSquared = numeric_limits<float>().max();
 
 	for (auto actor : allActors) {
 		PhysicsActor * pactor = dynamic_cast<PhysicsActor*>(actor);

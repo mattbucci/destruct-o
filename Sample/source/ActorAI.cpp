@@ -271,9 +271,21 @@ void ActorAI::stateScanning(bool & holdingTrigger) {
 	if (targetEnemy == NULL)
 		return;
 	if (data->BaseMovementSpeed <= 0) {
-		state = AI_TARGETING_ENEMY;
-		targetAcquiredAt = Game()->Now();
-		sawEnemyLast = Game()->Now();
+		//Check that you can see the enemy before you target them
+		PhysicsActor * hit;
+		vec3 targeter = Position+data->TargeterOffsetFromCenter;
+		if (Universal::Trace(targeter,glm::normalize(targetEnemy->GetPosition()-targeter),NULL,&hit)) {
+			if (hit == targetEnemy) {
+				//You can see them make them your new enemy
+				state = AI_TARGETING_ENEMY;
+				targetAcquiredAt = Game()->Now();
+				sawEnemyLast = Game()->Now();
+				return;
+			}
+		}
+		//You can't see them, go back to not having a target enemy
+		targetEnemy = NULL;
+
 	}
 	else {
 		//Request a pathing solution to their current position

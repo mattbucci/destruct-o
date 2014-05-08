@@ -221,7 +221,49 @@ void ActorAids::CancelRequests(PhysicsActor * canclingActor) {
 //Inside a city, assign to that city
 //Outside a city, assign to the nearest city in the direction of player->point
 FactionId ActorAids::FindAIFactionOfPoint(vec2 point) {
-	return GameFactions::FACTION_AIFACTION;
+	//If there are no cities, just make the enemy hostile to everything and everyone
+	if (cities.size() <= 0)
+		return GameFactions::FACTION_HOSTILE;
+
+	float currentCityRating = -10000;
+	FactionId currentCityFaction;
+	
+	vec2 player = vec2(Game()->Actors.Player()->GetPosition());
+
+	//Check if inside a city
+	for (auto city : cities) {
+		float dist = glm::distance(vec2(city->cityPosition),point);
+		//1.415 is ratio of radius to furthest edge of a square
+		if (dist < 1.415f*citysize/2.0f)
+			//Inside city
+			return city->cityFaction;
+
+		//Rate this city on how much sense it makes as a choice to use as the deciding city
+		//for the faction of this
+		float rating = 300.0f/dist;
+		//Scale rating by the angle created by the following vectors:
+		//vector 1: position of the player -> city
+		//vector 2: position of the player -> point
+		//the smaller the angle, the higher the scale
+		vec2 vector1 = vec2(city->cityPosition) - player;
+		vec2 vector2 = point - player;
+		float angle = acos(glm::dot(vector1,vector2)/(glm::length(vector1)*glm::length(vector2)));
+		//Nothing is > 180 degree difference
+		angle = abs(angle);
+		if (angle > M_PI)
+			angle -= M_PI;
+		//now produce a scaling value
+		//this equation 1-((x-1)^3+1) where x is 0 to 1, produces a y 1 to 0, which quickly goes towards 0
+		float angleFactor = 1-(pow((angle/M_PI)-1,3)+1);
+		rating *= angleFactor;
+		//Now check if this is the best rated or not
+		if (currentCityRating < rating) {
+			currentCityRating = rating;
+			currentCityFaction = city->cityFaction;
+		}
+	}
+	//Return the best rated city
+	return currentCityFaction;
 }
 
 //Use the AIId

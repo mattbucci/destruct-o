@@ -13,6 +13,8 @@
 
 //the space between each city
 const int cityspacing = 250;
+//the size of each city
+const int citysize = 150;
 
 
 //Place a turret perch at the given location
@@ -470,6 +472,8 @@ void CityGen::construct_city(GameTile * tile, vec3 pos) {
 	int selectedAlgorithm = rand() % generationFunctions.size();
 	//and generate a city
 	SavableCityData * city = generationFunctions[selectedAlgorithm](tile,pos);
+	//Asign a random faction
+	city->cityFaction = (rand() % GameFactions::AI_FACTION_COUNT) + GameFactions::FACTION_AIFACTION;
 	//Transfer city data to ai
 	Game()->Actors.Aids()->RegisterNewCity(city);
 

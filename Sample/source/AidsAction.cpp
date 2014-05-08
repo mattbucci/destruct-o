@@ -28,7 +28,7 @@ vec3 AidsAction::findHiddenLocation(vec3 startLocation, float desiredAltitude) {
 			break;
 
 		PhysicsActor * actorHit;
-		if (!Universal::Trace(lastPos,glm::normalize(player->GetPosition() - lastPos),NULL,&actorHit)) {
+		if (Universal::Trace(lastPos,glm::normalize(player->GetPosition() - lastPos),NULL,&actorHit)) {
 			//hit the actor
 			if (actorHit == player)
 				continue;
