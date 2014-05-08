@@ -5,6 +5,7 @@
 #include "VoxelDrawSystem.h"
 #include "ContiguousList.h"
 #include "GameEvent.h"
+#include "TimeStepTracker.h"
 
 class ShaderGroup;
 class PhysicsVoxel;
@@ -48,6 +49,9 @@ class PhysicsSystem : public Savable {
 
 	//A tie to the voxel system used to lookup the terrain height at various points
 	VoxelSystem * voxelSystem;
+
+	//Used to track the amount of time spent per update
+	TimeStepTracker updateTracker;
 
 	//The timestep can be manipulated, so the current delta is listed here
 	float simulationDelta;

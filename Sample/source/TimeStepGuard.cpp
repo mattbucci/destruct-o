@@ -14,5 +14,5 @@ TimeStepGuard::TimeStepGuard(TimeStepTracker * tracker) {
 }
 TimeStepGuard::~TimeStepGuard() {
 	//Add a recommendation now
-	tracker->addRecommendation((float)(OS::Now()-startTime));
+	tracker->addRecommendation(OS::Now()-startTime);
 }

@@ -19,7 +19,11 @@
 #include "GameSystem.h"
 #include "BaseFrame.h"
 
-PhysicsSystem::PhysicsSystem(VoxelSystem * system) {
+#include "TimeStepGuard.h"
+
+PhysicsSystem::PhysicsSystem(VoxelSystem * system) :
+	//Updates should vary between 15% of real time, and 45%
+	updateTracker(SIMULATION_DELTA*.15,SIMULATION_DELTA*.45){
 	//Build a voxel renderer
 	renderer = VoxelDrawSystem::BuildAppropriateSystem();
 	voxelSystem = system;
@@ -368,8 +372,33 @@ void PhysicsSystem::collideActorsToActors() {
 
 //Update the actors, called by base frame
 void PhysicsSystem::Update() {
+	TimeStepGuard trackTime(&updateTracker);
+
 	//For most operations the delta is always SIMULATION_DELTA
 	simulationDelta = SIMULATION_DELTA;
+
+	//Time step guard
+	//used to reduce the power being used if necessary
+	float timeRecommendation = updateTracker.GetRecommendation();
+	if (timeRecommendation < 1.0f) {
+		int originalVoxels = allVoxels.size();
+		int eliminatedVoxels = 0;
+		//Delete some voxels randomly until the recommendation improves
+		float chanceNotDeleted = .7f+.3f*(float)timeRecommendation;
+		for (auto it = allVoxels.begin(); it != allVoxels.end();){
+			//Voxels removed in this fashion do not produce particles
+			if (Utilities::random(0.0f,1.0f) > chanceNotDeleted) {
+				delete *it;
+				it = allVoxels.erase(it);
+				eliminatedVoxels++;
+			}
+			else
+				it++;
+		}
+
+		if (eliminatedVoxels > 0)
+			cout << "Eliminated (" << eliminatedVoxels << "/" << originalVoxels << ") physics voxels to improve performance\n";
+	}
 
 	//Set all voxels to have no forces
 	//And check if any voxels should expire

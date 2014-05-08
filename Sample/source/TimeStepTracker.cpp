@@ -1,16 +1,16 @@
 #include "stdafx.h"
 #include "TimeStepTracker.h"
 
-TimeStepTracker::TimeStepTracker(float minGoal, float maxGoal) : recommendationAverage(5) {
-	timeStepMinGoal = .5f;
-	timeStepMaxGoal = 2.0f;
+TimeStepTracker::TimeStepTracker(double minGoal, double maxGoal) : recommendationAverage(5) {
+	timeStepMinGoal = minGoal;
+	timeStepMaxGoal = maxGoal;
 }
 
 //Add a recommendation to the average based off of 
 //the amount of time it took to do whatever it is this tracker is tracking
 //added by a TimeStepGuard
-void TimeStepTracker::addRecommendation(float timeStepTook) {
-	float recommendation = 1.0f;
+void TimeStepTracker::addRecommendation(double timeStepTook) {
+	double recommendation = 1.0f;
 	//If the frames are really fast, recommend higher detail
 	if (timeStepTook < timeStepMinGoal) {
 		recommendation = timeStepMinGoal/timeStepTook;
@@ -36,6 +36,6 @@ void TimeStepTracker::addRecommendation(float timeStepTook) {
 //Get the recommendation from .5 to 2
 // <1 indicates a speed up is required (decrease detail of render/update)
 // >1 indicates a slow down is ok (increase detail of render/update)
-float TimeStepTracker::GetRecommendation() {
+double TimeStepTracker::GetRecommendation() {
 	return recommendationAverage.GetAverage();
 }
