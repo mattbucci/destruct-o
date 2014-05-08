@@ -41,6 +41,7 @@ class ActorAI : public PhysicsActor {
 	//Each AI has a unique ID which decides when the expensive update is done
 	//this helps even out the load of AI running
 	unsigned int aiID;
+	MovingAverage<float> stateChangesPerSec;
 protected:
 	//The weapon which characterizes this AI
 	//Do not change!

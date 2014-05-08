@@ -78,6 +78,12 @@ public:
 		curSample = 0;
 	}
 
+	int GetSampleCount() {
+		if (!arrayFilled)
+			return curSample;
+		return samples.size();
+	}
+
 	T GetAverage() {
 		return lastAverage;
 	}

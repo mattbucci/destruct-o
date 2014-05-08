@@ -83,6 +83,10 @@ void ActorAIBomber::cheapUpdate() {
 		break;
 	case AI_ENGAGING_ENEMY:
 		{
+			if (targetEnemy == NULL) {
+				state = AI_SCANNING;
+				return;
+			}
 			//Move towards your forward direction
 			Velocity = vec3(vec2(cos(this->facingDirection), sin(this->facingDirection))*data->BaseMovementSpeed, Velocity.z);
 
@@ -93,6 +97,10 @@ void ActorAIBomber::cheapUpdate() {
 			//Face the direction your run is moving
 			this->applyFacingDirection(atan2(runDirection.y,runDirection.x));
 		}
+		break;
+	case AI_FLEEING:
+	case AI_TAKINGCOVER:
+		moveTowardsGoal(coverLocation);
 		break;
 	case AI_DYING:
 		break;

@@ -50,7 +50,8 @@ static const float EnergyFleeLevel = .2f;
 //Used only by the save system to create an actorai loaded
 ActorAI::ActorAI() : 
 	PhysicsActor(GameFactions::FACTION_HOSTILE),
-	enemyPosition(10) {
+	enemyPosition(10),
+	stateChangesPerSec(20){
 	//AI starts with nothing
 	state = AI_SCANNING;
 	//Max out the energy pool
@@ -97,6 +98,10 @@ ActorAI::~ActorAI() {
 
 //Check if you can see the given actor
 bool  ActorAI::canSeeActor(PhysicsActor * actor) {
+	//Check the actor is within your sight range
+	if (glm::distance(vec2(actor->GetPosition()), vec2(Position)) > data->SightDistance)
+		return false;
+	//if you're close enough, do a ray trace check
 	PhysicsActor * hit;
 	vec3 targeter = Position+data->TargeterOffsetFromCenter;
 	if (Universal::Trace(targeter,glm::normalize(actor->GetPosition()-targeter),NULL,&hit)) {
@@ -194,7 +199,7 @@ bool ActorAI::checkEnemyValid() {
 	}
 
 	//Check if you're not too far away
-	if (glm::distance(targetEnemy->GetPosition(), Position) > data->SightDistance*1.5f && !flying) {
+	if (glm::distance(vec2(targetEnemy->GetPosition()), vec2(Position)) > data->SightDistance*1.5f && !flying) {
 		targetEnemy = NULL;
 		state = AI_SCANNING;
 		return false;
@@ -356,8 +361,16 @@ void ActorAI::stateScanning(bool & holdingTrigger) {
 	if (targetEnemy == NULL)
 		targetEnemy = sightNearbyEnemy();
 	//If you can't seen anyone right now, find an enemy you can't see
-	if (targetEnemy == NULL)
+	if (targetEnemy == NULL) {
 		targetEnemy = Actors().GetClosestEnemy(Position,faction);
+		if ((glm::distance(vec2(targetEnemy->GetPosition()),vec2(Position)) < 5) && (!canSeeActor(targetEnemy))) {
+			//You are really close to that enemy, but for some reason you can't see them
+			//try backing off in a random direction
+			goal = vec2(Position) + vec2(Utilities::random(-20,20),Utilities::random(-20,20));
+			state = AI_WAITINGFORPATH;
+		}
+	}
+		
 	//Check if there is anything to do
 	if (targetEnemy == NULL)
 		return;
@@ -643,6 +656,12 @@ void ActorAI::expensiveUpdate() {
 		//Check you still have an enemy to engage
 		stateEngaging(pullingTrigger);
 		break;
+	case AI_FLEEING:
+		stateFleeing(pullingTrigger);
+		break;
+	case AI_TAKINGCOVER:
+		stateTakingCover(pullingTrigger);
+		break;
 	case AI_DYING:
 		stateDying(pullingTrigger);
 		break;
@@ -659,8 +678,13 @@ void ActorAI::expensiveUpdate() {
 	if (!pullingTrigger)
 		weapon->HoldingTrigger(false);
 
-	/*if (state != oldState)
-		cout << "Switched from " << oldState << " to " << state << "\n";//*/
+	if (state != oldState)
+		stateChangesPerSec.AddSample(1);
+	else
+		stateChangesPerSec.AddSample(0);
+	if (stateChangesPerSec.GetSampleCount() > 10 && stateChangesPerSec.GetAverage() > .75)
+		cout << "Rapid state change warning [setbreakpointhere]\n";
+		//cout << "Switched from " << oldState << " to " << state << "\n";//*/
 }
 
 //The simple things, such as moving
