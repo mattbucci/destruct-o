@@ -221,7 +221,7 @@ void ActorAids::CancelRequests(PhysicsActor * canclingActor) {
 //Inside a city, assign to that city
 //Outside a city, assign to the nearest city in the direction of player->point
 FactionId ActorAids::FindAIFactionOfPoint(vec2 point) {
-	return GameFactions::FACTION_HOSTILE;
+	return GameFactions::FACTION_AIFACTION;
 }
 
 //Use the AIId

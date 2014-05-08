@@ -24,7 +24,6 @@ class HUD {
 
 	TexturedRect damageIndicator;
 	TexturedRect minimapDot;
-	TexturedRect minimapFactionDot;
 	TexturedRect minimapBackground;
 	TexturedRect chargeBar;
 	TexturedRect chargeBarBG;

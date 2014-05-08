@@ -50,10 +50,10 @@ void GameFactions::Load(Json::Value & parentValue, LoadData & loadData) {
 //Retrieve the color of the given faction
 vec4 GameFactions::FactionColor(FactionId faction) {
 	static const vec4 factionColorLookup[] = {
-		vec4(1,0,0,1),
 		vec4(0,0,1,1),
 		vec4(1,1,0,1),
 		vec4(1,0,1,1),
+		vec4(.5,0,.75,1),
 		vec4(0,1,1,1),
 	};
 	//The player's faction is green
