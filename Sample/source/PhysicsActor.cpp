@@ -11,12 +11,16 @@ PhysicsActor::PhysicsActor(FactionId faction)
 {
     size = vec3(1, 1, 1);
     maxLife = 100;
+	energyPoolMax = 100;
 	//Save settings
 	this->faction = faction;
 	//Apply defaults
 	onGround = false;
 	lastDamageRecieved = 0;
+	lifeRegenRate = 100.0f/45.0f; //regenerate all health in 45 seconds by default
 	life = maxLife;
+	energyRegenRate = 10.0f; //regenerate all energy in 10 seconds
+	energyPool = energyPoolMax;
 	vulnerable = true;
 	faction = GameFactions::FACTION_HOSTILE;
 	flying = false;

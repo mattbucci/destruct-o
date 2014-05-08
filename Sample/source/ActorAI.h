@@ -20,11 +20,17 @@ enum aiStates {
 	AI_TARGETING_ENEMY,
 	//When you're done targeting, kill'm
 	AI_ENGAGING_ENEMY,
+	//The AI is seeking cover/taking cover
+	AI_SEEKINGCOVER,
+	//The AI is fleeing
+	AI_FLEEING,
 	//The AI is dying dead
 	AI_DYING,
 	//The AI is rotting now
 	AI_ROTTING,
 };
+
+
 
 
 class ActorAI : public PhysicsActor {
@@ -69,10 +75,30 @@ protected:
 	//If the actor is crashing (after flying)
 	bool actorCrashing;
 
+	//This actor's shitlist is a pair of actor pointers and their current hate
+	SAVABLE_PAIR_DECLARATION(hatedActor,PhysicsActor*,ReflectionData::SAVE_HANDLE,float,ReflectionData::SAVE_FLOAT);
+	//the actors it hates
+	//each actor is rated by how hated it is
+	//numbers 0-2 are probable
+	ContiguousList<hatedActor> shitList;
+
 	//Retrieve the muzzle position after a draw calculate
 	//and save in muzzlePositionA
 	//and in muzzlePositionB if appropriate
 	virtual void findMuzzlePosition();
+
+	//Update the shit list slowly decreasing the value you hate everyone
+	//and removing dead enemies or ones which are too far away
+	//If you hate an enemy enough
+	//this may also switch your target to the hated enemy
+	void updateShitList();
+
+	//Add a certain number of points to this AI's shitlist in regards to a certain other AI
+	void addShitListPoints(PhysicsActor * toList, float hatePoints);
+
+	//Retrieve the identity of your most hated enemy
+	//from the shitlist
+	PhysicsActor* getMostHatedEnemy();
 
 	//Attempt to find a close nearby enemy you can see right now
 	virtual PhysicsActor * sightNearbyEnemy();
@@ -87,6 +113,8 @@ protected:
 
 	//If the current enemy is still valid returns true
 	//otherwise returns false
+	//this function also alters the state to STATE_SCANNING
+	//if the enemy is no longer valid
 	bool checkEnemyValid();
 
 	//Face the current valid enemy
@@ -94,11 +122,21 @@ protected:
 	//returns true when you're facing the enemy
 	bool faceEnemy();
 
+	//Check if you can see the given actor
+	bool canSeeActor(PhysicsActor * actor);
+
 	//Check if your spine can face the enemy right now
 	virtual bool checkSpineLimits();
 
 	//Snap the model's skeleton to face the enemy
 	virtual void snapSpineToEnemy();
+
+
+	//Trigger the target acquired event
+	//set the state to AI_TARGETING_ENEMY
+	//Only use if/when you have a clear shot
+	//and prepare to attack that enemy as appropriate
+	virtual void acquireTargetEnemy(PhysicsActor * actor);
 
 	//The smarts, ray traces and all that should go here
 	//planning etc.
@@ -121,13 +159,13 @@ protected:
 
 
 public:
-    //Used only by the save system to create an actorai loaded
+	//Used only by the save system to create an actorai loaded
 	ActorAI();
 
 	virtual ~ActorAI();
 
-    //Load data into this actor class, do not apply more than once
-    virtual void ApplyData(ActorAIData * dataToLoad);
+	//Load data into this actor class, do not apply more than once
+	virtual void ApplyData(ActorAIData * dataToLoad);
 
 
 	//Update the state of this AI
@@ -135,6 +173,14 @@ public:
 
 	//Change the allegiance of this AI
 	virtual void SetFaction(FactionId newFaction);
+
+	//Damage this actor from a particular faction
+	//exposed in this manner to prevent implicit hiding
+	virtual void Damage(FactionId damagingFaction, float damage);
+
+	//When damage has been done to this actor
+	//add the damager to your shitlist
+	virtual void Damage(PhysicsActor * damagingActor, float damage) override;
 
 	//Cause the actor to have a heart attack and die on the spot
 	void Kill();
@@ -155,7 +201,7 @@ public:
 
 	CLASS_DECLARATION(ActorAI)
 		INHERITS_FROM(PhysicsActor)
-        CLASS_MEMBER(data, ReflectionData::SAVE_OWNEDHANDLE)
+		CLASS_MEMBER(data, ReflectionData::SAVE_OWNEDHANDLE)
 		CLASS_MEMBER(weapon,ReflectionData::SAVE_OWNEDHANDLE)
 		CLASS_MEMBER(targetEnemy,ReflectionData::SAVE_HANDLE)
 		CLASS_MEMBER(targetAcquiredAt,ReflectionData::SAVE_DOUBLE)
@@ -168,6 +214,7 @@ public:
 		CLASS_MEMBER(muzzlePositionB,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(enemyPosition,ReflectionData::SAVE_INSTANCE)
 		CLASS_MEMBER(actorCrashing,ReflectionData::SAVE_BOOL)
+		CLASS_CONTAINER_MEMBER(shitList,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_INSTANCE)
 	END_DECLARATION
 };
 

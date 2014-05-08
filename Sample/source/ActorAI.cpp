@@ -19,6 +19,15 @@ CLASS_SAVE_CONSTRUCTOR(ActorAI);
 unsigned int ActorAI::currentAIID = 0;
 //How long after losing the target, the AI gives up shooting the target
 static const double LostEnemyTime = 5.0;
+//The distance in which an enemy notifies other enemies when it comes under attack
+static const float EnemyNotifyRadius = 90.0f;
+//Under this life % the AI will react to engage individual attackers faster
+static const float HurtLifePercent = .5f;
+//Under this life % the AI will flee if it is capable
+static const float FleeLifePercent = .2f;
+//When notifying other enemies of an attacker
+//this factor is a % of damage to this AI, that other AI empathize with
+static const float AIEmpathyFactor = .45f;
 
 //Used only by the save system to create an actorai loaded
 ActorAI::ActorAI() : 
@@ -63,19 +72,26 @@ ActorAI::~ActorAI() {
     delete data;
 }
 
+//Check if you can see the given actor
+bool  ActorAI::canSeeActor(PhysicsActor * actor) {
+	PhysicsActor * hit;
+	vec3 targeter = Position+data->TargeterOffsetFromCenter;
+	if (Universal::Trace(targeter,glm::normalize(actor->GetPosition()-targeter),NULL,&hit)) {
+		if (hit == actor) {
+			//We have a winner
+			return true;
+		}
+	}
+	return false;
+}
+
 //Attempt to find a close nearby enemy you can see right now
 PhysicsActor * ActorAI::sightNearbyEnemy() {
 	vector<PhysicsActor*> actors(Actors().GetEnemiesInRadius(Position,data->SightDistance,faction));
 	for (auto actor : actors) {
 		//Check if you can see the physics actor
-		PhysicsActor * hit;
-		vec3 targeter = Position+data->TargeterOffsetFromCenter;
-		if (Universal::Trace(targeter,glm::normalize(actor->GetPosition()-targeter),NULL,&hit)) {
-			if (hit == actor) {
-				//We have a winner
-				return hit;
-			}
-		}
+		if (canSeeActor(actor))
+			return actor;
 	}
 	return NULL;
 }
@@ -136,26 +152,23 @@ bool ActorAI::checkEnemyValid() {
 	
 	//Check if you've seen the enemy recently
 	if ((sawEnemyLast+LostEnemyTime) <= Game()->Now()) {
+		targetEnemy = NULL;
 		state = AI_SCANNING;
 		return false;
 	}
 
 	//Check if you're not too far away
 	if (glm::distance(targetEnemy->GetPosition(), Position) > data->SightDistance*1.5f && !flying) {
+		targetEnemy = NULL;
 		state = AI_SCANNING;
 		return false;
 	}
 		
 
 	//Check if you can see the enemy now
-	PhysicsActor * hit;
-	vec3 targeter = Position+data->TargeterOffsetFromCenter;
-	if (Universal::Trace(targeter,glm::normalize(targetEnemy->GetPosition()-targeter),NULL,&hit)) {
-		//If you can still see them record that fact
-		if (hit == targetEnemy)
-			sawEnemyLast = Game()->Now();
-			
-	}
+	if (canSeeActor(targetEnemy))
+		//Record that you saw them
+		sawEnemyLast = Game()->Now();
 
 	return true;
 }
@@ -178,24 +191,43 @@ vec3 ActorAI::getFireVector() {
 }
 
 
+//Trigger the target acquired event
+//set the state to AI_TARGETING_ENEMY
+//and prepare to attack that enemy as appropriate
+void ActorAI::acquireTargetEnemy(PhysicsActor * actor) {
+	//Set that you've seen the enemy and setup all state appropriately
+	targetEnemy = actor;
+	state = AI_TARGETING_ENEMY;
+	targetAcquiredAt = Game()->Now();
+	sawEnemyLast = Game()->Now();
+	Game()->Actors.AITargetAcquired.Fire([this](function<void(Actor *, Actor *)> observer) {
+		observer(this,targetEnemy);
+	});
+	//Clear movement velocity
+	Velocity = vec3(vec2(),Velocity.z);
+}
+
 	//State implementations which can be overridden if necessary
 void ActorAI::statePathing(bool & holdingTrigger) {
 	//Only look for an enemy if you're on the ground
 	//and not moving very fast in the z direction
 	if (flying || (OnGround() && (fabs(Velocity.z) < .1f))) {
-		PhysicsActor * seenEnemy = sightNearbyEnemy();
-		if (seenEnemy != NULL) {
-			//Found an enemy, target and kill
-			targetEnemy = seenEnemy;
-			state = AI_TARGETING_ENEMY;
-			targetAcquiredAt = Game()->Now();
-			sawEnemyLast = Game()->Now();
-			Game()->Actors.AITargetAcquired.Fire([this](function<void(Actor *, Actor *)> observer) {
-				observer(this,targetEnemy);
-			});
-			//Clear movement velocity
-			Velocity = vec3(vec2(),Velocity.z);
-			return;
+		//If you're going after your most hated enemy
+		//go forward with single-mindedness
+		//otherwise attack the first enemy you happen upon
+		if ((targetEnemy != NULL) && (targetEnemy == getMostHatedEnemy())) {
+			if (canSeeActor(targetEnemy)) {
+				acquireTargetEnemy(targetEnemy);
+			}
+		}
+		else {
+			//Look for any enemy in your sight range and attack them
+			PhysicsActor * seenEnemy = sightNearbyEnemy();
+			if (seenEnemy != NULL) {
+				//Found an enemy, target and kill
+				acquireTargetEnemy(seenEnemy);
+				return;
+			}
 		}
 	}
 		
@@ -204,6 +236,7 @@ void ActorAI::statePathing(bool & holdingTrigger) {
 	if (glm::distance(goal,vec2(Position)) < 2) {
 		//Well you're hear and there's no enemy
 		//back to the drawing board
+		targetEnemy = NULL;
 		state = AI_SCANNING;
 		//Clear movement velocity
 		Velocity = vec3(vec2(),Velocity.z);
@@ -265,23 +298,24 @@ void ActorAI::stateWaitingForPath(bool & holdingTrigger) {
 void ActorAI::stateScanning(bool & holdingTrigger) {
 	setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_AIM]);
 
-	//Not a turret find the closest enemy and try to walk to them
-	targetEnemy = Actors().GetClosestEnemy(Position,faction);
+	//If you don't already have an enemy
+	//find a new one now
+	if (targetEnemy == NULL)
+		targetEnemy = sightNearbyEnemy();
+	//If you can't seen anyone right now, find an enemy you can't see
+	if (targetEnemy == NULL)
+		targetEnemy = Actors().GetClosestEnemy(Position,faction);
 	//Check if there is anything to do
 	if (targetEnemy == NULL)
 		return;
 	if (data->BaseMovementSpeed <= 0) {
 		//Check that you can see the enemy before you target them
-		PhysicsActor * hit;
-		vec3 targeter = Position+data->TargeterOffsetFromCenter;
-		if (Universal::Trace(targeter,glm::normalize(targetEnemy->GetPosition()-targeter),NULL,&hit)) {
-			if (hit == targetEnemy) {
-				//You can see them make them your new enemy
-				state = AI_TARGETING_ENEMY;
-				targetAcquiredAt = Game()->Now();
-				sawEnemyLast = Game()->Now();
-				return;
-			}
+		if (canSeeActor(targetEnemy)) {
+			//You can see them make them your new enemy
+			state = AI_TARGETING_ENEMY;
+			targetAcquiredAt = Game()->Now();
+			sawEnemyLast = Game()->Now();
+			return;
 		}
 		//You can't see them, go back to not having a target enemy
 		targetEnemy = NULL;
@@ -509,6 +543,13 @@ bool ActorAI::Update() {
 	if ((targetEnemy != NULL) && targetEnemy->Dead())
 		targetEnemy = NULL;
 
+	//To prevent dead enemies from ever being referenced
+	//(because otherwise the save system will follow the bad references
+	//during a save)
+	//update the shitlist always too
+	updateShitList();
+
+
 	//Do expensive updates at 10hz
 	if (Game()->Actors.Aids()->DoHeavyCycle(aiID))
 		expensiveUpdate();
@@ -619,6 +660,70 @@ void ActorAI::snapSpineToEnemy() {
     }
 }
 
+//Update the shit list slowly decreasing the value you hate everyone
+//and removing dead enemies or ones which are too far away
+//If you hate an enemy enough
+//this may also switch your target to the hated enemy
+void ActorAI::updateShitList() {
+	bool someoneReallyHated = false;
+	//Iterate through the shit list
+	//and cull enemies that aren't relevant anymore
+	for (auto it = shitList.begin(); it != shitList.end(); ) {
+		if (it->first->Dead())
+			//Actor is dead
+			//can't hate a dead guy
+			it = shitList.erase(it);
+		else if (glm::distance(it->first->GetPosition(),Position) > 200.0f)
+			//Actor is too far away
+			//forget they existed
+			it = shitList.erase(it);
+		else if (!Game()->Actors.Factions.IsEnemy(GetFaction(),it->first->GetFaction()))
+			//Actor is not an enemy anymore
+			it = shitList.erase(it);
+		else if (it->second < .01)
+			//You don't really even hate them anymore
+			it = shitList.erase(it);
+		else {
+			if (it->second > .5) 
+				someoneReallyHated = true;
+
+			//Decrease how much you hate everyone slowly, decreases approx 40% over 10 seconds
+			it->second *= .9995;
+			it++;
+		}
+
+	}
+	//If you don't hate anyone particularly much, stop here
+	if (!someoneReallyHated)
+		return;
+	//If someone is really hated and you're not currently engaging them, go for it
+	PhysicsActor * mostHated = getMostHatedEnemy();
+	if (targetEnemy != mostHated) {
+		//Check you're still alive
+		if ((state != AI_DYING) && (state != AI_ROTTING)) {
+			//Switch targets immediately
+			targetEnemy = mostHated;
+			state  = AI_SCANNING;
+			cout << "AI Switched targets due to being provoked!\n";
+		}
+	}
+}
+
+//Retrieve the identity of your most hated enemy
+//from the shitlist
+PhysicsActor * ActorAI::getMostHatedEnemy() {
+	float mostHate = -1000;
+	PhysicsActor * mostHated = NULL;
+	//Find whichever enemy has the highest hate list
+	for (auto hated : shitList) {
+		if (hated.second > mostHate) {
+			mostHate = hated.second;
+			mostHated = hated.first;
+		}
+	}
+	return mostHated;
+}
+
 void ActorAI::findMuzzlePosition() {
 	//Node::const_flattreemap nodes;
 	//model->Skeleton()->GetFlatNodeTree(nodes);
@@ -643,6 +748,58 @@ void ActorAI::findMuzzlePosition() {
 
         muzzlePositionB = vec3(globalTransformB * vec4(data->MuzzleOffsetB, 1.0));
     }
+}
+
+//Add a certain number of points to this AI's shitlist in regards to a certain other AI
+void ActorAI::addShitListPoints(PhysicsActor * toList, float hatePoints) {
+	//Check if they're already on your shit list
+	for (auto hated : shitList) {
+		if (hated.first == toList) {
+			//Add how much more you hate that enemy
+			hated.second += hatePoints;
+			return;
+		}
+	}
+	//You must not hate them yet
+	//start hating
+	shitList.push_back(hatedActor(toList,hatePoints));
+}
+
+//Damage this actor from a particular faction
+//exposed in this manner to prevent implicit hiding
+void ActorAI::Damage(FactionId damagingFaction, float damage) {
+	PhysicsActor::Damage(damagingFaction,damage);
+}
+
+//When damage has been done to this actor
+//add the damager to your shitlist
+void ActorAI::Damage(PhysicsActor * damagingActor, float damage) {
+	float oldLife = life;
+	PhysicsActor::Damage(damagingActor,damage);
+	//Mark that those mean enemies hurt you
+	float damageDone = oldLife - life;
+	float damageFactor = damageDone/maxLife;
+	//If you're low life, hate them faster
+	if (life/maxLife < HurtLifePercent)
+		damageFactor *= 2.0;
+	//Add how much you hate them to the table
+	addShitListPoints(damagingActor,damageFactor);
+	//Let everyone else that's on your side nearby know that you hate this guy
+	//this also acts like a cry for help
+	//they may come to your aid
+	vector<PhysicsActor*> actors(Actors().GetActorsInRadius(Position,EnemyNotifyRadius));
+	for (auto actor : actors) {
+		ActorAI * otherAI = dynamic_cast<ActorAI*>(actor);
+		//Can't notify them if they're not AI
+		if (otherAI == NULL)
+			continue;
+		//Can't notify dead AI, or AI which aren't on your team
+		if ((otherAI->GetFaction() != faction) || (otherAI->Dead()))
+			continue;
+
+		//Notify them
+		otherAI->addShitListPoints(damagingActor,damageFactor*AIEmpathyFactor);
+	}
 }
 
 

@@ -114,7 +114,8 @@ namespace ReflectionData {
 #define CLASS_CONCAT_A(a,b) CLASS_CONCAT_B(a,b)
 #define CLASS_TNAME(classname) CLASS_CONCAT_A(classname,_TypeData)
 #define CLASS_VNAME(classname) CLASS_CONCAT_A(classname,_TypeDataStaticValue)
-
+#define CLASS_CONCAT3_B(a,b,c) a##b##c
+#define CLASS_CONCAT3_A(a,b,c) CLASS_CONCAT3_B(a,b,c)
 
 
 //This should be at the start of a save block inside any savable class
@@ -140,3 +141,20 @@ namespace ReflectionData {
 
 //If your class contains one or more members which are user owned handles, you must overload Load and call REPAIR_HANDLE for each user owned handle before calling Savable::Load
 #define REPAIR_HANDLE(variable) loadData.RegisterLoadedHandle(parentValue[#variable]["__HANDLE__"].asInt64(),variable);
+
+
+//Defines a savable pair of two types
+//use _DECLARATION in a header file
+//use _IMPLEMENTATION in a cpp file
+#define SAVABLE_PAIR_DECLARATION(pairtypename,typea,savetypea,typeb,savetypeb) class pairtypename : public Savable { \
+public: \
+	pairtypename() {} \
+	pairtypename(typea _first, typeb _second) : first(_first), second(_second) {} \
+	typea first; \
+	typeb second; \
+	CLASS_DECLARATION(SAVABLE_PAIR_TYPE(typea,typeb))	\
+		CLASS_MEMBER(first,savetypea) \
+		CLASS_MEMBER(second,savetypeb) \
+	END_DECLARATION \
+}
+#define SAVABLE_PAIR_IMPLEMENTATION(pairtypename)  CLASS_SAVE_CONSTRUCTOR(pairtypename)
