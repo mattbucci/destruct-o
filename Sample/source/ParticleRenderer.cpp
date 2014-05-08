@@ -60,7 +60,7 @@ void ParticleRenderer::renderSweep(GLParticleProgram * shader, int particleCount
 	glBindVertexArray(0);
 }
 
-void ParticleRenderer::Render(GLParticleProgram * shader, Particle ** particles, unsigned int size) {
+void ParticleRenderer::Render(GLParticleProgram * shader, Particle * particles, unsigned int size) {
 
 	//If there are no vertices, abort
 	if (size == 0)
@@ -77,28 +77,28 @@ void ParticleRenderer::Render(GLParticleProgram * shader, Particle ** particles,
 		}
         
 		//Generate the vertex data for the given particle
-		Particle * p = particles[i];
+		Particle & p = particles[i];
 		int offset = curParticles*4;
         int ioffset = curParticles*6;
-		float halfScale = p->Scale/2.0f;
+		float halfScale = p.Scale/2.0f;
         
 		//Generate position data
-		vertices[offset+0].vertex = toPOD(vec4(p->Position,halfScale));
-		vertices[offset+1].vertex = toPOD(vec4(p->Position,halfScale));
-		vertices[offset+2].vertex = toPOD(vec4(p->Position,halfScale));
-		vertices[offset+3].vertex = toPOD(vec4(p->Position,halfScale));
+		vertices[offset+0].vertex = toPOD(vec4(p.Position,halfScale));
+		vertices[offset+1].vertex = toPOD(vec4(p.Position,halfScale));
+		vertices[offset+2].vertex = toPOD(vec4(p.Position,halfScale));
+		vertices[offset+3].vertex = toPOD(vec4(p.Position,halfScale));
 
 
 		//Now figure out texture coordinate
-		vec2 texSize = vec2(1.0f/p->SystemData->Columns,1.0f/p->SystemData->Rows);
-		vec2 texCorner = texSize * vec2(p->Frame % (int)p->SystemData->Columns, p->Frame / (int)p->SystemData->Columns);
+		vec2 texSize = vec2(1.0f/p.SystemData->Columns,1.0f/p.SystemData->Rows);
+		vec2 texCorner = texSize * vec2(p.Frame % (int)p.SystemData->Columns, p.Frame / (int)p.SystemData->Columns);
 		vertices[offset+0].textureCoordinate = toPOD(texCorner + texSize*vec2(0,0));
 		vertices[offset+1].textureCoordinate = toPOD(texCorner + texSize*vec2(1,0));
 		vertices[offset+2].textureCoordinate = toPOD(texCorner + texSize*vec2(0,1));
 		vertices[offset+3].textureCoordinate = toPOD(texCorner + texSize*vec2(1,1));
 
 		//finally color
-		vertices[offset+0].color = vertices[offset+1].color = vertices[offset+2].color = vertices[offset+3].color = toPOD(p->Color);
+		vertices[offset+0].color = vertices[offset+1].color = vertices[offset+2].color = vertices[offset+3].color = toPOD(p.Color);
 
 		//vertex numbers
 		vertices[offset+0].vertNumber = 0;
