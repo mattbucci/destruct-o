@@ -9,13 +9,13 @@ ReflectionStore & ReflectionStore::Data() {
 }
 
 
-void ReflectionStore::RegisterConstructableClass(string name, function<Savable*()> constructor) {
+void ReflectionStore::RegisterConstructableClass(string name, reflector* reflectionInformation) {
 	_ASSERTE(reflectionStore.find(name) == reflectionStore.end());
 
-	reflectionStore[name] = constructor;
+	reflectionStore[name] = reflectionInformation;
 }
 
-Savable * ReflectionStore::RetrieveClassInstance(string name) {
+reflector * ReflectionStore::RetrieveClassTypeTools(string name) {
 	auto iterator = reflectionStore.find(name);
 	//Unable to find an appropriate constructor
 	_ASSERTE(iterator != reflectionStore.end());
@@ -23,5 +23,5 @@ Savable * ReflectionStore::RetrieveClassInstance(string name) {
 		return NULL;
 
 	//Create a class of the instance requested
-	return iterator->second();
+	return iterator->second;
 }

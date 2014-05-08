@@ -135,8 +135,20 @@ namespace ReflectionData {
 #define END_DECLARATION } private:
 
 
-//If a class is owned by the save system, CLASS_SAVE_CONSTRUCTOR(yourclass) must be in the .h file
-#define CLASS_SAVE_CONSTRUCTOR(classname) struct CLASS_TNAME(classname) { CLASS_TNAME(classname)(){ReflectionStore::Data().RegisterConstructableClass(#classname,[](){return new classname();});}}; \
+//If the class can be constructed into from a handle by the save system, CLASS_SAVE_CONSTRUCTOR(yourclass) must be in the .cpp file
+#define CLASS_SAVE_CONSTRUCTOR(classname) struct CLASS_TNAME(classname) { \
+		CLASS_TNAME(classname)(){ \
+			ReflectionStore::Data().RegisterConstructableClass(#classname,new savablereflector<classname>(NULL)); \
+		}; \
+	}; \
+	static CLASS_TNAME(classname) CLASS_VNAME(classname);
+
+//If the class INSTANCE is within containers, call this version instead of the above to add container support (not needed for containers containing handles)
+#define CLASS_SAVE_CONSTRUCTOR_CONTAINERS(classname) struct CLASS_TNAME(classname) { \
+		CLASS_TNAME(classname)(){ \
+			ReflectionStore::Data().RegisterConstructableClass(#classname,new savablereflector<classname>(new savablereflector<classname>::container_reflector_imp<classname>())); \
+		}; \
+	}; \
 	static CLASS_TNAME(classname) CLASS_VNAME(classname);
 
 //If your class contains one or more members which are user owned handles, you must overload Load and call REPAIR_HANDLE for each user owned handle before calling Savable::Load
@@ -157,4 +169,4 @@ public: \
 		CLASS_MEMBER(second,savetypeb) \
 	END_DECLARATION \
 }
-#define SAVABLE_PAIR_IMPLEMENTATION(pairtypename)  CLASS_SAVE_CONSTRUCTOR(pairtypename)
+#define SAVABLE_PAIR_IMPLEMENTATION(pairtypename) CLASS_SAVE_CONSTRUCTOR_CONTAINERS(pairtypename)

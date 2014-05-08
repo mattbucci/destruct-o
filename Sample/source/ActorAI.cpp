@@ -15,6 +15,7 @@
 
 
 CLASS_SAVE_CONSTRUCTOR(ActorAI);
+SAVABLE_PAIR_IMPLEMENTATION(hatedActor);
 
 unsigned int ActorAI::currentAIID = 0;
 //How long after losing the target, the AI gives up shooting the target
@@ -70,6 +71,11 @@ ActorAI::~ActorAI() {
 	delete weapon;
     //cleanup the ai data
     delete data;
+	//cleanup shit list
+	for (auto enemy : shitList) {
+		delete enemy;
+		shitList.clear();
+	}
 }
 
 //Check if you can see the given actor
@@ -669,26 +675,26 @@ void ActorAI::updateShitList() {
 	//Iterate through the shit list
 	//and cull enemies that aren't relevant anymore
 	for (auto it = shitList.begin(); it != shitList.end(); ) {
-		if (it->first->Dead())
-			//Actor is dead
-			//can't hate a dead guy
+		hatedActor * hated = *it;
+		//Check that the actor is not dead
+		if ((hated->first->Dead()) ||
+			//is not too far away
+			(glm::distance(hated->first->GetPosition(),Position) > 200.0f) ||
+			//is still an enemy
+			(!Game()->Actors.Factions.IsEnemy(GetFaction(),hated->first->GetFaction())) ||
+			//is still hated some amount
+			(hated->second < .01)) {
+
+			//If not any of those things, clean up the entry
+			delete hated;
 			it = shitList.erase(it);
-		else if (glm::distance(it->first->GetPosition(),Position) > 200.0f)
-			//Actor is too far away
-			//forget they existed
-			it = shitList.erase(it);
-		else if (!Game()->Actors.Factions.IsEnemy(GetFaction(),it->first->GetFaction()))
-			//Actor is not an enemy anymore
-			it = shitList.erase(it);
-		else if (it->second < .01)
-			//You don't really even hate them anymore
-			it = shitList.erase(it);
+		}
 		else {
-			if (it->second > .5) 
+			if (hated->second > .5) 
 				someoneReallyHated = true;
 
 			//Decrease how much you hate everyone slowly, decreases approx 40% over 10 seconds
-			it->second *= .9995;
+			hated->second *= .9995;
 			it++;
 		}
 
@@ -716,9 +722,9 @@ PhysicsActor * ActorAI::getMostHatedEnemy() {
 	PhysicsActor * mostHated = NULL;
 	//Find whichever enemy has the highest hate list
 	for (auto hated : shitList) {
-		if (hated.second > mostHate) {
-			mostHate = hated.second;
-			mostHated = hated.first;
+		if (hated->second > mostHate) {
+			mostHate = hated->second;
+			mostHated = hated->first;
 		}
 	}
 	return mostHated;
@@ -754,15 +760,15 @@ void ActorAI::findMuzzlePosition() {
 void ActorAI::addShitListPoints(PhysicsActor * toList, float hatePoints) {
 	//Check if they're already on your shit list
 	for (auto hated : shitList) {
-		if (hated.first == toList) {
+		if (hated->first == toList) {
 			//Add how much more you hate that enemy
-			hated.second += hatePoints;
+			hated->second += hatePoints;
 			return;
 		}
 	}
 	//You must not hate them yet
 	//start hating
-	shitList.push_back(hatedActor(toList,hatePoints));
+	shitList.push_back(new hatedActor(toList,hatePoints));
 }
 
 //Damage this actor from a particular faction

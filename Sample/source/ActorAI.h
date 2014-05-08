@@ -30,7 +30,9 @@ enum aiStates {
 	AI_ROTTING,
 };
 
-
+//This actor's shitlist is a pair of actor pointers and their current hate
+//must be ddefined /outside/ the class
+SAVABLE_PAIR_DECLARATION(hatedActor,PhysicsActor*,ReflectionData::SAVE_HANDLE,float,ReflectionData::SAVE_FLOAT);
 
 
 class ActorAI : public PhysicsActor {
@@ -75,12 +77,11 @@ protected:
 	//If the actor is crashing (after flying)
 	bool actorCrashing;
 
-	//This actor's shitlist is a pair of actor pointers and their current hate
-	SAVABLE_PAIR_DECLARATION(hatedActor,PhysicsActor*,ReflectionData::SAVE_HANDLE,float,ReflectionData::SAVE_FLOAT);
+
 	//the actors it hates
 	//each actor is rated by how hated it is
 	//numbers 0-2 are probable
-	ContiguousList<hatedActor> shitList;
+	ContiguousList<hatedActor*> shitList;
 
 	//Retrieve the muzzle position after a draw calculate
 	//and save in muzzlePositionA
@@ -214,7 +215,7 @@ public:
 		CLASS_MEMBER(muzzlePositionB,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(enemyPosition,ReflectionData::SAVE_INSTANCE)
 		CLASS_MEMBER(actorCrashing,ReflectionData::SAVE_BOOL)
-		CLASS_CONTAINER_MEMBER(shitList,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_INSTANCE)
+		CLASS_CONTAINER_MEMBER(shitList,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
 	END_DECLARATION
 };
 

@@ -49,7 +49,7 @@ void ActorSystem::cleanActorList() {
 //but simple physics actors should
 Actor * ActorSystem::BuildActorFromName(string name) {
     //Abuse the save system to construct an AI with the given name
-    Actor * actor = dynamic_cast<Actor*>(ReflectionStore::Data().RetrieveClassInstance(name));
+    Actor * actor = dynamic_cast<Actor*>(ReflectionStore::Data().RetrieveClassTypeTools(name)->BuildInstance());
 	//The actor should be valid
 	_ASSERTE(actor != NULL);
 
@@ -81,7 +81,7 @@ ActorAI * ActorSystem::BuildAI(vec3 position, string filename) {
     ActorAIData * aiData = AIProfiles.GetCached(filename);
 
     //Abuse the save system to construct an AI with the given name
-    ActorAI * actor = dynamic_cast<ActorAI*>(ReflectionStore::Data().RetrieveClassInstance(aiClassLookup[aiData->Behavior]));
+    ActorAI * actor = dynamic_cast<ActorAI*>(ReflectionStore::Data().RetrieveClassTypeTools(aiClassLookup[aiData->Behavior])->BuildInstance());
 	//The actor should be valid
 	_ASSERTE(actor != NULL);
     newlyBornActors.push_back(actor);
@@ -117,7 +117,7 @@ WeaponAI * ActorSystem::BuildWeapon(string filename, PhysicsActor * owner) {
     WeaponData * weaponData = Weapons.GetCached(filename);
 
     //Abuse the save system to construct an AI with the given name
-    WeaponAI * weapon = dynamic_cast<WeaponAI*>(ReflectionStore::Data().RetrieveClassInstance(weaponClassLookup[weaponData->Behavior]));
+    WeaponAI * weapon = dynamic_cast<WeaponAI*>(ReflectionStore::Data().RetrieveClassTypeTools(weaponClassLookup[weaponData->Behavior])->BuildInstance());
 	//The weapon should be valid
 	_ASSERTE(weapon != NULL);
     //Apply the weapon data to the new actor
