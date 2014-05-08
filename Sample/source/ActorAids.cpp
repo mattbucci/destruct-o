@@ -18,7 +18,7 @@ const float MaxTargetIntensity = 200.0f;
 const float MaxIntensityGrowRate = 5.0f;
 //The amount of time in seconds the player gets a break for in the start of the game
 //The intensity slowly ramps up during this time period
-const float StartGameBreakLength = 100.0f;
+const float StartGameBreakLength = 20.0f;
 
 
 //Cost of each single deployment

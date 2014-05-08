@@ -784,7 +784,9 @@ void ActorAI::Damage(PhysicsActor * damagingActor, float damage) {
 	PhysicsActor::Damage(damagingActor,damage);
 	//Mark that those mean enemies hurt you
 	float damageDone = oldLife - life;
-	float damageFactor = damageDone/maxLife;
+	//Add .05 because even the smallest tap is annoying
+	//an
+	float damageFactor = .05 + pow(damageDone/maxLife+1,2)-1;
 	//If you're low life, hate them faster
 	if (life/maxLife < HurtLifePercent)
 		damageFactor *= 2.0;
