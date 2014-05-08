@@ -12,12 +12,14 @@
 #include "PhysicsVoxel.h"
 #include "GLVoxelColors.h"
 
+#include "TimeStepGuard.h"
+
 //Register particle events
 ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics)
 	: Autocacher("particles/","particlemanifest.json"),
 	//Trackers not used yet
-	updateTracker(SIMULATION_DELTA*.5f,SIMULATION_DELTA*.75f),
-	drawTracker(1.0f/60.0f*.15f,1.0f/60.0f*.75f){
+	updateTracker(SIMULATION_DELTA*.1f,SIMULATION_DELTA*.25f),
+	drawTracker(1.0f/60.0f*.15f,1.0f/60.0f*.65f){
 
 	//VOXEL DISINTEGRATE EVENT
 	Subscribe<void(PhysicsVoxel*)>(&physics->VoxelDisintegrating,[this](PhysicsVoxel * voxel) {
@@ -33,6 +35,28 @@ ParticleCloud::~ParticleCloud() {
 	Clear();
 }
 
+//Erase some particle systems randomly based off of the given recommendation
+void ParticleCloud::enactRecommendation(float recommendation, bool updateRecommendation) {
+	if (recommendation < 1.0f) {
+		int originalSystems = particles.size();
+		int eliminatedSystems = 0;
+
+		//Delete some voxels randomly until the recommendation improves
+		float chanceNotDeleted = .7f+.3f*(float)recommendation; 
+		for (auto it = particles.begin(); it != particles.end();){
+			//Voxels removed in this fashion do not produce particles
+			if (Utilities::random(0.0f,1.0f) > chanceNotDeleted) {
+				delete *it;
+				it = particles.erase(it);
+				eliminatedSystems++;
+			}
+			else
+				it++;
+		}
+		if (eliminatedSystems > 0)
+			cout << "Eliminated (" << eliminatedSystems << "/" << originalSystems << ") particle systems to improve performance" << (updateRecommendation ? "[U]" : "[D]") <<"\n";
+	}
+}
 
 //Cache particle data
 ParticleData ParticleCloud::cacheItem(string path) {
@@ -41,6 +65,9 @@ ParticleData ParticleCloud::cacheItem(string path) {
 
 //Updates the contents of the particle cloud automatically
 void ParticleCloud::UpdateCloud() {
+	TimeStepGuard guard(&updateTracker);
+	//carefully control performance
+	enactRecommendation(updateTracker.GetRecommendation(),true);
 
 	//First update each particle
 	for (auto it = particles.begin(); it != particles.end(); ) {
@@ -73,6 +100,10 @@ void ParticleCloud::Clear() {
 
 //Draw the particle cloud using a special shader in the future
 void ParticleCloud::Draw(ShaderGroup * shaders) {
+	TimeStepGuard guard(&drawTracker);
+	//carefully control performance
+	enactRecommendation(drawTracker.GetRecommendation(),false);
+
 	GL3DProgram * shader3d = (GL3DProgram *)shaders->GetShader("3d");
 	GLParticleProgram * shaderParticles = (GLParticleProgram*)shaders->GetShader("particles");
 	//Switch to the particle shader
@@ -82,6 +113,8 @@ void ParticleCloud::Draw(ShaderGroup * shaders) {
 
     vec3 cameraZ = shader3d->Camera.GetZAxis();
     
+
+
 	//Draw each particle system
 	for (auto system : particles)
         system->Draw(&renderer, shaderParticles, cameraZ);

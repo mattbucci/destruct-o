@@ -6,6 +6,10 @@
 #include "Utilities.h"
 #include "VoxEngine.h"
 
+Particle::Particle() {
+	//Don't use this
+	this->Owner = NULL;
+}
 
 Particle::Particle(double gameTime, float systemLifeFactor, ParticleSystem * owner, ParticleData * systemData) {
 	this->Owner = owner;
@@ -55,6 +59,7 @@ Particle::Particle(double gameTime, float systemLifeFactor, ParticleSystem * own
 
 //Updates the position of the particle
 bool Particle::Update(double time) {
+	_ASSERTE(Owner != NULL);
 	if (time >= deathAt)
 		//Mark this particle for destruction
 		return true;

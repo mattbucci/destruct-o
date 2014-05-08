@@ -19,7 +19,7 @@ class ParticleSystem {
 	double deathAt;
 
 	//The list of particles
-	ContiguousList<Particle*> particleList;
+	ContiguousList<Particle> particleList;
 public:
 	ParticleSystem(ParticleData particleSystemDescription,double now, double lifetime);
 	~ParticleSystem();

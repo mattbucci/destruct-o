@@ -34,6 +34,8 @@ class ParticleCloud : GameEventSubscriber, public Autocacher<ParticleData> {
 	TimeStepTracker updateTracker;
 	TimeStepTracker drawTracker;
 
+	//Erase some particle systems randomly based off of the given recommendation
+	void enactRecommendation(float recommendation, bool updateRecommendation);
 protected:
 	//Cache particle data
 	ParticleData cacheItem(string path) override;

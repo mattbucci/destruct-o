@@ -38,5 +38,5 @@ public:
 
 	//Render all the given particles
 	//particles is an array of size "size" of particle *
-	void Render(GLParticleProgram * shader, Particle ** particles, unsigned int size);
+	void Render(GLParticleProgram * shader, Particle * particles, unsigned int size);
 }; 

@@ -13,6 +13,7 @@ class Particle {
 	//How long this particle will live in total
 	float lifeSpan;
 public:
+	Particle();
 	//systemLifeFactor is a a value 0 - 1 which represents how long the system (not the particle) has been
 	//alive for, 0 is just started, and 1 being the end point of the system
 	//if the particle system has infinite life, this will always be 1

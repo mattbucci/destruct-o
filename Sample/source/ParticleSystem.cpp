@@ -20,9 +20,6 @@ ParticleSystem::ParticleSystem(ParticleData particleSystemDescription,double now
 	nextParticle = 0;
 }
 ParticleSystem::~ParticleSystem() {
-	//Destroy all particles you still exist
-	for (auto particle : particleList)
-		delete particle;
 	particleList.clear();
 }
 
@@ -49,8 +46,7 @@ bool ParticleSystem::UpdateEmitter() {
 		double perParticle = 1.0f/generationRate;
 		while (nextParticle < systemTime) {
 			nextParticle += perParticle;
-			Particle * p = new Particle(now,systemLifeFactor,this,&particleSystemDescription);
-			particleList.push_back(p);
+			particleList.push_back(Particle(now,systemLifeFactor,this,&particleSystemDescription));
 		}
 	}
 	else {
@@ -62,10 +58,9 @@ bool ParticleSystem::UpdateEmitter() {
 
 	//Update all the particles
 	for (auto it = particleList.begin(); it != particleList.end();) {
-		Particle * p = *it;
-		if (p->Update(now)) {
+		Particle & p = *it;
+		if (p.Update(now)) {
 			//The particle requested death, cleanup
-			delete p;
 			it = particleList.erase(it);
 		}
 		else
@@ -102,8 +97,8 @@ void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shade
 	}
 	//Sort if necessary
 	if (particleSystemDescription.MaterialStyle == ParticleData::BLEND) {
-		particleList.sort([cameraZAxis](Particle * a, Particle * b) {
-			return glm::dot(a->Position, cameraZAxis) < glm::dot(b->Position, cameraZAxis);
+		particleList.sort([cameraZAxis](Particle & a, Particle & b) {
+			return glm::dot(a.Position, cameraZAxis) < glm::dot(b.Position, cameraZAxis);
 		});
 	}
 	
