@@ -58,7 +58,7 @@ void ActorAI::ApplyData(ActorAIData * dataToLoad) {
     playAnimation(data->AnimationLookupTable[Weapon::ANIMATION_AIM]);
     //Apply physics paramters
     Size = data->Size;
-    maxLife = data->MaxLife;
+    life = maxLife = data->MaxLife;
     flying = data->Flies;
     //Rest is applied automatically
 }
@@ -686,7 +686,7 @@ void ActorAI::updateShitList() {
 			(hated->second < .01)) {
 
 			//If not any of those things, clean up the entry
-			delete hated;
+ 			delete hated;
 			it = shitList.erase(it);
 		}
 		else {
