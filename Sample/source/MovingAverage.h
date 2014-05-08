@@ -35,6 +35,7 @@ public:
 		sampleId = 0;
 		this->sampleSkip = sampleSkip;
 		arrayFilled = false;
+		lastAverage = determineZero<T>();
 	}
 
 	void AddSample(T sample) {
