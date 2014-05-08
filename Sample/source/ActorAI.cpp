@@ -11,6 +11,8 @@
 #include "ModelInstance.h"
 #include "Model.h"
 
+#include <random>
+
 #define TWO_PI ((float)(M_PI*2.0f))
 
 
@@ -29,6 +31,21 @@ static const float FleeLifePercent = .2f;
 //When notifying other enemies of an attacker
 //this factor is a % of damage to this AI, that other AI empathize with
 static const float AIEmpathyFactor = .45f;
+//How far away from the player a location has to be to be considered cover from the player
+static const float CoverMinDistance = 50;
+//At this distance, even if the enemy can see you, consider yourself to be in cover
+static const float CoverMaxDistance = 200;
+//How close you have to be to cover before you're considered in cover
+static const float CoverArrivalDistance = 5;
+//The smallest distance away from itself the AI will look for cover
+static const float CoverSearchMinDistance = 5;
+//The largest distance away from itself the AI will look for cover
+static const float CoverSearchMaxDistance = 60;
+//Check this number of random enemies before assuming a location is safe
+static const int SafetyActorCheckCount = 6;
+//Below this % of energy or life the AI will flee
+static const float LifeFleeLevel = .2f;
+static const float EnergyFleeLevel = .2f;
 
 //Used only by the save system to create an actorai loaded
 ActorAI::ActorAI() : 
@@ -91,6 +108,14 @@ bool  ActorAI::canSeeActor(PhysicsActor * actor) {
 	return false;
 }
 
+//Whether or not this AI should flee
+//true if the AI is low on health
+//true if the AI is low on energy
+//false if the enemy is a turret
+bool ActorAI::shouldFlee() {
+	return ((data->BaseMovementSpeed > 0) && (((life/maxLife) < LifeFleeLevel) || ((energyPool/energyPoolMax) < EnergyFleeLevel)));
+}
+
 //Attempt to find a close nearby enemy you can see right now
 PhysicsActor * ActorAI::sightNearbyEnemy() {
 	vector<PhysicsActor*> actors(Actors().GetEnemiesInRadius(Position,data->SightDistance,faction));
@@ -147,6 +172,11 @@ bool ActorAI::applyFacingDirection(float desiredFacingDirection) {
 
 bool ActorAI::Dead() {
 	return PhysicsActor::Dead() || (life < 0);
+}
+
+//True if this actor is scared and is trying to make a break for it
+bool ActorAI::IsFleeing() {
+	return (state == AI_FLEEING) || (state == AI_TAKINGCOVER);
 }
 
 bool ActorAI::checkEnemyValid() {
@@ -213,30 +243,9 @@ void ActorAI::acquireTargetEnemy(PhysicsActor * actor) {
 	Velocity = vec3(vec2(),Velocity.z);
 }
 
-	//State implementations which can be overridden if necessary
-void ActorAI::statePathing(bool & holdingTrigger) {
-	//Only look for an enemy if you're on the ground
-	//and not moving very fast in the z direction
-	if (flying || (OnGround() && (fabs(Velocity.z) < .1f))) {
-		//If you're going after your most hated enemy
-		//go forward with single-mindedness
-		//otherwise attack the first enemy you happen upon
-		if ((targetEnemy != NULL) && (targetEnemy == getMostHatedEnemy())) {
-			if (canSeeActor(targetEnemy)) {
-				acquireTargetEnemy(targetEnemy);
-			}
-		}
-		else {
-			//Look for any enemy in your sight range and attack them
-			PhysicsActor * seenEnemy = sightNearbyEnemy();
-			if (seenEnemy != NULL) {
-				//Found an enemy, target and kill
-				acquireTargetEnemy(seenEnemy);
-				return;
-			}
-		}
-	}
-		
+
+//Move/path and jump over rocks towards the goal
+bool ActorAI::pathTowardsGoal(vec2 goal) {
 	//No enemy found
 	//Check how close you are
 	if (glm::distance(goal,vec2(Position)) < 2) {
@@ -246,7 +255,7 @@ void ActorAI::statePathing(bool & holdingTrigger) {
 		state = AI_SCANNING;
 		//Clear movement velocity
 		Velocity = vec3(vec2(),Velocity.z);
-		return;
+		return true;
 	}
 
 			
@@ -288,11 +297,49 @@ void ActorAI::statePathing(bool & holdingTrigger) {
 			}
 			//Wait until you clear the edge to move forwards
 			if ((!touchingGround) && (feetHeight-.15 < upcomingHeight))
-				return;
+				return false;
 						
 		}
 	}
+	return false;
+}
 
+//Move dumbly towards a goal no matter what is blocking you
+void ActorAI::moveTowardsGoal(vec2 goal) {
+	//Face the direction you're moving
+	vec2 diff = goal - vec2(Position);
+			
+	applyFacingDirection(atan2f(diff.y,diff.x));
+	//Apply some velocity in the direction you want to move
+	vec2 moveVelocity = glm::normalize(diff)*data->BaseMovementSpeed;
+	Velocity = vec3(moveVelocity,Velocity.z);
+}
+
+	//State implementations which can be overridden if necessary
+void ActorAI::statePathing(bool & holdingTrigger) {
+	//Only look for an enemy if you're on the ground
+	//and not moving very fast in the z direction
+	if (flying || (OnGround() && (fabs(Velocity.z) < .1f))) {
+		//If you're going after your most hated enemy
+		//go forward with single-mindedness
+		//otherwise attack the first enemy you happen upon
+		if ((targetEnemy != NULL) && (targetEnemy == getMostHatedEnemy())) {
+			if (canSeeActor(targetEnemy)) {
+				acquireTargetEnemy(targetEnemy);
+			}
+		}
+		else {
+			//Look for any enemy in your sight range and attack them
+			PhysicsActor * seenEnemy = sightNearbyEnemy();
+			if (seenEnemy != NULL) {
+				//Found an enemy, target and kill
+				acquireTargetEnemy(seenEnemy);
+				return;
+			}
+		}
+	}
+	//Path towards the goal
+	pathTowardsGoal(this->goal);
 }
 void ActorAI::stateWaitingForPath(bool & holdingTrigger) {
 	//While waiting for a path, if you have an enemy, go straight for them
@@ -371,7 +418,130 @@ void ActorAI::stateEngaging(bool & holdingTrigger) {
 		//Otherwise aim at the target
 		setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_AIM]);
 }
+
+//Check if a location is safe for cover from a particular actor
+bool ActorAI::checkIfSafeFromActor(vec3 location, PhysicsActor * actor) {
+	//Check if you're far enough away from that actor
+	float distFromEnemyToCover = glm::distance(actor->GetPosition(),location);
+	//If you have a cover location, check that it is still safe
+	if (distFromEnemyToCover < CoverMinDistance)
+		//Not safe 
+		return false;
+	else if (distFromEnemyToCover > CoverMaxDistance)
+		//safe, the enemy may be able to see you, but they're too far away (hopefully)
+		return true;
+	else {
+		//Check if enemy has visibility of that target
+		vec3 hitLocation;
+		//Trace continued into infinity by default
+		float traceDistance = 100000;
+
+		if (Universal::TraceIgnoreActor(actor->GetPosition(),glm::normalize(location-actor->GetPosition()),actor,&hitLocation))
+			//Now check the distance the trace went
+			traceDistance = glm::distance(hitLocation,actor->GetPosition());
+
+		//If the trace passed through the cover position, the enemy can see it
+		if (traceDistance+5 < distFromEnemyToCover)
+			//They can't see you in theory perhaps maybe
+			return true;
+		
+		//Cover is not safe
+		return false;
+	}
+}
+//Check if a location is safe for cover
+bool ActorAI::checkIfSafeForCover(vec3 location) {
+	//Check a max of three random enemies for safety
+	vector<PhysicsActor*> actors(Actors().GetEnemiesInRadius(location,CoverMaxDistance,faction));
+	int check = 0;
+	//Check a different three every time
+	shuffle (actors.begin(), actors.end(), default_random_engine(rand()));
+	for (auto actor : actors) {
+		//Check if this individual actor makes the area unsafe
+		if (!checkIfSafeFromActor(location,actor))
+			return false;
+		//Only check three actors
+		if (++check >= SafetyActorCheckCount)
+			return true;
+	}
+	//Area is safe maybe
+	return true;
+}
+
+void ActorAI::stateTakingCover(bool & holdingTrigger) {
+	//If you don't need to flee anymore, stop
+	if (!shouldFlee()) {
+		state = AI_SCANNING;
+		return;
+	}
+
+	//Get the 3d representation of the cover point
+	vec3 resultingPoint = vec3(coverLocation,0);
+	resultingPoint.z = Game()->Voxels.GetPositionHeight(vec2(resultingPoint))+3.0f;
+	//Check if the location is still safe
+	if (!checkIfSafeForCover(resultingPoint)) {
+		//It's not safe anymore, time to abandon ship
+		state = AI_FLEEING;
+	}
+}
+
+void ActorAI::stateFleeing(bool & holdingTrigger) {
+	//If you don't need to flee anymore, stop
+	if (!shouldFlee()) {
+		state = AI_SCANNING;
+		return;
+	}
+
+	//Find a location to flee towards
+	//Flee away from the average location of your enemies
+	vector<PhysicsActor*> actors(Actors().GetEnemiesInRadius(Position,data->SightDistance,faction));
+	vec2 enemyPosition;
+	//weight the enemy positions
+	//so that enemies which are closer to you are more important to your decision to run
+	float weightTotal = 0;
+	for (auto actor : actors) {
+		//actors <10 away are given max weight
+		//actors >100 away are given min weight
+		float weight = (glm::distance(actor->GetPosition(),Position)-10.0f)/90.0f;
+		weight = min(1.0f,weight);
+		weight = max(0.0f,weight);
+		//Apply weight
+		weightTotal += weight;
+		enemyPosition += vec2(actor->GetPosition())*weight;
+	}
+		
+	enemyPosition /= weightTotal;
+	//if the enemy position is close to you flee in a specific direction
+	//can't choose a random direction because then a different one would be chosen
+	//over and over and the actor would never move
+	vec2 fleeDirection = vec2(0,1);
+	if (glm::length(enemyPosition) > .5)
+		//flee away from the average enemy position
+		fleeDirection = glm::normalize(vec2(Position)-enemyPosition);
+	
+	//Choose a point far off along the flee direction
+	vec2 fleeEndPoint = fleeDirection*200.0f+vec2(Position);
+	//mark it as the cover point
+	coverLocation = fleeEndPoint;
+
+	//Now try to find an /actual/ cover point
+	//select a point at random in the general direction you're fleeing
+	//and check to see if it's in cover or not
+	//note, adding randomness in this fashion is not uniform, oh well
+	vec2 randomSearchDirection = glm::normalize(fleeDirection+vec2(Utilities::random(-.25f,.25f),Utilities::random(-.25f,.25f)));
+	//Select a random distance along that search direction
+	float randomSearchDistance = Utilities::random(CoverSearchMinDistance,CoverSearchMaxDistance);
+	//Check the resulting point and see if it would make good cover
+	vec3 resultingPoint = vec3(randomSearchDirection*randomSearchDistance,0)+Position;
+	resultingPoint.z = Game()->Voxels.GetPositionHeight(vec2(resultingPoint))+3.0f;
+	if (checkIfSafeForCover(resultingPoint)) {
+		//You found safety! Go for it buddy
+		coverLocation = vec2(resultingPoint);
+		state = AI_TAKINGCOVER;
+	}
+}
 void ActorAI::stateDying(bool & holdingTrigger) {
+	vulnerable = false;
 	if (actorCrashing) {
 		if (OnGround()) {
 			//You crashed, blow up and be destroyed
@@ -447,6 +617,10 @@ void ActorAI::expensiveUpdate() {
 		enemyPosition.Clear();
 
 
+	//If you should flee, and aren't already, do so
+	if (shouldFlee() && (state != AI_DYING) && (state != AI_ROTTING) && (state != AI_TAKINGCOVER))
+		state = AI_FLEEING;
+
 	bool pullingTrigger = false;
 
 	//AI is a state machine
@@ -511,15 +685,7 @@ void ActorAI::cheapUpdate() {
 	switch (state) {
 	case AI_WAITINGFORPATH:
 	case AI_PATHING:
-		{
-			//Face the direction you're moving
-			vec2 diff = goal - vec2(Position);
-			
-			applyFacingDirection(atan2f(diff.y,diff.x));
-			//Apply some velocity in the direction you want to move
-			vec2 moveVelocity = glm::normalize(diff)*data->BaseMovementSpeed;
-			Velocity = vec3(moveVelocity,Velocity.z);
-		}
+		moveTowardsGoal(this->goal);
 		break;
 	case AI_SCANNING:
 		break;
@@ -530,6 +696,10 @@ void ActorAI::cheapUpdate() {
 			faceEnemy();
 		break;
 	case AI_ENGAGING_ENEMY:
+		break;
+	case AI_FLEEING:
+	case AI_TAKINGCOVER:
+		moveTowardsGoal(coverLocation);
 		break;
 	case AI_DYING:
 		break;
@@ -699,6 +869,11 @@ void ActorAI::updateShitList() {
 		}
 
 	}
+	//If you should flee, you don't care what goes next
+	//worry about it later
+	if (shouldFlee())
+		return;
+
 	//If you don't hate anyone particularly much, stop here
 	if (!someoneReallyHated)
 		return;

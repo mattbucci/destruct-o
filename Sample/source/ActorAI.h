@@ -20,9 +20,10 @@ enum aiStates {
 	AI_TARGETING_ENEMY,
 	//When you're done targeting, kill'm
 	AI_ENGAGING_ENEMY,
-	//The AI is seeking cover/taking cover
-	AI_SEEKINGCOVER,
-	//The AI is fleeing
+	//The AI is taking cover
+	AI_TAKINGCOVER,
+	//While waiting to find cover
+	//simply run in any direction which is away from enemies
 	AI_FLEEING,
 	//The AI is dying dead
 	AI_DYING,
@@ -51,6 +52,8 @@ protected:
 	virtual void stateScanning(bool & holdingTrigger);
 	virtual void stateTargeting(bool & holdingTrigger);
 	virtual void stateEngaging(bool & holdingTrigger);
+	virtual void stateTakingCover(bool & holdingTrigger);
+	virtual void stateFleeing(bool & holdingTrigger);
 	virtual void stateDying(bool & holdingTrigger);
 	virtual void stateRotting(bool & holdingTrigger);
 
@@ -76,12 +79,28 @@ protected:
 	MovingAverage<vec3> enemyPosition;
 	//If the actor is crashing (after flying)
 	bool actorCrashing;
-
+	//The current place to take cover
+	vec2 coverLocation;
 
 	//the actors it hates
 	//each actor is rated by how hated it is
 	//numbers 0-2 are probable
 	ContiguousList<hatedActor*> shitList;
+
+	//Check if a location is safe for cover
+	bool checkIfSafeForCover(vec3 location);
+	//Check if a location is safe for cover from a particular actor
+	bool checkIfSafeFromActor(vec3 location, PhysicsActor * actor);
+
+	//Move/path and jump over rocks towards the goal
+	//return true when you're there
+	//use this during expensive updates
+	virtual bool pathTowardsGoal(vec2 goal);
+
+	//Move dumbly towards a goal no matter what is blocking you
+	//return true when you're there
+	//use this during cheap updates
+	virtual void moveTowardsGoal(vec2 goal);
 
 	//Retrieve the muzzle position after a draw calculate
 	//and save in muzzlePositionA
@@ -125,6 +144,11 @@ protected:
 
 	//Check if you can see the given actor
 	bool canSeeActor(PhysicsActor * actor);
+
+	//Whether or not this AI should flee
+	//true if the AI is low on health
+	//true if the AI is low on energy
+	bool shouldFlee();
 
 	//Check if your spine can face the enemy right now
 	virtual bool checkSpineLimits();
@@ -189,6 +213,9 @@ public:
 	//Tell other people you're dead the moment you run otu of health
 	bool Dead() override;
 
+	//True if this actor is scared and is trying to make a break for it
+	bool IsFleeing();
+
 	//When a path is granted from AIDS
 	//save it
 	virtual void PathingReady(vector<vec2> path);
@@ -216,6 +243,7 @@ public:
 		CLASS_MEMBER(enemyPosition,ReflectionData::SAVE_INSTANCE)
 		CLASS_MEMBER(actorCrashing,ReflectionData::SAVE_BOOL)
 		CLASS_CONTAINER_MEMBER(shitList,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
+		CLASS_MEMBER(coverLocation,ReflectionData::SAVE_VEC2)
 	END_DECLARATION
 };
 

@@ -16,8 +16,6 @@ CLASS_SAVE_CONSTRUCTOR(ActorPlayer);
 //so here are the constants involved
 static const float movementSpeed = 6.0f;
 static const float jumpVelocity = 20.0f;
-//Other player specific constants
-static const float energyPerSecond = 5.0f;
 
 // Construct an actor player.  Weapon camera is setup for optimal weapon size
 ActorPlayer::ActorPlayer()
@@ -25,7 +23,9 @@ ActorPlayer::ActorPlayer()
 {
 	//setup defaults
 	Size = vec3(2,2,6);
-	maxLife = 200;
+	//start the user with a full charge
+	life = maxLife = 200;
+	energyPool = maxEnergyPool = 100;
     
 	//Start the player off in abouts the center
 	Position = (vec3(0,0,0));
@@ -34,9 +34,6 @@ ActorPlayer::ActorPlayer()
 	debug_target_height = 0;
     weaponCamera.SetCameraView(vec3(0,0,0), glm::vec3(0,-1,0), 1000);
     
-	//Start the user with full charge
-	energyPool = 100;
-	maxEnergyPool = 100;
 
 	pulseLaser = NULL;
 	laserCannon = NULL;
@@ -132,10 +129,7 @@ bool ActorPlayer::Update()
     
     // Update the weapon
 	currentWeapon->Update(Game()->FirstPerson->GetLookVector(), weaponPos);
-    
-    // Recharge our energy pool
-    energyPool = glm::clamp(energyPool + (energyPerSecond * (float) SIMULATION_DELTA), 0.0f, 100.0f);
-    
+        
     // The firing setting depends on the weapon
     if(currentWeapon == pulseLaser)
     {
