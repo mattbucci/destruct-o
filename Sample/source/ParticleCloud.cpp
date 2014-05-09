@@ -10,6 +10,7 @@
 #include "ActorSystem.h"
 #include "PhysicsSystem.h"
 #include "PhysicsVoxel.h"
+#include "GLVoxelColors.h"
 
 #include "TimeStepGuard.h"
 
@@ -21,21 +22,11 @@ ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics)
 	drawTracker(1.0f/60.0f*.15f,1.0f/60.0f*.65f){
 
 	//VOXEL DISINTEGRATE EVENT
-	static const vec4 materialColors[16] = {
-		vec4(.39,.761,.254,1),
-		vec4(.43,.304,.214,1),
-		vec4(80.0f/255.0f,205.0f/255.0f,210.0f/255.0f,1),
-		//No colors set for anything else, make them all brown
-		vec4(.43,.304,.214,1),
-		vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),
-		vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),
-		vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),
-	};
 	Subscribe<void(PhysicsVoxel*)>(&physics->VoxelDisintegrating,[this](PhysicsVoxel * voxel) {
 		ParticleData particlePuff = Game()->Particles.GetCached("physicsDisintegrate.vpart");
 		//disintegrate voxel
 		particlePuff.Color.ClearValues();
-		particlePuff.Color.AddValue(0,materialColors[voxel->MaterialId]);
+		particlePuff.Color.AddValue(0,vec4(GLVoxelColors::MaterialColors[voxel->MaterialId],1.0));
 		BuildParticleSystem(particlePuff, voxel->Position, Utilities::random(.3f,.5f));
 	});
 }

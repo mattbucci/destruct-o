@@ -19,16 +19,22 @@ public:
 	static const FactionId FACTION_PLAYER;
 	//AI allied to the player is on this team
 	static const FactionId FACTION_PLAYERALLY;
-	//Generic AI enemies are on this team
-	static const FactionId FACTION_ENEMY;
 	//Enemies hostile to all are on this team, or any other
 	static const FactionId FACTION_HOSTILE;
 	//The terrain (such is if you fall from a great height or a physics voxel hits you)
 	static const FactionId FACTION_EARTH;
+	//AI factions start at this and go up
+	static const FactionId FACTION_AIFACTION;
+	//The number of AI factions
+	static const int AI_FACTION_COUNT;
 	//To make an actor hostile to all other actors
 	//just randomly assign a faction id
 
 	GameFactions();
+
+	//Retrieve the color of the given faction
+	static vec4 FactionColor(FactionId faction);
+
 
 	//Check if two factions are allies
 	bool IsAlly(FactionId a, FactionId b);

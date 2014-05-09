@@ -142,6 +142,12 @@ class Savable {
 		case ReflectionData::SAVE_HANDLE:
 			LoadSpecificContainer<ContainerType,AllocaterType,void*>(valueData,value,loadData);
 			break;
+		//Note: instance saving of containers
+		//is problematic on more than one level
+		//and currently not supported
+		/*case ReflectionData::SAVE_INSTANCE:
+			loadContainerInstance(valueData,value,loadData);
+			break;*/
 		default:
 			//Illegal type in container
 			//SAVE_USEROWNEDHANDLE
@@ -224,6 +230,12 @@ class Savable {
 		case ReflectionData::SAVE_HANDLE:
 			SaveSpecificContainer<ContainerType,AllocaterType,void*>(valueData,value);
 			break;
+		//Note: instance saving of containers
+		//is problematic on more than one level
+		//and currently not supported
+		/*case ReflectionData::SAVE_INSTANCE:
+			saveContainerInstance(valueData,value);
+			break;*/
 		default:
 			//Illegal type in container
 			//SAVE_USEROWNEDHANDLE
@@ -231,6 +243,11 @@ class Savable {
 			_ASSERTE(false);
 		}
 	}
+
+	//SAVE_INSTANCE is a special case for containers
+	//which is generalized elsewhere
+	void saveContainerInstance(ReflectionData::savable valueData,Json::Value & value);
+	void loadContainerInstance(ReflectionData::savable valueData,Json::Value & value, LoadData & loadData);
 
 
 	//Handle the json deserialize after the file has already been decoded

@@ -26,6 +26,9 @@ public:
 	//If the city is populated this is the list of AI in the city
 	vector<ActorAI*> cityPopulation;
 
+	//The faction of this city
+	int cityFaction;
+
 	CLASS_DECLARATION(SavableCityData)
 		CLASS_MEMBER(cityPosition,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(cityCenterVoxel,ReflectionData::SAVE_VEC2)
@@ -34,5 +37,6 @@ public:
 		CLASS_CONTAINER_MEMBER(gunPositions,ReflectionData::SAVE_VECTOR,ReflectionData::SAVE_VEC3)
 		CLASS_CONTAINER_MEMBER(gunAlive,ReflectionData::SAVE_VECTOR,ReflectionData::SAVE_INT8)
 		CLASS_CONTAINER_MEMBER(cityPopulation,ReflectionData::SAVE_VECTOR,ReflectionData::SAVE_HANDLE)
+		CLASS_MEMBER(cityFaction,ReflectionData::SAVE_INT32)
 	END_DECLARATION
 };

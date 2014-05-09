@@ -149,7 +149,10 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 		float intensity = min(1.0f, (MINIMAP_SIZE*.5f - actorDistance - MINIMAP_DOT_SIZE*.5f) / (MINIMAP_SIZE * .064f));
 
 		//Set Color to Identify Friend/Foe
-		if(actorSystem->Factions.IsAlly(player->GetFaction(), actor->GetFaction())) {
+		//If they are one of the AI factions, indicate which
+		if (actor->GetFaction() >= actorSystem->Factions.FACTION_AIFACTION)
+			minimapDot.SetColor(actorSystem->Factions.FactionColor(actor->GetFaction()) * vec4(1,1,1,intensity * hudOpaque));
+		else if(actorSystem->Factions.IsAlly(player->GetFaction(), actor->GetFaction())) {
 			minimapDot.SetColor(vec4(0,1,0,intensity * hudOpaque));
 		} else if(actorSystem->Factions.IsEnemy(player->GetFaction(), actor->GetFaction())) {
 			minimapDot.SetColor(vec4(1,0,0,intensity * hudOpaque));

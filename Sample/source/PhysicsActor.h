@@ -42,11 +42,20 @@ protected:
 	//if you've taken any damage in the last 4 seconds this is true
 	bool BeingDamaged();
 
+	//The rate at which you regain health
+	float lifeRegenRate;
+
 	//The max health you can have
 	float maxLife;
 
 	//your life (starts at max)
 	float life;
+
+	//the rate at which you regain energy
+	float energyRegenRate;
+
+	//the max energy in this units energy pool
+	float energyPoolMax;
 
 	//The energy pool for firing a weapon
 	float energyPool;
@@ -78,6 +87,8 @@ public:
 	virtual void Damage(FactionId damagingFaction, float damage);
 
 	//Damage this actor from a particular actor
+	//this should be preferred, always use this when an actor
+	//is available
 	virtual void Damage(PhysicsActor * damagingActor, float damage);
 
 	//Get the max life of this actor

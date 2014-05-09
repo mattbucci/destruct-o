@@ -35,6 +35,7 @@ public:
 		sampleId = 0;
 		this->sampleSkip = sampleSkip;
 		arrayFilled = false;
+		lastAverage = determineZero<T>();
 	}
 
 	void AddSample(T sample) {
@@ -75,6 +76,12 @@ public:
 	void Clear() {
 		arrayFilled = false;
 		curSample = 0;
+	}
+
+	int GetSampleCount() {
+		if (!arrayFilled)
+			return curSample;
+		return samples.size();
 	}
 
 	T GetAverage() {

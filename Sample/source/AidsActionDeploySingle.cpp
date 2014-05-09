@@ -3,6 +3,7 @@
 #include "BaseFrame.h"
 
 #include "ActorPlayer.h"
+#include "ActorAids.h"
 #include "ActorAI.h"
 
 CLASS_SAVE_CONSTRUCTOR(AidsActionDeploySingle);
@@ -19,6 +20,8 @@ AidsActionDeploySingle::AidsActionDeploySingle(vec3 actionLocation, float action
 	vec3 deplyLocation = findHiddenLocation(actionLocation,3);
 	//Deploy
 	deployed = Game()->Actors.BuildAI(deplyLocation,actorToDeploy);
+	//Calculate the appropriate faction for this AI which is being deployed
+	deployed->SetFaction(Game()->Actors.Aids()->FindAIFactionOfPoint(vec2(deplyLocation)));
 }
 
 //If this returns true clean up the action
