@@ -23,6 +23,8 @@ public:
 	//Valid range: 0 (least particles) - 1 (most particles)
 	float ParticleQuality;
 
+	//Autojump 0 is off, >0 is on
+	float Autojump;
 
 	void Print();
 

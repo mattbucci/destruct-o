@@ -11,7 +11,7 @@ ActorAIBomber::ActorAIBomber() : ActorAI()  {
 	flying = true;
 	scale = 2;
 	runStarted = false;
-	turnarounddistance = 150;
+	turnarounddistance = 200;
 }
 ActorAIBomber::~ActorAIBomber() {
 

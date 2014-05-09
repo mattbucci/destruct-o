@@ -254,7 +254,7 @@ bool ActorAI::pathTowardsGoal(vec2 goal) {
 	//No enemy found
 	//Check how close you are
 	if (glm::distance(goal,vec2(Position)) < 2) {
-		//Well you're hear and there's no enemy
+		//Well you're here and there's no enemy
 		//back to the drawing board
 		targetEnemy = NULL;
 		state = AI_SCANNING;

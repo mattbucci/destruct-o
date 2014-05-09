@@ -17,8 +17,8 @@ void PauseWindow::AddSliderOption(int sliderNumber, string sliderName, vector<fl
 	//Option View Distance
 	sliderLabel->vPin = slider->vPin = Control::MIN;
 	sliderLabel->hPin = slider->hPin = Control::CENTER;
-	sliderLabel->position = Rect(0, 50 + 80 * sliderNumber, 300, 20);
-	slider->SetPosition(Rect(0, 80 + 80 * sliderNumber, 300, 40));
+	sliderLabel->position = Rect(0, 50 + 65 * sliderNumber, 300, 20);
+	slider->SetPosition(Rect(0, 80 + 65 * sliderNumber, 300, 25));
 	sliderLabel->SetText(sliderName);
 	slider->SetValue(appliesTo);
 	optsRect.AddControl(sliderLabel);
@@ -148,6 +148,18 @@ PauseWindow::PauseWindow()
 	AddSliderOption(2,"Physics",basicOptionsVector,&VoxEngine::GlobalSavedData.GameOptions.PhysicsAccuracy);
 	//Particles
 	AddSliderOption(3,"Particles",basicOptionsVector,&VoxEngine::GlobalSavedData.GameOptions.ParticleQuality);
+
+#ifndef __MOBILE__
+    // jumping
+    floatOption jumpOptions[] =
+    {
+        floatOption("Off", 0.00),
+        floatOption("On", 2.00),
+    };
+	vector<floatOption> jumpOptionsVector(jumpOptions, jumpOptions + (sizeof(jumpOptions) / sizeof(jumpOptions[0])));
+	AddSliderOption(4,"Jumping",jumpOptionsVector,&VoxEngine::GlobalSavedData.GameOptions.Autojump);
+#endif
+
 }
 
 
