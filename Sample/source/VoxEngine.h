@@ -9,12 +9,18 @@
 #include "SyncTask.h"
 #include "GameEvent.h"
 #include "MovingAverage.h"
+#include "LoadInProgess.h"
 
-#undef SDL_PumpEvents
+/*
+//Why was this ever here?
+//it may have been necessary for android
+//so I'm going to leave it for the second
+#undef SDL_PumpEvents 
 #undef SDL_PollEvents
 
 #define SDL_PumpEvents()
 #define SDL_PollEvents
+*/
 
 // Callback on iOS to set the render flag
 void iOSAnimationCallback(void *context);
@@ -129,6 +135,9 @@ public:
 	static MovingAverage<float> DrawTime;
 	static MovingAverage<float> UpdateTime;
 
+	//Can be used by everything/anything to indicate the progress of a load
+	//when used outside of a load has no harmful effects
+	static LoadInProgress LoadProgress;
     
     // state changed changed event
     static GameEvent<void (bool)> ApplicationStateChanged;

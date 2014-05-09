@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "Utilities.h"
+#include "Particle.h"
 
 class GLParticleProgram;
 

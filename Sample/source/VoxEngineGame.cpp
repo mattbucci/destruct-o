@@ -111,6 +111,8 @@ void VoxEngine::RenderLoop() {
     // If we have a task needing completed (mostly frame switched)
     if (VoxEngine::task != NULL) {
 		if (!VoxEngine::task->IsStarted()) {
+			//Clear progress
+			LoadProgress.Update("");
 			//Start the task
 			VoxEngine::task->Start();
 
@@ -125,8 +127,9 @@ void VoxEngine::RenderLoop() {
 					//Assume one of the frames constructed the 2d shader
 					GL2DProgram * shader = (GL2DProgram*)Frames::shaders->GetShader("2d");
 					// Draw the loading screen
+					glClearColor(33.0f/255*.6f,196.0/255*.6f,0,1.0f);
 					glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-					load->Draw(curWidth,curHeight,shader);
+					load->Draw(scaledSize.x,scaledSize.y,shader);
 					//Draw the frame
 					PostFrame();
 				}
@@ -134,6 +137,20 @@ void VoxEngine::RenderLoop() {
 				//If there's a sync task, execute it now
 				SynchronousTask.PollingThreadPoll();
 
+				//Run events, process resize events still
+				//ignore all else
+				for (int i = 0; i < 20; i++) {
+					//Poll for events
+					SDL_Event event;
+					int eventPolled = SDL_PollEvent(&event);
+					if (eventPolled && (event.type == SDL_WINDOWEVENT) && (event.window.event == SDL_WINDOWEVENT_RESIZED)) {
+						//process resize
+						curWidth = event.window.data1;
+						curHeight = event.window.data2;
+						glViewport(0,0,curWidth,curHeight);
+						ResizeWindow();
+					}
+				}
 				//Sleep softly and use no cpu power
 				OS::SleepTime(1.0/60.0);
 			}

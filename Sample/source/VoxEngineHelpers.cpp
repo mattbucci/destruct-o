@@ -14,6 +14,7 @@
 bool VoxEngine::renderingIsSafe = true;
 bool VoxEngine::iOSRenderRequested = false;
 double VoxEngine::iOSRenderTime = 0.0;
+LoadInProgress VoxEngine::LoadProgress;
 
 LoadingScreen * VoxEngine::load;
 

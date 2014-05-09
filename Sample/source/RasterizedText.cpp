@@ -17,6 +17,7 @@ RasterizedText::RasterizedText(string text, Font * font, vec4 color) : GL2DVerte
 RasterizedText::RasterizedText() : GL2DVertexGroup(GL_TRIANGLE_STRIP,4) {
 	text = "";
 	this->textureId = 0;
+	this->font = NULL;
 }
 //For copying
 RasterizedText::RasterizedText(const RasterizedText & original) : GL2DVertexGroup(GL_TRIANGLE_STRIP,4) {

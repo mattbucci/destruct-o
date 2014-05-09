@@ -5,7 +5,7 @@
 #include "lodepng.h"
 #include "base64.h"
 #include "Utilities.h"
-
+#include "VoxEngine.h"
 
 
 TileHandler::~TileHandler(void)
@@ -272,13 +272,23 @@ GameTile * TileHandler::getTile(vec2i pos) {
 }
 
 //Generates all the tiles in the given radius synchronously
+//This is used exclusively in the world build right now
+
 void TileHandler::UpdateSync(vec2 pos, int radius) {
 	//First predict all the tiles
 	Update(pos,radius);
+	//A size call (should?) be safe without the lock
+	int originalSize = genQueue.size();
+
 	//Next sleep until the gen queue is empty
 	while (1) {
 		//Obtain Lock on World Set
 		unique_lock<mutex> worldLck(worldMtx);
+
+		//Update the load screen
+		//if no load screen open, does nothing
+		VoxEngine::LoadProgress.Update("Building tiles",originalSize-genQueue.size(),originalSize);
+
 		//Wait for a tile to finish, and then check if all the tiles are done
 		//Ensure Generator is Running (We aren't waiting for nothing!)
 		genCv.notify_all();

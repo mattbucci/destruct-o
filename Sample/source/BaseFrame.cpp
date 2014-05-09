@@ -145,9 +145,11 @@ void BaseFrame::OnFrameLeave() {
 }
 
 void BaseFrame::NewWorld() {
+	VoxEngine::LoadProgress.Update("Setting up game");
 	//Load the reset save
 	Savable::Deserialize(resetSave,this);
 	//Build a brave new world or some shit
+	VoxEngine::LoadProgress.Update("Building a world");
 	Voxels.NewWorld(rand());
 	// Build player stuff
     Actors.Player()->Build();
@@ -157,15 +159,20 @@ void BaseFrame::Build()
 {
     // Load the model group from the manifest
     cout << "Loading models\n";
+
+	VoxEngine::LoadProgress.Update("Loading models");
     models = new ModelGroup("meshes/manifest.json", Textures);
     
 	//Attempt to load particles
+	VoxEngine::LoadProgress.Update("Loading particles");
 	Particles.Load();
 
 	//Load actors and weapons
+	VoxEngine::LoadProgress.Update("Loading enemies");
 	Actors.Load();
 
 	cout << "Loading audio\n";
+	VoxEngine::LoadProgress.Update("Loading audio");
 	audio = new AudioPlayer(100);
     Actors.Player()->Build();
     GameStarted.Fire([this](function<void(BaseFrame*)> subscriber) {
@@ -202,6 +209,7 @@ void BaseFrame::Build()
     });
     
 	//Build the reset save
+	VoxEngine::LoadProgress.Update("finalizing...");
 	resetSave = Savable::Serialize(this);
 
 	cout << "Finished BaseFrame::Build()\n";
