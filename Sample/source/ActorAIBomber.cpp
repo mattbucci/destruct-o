@@ -19,13 +19,14 @@ ActorAIBomber::~ActorAIBomber() {
 
 //Path until you're in range of the bomb run
 void ActorAIBomber::stateEngaging(bool & holdingTrigger) {
+	//check you've got an enemy
+	if (targetEnemy == NULL) {
+		state = AI_SCANNING;
+		return;
+	}
+
 	if (!runStarted) {
 		//Plan the bombing run
-		//check you've got an enemy
-		if (targetEnemy == NULL) {
-			state = AI_SCANNING;
-			return;
-		}
 		//Set the run goal
 		vec2 goal = vec2(targetEnemy->GetPosition());
 		//Pick a point past that

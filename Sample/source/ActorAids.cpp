@@ -36,10 +36,10 @@ ActorAids::ActorAids() :
 	spawnedNasties = false;
 
 	//Register possible actions
-	//actionList[COST_DEPLOY_SOLDIER] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_SOLDIER,"soldier.json");};
-	//actionList[COST_DEPLOY_MECH] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_MECH,"mech.json");};
-	//actionList[COST_DEPLOY_HELI] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_HELI,"heli.json");};
-	//actionList[COST_DEPLOY_BOMBER] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_BOMBER,"bomber.json");};
+	actionList[COST_DEPLOY_SOLDIER] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_SOLDIER,"soldier.json");};
+	actionList[COST_DEPLOY_MECH] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_MECH,"mech.json");};
+	actionList[COST_DEPLOY_HELI] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_HELI,"heli.json");};
+	actionList[COST_DEPLOY_BOMBER] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_BOMBER,"bomber.json");};
 	actionList[COST_DEPLOY_ROCKETMECH] = [](vec3 pos) {return new AidsActionDeploySingle(pos,COST_DEPLOY_ROCKETMECH,"rocketmech.json");};
 
 	//Random offset for the intensity
@@ -137,8 +137,9 @@ bool ActorAids::Update() {
 	//Update cities
 	populateCities();
 
-	if (spawnedNasties)
-		return Actor::Update();
+	//Used to force AIDS to only spawn one enemy during testing
+	//if (spawnedNasties)
+	//	return Actor::Update();
 
 	//Calculate the target intensity using magic
 	//Use game time as a modifier
