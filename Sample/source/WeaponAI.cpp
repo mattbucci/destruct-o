@@ -4,7 +4,12 @@
 
 //Whether or not the weapon should repeat firing automatically
 bool WeaponAI::RepeatFireAutomatically() {
+#ifndef __MOBILE__
     return data->RepeatFireAutomatically;
+#else
+	//All mobile weapons repeat fire automatically
+	return true;
+#endif
 }
 //The amount of charge it takes to fire the weapon
 float WeaponAI::WeaponChargeRequired() {

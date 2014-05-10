@@ -210,8 +210,8 @@ int EventFilter(void *context, SDL_Event *event)
             {
                 subscriber(VoxEngine::renderingIsSafe);
             });
+			cout << "ENTERING BACKGROUND SAFTLEY?\n";
             return 0;
-            break;
             
         // If the application has resumed, it is again safe to render
         case SDL_APP_DIDENTERFOREGROUND:
@@ -221,7 +221,6 @@ int EventFilter(void *context, SDL_Event *event)
                 subscriber(VoxEngine::renderingIsSafe);
             });
             return 0;
-            break;
 #endif
         default:
             break;

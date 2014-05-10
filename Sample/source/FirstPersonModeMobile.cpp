@@ -16,17 +16,20 @@
 
 #include "stdafx.h"
 #include "FirstPersonModeMobile.h"
+#include "OS.h"
 
 // Provide constructor inheriting from base mode
 FirstPersonModeMobile::FirstPersonModeMobile() : FirstPersonMode(),
 	joystickNub(Rect(-75,-75,150,150),"Interface/UI/joystick.nub.png"),
-	joystickOutline(Rect(-125,-125,250,250),"Interface/UI/joystick.outline.png")
+	joystickOutline(Rect(-125,-125,250,250),"Interface/UI/joystick.outline.png"),
+	shootIco(Rect(-50,-50,100,100),"Interface/UI/shootico.png")
 {
     // Initialize finger state
     fingerLookActive = false;
     fingerJoystickActive = false;
     moveVector = vec2(0, 0);
     fingerJoystickCurrentLocation = vec2(0, 0);
+	lastShootIcoUpdate= 0;
 }
 
 //
@@ -69,6 +72,12 @@ void FirstPersonModeMobile::ReadInput(const set<Sint64> & pressedKeys, vector<In
             // If not possible for the joystick, use for looking?
             else if(!fingerLookActive)
             {
+				//Check if they're over the weapon icon
+				if (e.MouseX > (screenDimensions.x - 250.0f) && e.MouseY > (screenDimensions.y - 250.0f)) {
+					triggerPulled = true;
+					lastShootIcoUpdate = OS::Now();
+				}
+
                 // Store the finger which is controlling looking
                 fingerLook = e.Key;
                 
@@ -133,6 +142,12 @@ void FirstPersonModeMobile::ReadInput(const set<Sint64> & pressedKeys, vector<In
                 // Update cumulative look delta
                 mouseDeltaSum -= delta;
                 
+				//Move the shoot icon over the location pressed
+				if (triggerPulled) {
+					shootIcoLocation = location;
+					lastShootIcoUpdate = OS::Now();
+				}
+
                 // Update previous location
                 fingerLookPreviousLocation = location;
             }
@@ -155,7 +170,7 @@ void FirstPersonModeMobile::ReadInput(const set<Sint64> & pressedKeys, vector<In
             }
             
             // Since the finger moved, remove it from jump source consideration
-            std::map<SDL_FingerID, double>::iterator it = possibleJumpSources.find(e.Key);
+            auto it = possibleJumpSources.find(e.Key);
             if(it != possibleJumpSources.end())
             {
                 // Remove from jump source consideration
@@ -168,6 +183,14 @@ void FirstPersonModeMobile::ReadInput(const set<Sint64> & pressedKeys, vector<In
                 // not found
             }
         }
+		else if (e.Event == InputEvent::KeyboardDown) {
+			//If they pressed the back button
+			//a pause is requested
+			//this is how the android hardware back button is used
+			if (e.Key == SDLK_AC_BACK)
+				pauseRequestedEvent = true;
+	
+		}
 	}
     
 	// Now use the current mouse delta to build an aggregate
@@ -191,6 +214,12 @@ void FirstPersonModeMobile::ReadInput(const set<Sint64> & pressedKeys, vector<In
     {
         moveVector = glm::normalize(moveVector);
     }
+
+	if (lastShootIcoUpdate+.1 < OS::Now())
+	{
+		triggerPulled = false;
+		shootIcoLocation = screenDimensions - vec2(180,180);
+	}
 }
 
 // Override standard drawing function
@@ -224,6 +253,19 @@ void FirstPersonModeMobile::Draw(double width, double height, GL2DProgram * shad
     
     // Draw the joystick texture
 	joystickNub.Draw(shader);
+    
+    // Pop the translation matrix
+    shader->Model.PopMatrix();
+
+    // Push a translation matrix
+	shader->Model.PushMatrix();
+    shader->Model.Translate(vec3(shootIcoLocation,0));
+    
+    // Apply the matrix
+	shader->Model.Apply();
+    
+    // Draw the joystick texture
+	shootIco.Draw(shader);
     
     // Pop the translation matrix
     shader->Model.PopMatrix();

@@ -57,6 +57,9 @@ protected:
     
 	TexturedRect joystickOutline;
 	TexturedRect joystickNub;
+	TexturedRect shootIco;
+	vec2 shootIcoLocation;
+	double lastShootIcoUpdate;
     
 public:
 	FirstPersonModeMobile();

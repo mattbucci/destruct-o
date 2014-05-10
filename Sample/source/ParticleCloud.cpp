@@ -17,7 +17,7 @@
 #ifdef __MOBILE__
 //Only uncomment this as a very last resort to get mobile
 //working
-//#define NO_PARTICLES_AT_ALL
+#define NO_PARTICLES_AT_ALL
 #endif
 //If they've disabled particles, disable them
 #ifdef NO_PARTICLES_AT_ALL

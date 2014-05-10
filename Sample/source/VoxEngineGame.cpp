@@ -89,7 +89,15 @@ void VoxEngine::StartRenderLoop() {
 	//Android calls RenderLoop() externally
 #ifndef __ANDROID__
 	while (continueGameLoop) {
+		//Render/Update for one frame
 		RenderLoop();
+
+		//While rendering isn't safe, sleep and pump events
+		//also checks if any event is going to wake you up
+		while (!renderingIsSafe) {
+			SDL_PumpEvents();
+			OS::SleepTime(1.0/60.0);
+		}
 	}
 #endif
 }
@@ -244,12 +252,12 @@ bool VoxEngine::WaitForSafeRender()
     // Process events
     SDL_PumpEvents();
     
-    // Loop if rendering is not safe
-    while(!renderingIsSafe)
+    // If rendering isn't safe, don't do it
+    if(!renderingIsSafe)
     {
         // Wait a frame and pump events
-        SDL_PumpEvents();
         OS::SleepTime(1.0/60.0);
+		return false;
     }
 
 #ifdef __IPHONEOS__

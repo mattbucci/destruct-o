@@ -9,6 +9,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -17,6 +18,13 @@ public class ClearActivity extends Activity {
 		SDLActivity.mSingleton = this;
 	}
 	
+	@Override
+	public void onBackPressed() {
+		//We only care about the back button
+		//button codes listed on line 42 of SDL_androidkeyboard.c
+		SDLActivity.onNativeKeyDown(4);
+		SDLActivity.onNativeKeyUp(4);
+	}
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
