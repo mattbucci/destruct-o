@@ -121,6 +121,9 @@ void Savable::SaveValue(ReflectionData::savable valueData,Json::Value & value) {
 	case ReflectionData::SAVE_CONTIGOUSLIST:
 		SaveContainerValue<ContiguousList,__listdummyallocator>(valueData,value);
 		return;
+	case ReflectionData::SAVE_UNSAVABLEHANDLE:
+		//not saved
+		break;
 	default:
 		_ASSERTE(false);
 	}
@@ -234,7 +237,10 @@ void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, L
 			*(void**)valueData.member = nullptr;
 		return;
 	}
-
+	case ReflectionData::SAVE_UNSAVABLEHANDLE:
+		//Just set it NULL
+		*(void**)valueData.member = nullptr;
+		break;
 	case ReflectionData::SAVE_INSTANCE: {
 		uint64_t loadedValue;
 		loadedValue = value["__HANDLE__"].asUInt64();

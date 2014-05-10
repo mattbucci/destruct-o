@@ -139,6 +139,7 @@ class Savable {
 		case ReflectionData::SAVE_OWNEDHANDLE:
 			LoadSpecificOwnedHandleContainer<ContainerType,AllocaterType,void*>(valueData,value,loadData);
 			break;
+		case ReflectionData::SAVE_UNSAVABLEHANDLE:
 		case ReflectionData::SAVE_HANDLE:
 			LoadSpecificContainer<ContainerType,AllocaterType,void*>(valueData,value,loadData);
 			break;
@@ -225,6 +226,7 @@ class Savable {
 			SaveSpecificContainer<ContainerType,AllocaterType,string>(valueData,value);
 			break;
 		//This is actually unsafe but I doubt it'll break anything
+		case ReflectionData::SAVE_UNSAVABLEHANDLE:
 		case ReflectionData::SAVE_OWNEDHANDLEAR:
 		case ReflectionData::SAVE_OWNEDHANDLE:
 		case ReflectionData::SAVE_HANDLE:

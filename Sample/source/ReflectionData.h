@@ -45,6 +45,10 @@ namespace ReflectionData {
 		SAVE_USEROWNEDHANDLE,
 		//Save an instance of something savable, (not a pointer)
 		SAVE_INSTANCE,
+		//A handle which is lost on save/load
+		//and is just reset to NULL on load
+		//(original contents aren't deleted)
+		SAVE_UNSAVABLEHANDLE,
 		SAVE_LIST,
 		SAVE_VECTOR,
 		SAVE_CONTIGOUSLIST,
