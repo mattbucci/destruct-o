@@ -124,6 +124,12 @@ class ClearRenderer implements GLSurfaceView.Renderer {
 	
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
     	Log.v("_SDL", "onSurfaceCreated");
+    	if (ranOnce) {
+    		//Right now there's no way to reinitialize the opengl context without trashing global state
+    		//so we're going to have to restart the app entirely and then do something fancy to try and bring
+    		//the user exactly back to where they were
+    		Log.v("_SDL", "Attempting to app restart, this will probably not work");
+    	}
     	ranOnce = false;
 
     }

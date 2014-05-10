@@ -38,6 +38,7 @@
 class FirstPersonModeMobile : public FirstPersonMode
 {
 protected:
+	bool sprinting;
     // Current finger controlling looking
     SDL_FingerID fingerLook;
     bool         fingerLookActive;

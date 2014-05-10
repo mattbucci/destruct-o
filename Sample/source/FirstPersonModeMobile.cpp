@@ -30,6 +30,8 @@ FirstPersonModeMobile::FirstPersonModeMobile() : FirstPersonMode(),
     moveVector = vec2(0, 0);
     fingerJoystickCurrentLocation = vec2(0, 0);
 	lastShootIcoUpdate= 0;
+
+	sprinting = false;
 }
 
 //
@@ -166,7 +168,9 @@ void FirstPersonModeMobile::ReadInput(const set<Sint64> & pressedKeys, vector<In
                 position = position / 100.0f;
                 
                 // Set the move vector
-                moveVector = vec2(-position.y, -position.x);
+                moveVector = vec2(-position.y,-position.x);
+				//If they've moved the joystick significantly, allow sprinting
+				sprinting = glm::length(moveVector) > .65f;
             }
             
             // Since the finger moved, remove it from jump source consideration
@@ -210,9 +214,9 @@ void FirstPersonModeMobile::ReadInput(const set<Sint64> & pressedKeys, vector<In
 	lookVector = glm::normalize(lookVector); //IIRC this isn't necessary
     
     // If the move vector is non zero, normalize
-    if(moveVector.x > 0 || moveVector.y > 0)
+    if(moveVector != vec2())
     {
-        moveVector = glm::normalize(moveVector);
+        moveVector = glm::normalize(moveVector)*(sprinting ? 2.0f : 1.0f);
     }
 
 	if (lastShootIcoUpdate+.1 < OS::Now())
