@@ -18,96 +18,23 @@
 #include "FirstPersonModeMobile.h"
 
 // Provide constructor inheriting from base mode
-FirstPersonModeMobile::FirstPersonModeMobile() : FirstPersonMode()
+FirstPersonModeMobile::FirstPersonModeMobile() : FirstPersonMode(),
+	joystickNub(Rect(-75,-75,150,150),"Interface/UI/joystick.nub.png"),
+	joystickOutline(Rect(-125,-125,250,250),"Interface/UI/joystick.outline.png")
 {
     // Initialize finger state
     fingerLookActive = false;
     fingerJoystickActive = false;
     moveVector = vec2(0, 0);
     fingerJoystickCurrentLocation = vec2(0, 0);
-    
-    // Setup the verticies for the joystick texture
-    joystickVertices = new GL2DVertexGroup(GL_TRIANGLE_STRIP, 4);
-    joystickOutlineVertices = new GL2DVertexGroup(GL_TRIANGLE_STRIP, 4);
-    
-    // Push verticies and texcoords for joystick outline
-    const float joystick_x = 150.f;
-    const float joystick_y = 150.f;
-    joystickVertices->svat(0,vec2(-joystick_x/2, -joystick_y/2));
-    joystickVertices->svat(1,vec2(-joystick_x/2, joystick_y/2));
-    joystickVertices->svat(2,vec2(joystick_x/2, -joystick_y/2));
-    joystickVertices->svat(3,vec2(joystick_x/2, joystick_y/2));
-    joystickVertices->sxat(0,vec2(0, 0));
-    joystickVertices->sxat(1,vec2(0, 1));
-    joystickVertices->sxat(2,vec2(1, 0));
-    joystickVertices->sxat(3,vec2(1, 1));
-    
-    // Push vertices and texcoords for joystick outline
-    const float joystickOutline_x = 250.f;
-    const float joystickOutline_y = 250.f;
-    joystickOutlineVertices->svat(0,vec2(-joystickOutline_x/2, -joystickOutline_y/2));
-    joystickOutlineVertices->svat(1,vec2(-joystickOutline_x/2, joystickOutline_y/2));
-    joystickOutlineVertices->svat(2,vec2(joystickOutline_x/2, -joystickOutline_y/2));
-    joystickOutlineVertices->svat(3,vec2(joystickOutline_x/2, joystickOutline_y/2));
-    joystickOutlineVertices->sxat(0,vec2(0, 0));
-    joystickOutlineVertices->sxat(1,vec2(0, 1));
-    joystickOutlineVertices->sxat(2,vec2(1, 0));
-    joystickOutlineVertices->sxat(3,vec2(1, 1));
-    
-    // Load textures from disk
-	unsigned int textureWidth, textureHeight;
-	vector<unsigned char> image;
-	unsigned error = lodepng::decode(image,textureWidth,textureHeight,"Interface/UI/joystick.nub.png");
-    if(error)
-    {
-        SDL_Log("Joystick Nub Texture - Lodepng error (%u) - %s", error, lodepng_error_text(error));
-    }
-    
-    // Generate the texture object for the joystick
-    glGenTextures(1, &joystickTexture);
-	glBindTexture(GL_TEXTURE_2D, joystickTexture);
-    
-	//Is actually stored in  GL_BGRA but that can't be loaded in opengl es apparently
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0] );
-    
-    // Texture parameters (filters, non-power of two, etc.)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    
-    // Load the joystick outline image
-    image.clear();
-    error = lodepng::decode(image,textureWidth,textureHeight,"Interface/UI/joystick.outline.png");
-    if(error)
-    {
-        SDL_Log("Joystick Outline Texture - Lodepng error (%u) - %s", error, lodepng_error_text(error));
-    }
-    
-    // Generate the texture object for the joystick
-    glGenTextures(1, &joystickOutlineTexture);
-	glBindTexture(GL_TEXTURE_2D, joystickOutlineTexture);
-    
-	//Is actually stored in  GL_BGRA but that can't be loaded in opengl es apparently
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0] );
-    
-    // Texture parameters (filters, non-power of two, etc.)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
+
+//
+//
 
 // Provide destructor
 FirstPersonModeMobile::~FirstPersonModeMobile()
 {
-    // Delete the joystick textures
-    glDeleteTextures(1, &joystickTexture);
-    glDeleteTextures(1, &joystickOutlineTexture);
-
-    // Delete vertex group
-    delete joystickVertices;
-    delete joystickOutlineVertices;
 }
 
 // Override standard read input to use touch controls
@@ -274,13 +201,7 @@ void FirstPersonModeMobile::Draw(double width, double height, GL2DProgram * shad
     
     // Enable textures for this shader
 	shader->EnableTexture(true);
-    
-    // Active the first texture unit
-	glActiveTexture (GL_TEXTURE0);
-    
-    // Bind the outline texture
-	glBindTexture(GL_TEXTURE_2D, joystickOutlineTexture);
-	
+    	
     // Push a translation matrix
 	shader->Model.PushMatrix();
     shader->Model.Translate(160, (float)height - 160, 0);
@@ -289,13 +210,10 @@ void FirstPersonModeMobile::Draw(double width, double height, GL2DProgram * shad
 	shader->Model.Apply();
     
     // Draw the joystick outline
-	joystickOutlineVertices->Draw(shader);
+	joystickOutline.Draw(shader);
     
     // Pop the translation matrix
     shader->Model.PopMatrix();
-    
-    // Bind the joystick texture
-	glBindTexture(GL_TEXTURE_2D, joystickTexture);
 	
     // Push a translation matrix
 	shader->Model.PushMatrix();
@@ -305,7 +223,7 @@ void FirstPersonModeMobile::Draw(double width, double height, GL2DProgram * shad
 	shader->Model.Apply();
     
     // Draw the joystick texture
-	joystickVertices->Draw(shader);
+	joystickNub.Draw(shader);
     
     // Pop the translation matrix
     shader->Model.PopMatrix();

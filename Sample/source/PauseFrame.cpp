@@ -8,6 +8,8 @@
 
 #include "PauseWindow.h"
 #include "PauseWindowMobile.h"
+#include "FirstPersonMode.h"
+
 
 
 PauseFrame::PauseFrame(ShaderGroup * shaders)

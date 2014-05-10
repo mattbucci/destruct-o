@@ -4,6 +4,7 @@
 #include "BaseFrame.h"
 #include "ActorPlayer.h"
 #include "VoxEngine.h"
+#include "FirstPersonMode.h"
 
 #define MINIMAP_SIZE 200
 #define MINIMAP_DOT_SIZE 20

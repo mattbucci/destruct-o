@@ -26,6 +26,9 @@
 #include "Building.h"
 #include "ModelGroup.h"
 
+#include "FirstPersonModeMobile.h"
+#include "FirstPersonMode.h"
+
 #include "GLTextureCubeMap.h"
 #include "GLSkydome.h"
 #include "Audio.h"

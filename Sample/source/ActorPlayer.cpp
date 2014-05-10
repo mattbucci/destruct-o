@@ -10,6 +10,7 @@
 #include "Model.h"
 
 #include "VoxEngine.h"
+#include "FirstPersonMode.h"
 
 
 CLASS_SAVE_CONSTRUCTOR(ActorPlayer);

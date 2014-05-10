@@ -14,6 +14,18 @@
 
 #include "TimeStepGuard.h"
 
+#ifdef __MOBILE__
+//Only uncomment this as a very last resort to get mobile
+//working
+//#define NO_PARTICLES_AT_ALL
+#endif
+//If they've disabled particles, disable them
+#ifdef NO_PARTICLES_AT_ALL
+#define MOBILE_ESCAPE() return;
+#else
+#define MOBILE_ESCAPE()
+#endif
+
 //Register particle events
 ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics)
 	: Autocacher("particles/","particlemanifest.json"),
@@ -69,6 +81,8 @@ void ParticleCloud::UpdateCloud() {
 	//carefully control performance
 	enactRecommendation(updateTracker.GetRecommendation(),true);
 
+	MOBILE_ESCAPE();
+
 	//First update each particle
 	for (auto it = particles.begin(); it != particles.end(); ) {
 		ParticleSystem * current = *it;
@@ -107,6 +121,8 @@ void ParticleCloud::Draw(ShaderGroup * shaders) {
 	TimeStepGuard guard(&drawTracker);
 	//carefully control performance
 	enactRecommendation(drawTracker.GetRecommendation(),false);
+
+	MOBILE_ESCAPE();
 
 	GL3DProgram * shader3d = (GL3DProgram *)shaders->GetShader("3d");
 	GLParticleProgram * shaderParticles = (GLParticleProgram*)shaders->GetShader("particles");

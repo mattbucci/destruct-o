@@ -6,8 +6,6 @@
 #include "VoxelSystem.h"
 #include "GameCamera.h"
 #include "ActorSystem.h"
-#include "FirstPersonModeMobile.h"
-#include "FirstPersonMode.h"
 #include "PhysicsSystem.h"
 #include "ParticleCloud.h"
 #include "Notification.h"
@@ -21,7 +19,7 @@ class ActorPlayer;
 class ParticleSystem;
 class ModelGroup;
 class AudioPlayer;
-
+class FirstPerson;
 class GLSkydome;
 
 //Retrieve base frame

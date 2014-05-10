@@ -504,7 +504,7 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 
 	shader->Model.PopMatrix();
 
-
+	/*
 	//FOR DEBUG
 	//DRAW ACTOR EXTENTS
 	glDepthMask(GL_FALSE);
@@ -535,6 +535,7 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 	}
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
+	//*/
 }
 
 ContiguousList<PhysicsActor*>* PhysicsSystem::GetActors() {

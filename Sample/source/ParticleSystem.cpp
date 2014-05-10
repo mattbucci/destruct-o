@@ -10,6 +10,8 @@
 #include "GLParticleProgram.h"
 #include "VoxEngine.h"
 
+
+
 ParticleSystem::ParticleSystem(ParticleData particleSystemDescription,double now, double lifetime) {
 	this->particleSystemDescription = particleSystemDescription;
 	this->creationTime = now;
