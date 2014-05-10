@@ -7,6 +7,9 @@
 class GameData : public Savable {
 public:
 
+	void Save();
+	void Load();
+
 	Options GameOptions;
 
 	CLASS_DECLARATION(Options)

@@ -6,13 +6,13 @@
 // Only include this file on non apple platforms
 #if !(defined __IPHONEOS__) && !(defined __APPLE__)
 
-#if !(defined __ANDROID__)
+#ifndef __ANDROID__
 
 // Return a save file directory
-std::string OS::SaveDirectory()
+string OS::SaveDirectory()
 {
     // Find the magical save directoy
-    std::string saveDir = "./";
+    static string saveDir = string(getenv("APPDATA")) + "\\";
     
     // Return the magical save directory
     return saveDir;
@@ -21,10 +21,10 @@ std::string OS::SaveDirectory()
 #else
 
 // Return a save file directory
-std::string OS::SaveDirectory()
+string OS::SaveDirectory()
 {
     // Find the magical save directoy
-    std::string saveDir = "/mnt/sdcard/";
+    static string saveDir = "/mnt/sdcard/";
     
     // Return the magical save directory
     return saveDir;

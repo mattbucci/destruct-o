@@ -168,7 +168,7 @@ public: \
 	pairtypename(typea _first, typeb _second) : first(_first), second(_second) {} \
 	typea first; \
 	typeb second; \
-	CLASS_DECLARATION(SAVABLE_PAIR_TYPE(typea,typeb))	\
+	CLASS_DECLARATION(pairtypename)	\
 		CLASS_MEMBER(first,savetypea) \
 		CLASS_MEMBER(second,savetypeb) \
 	END_DECLARATION \

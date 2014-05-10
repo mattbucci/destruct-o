@@ -11,17 +11,6 @@
 #include "MovingAverage.h"
 #include "LoadInProgess.h"
 
-/*
-//Why was this ever here?
-//it may have been necessary for android
-//so I'm going to leave it for the second
-#undef SDL_PumpEvents 
-#undef SDL_PollEvents
-
-#define SDL_PumpEvents()
-#define SDL_PollEvents
-*/
-
 // Callback on iOS to set the render flag
 void iOSAnimationCallback(void *context);
 

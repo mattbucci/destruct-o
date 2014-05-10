@@ -32,6 +32,8 @@ public:
 		CLASS_MEMBER(HUDTransparency,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(ViewDistance,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(PhysicsAccuracy,ReflectionData::SAVE_FLOAT)
+		CLASS_MEMBER(ParticleQuality,ReflectionData::SAVE_FLOAT)
+		CLASS_MEMBER(Autojump,ReflectionData::SAVE_FLOAT)
 	END_DECLARATION
 };
 

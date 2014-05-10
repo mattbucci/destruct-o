@@ -172,6 +172,8 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 					case SDL_QUIT:
 						//Stops the next iteration of the game loop
 						continueGameLoop = false;
+						//Save things now
+						VoxEngine::GlobalSavedData.Save();
 						break;
 				}
 			}

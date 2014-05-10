@@ -364,7 +364,7 @@ ModelGroup* BaseFrame::Models()
 }
 
 string BaseFrame::GetSaveLocation() {
-	return OS::SaveDirectory() + "Saves/" + saveName + "/";
+	return OS::SaveDirectory() + "Destructo_Saves/" + saveName + "/";
 }
 
 //Retrieve the game object
