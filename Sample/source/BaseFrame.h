@@ -56,6 +56,9 @@ class BaseFrame : public GameSystem {
 		//this will be moved to a more powerful game logic system in the future
 		shader->Acid.SetAcidFactor(0);
 	}
+	//Should be unique per-save
+	string saveName;
+
 	//Access to the singleton
 	friend BaseFrame * Game();
 protected:
@@ -65,9 +68,6 @@ protected:
 public:
 	BaseFrame(ShaderGroup * shaders);
 	~BaseFrame();
-
-	//Should be unique per-save
-	string SaveName;
 
 	//Get the save path to the particular save folder
 	string GetSaveLocation();
@@ -119,11 +119,11 @@ public:
     
     //synchronously saves the game
 	//returns true if successful
-	bool Save(string saveFile);
+	bool Save();
     
 	//synchronously loads the game over any existing data
 	//returns true if successful
-	bool Load(string saveFile);
+	bool Load(string saveName);
 
 	//Draw happens whenever possible
 	void Draw(double width, double height) override;
@@ -148,5 +148,6 @@ public:
 		CLASS_MEMBER(Physics,ReflectionData::SAVE_INSTANCE)
 		CLASS_MEMBER(Actors,ReflectionData::SAVE_INSTANCE)
 		CLASS_MEMBER(Voxels,ReflectionData::SAVE_INSTANCE)
+		CLASS_MEMBER(saveName,ReflectionData::SAVE_STRING)
 	END_DECLARATION
 };

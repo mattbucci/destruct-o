@@ -100,6 +100,8 @@ void TileHandler::handlerLoop() {
 			if (now >= tile->UseByDate) {
 				_ASSERTE(tile->Cells != NULL);
 				vec2i tilePos = vec2i(tile->tile_x,tile->tile_y);
+				//Create relevant directories
+				OS::BuildPath(saveDirectory());
 				//Cache to disk
 				tile->SaveTile(saveDirectory() + tileName(tilePos));
 

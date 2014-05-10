@@ -62,7 +62,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
     skydome = new GLSkydome("skybox/skybox", Textures);
     
 	//Not a unique save. Should be altered in the future
-	SaveName = "Default_Save";
+	saveName = "Default_Save";
     
 	cout << "\t Finished base frame\n";
 }
@@ -75,51 +75,39 @@ BaseFrame::~BaseFrame()
 
 
 //synchronously saves the game
-bool BaseFrame::Save(string saveFile) {
+bool BaseFrame::Save() {
+	//Create relevant directories
+	OS::BuildPath(GetSaveLocation());
+
 	//Serialize this class
 	vector<unsigned char> saveData = Savable::Serialize(this);
-
-	//Open for writing binary data
-	SDL_RWops *file = SDL_RWFromFile(saveFile.c_str(), "wb"); 
-
-	//Check the file opened
-	if(!file) 
-		return false;
-	//Write the file containing all the save data
-	SDL_RWwrite(file,(char*)&saveData.front(),1,saveData.size());
-	SDL_RWclose(file);
+	//Save the file
+	lodepng::save_file(saveData,GetSaveLocation() + "data.json.compressed");
 
 	return true;
 }
 //synchronously loads the game over any existing data
-bool BaseFrame::Load(string saveFile) {
-	SDL_RWops *file = SDL_RWFromFile(saveFile.c_str(), "rb"); 
-	long size;
-	
-	//Check the file opened
-	if(!file) 
-		return false;
-
-	//Determine file size
-	SDL_RWseek(file , 0 , RW_SEEK_END);
-	size = (long)SDL_RWtell(file);
-	SDL_RWseek(file,0,RW_SEEK_SET);
+bool BaseFrame::Load(string saveName) {
+	//Remember the save name
+	this->saveName = saveName;
 
 	//allocate space for file data
-	vector<unsigned char> fileData(size);
-	SDL_RWread(file,&fileData.front(), 1, (size_t)size);
-	SDL_RWclose(file);
-	
+	vector<unsigned char> fileData;
+	lodepng::load_file(fileData,GetSaveLocation() + "data.json.compressed");
+
+	if (fileData.size() <= 0)
+		return false;
+
 	//Deserialize the data
 	Savable::Deserialize(fileData,this);
     
 	// Build player stuff
     Actors.Player()->Build();
     
-	return true;
     GameLoaded.Fire([this](function<void(BaseFrame*)> subscriber) {
         subscriber(this);
     });
+	return true;
 }
 
 void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
@@ -193,7 +181,7 @@ void BaseFrame::Build()
             audio->Pause();
             
             // Save the game
-            this->Save(Game()->GetSaveLocation() + "data.json.compressed");
+            this->Save();
             
             // Pause
             //pauseWindow->SetVisible(true);
@@ -376,7 +364,7 @@ ModelGroup* BaseFrame::Models()
 }
 
 string BaseFrame::GetSaveLocation() {
-	return OS::SaveDirectory() + "Saves/" + SaveName + "/";
+	return OS::SaveDirectory() + "Saves/" + saveName + "/";
 }
 
 //Retrieve the game object
