@@ -108,6 +108,8 @@ void TileHandler::handlerLoop() {
 					//Mark no tile as cached
 					getTileCacheLastTilePos = vec2i(-10000,10000);
 
+				cout << "Cached tile [" << tilePos.x << "," << tilePos.y << "]\n";
+
 				//Erase from the list of tiles in memory
 				cachedTiles.erase(tilePos);
 				//Cleanup tile
