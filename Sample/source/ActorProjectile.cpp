@@ -18,6 +18,7 @@ void ActorProjectile::FireProjectile(PhysicsActor * firingActor, vec3 fromPositi
 	Velocity = velocityVector;
 	//set your facing direction to match the velocity vector
 	facingDirection = atan2(Velocity.y,Velocity.x);
+	tiltDirection = atan2(glm::length(vec2(Velocity)),Velocity.z)-M_PI/2.0;
 	//TODO: handle 3d case
 	spawnPos = fromPosition;
 }
