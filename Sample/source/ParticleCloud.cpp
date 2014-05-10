@@ -45,7 +45,7 @@ void ParticleCloud::enactRecommendation(float recommendation, bool updateRecomme
 		float chanceNotDeleted = .7f+.3f*(float)recommendation; 
 		for (auto it = particles.begin(); it != particles.end();){
 			//Voxels removed in this fashion do not produce particles
-			if (Utilities::random(0.0f,1.0f) > chanceNotDeleted) {
+			if ((*it)->Timed() && (Utilities::random(0.0f,1.0f) > chanceNotDeleted)) {
 				delete *it;
 				it = particles.erase(it);
 				eliminatedSystems++;
@@ -85,10 +85,14 @@ void ParticleCloud::UpdateCloud() {
 	}
 }
 
-void ParticleCloud::BuildParticleSystem(const ParticleData & particleType, vec3 pos, float lifeTime) {
+ParticleSystem * ParticleCloud::BuildParticleSystem(const ParticleData & particleType, vec3 pos, float lifeTime) {
 	ParticleSystem * ps = new ParticleSystem(particleType,Game()->Now(),lifeTime);
 	particles.push_back(ps);
 	ps->Position = pos;
+	//Only infinite life particle systems are immune
+	//to being removed for performance
+	//so only they can have a persistant pointer
+	return (lifeTime < 0.0f) ? ps : NULL;
 }
 
 void ParticleCloud::Clear() {

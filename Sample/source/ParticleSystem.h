@@ -24,6 +24,13 @@ public:
 	ParticleSystem(ParticleData particleSystemDescription,double now, double lifetime);
 	~ParticleSystem();
 
+	//Destroy this particle system during the next update
+	void Destroy();
+
+	//Check if this particle has an infinite lifespan
+	//returns false if it does
+	bool Timed();
+
 	//Particle system position
 	//particles spawn relative to this (but do not move relative to it)
 	vec3 Position;

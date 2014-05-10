@@ -23,6 +23,18 @@ ParticleSystem::~ParticleSystem() {
 	particleList.clear();
 }
 
+
+//Destroy this particle system during the next update
+void ParticleSystem::Destroy() {
+	deathAt = 1;
+}
+
+//Check if this particle has an infinite lifespan
+//returns false if it does
+bool ParticleSystem::Timed() {
+	return deathAt >= 0;
+}
+
 //Update the particle emitter spawning particles
 bool ParticleSystem::UpdateEmitter() {
 	//Adjust the time so it's relative to you
