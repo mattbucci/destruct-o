@@ -100,6 +100,12 @@ void PhysicsSystem::updatePhysicsActors() {
 				actor->velocity += vel*forceDirection;
 				//Apply extra enhanced friction while they're touching
 				actor->velocity *= .98;
+				
+				//Keep track of whether or not you're touching a wall or the floor
+				if (forceDirection.z <= 0)
+					actor->touchingWall = true;
+				//This is the bug which allows wall climbing
+				//but I'm going to leave it
 				actor->onGround = true;
 				actor->colliding = true;
 			}
@@ -302,6 +308,8 @@ void PhysicsSystem::collideVoxelsToActors() {
 					//Check if the force will move the actor up
 					if (intr.Normal.z > 0)
 						actor->onGround = true;
+					else
+						actor->touchingWall = true;
 					actor->colliding = true;
 
 					voxel->Acceleration += forceDirection*force;
@@ -352,8 +360,12 @@ void PhysicsSystem::collideActorsToActors() {
 				//Check if the force will move the actor up
 				if (intr.Normal.z > 0)
 					actorB->onGround = true;
+				else
+					actorB->touchingWall = true;
 				if (intr.Normal.z < 0)
 					actorA->onGround = true;
+				else
+					actorA->touchingWall = true;
 				//Mark the actors as colliding with each other
 				actorA->colliding = true;
 				actorB->colliding = true;

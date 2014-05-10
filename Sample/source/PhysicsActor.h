@@ -23,6 +23,8 @@ class PhysicsActor : public Actor {
 
 	//If the actor has experienced an upwards force from solid ground this is true
 	bool onGround;
+	//if the actor has experinced a sideways force from solid ground this is true
+	bool touchingWall;
 	double lastDamageRecieved;
 
 	//if the physics actor is colliding with another physics actor this is the actor
@@ -44,7 +46,10 @@ protected:
 	//(doesn't experience gravity)
 	bool flying;
 	//Status checkups
+	//If the actor has experienced an upwards force from solid ground this is true
 	bool OnGround();
+	//if the actor has experienced a sideways force from solid ground this is true
+	bool TouchingWall();
 	//if you've taken any damage in the last 4 seconds this is true
 	bool BeingDamaged();
 	//If you're touching anything, this is true
@@ -92,6 +97,9 @@ public:
 
 	//Get the faction of this actor
 	FactionId GetFaction();
+
+	//Update life
+	virtual bool Update() override;
 
 	//Damage this actor from a particular faction
 	virtual void Damage(FactionId damagingFaction, float damage);

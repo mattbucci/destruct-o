@@ -131,6 +131,21 @@ protected:
 	//returns true when you're facing that direction
 	bool applyFacingDirection(float desiredFacingDirection);
 
+	//Ray trace method for checking if a jump is necessary
+	//works well for objects of size less than 2
+	//tends to be more accurate than wall touch
+	//but fails for larger sizes
+	bool jumpCheckRayTrace(vec3 traceDirection, float feetHeight, float & jumpDifference);
+
+	//Wall touch method for checking if a jump is necessary
+	//works well for objects of size greater than 2
+	//but tends to jump in incorrect situations sometimes
+	bool jumpCheckWallTouch(vec3 traceDirection, float feetHeight, float & jumpDifference);
+
+	//Uses the appropriate jump check to jump if necessary
+	//then jump the appropriate height
+	void jumpIfNecessary(vec3 moveDirection);
+
 
 	//If the current enemy is still valid returns true
 	//otherwise returns false

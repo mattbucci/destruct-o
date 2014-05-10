@@ -137,6 +137,9 @@ bool ActorAids::Update() {
 	//Update cities
 	populateCities();
 
+	if (spawnedNasties)
+		return Actor::Update();
+
 	//Calculate the target intensity using magic
 	//Use game time as a modifier
 	float timeModifier = (float)(min(Game()->Now(),(double)StartGameBreakLength))/StartGameBreakLength;

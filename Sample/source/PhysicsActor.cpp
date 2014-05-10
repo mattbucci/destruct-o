@@ -27,6 +27,7 @@ PhysicsActor::PhysicsActor(FactionId faction)
 	//Mark you're not colliding
 	collidingWith = NULL;
 	colliding = false;
+	touchingWall = false;
 }
 PhysicsActor::~PhysicsActor() {
 	
@@ -92,6 +93,8 @@ void PhysicsActor::Damage(FactionId damagingFaction, float damage) {
 		if (life < 0)
 			life = 0;
 		if (life <= 0) {
+			//Can't die anymore
+			vulnerable = false;
 			//Fire on death event
 			Game()->Actors.ActorKilled.Fire([this,damagingFaction](function<void(Actor*,Actor*,FactionId)> observer) {
 				observer(this,NULL,damagingFaction);
@@ -119,6 +122,8 @@ void PhysicsActor::Damage(PhysicsActor * damagingActor, float damage) {
 		if (life < 0)
 			life = 0;
 		if (life <= 0) {
+			//can't die anymore
+			vulnerable = false;
 			//Fire on death event
 			Game()->Actors.ActorKilled.Fire([this,damagingActor](function<void(Actor*,Actor*,FactionId)> observer) {
 				observer(this,damagingActor,damagingActor->faction);
@@ -139,6 +144,11 @@ FactionId PhysicsActor::GetFaction() {
 	return faction;
 }
 
+
+//if the actor has experienced a sideways force from solid ground this is true
+bool PhysicsActor::TouchingWall() {
+	return touchingWall;
+}
 
 //Check for the special case of a collision with an axis aligned voxel
 //The fed position should be the center of the voxel
@@ -169,11 +179,8 @@ bool PhysicsActor::aabbCollision(PhysicsActor * other) {
 }
 
 
-
-void PhysicsActor::Draw(MaterialProgram * materialShader) {
-	//Update model position
-	if (model != NULL) 
-		model->GetTransform().Translation() = vec3(position.x,position.y,position.z-size.z/2.0);
+//Update life
+bool PhysicsActor::Update() {
 	//Regenerate life and energy while alive
 	if (!Dead()) {
 		life += SIMULATION_DELTA*lifeRegenRate;
@@ -183,6 +190,22 @@ void PhysicsActor::Draw(MaterialProgram * materialShader) {
 		if (energyPool > energyPoolMax)
 			energyPool = energyPoolMax;
 	}
+
+	if ((life <= 0) && vulnerable) {
+		//This unit died
+		vulnerable = false;
+		//call on death
+		onDeath();
+	}
+	return Actor::Update();
+}
+
+
+void PhysicsActor::Draw(MaterialProgram * materialShader) {
+	//Update model position
+	if (model != NULL) 
+		model->GetTransform().Translation() = vec3(position.x,position.y,position.z-size.z/2.0);
+
 	//Update the underlying actor
 	Actor::Draw(materialShader);
 }

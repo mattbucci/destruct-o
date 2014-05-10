@@ -175,6 +175,99 @@ bool ActorAI::applyFacingDirection(float desiredFacingDirection) {
 	return false;
 }
 
+//Ray trace method for checking if a jump is necessary
+//works well for objects of size less than 2
+//tends to be more accurate than wall touch
+//but fails for larger sizes
+bool ActorAI::jumpCheckRayTrace(vec3 traceDirection, float feetHeight, float & jumpDifference)  {
+	//Do the original ray-trace based detection
+	//works well for small sized objects (soldier)
+	float checkHeight = feetHeight+.5f;
+	float rayLength;
+	vec3 surfaceNormal;
+	if (Game()->Voxels.RaytraceToTerrain(vec3(Position.x,Position.y,checkHeight),traceDirection,rayLength,surfaceNormal)) {
+		if (rayLength < 1.5) {
+			//Check the height of the given location
+			//add .15 to go pas the surface and onto the voxel itself
+			vec3 upcomingTerrain = vec3(Position.x,Position.y,checkHeight) + traceDirection*(rayLength+.15f);
+			float upcomingHeight = Game()->Voxels.GetPositionHeight(vec2(upcomingTerrain));
+			//Now check if you're too low
+			if (feetHeight+.15 < upcomingHeight) {
+				//your feet won't clear it
+				jumpDifference = (upcomingHeight-feetHeight);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+
+//Wall touch method for checking if a jump is necessary
+//works well for objects of size greater than 2
+//but tends to jump in incorrect situations sometimes
+bool ActorAI::jumpCheckWallTouch(vec3 traceDirection, float feetHeight, float & jumpDifference) {
+	//Check if you've got terrain (cliff/hill) directly in front of you
+	//Check just a bit above your feet
+	if (TouchingWall()) {
+		//Directly check if the physics system said you're touching a wall
+		//works well for large objects (mech)
+		//If so do a max based prediction of tiles in your way
+		float upcomingHeight = 0.0f;
+		for (float x = -(Size.x/2.0+1); x <= (Size.x/2.0+1); x++) {
+			for (float y = -(Size.y/2.0+1); y <= (Size.y/2.0+1); y++) {
+				vec2 pos = vec2(x,y);
+				pos = glm::floor(pos);
+				//check the angle between the direction you intend to go
+				//and this voxel
+				float angle = acos(glm::dot(pos,vec2(traceDirection))/(glm::length(traceDirection)*glm::length(pos)));
+				angle = fabsf(angle);
+				if (angle < M_PI/2.0f) {
+					//If less than 90 degree difference
+					//consider this for height
+					upcomingHeight = max(upcomingHeight,Game()->Voxels.GetPositionHeight(vec2(Position)+pos));
+				}
+			}
+		}
+		//Now check if you're going to make it without jumping
+		if (feetHeight+.15 < upcomingHeight) {
+			//your feet won't clear it
+			jumpDifference = (upcomingHeight-feetHeight);
+			return true;
+		}
+	}
+	return false;
+}
+
+//Uses the appropriate jump check to jump if necessary
+//then jump the appropriate height
+void ActorAI::jumpIfNecessary(vec3 moveDirection) {
+				
+	//The direction you intend to move
+	float feetHeight = Position.z-Size.z/2.0f;
+
+	float actorSize = max(Size.x,Size.y);
+
+	//can't jump or climb if you're not on the ground
+	if (OnGround() && Velocity.z < .2) {
+		bool doJump;
+		float heightDifference;
+		//Check using the appropriate test for your size
+		if (actorSize > 2.0f) 
+			doJump = jumpCheckWallTouch(moveDirection,feetHeight,heightDifference);
+		else 
+			doJump = jumpCheckRayTrace(moveDirection,feetHeight,heightDifference);
+		//Now do you need to jump?
+		if (doJump) {
+			//Ok lets jump up
+			//Playing some kind of jump animation would be A+
+			Velocity.z += min(15*heightDifference,20.0f)+2.0f;
+			//jump!
+			setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_JUMP]);
+		}
+	}
+}
+
 bool ActorAI::Dead() {
 	return PhysicsActor::Dead() || (life < 0);
 }
@@ -273,39 +366,10 @@ bool ActorAI::pathTowardsGoal(vec2 goal) {
 	}
 	else if (!animationRunning())
 		setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_AIM]);
-				
 
-			
-	//Check if you've got terrain (cliff/hill) directly in front of you
-	//Check just a bit above your feet
-	float feetHeight = Position.z-Size.z/2.0f;
-	float checkHeight = feetHeight+.5f;
-	float rayLength;
-	vec3 surfaceNormal;
-	vec3 traceDirection = glm::normalize(vec3(goal,checkHeight) - vec3(Position.x,Position.y,checkHeight));
-	if (Game()->Voxels.RaytraceToTerrain(vec3(Position.x,Position.y,checkHeight),traceDirection,rayLength,surfaceNormal)) {
-		if (rayLength < 1.5) {
-			//Check the height of the given location
-			//add .15 to go pas the surface and onto the voxel itself
-			vec3 upcomingTerrain = vec3(Position.x,Position.y,checkHeight) + traceDirection*(rayLength+.15f);
-			float upcomingHeight = Game()->Voxels.GetPositionHeight(vec2(upcomingTerrain));
-			//Now check if you're too low
-			if (feetHeight+.15 < upcomingHeight) {
-				if (touchingGround) {
-					//Ok lets jump up
-					//Playing some kind of jump animation would be A+
-					Velocity.z += min(15*(upcomingHeight-feetHeight),20.0f);
-					//jump!
-					setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_JUMP]);
-				}
-				
-			}
-			//Wait until you clear the edge to move forwards
-			if ((!touchingGround) && (feetHeight-.15 < upcomingHeight))
-				return false;
-						
-		}
-	}
+	//Jump if you need to, to keep moving towards your destination
+	jumpIfNecessary(glm::normalize(vec3(goal,0) - vec3(Position.x,Position.y,0)));
+
 	return false;
 }
 
