@@ -9,7 +9,7 @@
 
 CLASS_SAVE_CONSTRUCTOR(ActorBomb);
 
-ActorBomb::ActorBomb() : ActorProjectile(GameFactions::FACTION_HOSTILE) {
+ActorBomb::ActorBomb() {
 	energyPool = 100;
 	this->Velocity = vec3(0, 0, -50);
 	setModel("bomb");

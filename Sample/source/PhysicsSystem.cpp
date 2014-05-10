@@ -101,6 +101,7 @@ void PhysicsSystem::updatePhysicsActors() {
 				//Apply extra enhanced friction while they're touching
 				actor->velocity *= .98;
 				actor->onGround = true;
+				actor->colliding = true;
 			}
 		}
 		
@@ -113,7 +114,9 @@ void PhysicsSystem::updatePhysicsActors() {
 
 		//Now apply velocity/acceleration
 		//Always decrease the total energy in the system
-		actor->velocity *= .99;
+		//accept true flying things, they can fly forever
+		if (!actor->flying)
+			actor->velocity *= .99;
 		//Apply forces!
 		actor->velocity += actor->acceleration*(float)simulationDelta;
 		actor->position += actor->velocity*(float)simulationDelta;
@@ -299,6 +302,7 @@ void PhysicsSystem::collideVoxelsToActors() {
 					//Check if the force will move the actor up
 					if (intr.Normal.z > 0)
 						actor->onGround = true;
+					actor->colliding = true;
 
 					voxel->Acceleration += forceDirection*force;
 					actor->Acceleration += -forceDirection*force;
@@ -350,6 +354,11 @@ void PhysicsSystem::collideActorsToActors() {
 					actorB->onGround = true;
 				if (intr.Normal.z < 0)
 					actorA->onGround = true;
+				//Mark the actors as colliding with each other
+				actorA->colliding = true;
+				actorB->colliding = true;
+				actorA->collidingWith = actorB;
+				actorB->collidingWith = actorA;
 
 				actorB->Acceleration += forceDirection*force;
 				actorA->Acceleration += -forceDirection*force; 
@@ -420,8 +429,12 @@ void PhysicsSystem::Update() {
 
 	//Establish all actors as not on the ground
 	//if they experience an upwards force as a result of a collision or ground, mark them as on the ground
-	for (auto actor : actors)
+	for (auto actor : actors) {
 		actor->onGround = false;
+		actor->colliding = false;
+		actor->collidingWith = NULL;
+	}
+		
 	
 	//Now check for collisions between everything that can experience them
 	//Physics voxel physics may be skipped periodically
@@ -482,7 +495,9 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 
 	//FOR DEBUG
 	//DRAW ACTOR EXTENTS
-	/*glDepthMask(GL_FALSE);
+	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
 	for (auto actor : actors) {
 		//Skip the player
 		if (typeid(*(Actor*)actor) == typeid(ActorPlayer))
@@ -501,12 +516,13 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 
 		//draw one voxel
 		renderer->startDraw(shader);
-		renderer->pushVoxel(shader,vec3(),8);
+		renderer->pushVoxel(shader,vec3(),2);
 		renderer->finishDraw(shader);
 
 		shader->Model.PopMatrix();
 	}
-	glDepthMask(GL_TRUE);*/
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
 }
 
 ContiguousList<PhysicsActor*>* PhysicsSystem::GetActors() {

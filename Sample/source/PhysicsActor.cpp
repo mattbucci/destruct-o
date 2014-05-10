@@ -24,6 +24,9 @@ PhysicsActor::PhysicsActor(FactionId faction)
 	vulnerable = true;
 	faction = GameFactions::FACTION_HOSTILE;
 	flying = false;
+	//Mark you're not colliding
+	collidingWith = NULL;
+	colliding = false;
 }
 PhysicsActor::~PhysicsActor() {
 	
@@ -48,6 +51,15 @@ bool PhysicsActor::OnGround() {
 
 bool PhysicsActor::BeingDamaged() {
 	return Game()->Now() < lastDamageRecieved+5;
+}
+
+//If you're touching anything, this is true
+bool PhysicsActor::Colliding() {
+	return colliding;
+}
+//If what you're touching is an actor, this is that actor
+PhysicsActor * PhysicsActor::CollidingWith() {
+	return collidingWith;
 }
 
 //Get the current life of this actor
