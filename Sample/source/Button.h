@@ -5,11 +5,12 @@
 #include "GameEvent.h"
 
 class Button : public Control {
+protected:
 	vec4 normalColor;
 	vec4 hoverColor;
 	vec4 clickColor;
 	Label innerLabel;
-protected:
+
 	virtual void OnMousePress(vec2 mousePos, int button, bool down);
 	virtual void OnMouseMove(vec2 mousePos);
 	virtual void OnMouseLeave();
