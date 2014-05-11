@@ -22,6 +22,9 @@ Achievements::Achievements(){
 	AddPossibleAchievement(ACH_WHERESFIRE,100,200,"player-walked","Where's the Fire?, 100 steps taken");
 	AddPossibleAchievement(ACH_LEARNINGTOFLY,1,50,"player-jumped","Learning to fly, Jumped for the first time");
 	AddPossibleAchievement(ACH_DESTROYEROFWORLDS,100,50,"voxel-destroyed","Destroyer of worlds, 100 voxels destroyed");
+
+	//No points earned or unspent so far
+	pointsEarned = pointsUnspent = 0;
 };
 
 Achievements::~Achievements() {
@@ -73,6 +76,7 @@ void Achievements::ConnectToGame(Notification* notification, BaseFrame * game) {
 	GameEventSubscriber::Subscribe<void(PhysicsVoxel*)>(&game->Physics.VoxelDisintegrating,[this](PhysicsVoxel* Object) {
 		incrementAchievement("voxel-destroyed",1);
 	});
+	this->notify = notification;
 }
 
 void Achievements::incrementAchievement(const string & name, float incrementQuantity) {

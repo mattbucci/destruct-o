@@ -51,6 +51,10 @@ private:
 
 	//notification system to notify things
     Notification * notify;
+	//Total points earned through achievements
+	int pointsEarned;
+	//Unspent points earned so far
+	int pointsUnspent;
 protected:
 	//Overload to rebuild the progress map after this class is loaded
 	void Load(Json::Value & parentValue, LoadData & loadData) override;
@@ -69,6 +73,8 @@ public:
 
 	CLASS_DECLARATION(Achievements)
 		CLASS_CONTAINER_MEMBER(achievementProgress,ReflectionData::SAVE_VECTOR,ReflectionData::SAVE_OWNEDHANDLE)
+		CLASS_MEMBER(pointsEarned,ReflectionData::SAVE_INT32)
+		CLASS_MEMBER(pointsUnspent,ReflectionData::SAVE_INT32)
 	END_DECLARATION
 };
 
