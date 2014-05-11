@@ -40,7 +40,7 @@
 BaseFrame * BaseFrame::instance = NULL;
 
 BaseFrame::BaseFrame(ShaderGroup * shaders)
-    : GameSystem(shaders), hud(this), Physics(&Voxels), Actors(&Physics), Particles(&Actors,&Physics), achievements(&notification,this)
+    : GameSystem(shaders), hud(this), Physics(&Voxels), Actors(&Physics), Particles(&Actors,&Physics)
 {
 	_ASSERTE(instance == NULL);
 	instance = this;
@@ -169,6 +169,9 @@ void BaseFrame::Build()
     GameStarted.Fire([this](function<void(BaseFrame*)> subscriber) {
         subscriber(this);
     });
+	
+	//Connect achievements
+	VoxEngine::SavedAccountData.GameAchievements.ConnectToGame(&notification,this);
     
    
     // Subscribe to the application state event
@@ -243,7 +246,7 @@ void BaseFrame::Draw(double width, double height)
 	Textures.Refresh();
     
 	// Calculate the view and fog distances from the stored slider
-    viewDistance = glm::mix(MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE, VoxEngine::GlobalSavedData.GameOptions.ViewDistance);
+    viewDistance = glm::mix(MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE, VoxEngine::SavedDeviceData.GameOptions.ViewDistance);
     float fogDistance = viewDistance * 0.8f;
     
     // Compute the view for size vector

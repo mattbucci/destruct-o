@@ -89,7 +89,6 @@ public:
 	//Private objects which must be initialized after everything else
 	//goes here
 private:
-	Achievements achievements;
 	//This is the reset save
 	//it represents the initial state of the world when there isnt' a world
 	//its loaded to force the state to clear when making a new world

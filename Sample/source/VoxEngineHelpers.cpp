@@ -64,7 +64,12 @@ MovingAverage<float> VoxEngine::UpdateTime(20);
 
 
 //Save data to keep across all games
-GameData VoxEngine::GlobalSavedData;
+DeviceData VoxEngine::SavedDeviceData;
+
+//Saved per-account data
+//instead of per-world or per-device
+//such as username, security data, and achievements
+AccountData VoxEngine::SavedAccountData;
 
 GameEvent<void (bool)> VoxEngine::ApplicationStateChanged;
 
@@ -173,7 +178,7 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 						//Stops the next iteration of the game loop
 						continueGameLoop = false;
 						//Save things now
-						VoxEngine::GlobalSavedData.Save();
+						VoxEngine::SavedDeviceData.Save();
 						break;
 				}
 			}

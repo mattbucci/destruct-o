@@ -34,7 +34,7 @@ Achievements::~Achievements() {
 
 //Add a possible achievement to the achievements list
 void Achievements::AddPossibleAchievement(AchievementType uniqueType, float goalValue, int rewardPoints, string achievementType, string achievementText) {
-	achievementlist[uniqueType] = new Achievement(uniqueType,rewardPoints,goalValue,achievementText,AchievementType);
+	achievementlist[uniqueType] = new Achievement(uniqueType,rewardPoints,goalValue,achievementText,achievementType);
 }
 
 //Overload to rebuild the progress map after this class is loaded

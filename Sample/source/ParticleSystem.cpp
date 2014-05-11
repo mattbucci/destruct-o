@@ -55,7 +55,7 @@ bool ParticleSystem::UpdateEmitter() {
 		float generationRate = particleSystemDescription.GenerationRate.ValueAtSequence(systemLifeFactor);
 		//Scale generation rate with particle system options
 		//generation rate goes from 25% to 100%
-		generationRate *= (VoxEngine::GlobalSavedData.GameOptions.ParticleQuality*.75f+.25f);
+		generationRate *= (VoxEngine::SavedDeviceData.GameOptions.ParticleQuality*.75f+.25f);
 		//Check if it's time to spawn a new particle
 		double perParticle = 1.0f/generationRate;
 		while (nextParticle < systemTime) {

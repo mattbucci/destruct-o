@@ -62,8 +62,9 @@ void VoxEngine::Start() {
 	VisualInterface.init();
 	//Populate the list of game systems
 	Frames::BuildSystemList();
-	//Load game settings
-	GlobalSavedData.Load();
+	//Load game settings and account data from disk
+	SavedDeviceData.Load();
+	SavedAccountData.Load();
 
 	//Start up game
 	continueGameLoop = true;

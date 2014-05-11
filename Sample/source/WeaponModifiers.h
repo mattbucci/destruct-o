@@ -18,6 +18,6 @@ public:
 	CLASS_DECLARATION(WeaponModifiers)
 		CLASS_MEMBER(CooldownFactor,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(ChargeUseFactor,ReflectionData::SAVE_FLOAT)
-		CLASS_MEMBER(Damage,ReflectionData::SAVE_FLOAT)
+		CLASS_MEMBER(DamageFactor,ReflectionData::SAVE_FLOAT)
 	END_DECLARATION
 };

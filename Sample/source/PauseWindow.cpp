@@ -121,7 +121,7 @@ PauseWindow::PauseWindow()
 		floatOption("100%", 1.0f)
 	};
 	vector<floatOption> HUDTrans(HUDTransOpts, HUDTransOpts + sizeof(HUDTransOpts) / sizeof(HUDTransOpts[0]));
-	AddSliderOption(0,"HUD Transparency",HUDTrans,&VoxEngine::GlobalSavedData.GameOptions.HUDTransparency);
+	AddSliderOption(0,"HUD Transparency",HUDTrans,&VoxEngine::SavedDeviceData.GameOptions.HUDTransparency);
     
     // View distance options
     floatOption viewDistanceOptions[] =
@@ -133,7 +133,7 @@ PauseWindow::PauseWindow()
         floatOption("$oopah Us3r", 1.0f),
     };
     vector<floatOption> viewDistance(viewDistanceOptions, viewDistanceOptions + (sizeof(viewDistanceOptions) / sizeof(viewDistanceOptions[0])));
-	AddSliderOption(1,"View Distance",viewDistance,&VoxEngine::GlobalSavedData.GameOptions.ViewDistance);
+	AddSliderOption(1,"View Distance",viewDistance,&VoxEngine::SavedDeviceData.GameOptions.ViewDistance);
 
     // Physics
     floatOption basicOptions[] =
@@ -145,9 +145,9 @@ PauseWindow::PauseWindow()
         floatOption("VeryHigh", 1.0f),
     };
 	vector<floatOption> basicOptionsVector(basicOptions, basicOptions + (sizeof(basicOptions) / sizeof(basicOptions[0])));
-	AddSliderOption(2,"Physics",basicOptionsVector,&VoxEngine::GlobalSavedData.GameOptions.PhysicsAccuracy);
+	AddSliderOption(2,"Physics",basicOptionsVector,&VoxEngine::SavedDeviceData.GameOptions.PhysicsAccuracy);
 	//Particles
-	AddSliderOption(3,"Particles",basicOptionsVector,&VoxEngine::GlobalSavedData.GameOptions.ParticleQuality);
+	AddSliderOption(3,"Particles",basicOptionsVector,&VoxEngine::SavedDeviceData.GameOptions.ParticleQuality);
 
 #ifndef __MOBILE__
     // jumping
@@ -157,7 +157,7 @@ PauseWindow::PauseWindow()
         floatOption("On", 2.00),
     };
 	vector<floatOption> jumpOptionsVector(jumpOptions, jumpOptions + (sizeof(jumpOptions) / sizeof(jumpOptions[0])));
-	AddSliderOption(4,"Jumping",jumpOptionsVector,&VoxEngine::GlobalSavedData.GameOptions.Autojump);
+	AddSliderOption(4,"Jumping",jumpOptionsVector,&VoxEngine::SavedDeviceData.GameOptions.Autojump);
 #endif
 
 }

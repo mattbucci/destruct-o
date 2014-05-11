@@ -217,7 +217,7 @@ void PhysicsSystem::collideVoxelsToVoxels() {
 
 	//Calculate a max-section-size
 	//which is the largest n for the O(n^2) operation
-	unsigned int MaxSectionSize = (unsigned int)(10.0f+30.0f*VoxEngine::GlobalSavedData.GameOptions.PhysicsAccuracy);
+	unsigned int MaxSectionSize = (unsigned int)(10.0f+30.0f*VoxEngine::SavedDeviceData.GameOptions.PhysicsAccuracy);
 
 	//Sort using insertion sort as the list rarely moves much
 	allVoxels.sort([](PhysicsVoxel * a, PhysicsVoxel * b) -> bool {
@@ -453,9 +453,9 @@ void PhysicsSystem::Update() {
 	skipCount--;
 	if (skipCount <= 0) {
 		//Determine new skip count
-		if (VoxEngine::GlobalSavedData.GameOptions.PhysicsAccuracy <= .26f)
+		if (VoxEngine::SavedDeviceData.GameOptions.PhysicsAccuracy <= .26f)
 			skipCount = 4;
-		else if (VoxEngine::GlobalSavedData.GameOptions.PhysicsAccuracy <= .51f) 
+		else if (VoxEngine::SavedDeviceData.GameOptions.PhysicsAccuracy <= .51f) 
 			skipCount = 2;
 		else
 			skipCount = 1;

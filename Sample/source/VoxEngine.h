@@ -4,7 +4,8 @@
 #include "stdafx.h"
 
 #include "InputEvent.h"
-#include "GameData.h"
+#include "DeviceData.h"
+#include "AccountData.h"
 #include "AsyncTask.h"
 #include "SyncTask.h"
 #include "GameEvent.h"
@@ -113,11 +114,15 @@ public:
 	//do so from here
 	static SyncTask SynchronousTask;
 
-	//Saved global game data
-	//A good place for things that are per-device
-	//instead of per-save
+	//Saved per-device data
+	//instead of per-world-save
 	//Such as options, account data, etc.
-	static GameData GlobalSavedData;
+	static DeviceData SavedDeviceData;
+
+	//Saved per-account data
+	//instead of per-world or per-device
+	//such as username, security data, and achievements
+	static AccountData SavedAccountData;
 
 
 	//Get the average update and draw times

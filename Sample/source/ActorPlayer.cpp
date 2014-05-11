@@ -204,7 +204,7 @@ bool ActorPlayer::Update()
 		}
 	}
 	//Run autojump?
-	if (VoxEngine::GlobalSavedData.GameOptions.Autojump > 0) {
+	if (VoxEngine::SavedDeviceData.GameOptions.Autojump > 0) {
 		//Autojump
 		if (glm::length(moveVector) > .15) {
 			//Only jump if you're touching ground
