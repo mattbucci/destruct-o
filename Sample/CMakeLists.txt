@@ -310,6 +310,8 @@ FILE(GLOB InterfaceFiles
 	source/Shape.h
 	source/Shape.cpp
 	source/Slider.h
+	source/PictureBox.*
+	source/PictureButton.*
 )
 source_group(InterfaceLibrary FILES ${InterfaceFiles})
 
@@ -382,11 +384,20 @@ FILE(GLOB GameplayFiles
 	source/Achievements.cpp
 	source/Achievement.h
 	source/Achievement.cpp
+	source/AchievementProgress.*
 	source/GameData.*
 	source/Options.*
 	source/GameFactions.*
 )
-source_group(Achievements FILES ${GameplayFiles})
+source_group(Gameplay FILES ${GameplayFiles})
+
+FILE(GLOB GameDataFiles
+	source/DeviceData.*
+	source/RootSavable.*
+	source/AccountData.*
+)
+source_group(GameData FILES ${GameDataFiles})
+
 
 
 
@@ -400,7 +411,7 @@ FILE(GLOB SaveFiles
 	source/Savable.h
 	source/Savable.cpp
 )
-source_group(Saving FILES ${SaveFiles})
+source_group(SaveSystem FILES ${SaveFiles})
 
 FILE(GLOB UtilityFiles
 	source/AuxLogger.h
@@ -435,6 +446,7 @@ FILE(GLOB UtilityFiles
 	source/MovingAverage.*
 	source/SimplePolygon.*
 	source/TimeStep*
+	source/IntegerGlmTypes.*
 )
 source_group(Utilities FILES ${UtilityFiles})
 
@@ -481,6 +493,8 @@ FILE(GLOB CoreFiles
 	source/stdafx.cpp
 	source/Universal.h
 	source/Universal.cpp
+	source/LoadInProgess.h
+	source/LoadInProgess.cpp
 )
 source_group(Core FILES ${CoreFiles})
 
@@ -502,6 +516,7 @@ FILE(GLOB WeaponFiles
 	source/WeaponPulseLaser.*
 	source/WeaponLaserCannon.*
 	source/WeaponAI*
+	source/WeaponModifiers.*
 )
 source_group(Weapons FILES ${WeaponFiles})
 
