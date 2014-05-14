@@ -13,11 +13,11 @@ bool WeaponAI::RepeatFireAutomatically() {
 }
 //The amount of charge it takes to fire the weapon
 float WeaponAI::WeaponChargeRequired() {
-    return data->ChargeRequired;
+    return data->ChargeRequired * Modifiers.ChargeUseFactor;
 }
 //Cooldown length for the weapon
 float WeaponAI::WeaponCooldownTime() {
-    return data->CooldownTime;
+    return data->CooldownTime * Modifiers.CooldownFactor;
 }
 //The amount of jitter in the weapon
 float WeaponAI::JitterAmount() {

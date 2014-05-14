@@ -22,7 +22,7 @@ static const float jumpVelocity = 20.0f;
 
 // Construct an actor player.  Weapon camera is setup for optimal weapon size
 ActorPlayer::ActorPlayer()
-	: PhysicsActor(GameFactions::FACTION_PLAYER), weaponCamera(GameCamera(40.0f)), currentWeapon(NULL), pulseLaser(NULL), laserCannon(NULL)
+	: PhysicsActor(GameFactions::FACTION_PLAYER), weaponCamera(GameCamera(40.0f)), currentWeapon(NULL)
 {
 	//setup defaults
 	Size = vec3(2,2,6);
@@ -36,19 +36,17 @@ ActorPlayer::ActorPlayer()
 	debug = true;
 	debug_target_height = 0;
 	weaponCamera.SetCameraView(vec3(0,0,0), glm::vec3(0,-1,0), 1000);
-	
-
-	pulseLaser = NULL;
-	laserCannon = NULL;
+	currentWeaponId = 0;
 }
 
 ActorPlayer::~ActorPlayer()
 {
-	/*VoxEngine::SynchronousTask.RequestTask([this]()
+	VoxEngine::SynchronousTask.RequestTask([this]()
 	{
-		delete pulseLaser;
-		delete laserCannon;
-	});*/
+		for (auto weapon : weapons)
+			delete weapon;
+		weapons.clear();
+	});
 }
 
 
@@ -60,19 +58,31 @@ float ActorPlayer::GetMaxCharge() {
 	return maxEnergyPool;
 }
 
-// Create anything related to the actor
-void ActorPlayer::Build()
-{
-	// Create the weapons
-	pulseLaser = Game()->Actors.BuildWeapon("playerpulselaser.json",this);
-	laserCannon = Game()->Actors.BuildWeapon("playerlasercannon.json",this);
-	
-	// Set initial weapon to pulse laser
-	setWeapon(laserCannon);
+
+
+//When an actor is loaded
+//handles building weapons and model and such
+void ActorPlayer::Load(Json::Value & parentValue, LoadData & loadData) {
+	//Load this class' data
+	PhysicsActor::Load(parentValue,loadData);
+	//Setup the weapons
+	VoxEngine::SynchronousTask.RequestTask([this]() {
+		// Create the weapons only if none were loaded
+		if (weapons.size() <= 0) {
+			//Setup weapons
+			weapons.push_back(Game()->Actors.BuildWeapon("playerpulselaser.json",this));
+			weapons.push_back(Game()->Actors.BuildWeapon("playerlasercannon.json",this));
+		}
+
+		// Set initial weapon to pulse laser
+		setWeapon(currentWeaponId);
+	});
 }
 
-void ActorPlayer::setWeapon(Weapon * weapon)
+
+void ActorPlayer::setWeapon(int weaponId)
 {
+	this->currentWeaponId = weaponId;
 	// Construct the weapon model instance
 	if(!model)
 	{
@@ -81,7 +91,7 @@ void ActorPlayer::setWeapon(Weapon * weapon)
 	model->GetTransform().Translation() = glm::vec3(0, -0.3, -1.95);
 	
 	// Based on which weapon it is, select a reticle
-	if(weapon == laserCannon)
+	if(weaponId == 0)
 	{
 		Game()->GetHUD()->SetReticle("hud/reticle_sniper.png", glm::vec2(48, 48));
 	} else
@@ -90,7 +100,7 @@ void ActorPlayer::setWeapon(Weapon * weapon)
 	}
 	
 	//Save weapon
-	this->currentWeapon = weapon;
+	this->currentWeapon = weapons[weaponId];
 }
 
 void ActorPlayer::onDeath()
@@ -105,9 +115,7 @@ bool ActorPlayer::Update()
 {
 	// If the weapon is null, don't do shit
 	if(currentWeapon == NULL)
-	{
-		return false;
-	}
+		return PhysicsActor::Update();
 	
 	// Get the movement vector from the first person controller
 	vec2 moveVector = Game()->FirstPerson->GetMoveVector();
@@ -120,42 +128,23 @@ bool ActorPlayer::Update()
 	
 	// Check if we should switch weapons
 	if(Game()->FirstPerson->GetSwitchWeaponRequested())
-	{
-		if(currentWeapon == laserCannon)
-		{
-			setWeapon(pulseLaser);
-		} else
-		{
-			setWeapon(laserCannon);
-		}
-	}
+		setWeapon((currentWeaponId+1) % weapons.size());
 	
 	// Update the weapon
 	currentWeapon->Update(Game()->FirstPerson->GetLookVector(), weaponPos);
-		
-	// The firing setting depends on the weapon
-	if(currentWeapon == pulseLaser)
-	{
-		// Forward the potential shoot request
-		currentWeapon->HoldingTrigger(Game()->FirstPerson->GetTriggerPulled());
-		
-		// Forward whether or not we want to shoot to the player's weapon animation controller
-		model->Controller()->SetBoolean("firing", Game()->FirstPerson->GetTriggerPulled());
-	} else
-	{
-		// Forward whether or not we want to shoot to the player's weapon animation controller
-		bool r = currentWeapon->HoldingTrigger(Game()->FirstPerson->GetTriggerPulled());
-		model->Controller()->SetBoolean("firing", r);
-		
-		// if we fired the weapon, update the state machine
-		if(r)
-		{
-			model->Update(SIMULATION_DELTA, Game()->Now());
-		}
-	}
+
+	// Forward whether or not we want to shoot to the player's weapon animation controller
+	bool r = currentWeapon->HoldingTrigger(Game()->FirstPerson->GetTriggerPulled());
+	model->Controller()->SetBoolean("firing", r);
+
+
+	// if we fired the weapon, update the state machine
+	//but only if its not the pulseLaser, no idea why
+	if(r && (currentWeaponId == 0))
+		model->Update(SIMULATION_DELTA, Game()->Now());
 	
 	// Forward the weapon mode to the controller
-	model->Controller()->SetBoolean("mode", (currentWeapon == laserCannon) ? true : false);
+	model->Controller()->SetBoolean("mode", (currentWeaponId == 0) ? true : false);
 	
 	// Forward the movement speed to the player's weapon animation controller
 	model->Controller()->SetFloat("speed", OnGround() ? magnitude : 0.0f);
@@ -273,6 +262,14 @@ void ActorPlayer::DrawWeapon(MaterialProgram *materialShader)
 		//Save the altered MVP
 		alteredMVP = aProjection * (aView * aModel);
 	}
+}
+
+	
+//Get modifiers for the selected weapon
+//A damage factor of 0 indicates the weapon is locked
+WeaponModifiers * ActorPlayer::GetModifiers(int weaponId) {
+	_ASSERTE(weaponId > 0 && weaponId < weapons.size());
+	return &weapons[weaponId]->Modifiers;
 }
 
 //Draw the effects of said weapon

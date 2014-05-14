@@ -31,7 +31,7 @@ void WeaponAILaser::Fire() {
 		hitPosA = firePointA+finalFireVectorA*100.0f;
 	
 	weaponImpact(hitPosA);
- 	Universal::Concuss(hitPosA,laserData->Radius,laserData->Damage,(PhysicsActor*)this->weaponOwner);
+ 	Universal::Concuss(hitPosA,laserData->Radius,Modifiers.DamageFactor * laserData->Damage,(PhysicsActor*)this->weaponOwner);
 	//Laser hit
 	if (laserData->WeaponHitParticles.size() > 0) {
 		//Create a laser puff tailored to the culor of the laser
@@ -66,7 +66,7 @@ void WeaponAILaser::Fire() {
 			hitPosB = firePointB+finalFireVectorB*100.0f;
 	
 		weaponImpact(hitPosB);
- 		Universal::Concuss(hitPosB,laserData->Radius,laserData->Damage,(PhysicsActor*)this->weaponOwner);
+ 		Universal::Concuss(hitPosB,laserData->Radius,Modifiers.DamageFactor * laserData->Damage,(PhysicsActor*)this->weaponOwner);
 
 		//Laser hit
 		if (laserData->WeaponHitParticles.size() > 0) {

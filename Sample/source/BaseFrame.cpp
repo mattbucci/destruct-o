@@ -100,9 +100,7 @@ bool BaseFrame::Load(string saveName) {
 
 	//Deserialize the data
 	Savable::Deserialize(fileData,this);
-    
-	// Build player stuff
-    Actors.Player()->Build();
+
     
     GameLoaded.Fire([this](function<void(BaseFrame*)> subscriber) {
         subscriber(this);
@@ -142,8 +140,6 @@ void BaseFrame::NewWorld() {
 	//Build a brave new world or some shit
 	VoxEngine::LoadProgress.Update("Building a world");
 	Voxels.NewWorld(rand());
-	// Build player stuff
-    Actors.Player()->Build();
 }
 
 void BaseFrame::Build()
@@ -165,7 +161,7 @@ void BaseFrame::Build()
 	cout << "Loading audio\n";
 	VoxEngine::LoadProgress.Update("Loading audio");
 	audio = new AudioPlayer(100);
-    Actors.Player()->Build();
+
     GameStarted.Fire([this](function<void(BaseFrame*)> subscriber) {
         subscriber(this);
     });
