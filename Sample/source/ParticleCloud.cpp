@@ -21,9 +21,9 @@
 #endif
 //If they've disabled particles, disable them
 #ifdef NO_PARTICLES_AT_ALL
-#define MOBILE_ESCAPE() return;
+#define MOBILE_ESCAPE(x) return x;
 #else
-#define MOBILE_ESCAPE()
+#define MOBILE_ESCAPE(x)
 #endif
 
 //Register particle events
@@ -100,6 +100,11 @@ void ParticleCloud::UpdateCloud() {
 }
 
 ParticleSystem * ParticleCloud::BuildParticleSystem(const ParticleData & particleType, vec3 pos, float lifeTime) {
+	//don't run on mobile right now
+	if (lifeTime > 0.0f) {
+		MOBILE_ESCAPE(NULL);
+	}
+	//Build a particle system
 	ParticleSystem * ps = new ParticleSystem(particleType,Game()->Now(),lifeTime);
 	particles.push_back(ps);
 	ps->Position = pos;
