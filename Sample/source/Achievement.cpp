@@ -25,33 +25,3 @@ Achievement::Achievement() {
 	this->rewardPoints = -100;
 }
 
-
-/*
-void Achievement::SetValue(float value) {
-    currentvalue=value;
-    if(IsComplete() && !notified){
-        stringstream output;
-        output << "Achievement Unlocked: " << displaytext;
-        interface->Notify(output.str());
-        notified = true;
-    }
-}
-
-void Achievement::IncrementValue(float value) {
-    currentvalue+=value;
-    if(IsComplete() && !notified) {
-        stringstream output;
-        output << "Achievement Unlocked: " << displaytext;
-
-    }
-}
-
-bool Achievement::IsComplete() {
-    return currentvalue >= targetvalue;
-}
-
-float Achievement::GetProgress(){
-    if(targetvalue != 0)
-        return currentvalue / targetvalue;
-    else return 0;
-}*/

@@ -59,18 +59,6 @@ MenuFrame::~MenuFrame()
 
 
 
-//synchronously saves the game
-bool MenuFrame::Save(string saveFile) {
-
-	return true;
-}
-//synchronously loads the game over any existing data
-bool MenuFrame::Load(string saveFile) {
-
-	return true;
-}
-
-
 void MenuFrame::OnFrameFocus() {
 		//Tell the engine to load a new game
 		//VoxEngine::SetAsyncTask(new AsyncTask([]() {Game()->NewWorld();}));
