@@ -24,7 +24,8 @@ Achievements::Achievements(){
 	AddPossibleAchievement(ACH_DESTROYEROFWORLDS,100,50,"voxel-destroyed","Destroyer of worlds, 100 voxels destroyed");
 
 	//No points earned or unspent so far
-	pointsEarned = pointsUnspent = 0;
+	pointsEarned = PointsUnspent = 0;
+	lastUpgradeNotification = -10000;
 };
 
 Achievements::~Achievements() {
@@ -107,6 +108,19 @@ void Achievements::incrementAchievement(const string & name, float incrementQuan
 			if (p->Progress >= achievement.second->targetvalue) {
 				p->Earned = true;
 				notify->Notify(string("Achievement Unlocked: ") + achievement.second->displaytext);
+				//Add associated points
+				PointsUnspent += achievement.second->rewardPoints;
+				pointsEarned += achievement.second->rewardPoints;
+				if ((Game()->Now() - lastUpgradeNotification) > 60) {
+					//If it's been longer than 60 seconds since the last reminder
+					//remind the player again
+					lastUpgradeNotification = Game()->Now();
+#ifdef __MOBILE
+					notify->Notify("Tap here to spend achievement points!");
+#else
+					notify->Notify("Press U to spend achievement points!");
+#endif
+				}
 			}
 		}
     }

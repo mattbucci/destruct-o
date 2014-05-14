@@ -53,8 +53,8 @@ private:
     Notification * notify;
 	//Total points earned through achievements
 	int pointsEarned;
-	//Unspent points earned so far
-	int pointsUnspent;
+	//Last time the user was notified of the upgrade window
+	double lastUpgradeNotification;
 protected:
 	//Overload to rebuild the progress map after this class is loaded
 	void Load(Json::Value & parentValue, LoadData & loadData) override;
@@ -65,6 +65,10 @@ public:
     Achievements();
 	~Achievements();
 
+	//Unspent points earned so far
+	//can be modified because the player can spend them
+	int PointsUnspent;
+
 	//Connect the achievements object to baseframe
 	//should only be called once per program execution
 	void ConnectToGame(Notification* notification, BaseFrame * game);
@@ -74,7 +78,7 @@ public:
 	CLASS_DECLARATION(Achievements)
 		CLASS_CONTAINER_MEMBER(achievementProgress,ReflectionData::SAVE_VECTOR,ReflectionData::SAVE_OWNEDHANDLE)
 		CLASS_MEMBER(pointsEarned,ReflectionData::SAVE_INT32)
-		CLASS_MEMBER(pointsUnspent,ReflectionData::SAVE_INT32)
+		CLASS_MEMBER(PointsUnspent,ReflectionData::SAVE_INT32)
 	END_DECLARATION
 };
 

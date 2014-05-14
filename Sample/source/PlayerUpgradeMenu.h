@@ -4,14 +4,16 @@
 #include "Window.h"
 
 class PictureButton;
+class Label;
 
 class PlayerUpgradeMenu : public Window {
 	//List the weapons the player can upgrade or unlock
 	Window * weaponUpgradeMenu;
 	PictureButton * weaponUpgradeChoices;
+	Label * currentScore;
 
 	struct weaponInformation {
-		weaponInformation(int id, int cost, float costModifier, string name);
+		weaponInformation(int id, int cost, float costModifier, string name, string lockedImage, string unlockedImage);
 		//The name to be displayed
 		string name;
 		//the id used by the ActorPlayer
@@ -21,6 +23,10 @@ class PlayerUpgradeMenu : public Window {
 		//The modifier to purchase upgrades to this weapon
 		//modifies the default prices
 		float upgradeCostModifier;
+		//The image of this gun locked
+		string lockedImage;
+		//the image of this gun unlocked
+		string unlockedImage;
 	};
 
 	vector<weaponInformation> weapons;

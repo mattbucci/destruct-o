@@ -70,8 +70,10 @@ void ActorPlayer::Load(Json::Value & parentValue, LoadData & loadData) {
 		// Create the weapons only if none were loaded
 		if (weapons.size() <= 0) {
 			//Setup weapons
-			weapons.push_back(Game()->Actors.BuildWeapon("playerpulselaser.json",this));
 			weapons.push_back(Game()->Actors.BuildWeapon("playerlasercannon.json",this));
+			weapons.push_back(Game()->Actors.BuildWeapon("playerpulselaser.json",this));
+			//The pulse laser starts unpurchased
+			weapons[1]->Modifiers.DamageFactor = 0.0f;
 		}
 
 		// Set initial weapon to pulse laser
@@ -127,8 +129,18 @@ bool ActorPlayer::Update()
 	float magnitude = glm::length(moveVector);
 	
 	// Check if we should switch weapons
-	if(Game()->FirstPerson->GetSwitchWeaponRequested())
-		setWeapon((currentWeaponId+1) % weapons.size());
+	if(Game()->FirstPerson->GetSwitchWeaponRequested()) {
+		//switch weapons to the next weapon which has been purchased
+		for (int i = (currentWeaponId+1) % weapons.size(); i = (i+1) % weapons.size(); i++) {
+			//A damage factor of <= 0 indicates the weapon is currently locked
+			if (weapons[i]->Modifiers.DamageFactor > 0) {
+				setWeapon(i);
+				break;
+			}
+		}
+		
+	}
+		
 	
 	// Update the weapon
 	currentWeapon->Update(Game()->FirstPerson->GetLookVector(), weaponPos);
@@ -268,7 +280,7 @@ void ActorPlayer::DrawWeapon(MaterialProgram *materialShader)
 //Get modifiers for the selected weapon
 //A damage factor of 0 indicates the weapon is locked
 WeaponModifiers * ActorPlayer::GetModifiers(int weaponId) {
-	_ASSERTE(weaponId > 0 && weaponId < weapons.size());
+	_ASSERTE(weaponId >= 0 && weaponId < weapons.size());
 	return &weapons[weaponId]->Modifiers;
 }
 

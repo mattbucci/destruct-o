@@ -36,7 +36,7 @@ Label::~Label() {
 void Label::recalculatePosition() {
 	//Calculate width before you recalculate position
 	position.Width = 0;
-	position.Height = activeFont->GetFontSize()*textSegments.size();
+	position.Height = activeFont->GetFontSize()*textSegments.size()*1.2f;
 	//The width is the longest segment
 	for (auto segment : textSegments)
 		position.Width = max(position.Width,segment.Size().x);
