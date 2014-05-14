@@ -6026,12 +6026,16 @@ const char* lodepng_error_text(unsigned code)
 
 
 #ifdef LODEPNG_COMPILE_CPP
+#include <mutex>
+static mutex SDLPROTECTIONMUTEX;
 namespace lodepng
 {
 
 #ifdef LODEPNG_COMPILE_DISK
 void load_file(std::vector<unsigned char>& buffer, const std::string& filename)
 {
+	lock_guard<mutex> guard(SDLPROTECTIONMUTEX);
+
   SDL_RWops *file = SDL_RWFromFile(filename.c_str(), "r"); 
   long size;
 
@@ -6052,6 +6056,8 @@ void load_file(std::vector<unsigned char>& buffer, const std::string& filename)
 /*write given buffer to the file, overwriting the file, it doesn't append to it.*/
 void save_file(const std::vector<unsigned char>& buffer, const std::string& filename)
 {
+	lock_guard<mutex> guard(SDLPROTECTIONMUTEX);
+
   SDL_RWops *file = SDL_RWFromFile(filename.c_str(), "wb"); 
   if(!file) return;
   //fwrite((char*)buffer , 1 , buffersize, file);

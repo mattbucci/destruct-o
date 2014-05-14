@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "Music.h"
-
+#include "lodepng.h"
 
 Music::Music() {
     Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
@@ -44,20 +44,11 @@ void Music::start_playback() {
 bool Music::load_tracks() {
 	//Load the effects
 	string filename = "sounds/Music.txt";
+	vector<unsigned char> fileData;
 
-	SDL_RWops *file = SDL_RWFromFile(filename.c_str(), "r");
-	long size;
+	lodepng::load_file(fileData,filename);
 
-	//Use the SDL system to read the file
-	SDL_RWseek(file, 0, RW_SEEK_END);
-	size = (long)SDL_RWtell(file);
-	SDL_RWseek(file, 0, RW_SEEK_SET);
-
-	char * fileData = new char[size];
-	SDL_RWread(file, fileData, 1, (size_t)size);
-	SDL_RWclose(file);
-
-	stringstream File(string(fileData, size));
+	stringstream File(string((char*)fileData.data(), fileData.size()));
 
 	string tmp;
 	//Effect File Defintion Format
