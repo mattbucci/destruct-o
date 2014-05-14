@@ -33,6 +33,7 @@ public:
 		FRAME_MAINMENU,
 		FRAME_GAME,
 		FRAME_PAUSEMENU,
+		FRAME_UPGRADEMENU,
 	};
 	//Change which game system is receiving input and drawing
 	static void SetSystem(Systems system);

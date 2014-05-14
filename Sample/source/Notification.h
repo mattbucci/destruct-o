@@ -14,7 +14,9 @@ class Notification : public Window
 	queue<string> q;
 	Label* text;
 	double updateTime;
-
+protected:
+	//If the user clicks on this window switch to the upgrade frame
+	virtual void OnMousePress(vec2 mousePos, int button, bool down) override;
 public:
 	Notification(void);
 	~Notification(void);
