@@ -156,5 +156,11 @@ void RasterizedText::Draw(GL2DProgram * shader) {
 }
 
 vec2 RasterizedText::Size() {
-	return size;
+	if (font != NULL) {
+		//Recalculate size with the correct scale factor
+		float scale = (float)font->GetFontSize()/size.y;
+		return size * scale;
+	}
+	//No text means no font
+	return vec2();
 }

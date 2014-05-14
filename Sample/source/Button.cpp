@@ -31,6 +31,12 @@ void Button::OnMouseEnter() {
 }
 
 
+//On draw properly size the label
+void Button::Draw(GL2DProgram * shaders) {
+	innerLabel.SetMaxWidth(position.Width);
+	Control::Draw(shaders);
+}
+
 Button::Button() : innerLabel(0,0,"") {
 	useNinePatch(VisualInterface.NPButton);
 	//center the label

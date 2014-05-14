@@ -25,6 +25,9 @@ public:
 
 	GameEvent<void(Button*)> EventClicked;
 
+	//On draw properly size the label
+	virtual void Draw(GL2DProgram * shaders) override;
+
 	void SetText(string text);
 	void SetTextColor(vec4 color);
 //Get
