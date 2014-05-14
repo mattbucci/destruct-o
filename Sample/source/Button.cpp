@@ -85,6 +85,10 @@ void Button::SetText(string text) {
 	innerLabel.SetText(text);
 }
 
+void Button::SetTextColor(vec4 color) {
+	innerLabel.SetTextColor(color);
+}
+
 string Button::GetLabelText() {
 	return innerLabel.GetText();
 }

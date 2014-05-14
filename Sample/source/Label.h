@@ -13,6 +13,7 @@ protected:
 	float maxWidth;
 	//Wrap
 	RasterizedText text;
+	vec4 textColor;
 public:
 	Label();
 	Label(float x, float y, string text);
@@ -26,6 +27,7 @@ public:
 
 	//Wordwrap broken currently
 	void SetText(string text);
+	void SetTextColor(vec4 color);
 	string GetText();
 
 };

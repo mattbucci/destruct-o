@@ -26,6 +26,7 @@ public:
 	GameEvent<void(Button*)> EventClicked;
 
 	void SetText(string text);
+	void SetTextColor(vec4 color);
 //Get
 	string GetLabelText();
 };

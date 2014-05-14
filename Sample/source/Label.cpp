@@ -7,6 +7,7 @@ Label::Label() {
 	//Default to white
 	color = vec4(1,1,1,0);
 
+	textColor = VisualInterface.ColorControlText;
 	this->text = RasterizedText("",VisualInterface.FontControlText,VisualInterface.ColorControlText);
 	//textSize = 20;
 	maxWidth = 0;
@@ -18,6 +19,7 @@ Label::Label(float x, float y, string text) {
 	//Default to white
 	color = vec4(1,1,1,0);
 
+	textColor = VisualInterface.ColorControlText;
 	this->text = RasterizedText(text,VisualInterface.FontControlText,VisualInterface.ColorControlText);
 	//textSize = 20;
 	maxWidth = 0;
@@ -122,6 +124,18 @@ void Label::SetText(string text) {
 	//Only update if it changed
 	if (this->text.Text() != text)
 		this->text.SetText(text);
+	//apply wordwrap
+	applyWordwrap();
+	//Recalculate label size instantly
+	recalculatePosition();
+}
+
+void Label::SetTextColor(vec4 color) {
+	if (textColor == color)
+		return;
+	textColor = color;
+	//Update text
+	text = RasterizedText(text.Text(),VisualInterface.FontControlText,textColor);
 	//apply wordwrap
 	applyWordwrap();
 	//Recalculate label size instantly
