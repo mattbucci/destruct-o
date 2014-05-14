@@ -28,7 +28,7 @@ class GameTile {
 	vector<unsigned char> recode();
 
 	//Read image data into this tile
-	void readImageData(const vector<unsigned char> & imageData);
+	void readImageData(const vector<unsigned char> & imageData, bool updateStackHeights);
 
 	//Terrain is chunked. Each chunk draws independently
 	TerrainChunk ** chunks;
@@ -45,7 +45,8 @@ public:
 	//expects compressed memory!
 	static GameTile * LoadCompressedTileFromMemory(const vector<unsigned char> & tileData);
 	//Load a game tile from Memory (into existing GameTile)
-	static void LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tileData, GameTile * newTile);
+	//doUpdate indicates whether or not a full update of stack heights should be done after load
+	static void LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tileData, GameTile * newTile,bool doUpdate = true);
 
 	//Recalculate stack heights for the given region of tile cells
 	void UpdateTileSection(unsigned int rx, unsigned int ry, unsigned int tox, unsigned int toy);

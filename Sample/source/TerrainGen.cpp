@@ -149,5 +149,5 @@ void TerrainGen::generateTerrain(GameTile * tile) {
 	delete [] rawtile;
 
 	//Load Tile Data into GameTile
-	GameTile::LoadTileFromMemoryIntoExisting(tilecontainer, tile);
+	GameTile::LoadTileFromMemoryIntoExisting(tilecontainer, tile,false);
 }

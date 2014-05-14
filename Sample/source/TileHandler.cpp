@@ -418,11 +418,15 @@ void TileHandler::Load(Json::Value & parentValue, LoadData & loadData) {
 	//Load general data
 	Savable::Load(parentValue,loadData);
 
-	
+	//Keep track of how many tiles you've done
+	int tilesDone = 0;
 
 	//Load tiles
 	Json::Value & tiles = parentValue["tiles"];
 	for (auto tile : tiles) {
+		//If this load is async, show the user progress
+		VoxEngine::LoadProgress.Update("Unpacking tiles",tilesDone++,tiles.size());
+
 		vec2i tilePosition((int)tile["x"].asFloat(),(int)tile["y"].asFloat());
 		//Get the tile data
 		string base64Data = tile["base64data"].asString();
