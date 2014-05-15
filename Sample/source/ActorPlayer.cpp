@@ -131,7 +131,7 @@ bool ActorPlayer::Update()
 	// Check if we should switch weapons
 	if(Game()->FirstPerson->GetSwitchWeaponRequested()) {
 		//switch weapons to the next weapon which has been purchased
-		for (int i = (currentWeaponId+1) % weapons.size(); i = (i+1) % weapons.size(); i++) {
+		for (int i = (currentWeaponId+1) % weapons.size(); i != currentWeaponId; i = (i+1) % weapons.size()) {
 			//A damage factor of <= 0 indicates the weapon is currently locked
 			if (weapons[i]->Modifiers.DamageFactor > 0) {
 				setWeapon(i);

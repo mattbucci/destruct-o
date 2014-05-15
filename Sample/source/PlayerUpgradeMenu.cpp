@@ -7,6 +7,8 @@
 #include "ActorPlayer.h"
 #include "BaseFrame.h"
 
+#include "Frames.h"
+
 
 //All the weapon information should go here
 
@@ -35,9 +37,43 @@ PlayerUpgradeMenu::PlayerUpgradeMenu() {
 		//Setup defaults
 		weaponUpgradeChoices[i].position = Rect(20+i*220,10,200,200);
 		weaponUpgradeChoices[i].vPin = Control::CENTER;
-		weaponUpgradeChoices[i].SetPicturePosition(Rect(.55,.3,.4,.4));
+		weaponUpgradeChoices[i].SetPicturePosition(Rect(.3,.5,.4,.4));
+		weaponUpgradeChoices[i].SetTextPosition(.25);
+		//Subscribe
+		Subscribe<void(Button*)>(&weaponUpgradeChoices[i].EventClicked, [this,i](Button * b) {
+			//Get the player's points
+			int & points = VoxEngine::SavedAccountData.GameAchievements.PointsUnspent;
+			//Get the weapon modifier
+			WeaponModifiers * m = Game()->Actors.Player()->GetModifiers(weapons[i].unlockId);
+
+			if (m->DamageFactor <= 0) {
+				//Weapon is locked, and the player is trying to unlock it, if they have enough money unlock it
+				if (points >= weapons[i].unlockCost) {
+					//They can afford it
+					points -= weapons[i].unlockCost;
+					//Unlock the weapon
+					m->DamageFactor = 1.0f;
+					//Play some kind of notification or something?
+					//Update UI
+					this->Refresh();
+				}
+			}
+			else {
+				//They want to upgrade the weapon
+				//open the uprade dialog
+			}
+
+		});
 	}
-	//Back button pending =(
+	//Back Button
+	Button * backButton = new Button(Rect(-20,10,130,200));
+	backButton->hPin = Control::MAX;
+	backButton->vPin = Control::CENTER;
+	backButton->SetText("Back");
+	Subscribe<void(Button*)>(&backButton->EventClicked, [this](Button * b) {
+		Frames::SetSystem(Frames::FRAME_GAME);
+	});
+	AddChild(backButton);
 
 
 	currentScore = new Label(0,10,"");
@@ -69,11 +105,13 @@ void PlayerUpgradeMenu::Refresh() {
 			//Weapon is locked
 			ss << "Unlock " << weapons[i].name << " - " << weapons[i].unlockCost << "pts";
 			weaponUpgradeChoices[i].SetTexture(weapons[i].lockedImage);
+			weaponUpgradeChoices[i].SetTextColor((points >= weapons[i].unlockCost) ? vec4(0,1,0,1) : vec4(0,0,1,1));
 		}
 		else {
 			//Weapon is unlocked
 			ss << "Upgrade " << weapons[i].name;
 			weaponUpgradeChoices[i].SetTexture(weapons[i].unlockedImage);
+			weaponUpgradeChoices[i].SetTextColor(vec4(1,1,1,1));
 		}
 		//set weapon upgrade text
 		weaponUpgradeChoices[i].SetText(ss.str());

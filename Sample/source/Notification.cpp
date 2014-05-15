@@ -32,9 +32,11 @@ void Notification::Notify(string msg) {
 
 //If the user clicks on this window switch to the upgrade frame
 void Notification::OnMousePress(vec2 mousePos, int button, bool down) {
+#ifdef __MOBILE__
 	//Switch to the upgrade menu
 	if (down)
 		Frames::SetSystem(Frames::FRAME_UPGRADEMENU);
+#endif
 }
 
 void Notification::Draw(GL2DProgram * shader) {
