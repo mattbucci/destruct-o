@@ -89,19 +89,16 @@ void Universal::Concuss(vec3 at, float radius, float damage, PhysicsActor * dama
 	static const float initialDisplacement = 0.5f;
 
 	//Check that the "at" is above the terrain
-	vec2 checkPos[4] = {
-		vec2(floor(at.x),floor(at.y)),
-		vec2(floor(at.x),ceil(at.y)),
-		vec2(ceil(at.x),floor(at.y)),
-		vec2(ceil(at.x),ceil(at.y)),
-	};
+	vec2 checkPos = glm::floor(vec2(at));
 	int underCount = 0;
-	for (int i = 0; i < 4; i++) {
-		if ((Game()->Voxels.GetPositionHeight(checkPos[i]) - 5.0f) > at.z)
-			underCount++;
+	for (int x = -1; x <= 1; x++) {
+		for (int y = -1; y <= 1; y++) {
+			if ((Game()->Voxels.GetPositionHeight(checkPos + vec2(x,y)) - 4.0f) > at.z)
+				underCount++;
+		}
 	}
 	//If far below the earth, correct to above the earth.
-	if (underCount == 4)
+	if (underCount > 7)
 		at.z = Game()->Voxels.GetPositionHeight(vec2(at));
 
 	//Damage the terrain (terrain takes 50% damage)
