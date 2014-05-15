@@ -87,6 +87,24 @@ void Universal::Concuss(vec3 at, float radius, float damage, PhysicsActor * dama
 	static const int maxParticlesCreated = 120;
 	static const float initialEnergy = 20.0f;
 	static const float initialDisplacement = 0.5f;
+
+	//Check that the "at" is above the terrain
+	vec2 checkPos[4] = {
+		vec2(floor(at.x),floor(at.y)),
+		vec2(floor(at.x),ceil(at.y)),
+		vec2(ceil(at.x),floor(at.y)),
+		vec2(ceil(at.x),ceil(at.y)),
+	};
+	int underCount = 0;
+	for (int i = 0; i < 4; i++) {
+		if ((Game()->Voxels.GetPositionHeight(checkPos[i]) - 5.0f) > at.z)
+			underCount++;
+	}
+	if (underCount == 4) {
+		cout << "Corrected an explosion deep underground\n";
+		at.z = Game()->Voxels.GetPositionHeight(vec2(at));
+	}
+
 	//Damage the terrain (terrain takes 50% damage)
 	vector<vec4> newPhysicsVoxels = Game()->Voxels.Crater(at,radius*2.0f,damage*.50);
 	//Damage the existing physics voxels
