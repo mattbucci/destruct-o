@@ -229,6 +229,11 @@ void GameTile::Crater(IntRect craterRegion, int craterBottomZ, float damageDone,
 				continue;
 			}
 
+			//Warn the user something is suspicious
+			//place a breakpoint on the cout to find otu what the cause was
+			if (heightDiff > 30)
+				cout << "Suspicious crater!\n";
+
 			//Keep track of all removed voxels
 			while (heightDiff > 0) {
 				removedVoxels.push_back(vec4(x+(tile_x*TILE_SIZE),y+(tile_y*TILE_SIZE),height,cell.materialId));
