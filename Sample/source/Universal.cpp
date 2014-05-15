@@ -100,10 +100,9 @@ void Universal::Concuss(vec3 at, float radius, float damage, PhysicsActor * dama
 		if ((Game()->Voxels.GetPositionHeight(checkPos[i]) - 5.0f) > at.z)
 			underCount++;
 	}
-	if (underCount == 4) {
-		cout << "Corrected an explosion deep underground\n";
+	//If far below the earth, correct to above the earth.
+	if (underCount == 4)
 		at.z = Game()->Voxels.GetPositionHeight(vec2(at));
-	}
 
 	//Damage the terrain (terrain takes 50% damage)
 	vector<vec4> newPhysicsVoxels = Game()->Voxels.Crater(at,radius*2.0f,damage*.50);
