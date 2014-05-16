@@ -21,8 +21,16 @@ class PhysicsActor : public Actor {
 	vec3 velocity;
 	vec3 acceleration;
 
+	//If the actor has experienced an upwards force from solid ground this is true
 	bool onGround;
+	//if the actor has experinced a sideways force from solid ground this is true
+	bool touchingWall;
 	double lastDamageRecieved;
+
+	//if the physics actor is colliding with another physics actor this is the actor
+	PhysicsActor * collidingWith;
+	//If the physics actor is colliding with anything (the ground or another physics actor) this is true
+	bool colliding;
 
 	//The physics system has direct access to position/velocity/acceleration
 	friend class PhysicsSystem;
@@ -38,15 +46,31 @@ protected:
 	//(doesn't experience gravity)
 	bool flying;
 	//Status checkups
+	//If the actor has experienced an upwards force from solid ground this is true
 	bool OnGround();
+	//if the actor has experienced a sideways force from solid ground this is true
+	bool TouchingWall();
 	//if you've taken any damage in the last 4 seconds this is true
 	bool BeingDamaged();
+	//If you're touching anything, this is true
+	bool Colliding();
+	//If what you're touching is an actor, this is that actor
+	PhysicsActor * CollidingWith();
+
+	//The rate at which you regain health
+	float lifeRegenRate;
 
 	//The max health you can have
 	float maxLife;
 
 	//your life (starts at max)
 	float life;
+
+	//the rate at which you regain energy
+	float energyRegenRate;
+
+	//the max energy in this units energy pool
+	float energyPoolMax;
 
 	//The energy pool for firing a weapon
 	float energyPool;
@@ -74,10 +98,15 @@ public:
 	//Get the faction of this actor
 	FactionId GetFaction();
 
+	//Update life
+	virtual bool Update() override;
+
 	//Damage this actor from a particular faction
 	virtual void Damage(FactionId damagingFaction, float damage);
 
 	//Damage this actor from a particular actor
+	//this should be preferred, always use this when an actor
+	//is available
 	virtual void Damage(PhysicsActor * damagingActor, float damage);
 
 	//Get the max life of this actor
@@ -107,5 +136,7 @@ public:
 		CLASS_MEMBER(lastDamageRecieved,ReflectionData::SAVE_DOUBLE)
 
 		CLASS_MEMBER(faction,ReflectionData::SAVE_INT32)
+		CLASS_MEMBER(colliding,ReflectionData::SAVE_BOOL)
+		CLASS_MEMBER(collidingWith,ReflectionData::SAVE_HANDLE)
 	END_DECLARATION
 };

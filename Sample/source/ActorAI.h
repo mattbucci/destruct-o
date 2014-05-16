@@ -20,11 +20,20 @@ enum aiStates {
 	AI_TARGETING_ENEMY,
 	//When you're done targeting, kill'm
 	AI_ENGAGING_ENEMY,
+	//The AI is taking cover
+	AI_TAKINGCOVER,
+	//While waiting to find cover
+	//simply run in any direction which is away from enemies
+	AI_FLEEING,
 	//The AI is dying dead
 	AI_DYING,
 	//The AI is rotting now
 	AI_ROTTING,
 };
+
+//This actor's shitlist is a pair of actor pointers and their current hate
+//must be ddefined /outside/ the class
+SAVABLE_PAIR_DECLARATION(hatedActor,PhysicsActor*,ReflectionData::SAVE_HANDLE,float,ReflectionData::SAVE_FLOAT);
 
 
 class ActorAI : public PhysicsActor {
@@ -32,6 +41,7 @@ class ActorAI : public PhysicsActor {
 	//Each AI has a unique ID which decides when the expensive update is done
 	//this helps even out the load of AI running
 	unsigned int aiID;
+	MovingAverage<float> stateChangesPerSec;
 protected:
 	//The weapon which characterizes this AI
 	//Do not change!
@@ -43,6 +53,8 @@ protected:
 	virtual void stateScanning(bool & holdingTrigger);
 	virtual void stateTargeting(bool & holdingTrigger);
 	virtual void stateEngaging(bool & holdingTrigger);
+	virtual void stateTakingCover(bool & holdingTrigger);
+	virtual void stateFleeing(bool & holdingTrigger);
 	virtual void stateDying(bool & holdingTrigger);
 	virtual void stateRotting(bool & holdingTrigger);
 
@@ -68,11 +80,46 @@ protected:
 	MovingAverage<vec3> enemyPosition;
 	//If the actor is crashing (after flying)
 	bool actorCrashing;
+	//The current place to take cover
+	vec2 coverLocation;
+
+	//the actors it hates
+	//each actor is rated by how hated it is
+	//numbers 0-2 are probable
+	ContiguousList<hatedActor*> shitList;
+
+	//Check if a location is safe for cover
+	bool checkIfSafeForCover(vec3 location);
+	//Check if a location is safe for cover from a particular actor
+	bool checkIfSafeFromActor(vec3 location, PhysicsActor * actor);
+
+	//Move/path and jump over rocks towards the goal
+	//return true when you're there
+	//use this during expensive updates
+	virtual bool pathTowardsGoal(vec2 goal);
+
+	//Move dumbly towards a goal no matter what is blocking you
+	//return true when you're there
+	//use this during cheap updates
+	virtual void moveTowardsGoal(vec2 goal);
 
 	//Retrieve the muzzle position after a draw calculate
 	//and save in muzzlePositionA
 	//and in muzzlePositionB if appropriate
 	virtual void findMuzzlePosition();
+
+	//Update the shit list slowly decreasing the value you hate everyone
+	//and removing dead enemies or ones which are too far away
+	//If you hate an enemy enough
+	//this may also switch your target to the hated enemy
+	void updateShitList();
+
+	//Add a certain number of points to this AI's shitlist in regards to a certain other AI
+	void addShitListPoints(PhysicsActor * toList, float hatePoints);
+
+	//Retrieve the identity of your most hated enemy
+	//from the shitlist
+	PhysicsActor* getMostHatedEnemy();
 
 	//Attempt to find a close nearby enemy you can see right now
 	virtual PhysicsActor * sightNearbyEnemy();
@@ -84,9 +131,26 @@ protected:
 	//returns true when you're facing that direction
 	bool applyFacingDirection(float desiredFacingDirection);
 
+	//Ray trace method for checking if a jump is necessary
+	//works well for objects of size less than 2
+	//tends to be more accurate than wall touch
+	//but fails for larger sizes
+	bool jumpCheckRayTrace(vec3 traceDirection, float feetHeight, float & jumpDifference);
+
+	//Wall touch method for checking if a jump is necessary
+	//works well for objects of size greater than 2
+	//but tends to jump in incorrect situations sometimes
+	bool jumpCheckWallTouch(vec3 traceDirection, float feetHeight, float & jumpDifference);
+
+	//Uses the appropriate jump check to jump if necessary
+	//then jump the appropriate height
+	void jumpIfNecessary(vec3 moveDirection);
+
 
 	//If the current enemy is still valid returns true
 	//otherwise returns false
+	//this function also alters the state to STATE_SCANNING
+	//if the enemy is no longer valid
 	bool checkEnemyValid();
 
 	//Face the current valid enemy
@@ -94,11 +158,26 @@ protected:
 	//returns true when you're facing the enemy
 	bool faceEnemy();
 
+	//Check if you can see the given actor
+	bool canSeeActor(PhysicsActor * actor);
+
+	//Whether or not this AI should flee
+	//true if the AI is low on health
+	//true if the AI is low on energy
+	bool shouldFlee();
+
 	//Check if your spine can face the enemy right now
 	virtual bool checkSpineLimits();
 
 	//Snap the model's skeleton to face the enemy
 	virtual void snapSpineToEnemy();
+
+
+	//Trigger the target acquired event
+	//set the state to AI_TARGETING_ENEMY
+	//Only use if/when you have a clear shot
+	//and prepare to attack that enemy as appropriate
+	virtual void acquireTargetEnemy(PhysicsActor * actor);
 
 	//The smarts, ray traces and all that should go here
 	//planning etc.
@@ -121,13 +200,13 @@ protected:
 
 
 public:
-    //Used only by the save system to create an actorai loaded
+	//Used only by the save system to create an actorai loaded
 	ActorAI();
 
 	virtual ~ActorAI();
 
-    //Load data into this actor class, do not apply more than once
-    virtual void ApplyData(ActorAIData * dataToLoad);
+	//Load data into this actor class, do not apply more than once
+	virtual void ApplyData(ActorAIData * dataToLoad);
 
 
 	//Update the state of this AI
@@ -136,11 +215,22 @@ public:
 	//Change the allegiance of this AI
 	virtual void SetFaction(FactionId newFaction);
 
+	//Damage this actor from a particular faction
+	//exposed in this manner to prevent implicit hiding
+	virtual void Damage(FactionId damagingFaction, float damage);
+
+	//When damage has been done to this actor
+	//add the damager to your shitlist
+	virtual void Damage(PhysicsActor * damagingActor, float damage) override;
+
 	//Cause the actor to have a heart attack and die on the spot
 	void Kill();
 
 	//Tell other people you're dead the moment you run otu of health
 	bool Dead() override;
+
+	//True if this actor is scared and is trying to make a break for it
+	bool IsFleeing();
 
 	//When a path is granted from AIDS
 	//save it
@@ -155,7 +245,7 @@ public:
 
 	CLASS_DECLARATION(ActorAI)
 		INHERITS_FROM(PhysicsActor)
-        CLASS_MEMBER(data, ReflectionData::SAVE_OWNEDHANDLE)
+		CLASS_MEMBER(data, ReflectionData::SAVE_OWNEDHANDLE)
 		CLASS_MEMBER(weapon,ReflectionData::SAVE_OWNEDHANDLE)
 		CLASS_MEMBER(targetEnemy,ReflectionData::SAVE_HANDLE)
 		CLASS_MEMBER(targetAcquiredAt,ReflectionData::SAVE_DOUBLE)
@@ -168,6 +258,8 @@ public:
 		CLASS_MEMBER(muzzlePositionB,ReflectionData::SAVE_VEC3)
 		CLASS_MEMBER(enemyPosition,ReflectionData::SAVE_INSTANCE)
 		CLASS_MEMBER(actorCrashing,ReflectionData::SAVE_BOOL)
+		CLASS_CONTAINER_MEMBER(shitList,ReflectionData::SAVE_CONTIGOUSLIST,ReflectionData::SAVE_OWNEDHANDLE)
+		CLASS_MEMBER(coverLocation,ReflectionData::SAVE_VEC2)
 	END_DECLARATION
 };
 

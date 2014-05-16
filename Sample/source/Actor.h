@@ -63,6 +63,10 @@ protected:
 	//in radians
 	float facingDirection;
 
+	//The tilt of the model along the facing direction
+	//in radians (defaults to 0)
+	float tiltDirection;
+
 	//The scale applied to the model
 	float scale;
 

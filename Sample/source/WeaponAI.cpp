@@ -4,15 +4,20 @@
 
 //Whether or not the weapon should repeat firing automatically
 bool WeaponAI::RepeatFireAutomatically() {
+#ifndef __MOBILE__
     return data->RepeatFireAutomatically;
+#else
+	//All mobile weapons repeat fire automatically
+	return true;
+#endif
 }
 //The amount of charge it takes to fire the weapon
 float WeaponAI::WeaponChargeRequired() {
-    return data->ChargeRequired;
+    return data->ChargeRequired * Modifiers.ChargeUseFactor;
 }
 //Cooldown length for the weapon
 float WeaponAI::WeaponCooldownTime() {
-    return data->CooldownTime;
+    return data->CooldownTime * Modifiers.CooldownFactor;
 }
 //The amount of jitter in the weapon
 float WeaponAI::JitterAmount() {

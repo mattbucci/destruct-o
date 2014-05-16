@@ -4,9 +4,19 @@
 #include "stdafx.h"
 
 #include "GL2DVertexGroup.h"
+#include "RasterizedText.h"
+
+class Font;
+class GLTexture;
 
 class LoadingScreen : public GL2DVertexGroup {
-	GLuint textureId;
+	//Fonts
+	static Font * titleText;
+	static Font * infoText;
+	static GLTexture * texture;
+
+	RasterizedText bigText;
+	RasterizedText littleText;
 public:
 	LoadingScreen();
 	~LoadingScreen();

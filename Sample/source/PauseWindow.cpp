@@ -17,8 +17,8 @@ void PauseWindow::AddSliderOption(int sliderNumber, string sliderName, vector<fl
 	//Option View Distance
 	sliderLabel->vPin = slider->vPin = Control::MIN;
 	sliderLabel->hPin = slider->hPin = Control::CENTER;
-	sliderLabel->position = Rect(0, 50 + 80 * sliderNumber, 300, 20);
-	slider->SetPosition(Rect(0, 80 + 80 * sliderNumber, 300, 40));
+	sliderLabel->position = Rect(0, 50 + 65 * sliderNumber, 300, 20);
+	slider->SetPosition(Rect(0, 80 + 65 * sliderNumber, 300, 25));
 	sliderLabel->SetText(sliderName);
 	slider->SetValue(appliesTo);
 	optsRect.AddControl(sliderLabel);
@@ -68,11 +68,11 @@ PauseWindow::PauseWindow()
 
 	//Subscribe Main Menu Buttons to Actions
 	Subscribe<void(Button*)>(&menuSave.EventClicked, [this](Button * b) {
-		VoxEngine::SetAsyncTask(new AsyncTask([](){Game()->Save(Game()->GetSaveLocation() + "data.json.compressed");}));
+		VoxEngine::SetAsyncTask(new AsyncTask([](){Game()->Save();}));
 		Frames::SetSystem(Frames::FRAME_GAME);
 	});
 	Subscribe<void(Button*)>(&menuLoad.EventClicked, [this](Button * b) {
-		VoxEngine::SetAsyncTask(new AsyncTask([](){Game()->Load(Game()->GetSaveLocation() + "data.json.compressed");}));
+		VoxEngine::SetAsyncTask(new AsyncTask([](){Game()->Load("Default_Save");}));
 		Frames::SetSystem(Frames::FRAME_GAME);
 	});
 	Subscribe<void(Button*)>(&menuOptions.EventClicked, [this](Button * b) {
@@ -80,7 +80,7 @@ PauseWindow::PauseWindow()
 	});
 	Subscribe<void(Button*)>(&menuSaveAndQuit.EventClicked, [this](Button * b) {
 		cout << "\'Save & Quit\' Button Clicked" << endl;
-		VoxEngine::SetAsyncTask(new AsyncTask([](){Game()->Save(Game()->GetSaveLocation() + "data.json.compressed");}));
+		VoxEngine::SetAsyncTask(new AsyncTask([](){Game()->Save();}));
 		
 		Frames::SetSystem(Frames::FRAME_MAINMENU);
 	});
@@ -121,7 +121,7 @@ PauseWindow::PauseWindow()
 		floatOption("100%", 1.0f)
 	};
 	vector<floatOption> HUDTrans(HUDTransOpts, HUDTransOpts + sizeof(HUDTransOpts) / sizeof(HUDTransOpts[0]));
-	AddSliderOption(0,"HUD Transparency",HUDTrans,&VoxEngine::GlobalSavedData.GameOptions.HUDTransparency);
+	AddSliderOption(0,"HUD Transparency",HUDTrans,&VoxEngine::SavedDeviceData.GameOptions.HUDTransparency);
     
     // View distance options
     floatOption viewDistanceOptions[] =
@@ -133,7 +133,7 @@ PauseWindow::PauseWindow()
         floatOption("$oopah Us3r", 1.0f),
     };
     vector<floatOption> viewDistance(viewDistanceOptions, viewDistanceOptions + (sizeof(viewDistanceOptions) / sizeof(viewDistanceOptions[0])));
-	AddSliderOption(1,"View Distance",viewDistance,&VoxEngine::GlobalSavedData.GameOptions.ViewDistance);
+	AddSliderOption(1,"View Distance",viewDistance,&VoxEngine::SavedDeviceData.GameOptions.ViewDistance);
 
     // Physics
     floatOption basicOptions[] =
@@ -145,9 +145,21 @@ PauseWindow::PauseWindow()
         floatOption("VeryHigh", 1.0f),
     };
 	vector<floatOption> basicOptionsVector(basicOptions, basicOptions + (sizeof(basicOptions) / sizeof(basicOptions[0])));
-	AddSliderOption(2,"Physics",basicOptionsVector,&VoxEngine::GlobalSavedData.GameOptions.PhysicsAccuracy);
+	AddSliderOption(2,"Physics",basicOptionsVector,&VoxEngine::SavedDeviceData.GameOptions.PhysicsAccuracy);
 	//Particles
-	AddSliderOption(3,"Particles",basicOptionsVector,&VoxEngine::GlobalSavedData.GameOptions.ParticleQuality);
+	AddSliderOption(3,"Particles",basicOptionsVector,&VoxEngine::SavedDeviceData.GameOptions.ParticleQuality);
+
+#ifndef __MOBILE__
+    // jumping
+    floatOption jumpOptions[] =
+    {
+        floatOption("Off", 0.00),
+        floatOption("On", 2.00),
+    };
+	vector<floatOption> jumpOptionsVector(jumpOptions, jumpOptions + (sizeof(jumpOptions) / sizeof(jumpOptions[0])));
+	AddSliderOption(4,"Jumping",jumpOptionsVector,&VoxEngine::SavedDeviceData.GameOptions.Autojump);
+#endif
+
 }
 
 

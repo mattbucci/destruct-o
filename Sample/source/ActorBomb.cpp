@@ -9,7 +9,7 @@
 
 CLASS_SAVE_CONSTRUCTOR(ActorBomb);
 
-ActorBomb::ActorBomb() : ActorProjectile(GameFactions::FACTION_HOSTILE) {
+ActorBomb::ActorBomb() {
 	energyPool = 100;
 	this->Velocity = vec3(0, 0, -50);
 	setModel("bomb");
@@ -27,13 +27,13 @@ ActorBomb::~ActorBomb() {
 }
 
 bool ActorBomb::Update() {
-	if (OnGround()) {
+	if (Colliding() && (CollidingWith() != firingActor)) {
 		//Kill yourself
 		life = 0;
 		Destroy();
 		//Pull trigger 
 		bomb->Update(vec3(),Position,vec3());
-		//bomb->HoldingTrigger(true);
+		bomb->HoldingTrigger(true);
 	}
 	return PhysicsActor::Update();
 }

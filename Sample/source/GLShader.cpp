@@ -3,6 +3,7 @@
 #include "GLCommonShaderFile.h"
 #include "OS.h"
 #include <fstream>
+#include "lodepng.h"
 
 
 GLShader::GLShader(const GLShader & other) {
@@ -15,23 +16,16 @@ GLShader & GLShader::operator=(const GLShader & other) {
 
 //Attempts to compile in constructor
 GLShader::GLShader(GLCommonShaderFile * commonShader, string filename,GLenum shaderType) {
-	vector<char> fileContents;
-	SDL_RWops *file = SDL_RWFromFile(filename.c_str(), "r"); 
+	vector<unsigned char> fileContents;
+	lodepng::load_file(fileContents,filename);
 	
 	shaderId = -1;
 
-	if (!file) {
+	if (fileContents.size() <= 0) {
 		cout << "Failed to open shader file \"" << filename << "\""; 
 		return;
 	}
-	
-	//Read all the contents (byte by byte is slow, but shader files are small)
-	char byte;
-	while (SDL_RWread(file, &byte, 1, 1) > 0) {
-		fileContents.push_back(byte);
-	}
 
-	SDL_RWclose(file); 
 
 	//Null terminate
 	fileContents.push_back(0);

@@ -30,8 +30,11 @@ public:
 	static GLTextureCubeMap * GenerateErrorTexture();
     
 	// Attempt to cache the texture in graphics memory
-	bool CacheTexture() override;
+	bool CacheTexture(textureFlags flags = TEXTURE_LINEAR) override;
     
+	//Default texture options
+	static const textureFlags DefaultTextureOption;
+
 	// Bind this texture to the currently selected texture unit
 	void Bind() override;
 };

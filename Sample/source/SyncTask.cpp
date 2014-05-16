@@ -28,9 +28,17 @@ void SyncTask::RequestTask(function<void()> task) {
 	if (asyncRunning) {
 		unique_lock<mutex> check(taskMutex);
 
+		//Mark async not running so that any other requests will be handled on the same thread
+		//note: because of this step this setup can only ever work with two threads, the polling thread
+		//and one other thread. This could be fixed with a recursive mutex
+		asyncRunning = false;
+
 		asyncTask = task;
 		waitingOnTask = true;
 		taskWatch.wait(check);
+
+		//Mark async running again
+		asyncRunning = true;
 		check.unlock();
 	}
 	else

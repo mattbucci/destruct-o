@@ -24,8 +24,8 @@ void WeaponAIEntityFire::Fire() {
 	ActorProjectile * bombOne = dynamic_cast<ActorProjectile*>(Game()->Actors.BuildActorFromName(fireData->ActorFired));
 	//Better be a projectile or how can it be a projectile?
 	_ASSERTE(bombOne != NULL);
-
-	bombOne->FireProjectile(firePointA,finalFireVectorA*fireData->Velocity);
+	
+	bombOne->FireProjectile(this->weaponOwner,firePointA,finalFireVectorA*fireData->Velocity);
 
 	//Align the bombs to your faction
 	bombOne->SetFaction(weaponOwner->GetFaction());
@@ -36,7 +36,7 @@ void WeaponAIEntityFire::Fire() {
 		//Better be a projectile or how can it be a projectile?
 		_ASSERTE(bombTwo != NULL);
 
-		bombTwo->FireProjectile(firePointB,finalFireVectorB*fireData->Velocity);
+		bombTwo->FireProjectile(this->weaponOwner,firePointB,finalFireVectorB*fireData->Velocity);
 
 		bombTwo->SetFaction(weaponOwner->GetFaction());
 	}

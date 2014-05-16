@@ -11,15 +11,23 @@ PhysicsActor::PhysicsActor(FactionId faction)
 {
     size = vec3(1, 1, 1);
     maxLife = 100;
+	energyPoolMax = 100;
 	//Save settings
 	this->faction = faction;
 	//Apply defaults
 	onGround = false;
 	lastDamageRecieved = 0;
+	lifeRegenRate = 100.0f/45.0f; //regenerate all health in 45 seconds by default
 	life = maxLife;
+	energyRegenRate = 10.0f; //regenerate all energy in 10 seconds
+	energyPool = energyPoolMax;
 	vulnerable = true;
 	faction = GameFactions::FACTION_HOSTILE;
 	flying = false;
+	//Mark you're not colliding
+	collidingWith = NULL;
+	colliding = false;
+	touchingWall = false;
 }
 PhysicsActor::~PhysicsActor() {
 	
@@ -44,6 +52,15 @@ bool PhysicsActor::OnGround() {
 
 bool PhysicsActor::BeingDamaged() {
 	return Game()->Now() < lastDamageRecieved+5;
+}
+
+//If you're touching anything, this is true
+bool PhysicsActor::Colliding() {
+	return colliding;
+}
+//If what you're touching is an actor, this is that actor
+PhysicsActor * PhysicsActor::CollidingWith() {
+	return collidingWith;
 }
 
 //Get the current life of this actor
@@ -76,6 +93,8 @@ void PhysicsActor::Damage(FactionId damagingFaction, float damage) {
 		if (life < 0)
 			life = 0;
 		if (life <= 0) {
+			//Can't die anymore
+			vulnerable = false;
 			//Fire on death event
 			Game()->Actors.ActorKilled.Fire([this,damagingFaction](function<void(Actor*,Actor*,FactionId)> observer) {
 				observer(this,NULL,damagingFaction);
@@ -103,6 +122,8 @@ void PhysicsActor::Damage(PhysicsActor * damagingActor, float damage) {
 		if (life < 0)
 			life = 0;
 		if (life <= 0) {
+			//can't die anymore
+			vulnerable = false;
 			//Fire on death event
 			Game()->Actors.ActorKilled.Fire([this,damagingActor](function<void(Actor*,Actor*,FactionId)> observer) {
 				observer(this,damagingActor,damagingActor->faction);
@@ -123,6 +144,11 @@ FactionId PhysicsActor::GetFaction() {
 	return faction;
 }
 
+
+//if the actor has experienced a sideways force from solid ground this is true
+bool PhysicsActor::TouchingWall() {
+	return touchingWall;
+}
 
 //Check for the special case of a collision with an axis aligned voxel
 //The fed position should be the center of the voxel
@@ -153,11 +179,33 @@ bool PhysicsActor::aabbCollision(PhysicsActor * other) {
 }
 
 
+//Update life
+bool PhysicsActor::Update() {
+	//Regenerate life and energy while alive
+	if (!Dead()) {
+		life += SIMULATION_DELTA*lifeRegenRate;
+		if (life > maxLife)
+			life = maxLife;
+		energyPool += SIMULATION_DELTA*energyRegenRate;
+		if (energyPool > energyPoolMax)
+			energyPool = energyPoolMax;
+	}
+
+	if ((life <= 0) && vulnerable) {
+		//This unit died
+		vulnerable = false;
+		//call on death
+		onDeath();
+	}
+	return Actor::Update();
+}
+
 
 void PhysicsActor::Draw(MaterialProgram * materialShader) {
 	//Update model position
 	if (model != NULL) 
 		model->GetTransform().Translation() = vec3(position.x,position.y,position.z-size.z/2.0);
+
 	//Update the underlying actor
 	Actor::Draw(materialShader);
 }

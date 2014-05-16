@@ -18,7 +18,7 @@ public:
     
     // Acquires the given texture, caching it on the fly if necessary
     template <class T>
-    T * GetTexture(string path)
+    T * GetTexture(string path, typename T::textureFlags cacheFlags = T::DefaultTextureOption)
     {
         //Check cache first
         auto it = cachedTextures.find(path);
@@ -26,7 +26,7 @@ public:
         {
             //Attempt to cache
             GLTexture * tex = new T(path);
-            if (!tex->CacheTexture())
+            if (!tex->CacheTexture(cacheFlags))
             {
                 //Cache failed, destroy the texture
                 //Substitute the memory-created error texture
@@ -55,11 +55,11 @@ public:
 
 	// Caches the texture forever without unloading it until Flush() is explicitly called
     template <typename T>
-    void PermaCacheTexture(string path)
+    void PermaCacheTexture(string path, typename T::textureFlags cacheFlags = T::DefaultTextureOption)
     {
         //Attempt to cache
         GLTexture * tex = new T(path);
-        if (!tex->CacheTexture()) {
+        if (!tex->CacheTexture(cacheFlags)) {
             //Cache failed, destroy the texture
             delete tex;
             return;

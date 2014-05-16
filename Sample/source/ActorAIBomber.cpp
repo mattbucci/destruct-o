@@ -11,7 +11,7 @@ ActorAIBomber::ActorAIBomber() : ActorAI()  {
 	flying = true;
 	scale = 2;
 	runStarted = false;
-	turnarounddistance = 150;
+	turnarounddistance = 200;
 }
 ActorAIBomber::~ActorAIBomber() {
 
@@ -19,13 +19,14 @@ ActorAIBomber::~ActorAIBomber() {
 
 //Path until you're in range of the bomb run
 void ActorAIBomber::stateEngaging(bool & holdingTrigger) {
+	//check you've got an enemy
+	if (targetEnemy == NULL) {
+		state = AI_SCANNING;
+		return;
+	}
+
 	if (!runStarted) {
 		//Plan the bombing run
-		//check you've got an enemy
-		if (targetEnemy == NULL) {
-			state = AI_SCANNING;
-			return;
-		}
 		//Set the run goal
 		vec2 goal = vec2(targetEnemy->GetPosition());
 		//Pick a point past that
@@ -83,6 +84,10 @@ void ActorAIBomber::cheapUpdate() {
 		break;
 	case AI_ENGAGING_ENEMY:
 		{
+			if (targetEnemy == NULL) {
+				state = AI_SCANNING;
+				return;
+			}
 			//Move towards your forward direction
 			Velocity = vec3(vec2(cos(this->facingDirection), sin(this->facingDirection))*data->BaseMovementSpeed, Velocity.z);
 
@@ -93,6 +98,10 @@ void ActorAIBomber::cheapUpdate() {
 			//Face the direction your run is moving
 			this->applyFacingDirection(atan2(runDirection.y,runDirection.x));
 		}
+		break;
+	case AI_FLEEING:
+	case AI_TAKINGCOVER:
+		moveTowardsGoal(coverLocation);
 		break;
 	case AI_DYING:
 		break;

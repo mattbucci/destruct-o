@@ -12,6 +12,6 @@ protected:
 public:
 
 	CLASS_DECLARATION(WeaponAIEntityFire)
-		INHERITS_FROM(Weapon)
+		INHERITS_FROM(WeaponAI)
 	END_DECLARATION
 };

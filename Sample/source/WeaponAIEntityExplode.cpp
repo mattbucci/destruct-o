@@ -20,7 +20,7 @@ void WeaponAIEntityExplode::Fire() {
 
 	
 	weaponImpact(firePointA);
- 	Universal::Concuss(firePointA,data->Radius,data->Damage,(PhysicsActor*)this->weaponOwner);
+ 	Universal::Concuss(firePointA,data->Radius,Modifiers.DamageFactor * data->Damage,(PhysicsActor*)this->weaponOwner);
 	//exploson
 	if (data->WeaponHitParticles.size() > 0) {
 		ParticleData particlePuff = Game()->Particles.GetCached(data->WeaponHitParticles);
@@ -36,7 +36,7 @@ void WeaponAIEntityExplode::Fire() {
 	//Do second fire point
 	if (data->DualWeapon) {
 		weaponImpact(firePointA);
- 		Universal::Concuss(firePointB,data->Radius,data->Damage,(PhysicsActor*)this->weaponOwner);
+ 		Universal::Concuss(firePointB,data->Radius,Modifiers.DamageFactor * data->Damage,(PhysicsActor*)this->weaponOwner);
 		//exploson
 		if (data->WeaponHitParticles.size() > 0) {
 			ParticleData particlePuff = Game()->Particles.GetCached(data->WeaponHitParticles);

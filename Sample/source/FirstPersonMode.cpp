@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "FirstPersonMode.h"
+#include "Frames.h"
 
 float movement_speed = 1.0f;
 
@@ -11,9 +12,7 @@ FirstPersonMode::FirstPersonMode()
 	debug_target_height = 0;
 	lookVector = vec3(1,0,0);
 	triggerPulled = false;
-    weaponModeSwitch = false;
     weaponModeSwitchEvent = false;
-    pauseRequested = false;
     pauseRequestedEvent = false;
 }
 FirstPersonMode::~FirstPersonMode() {
@@ -107,18 +106,8 @@ void FirstPersonMode::Enable(bool enableFirstPerson) {
 
 //Update the looking direction based off input events
 void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEvent> input) {
-    // Does the user want to pause (or unpause) the game
-    if(pressedKeys.find(SDLK_ESCAPE) != pressedKeys.end())
-    {
-        if(!pauseRequested)
-        {
-            pauseRequested = true;
-            pauseRequestedEvent = true;
-        }
-    } else
-    {
-        pauseRequested = false;
-    }
+    
+
 
 	//What follows only matters if first person mode is enabled
 	if (!firstPersonEnabled)
@@ -162,18 +151,6 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 		jumpRequested = true;
 	}
 
-    // Does the user want to switch weapons?
-    if(pressedKeys.find(SDLK_TAB) != pressedKeys.end())
-    {
-        if(!weaponModeSwitch)
-        {
-            weaponModeSwitch = true;
-            weaponModeSwitchEvent = true;
-        }
-    } else
-    {
-        weaponModeSwitch = false;
-    }
     
 	//Sum up the mouse deltas into the current looking vector
 	//Mouse sensitivity constants for now
@@ -197,6 +174,15 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 				if(!debug) movement_speed = 2.0f;
 				else movement_speed = 5.0f;
 			}
+			// Does the user want to pause (or unpause) the game
+			else if (e.Key == SDLK_ESCAPE) 
+				pauseRequestedEvent = true;
+			// Does the user want to switch weapons?
+			else if (e.Key == SDLK_TAB) 
+				weaponModeSwitchEvent = true;
+			else if (e.Key == 'u')
+				//switch to upgrade frame
+				Frames::SetSystem(Frames::FRAME_UPGRADEMENU);
 
 		}
 #ifndef __MOBILE__

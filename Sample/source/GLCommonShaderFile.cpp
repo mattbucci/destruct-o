@@ -1,24 +1,12 @@
 #include "stdafx.h"
 #include "GLCommonShaderFile.h"
 #include <sstream>
+#include "lodepng.h"
 
 //Builds the shader file text
 GLCommonShaderFile::GLCommonShaderFile(string path) {
-	vector<char> fileContents;
-	SDL_RWops *file = SDL_RWFromFile(path.c_str(), "r"); 
-	
-	if (!file) {
-		cout << "Failed to find common shader at path: \"" << path << "\"\n";
-		return;
-	}
-
-	//Read all the contents (byte by byte is slow, but shader files are small)
-	char byte;
-	while (SDL_RWread(file, &byte, 1, 1) > 0) {
-		fileContents.push_back(byte);
-	}
-
-	SDL_RWclose(file); 
+	vector<unsigned char> fileContents;
+	lodepng::load_file(fileContents,path);
 
 
 	//Build the rest of a shader using a stringstream
@@ -45,7 +33,7 @@ GLCommonShaderFile::GLCommonShaderFile(string path) {
 #endif
 	virtualShader << "#define GLSL_VERSION_" << GLSLVersion << "\n";
 	//Now add the common file to the virtual shader
-	virtualShader << string(&fileContents.front(),fileContents.size());
+	virtualShader << string((char*)fileContents.data(),fileContents.size());
 	//Now shove it all into a string and then a vector
 	string vs = virtualShader.str();
 	//First create the vertex shader file

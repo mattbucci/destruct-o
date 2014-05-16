@@ -5,7 +5,7 @@
 #include "Building.h"
 
 //the size of each city
-const int citysize = 150;
+extern const int citysize;
 
 class SavableCityData;
 

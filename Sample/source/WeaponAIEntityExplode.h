@@ -12,4 +12,8 @@ protected:
 
 public:
 	WeaponAIEntityExplode();
+
+	CLASS_DECLARATION(WeaponAIEntityExplode)
+		INHERITS_FROM(WeaponAI)
+	END_DECLARATION
 };

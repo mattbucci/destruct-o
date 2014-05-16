@@ -79,6 +79,8 @@ public:
 		listSize = original.listSize;
 		data = new T[listCapacity];
 		memcpy(data,original.data,original.listSize*sizeof(T));
+
+		return *this;
 	}
 
 	virtual ~ContiguousList() {
@@ -307,8 +309,8 @@ public:
 			//Not enough room, make some more
 			reserve((int)(listCapacity * 1.5 + 4));
 		//Assume the space after listSize is empty
-		data[listSize++] = toInsert;
-		//return listSize-1;
+		//use "placement new" to avoid the assignment operator
+		new (&data[listSize++]) T(toInsert);
 	}
 	//Erase somthing based off an iterator
 	//returns a new valid iterator

@@ -4,6 +4,7 @@
 #include "BaseFrame.h"
 #include "ActorPlayer.h"
 #include "VoxEngine.h"
+#include "FirstPersonMode.h"
 
 #define MINIMAP_SIZE 200
 #define MINIMAP_DOT_SIZE 20
@@ -52,7 +53,7 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 	float px = player->GetPosition().x;
 	float py = player->GetPosition().y;
 	float playerAngle = fps->GetAngleVector().x;
-	float hudOpaque = 1.0f - VoxEngine::GlobalSavedData.GameOptions.HUDTransparency;
+	float hudOpaque = 1.0f - VoxEngine::SavedDeviceData.GameOptions.HUDTransparency;
 
 	// ---------------------------------
 	// |||||||||| CHARGE BAR |||||||||||
@@ -149,7 +150,10 @@ void HUD::DrawAndUpdate(GL2DProgram * shader, vec2 viewPortSize) {
 		float intensity = min(1.0f, (MINIMAP_SIZE*.5f - actorDistance - MINIMAP_DOT_SIZE*.5f) / (MINIMAP_SIZE * .064f));
 
 		//Set Color to Identify Friend/Foe
-		if(actorSystem->Factions.IsAlly(player->GetFaction(), actor->GetFaction())) {
+		//If they are one of the AI factions, indicate which
+		if (actor->GetFaction() >= actorSystem->Factions.FACTION_AIFACTION)
+			minimapDot.SetColor(actorSystem->Factions.FactionColor(actor->GetFaction()) * vec4(1,1,1,intensity * hudOpaque));
+		else if(actorSystem->Factions.IsAlly(player->GetFaction(), actor->GetFaction())) {
 			minimapDot.SetColor(vec4(0,1,0,intensity * hudOpaque));
 		} else if(actorSystem->Factions.IsEnemy(player->GetFaction(), actor->GetFaction())) {
 			minimapDot.SetColor(vec4(1,0,0,intensity * hudOpaque));

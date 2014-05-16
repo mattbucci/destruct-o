@@ -18,6 +18,9 @@
 #include "GLTextureCubeMap.h"
 #include "lodepng.h"
 
+//Default texture options
+const GLTextureCubeMap::textureFlags GLTextureCubeMap::DefaultTextureOption = GLTextureCubeMap::TEXTURE_LINEAR;
+
 // The string contants representing the suffixes of the cubemap textures
 static const std::string cubemapTextureNameSuffixes[] =
 {
@@ -52,7 +55,7 @@ GLTextureCubeMap* GLTextureCubeMap::GenerateErrorTexture()
 }
 
 // Attempt to cache the texture in graphics memory
-bool GLTextureCubeMap::CacheTexture()
+bool GLTextureCubeMap::CacheTexture(textureFlags flags)
 {
     // If the texture has already been cached, get out of here
 	if (IsCached())
@@ -63,8 +66,8 @@ bool GLTextureCubeMap::CacheTexture()
     // Generate an cubemap OpenGL Texture
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     

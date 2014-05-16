@@ -26,6 +26,7 @@ DebugWindow::DebugWindow() {
 
 	takeInput = false;
 	
+	SetVisible(false);
 
 	Fps = DrawTime = UpdateTime = 0.0f;
 	Voxels = 0;

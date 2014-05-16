@@ -26,6 +26,9 @@
 #include "Building.h"
 #include "ModelGroup.h"
 
+#include "FirstPersonModeMobile.h"
+#include "FirstPersonMode.h"
+
 #include "GLTextureCubeMap.h"
 #include "GLSkydome.h"
 #include "Audio.h"
@@ -37,7 +40,7 @@
 BaseFrame * BaseFrame::instance = NULL;
 
 BaseFrame::BaseFrame(ShaderGroup * shaders)
-    : GameSystem(shaders), hud(this), Physics(&Voxels), Actors(&Physics), Particles(&Actors,&Physics), achievements(&notification,this)
+    : GameSystem(shaders), hud(this), Physics(&Voxels), Actors(&Physics), Particles(&Actors,&Physics)
 {
 	_ASSERTE(instance == NULL);
 	instance = this;
@@ -59,7 +62,7 @@ BaseFrame::BaseFrame(ShaderGroup * shaders)
     skydome = new GLSkydome("skybox/skybox", Textures);
     
 	//Not a unique save. Should be altered in the future
-	SaveName = "Default_Save";
+	saveName = "Default_Save";
     
 	cout << "\t Finished base frame\n";
 }
@@ -72,51 +75,37 @@ BaseFrame::~BaseFrame()
 
 
 //synchronously saves the game
-bool BaseFrame::Save(string saveFile) {
+bool BaseFrame::Save() {
+	//Create relevant directories
+	OS::BuildPath(GetSaveLocation());
+
 	//Serialize this class
 	vector<unsigned char> saveData = Savable::Serialize(this);
-
-	//Open for writing binary data
-	SDL_RWops *file = SDL_RWFromFile(saveFile.c_str(), "wb"); 
-
-	//Check the file opened
-	if(!file) 
-		return false;
-	//Write the file containing all the save data
-	SDL_RWwrite(file,(char*)&saveData.front(),1,saveData.size());
-	SDL_RWclose(file);
+	//Save the file
+	lodepng::save_file(saveData,GetSaveLocation() + "data.json.compressed");
 
 	return true;
 }
 //synchronously loads the game over any existing data
-bool BaseFrame::Load(string saveFile) {
-	SDL_RWops *file = SDL_RWFromFile(saveFile.c_str(), "rb"); 
-	long size;
-	
-	//Check the file opened
-	if(!file) 
-		return false;
-
-	//Determine file size
-	SDL_RWseek(file , 0 , RW_SEEK_END);
-	size = (long)SDL_RWtell(file);
-	SDL_RWseek(file,0,RW_SEEK_SET);
+bool BaseFrame::Load(string saveName) {
+	//Remember the save name
+	this->saveName = saveName;
 
 	//allocate space for file data
-	vector<unsigned char> fileData(size);
-	SDL_RWread(file,&fileData.front(), 1, (size_t)size);
-	SDL_RWclose(file);
-	
+	vector<unsigned char> fileData;
+	lodepng::load_file(fileData,GetSaveLocation() + "data.json.compressed");
+
+	if (fileData.size() <= 0)
+		return false;
+
 	//Deserialize the data
 	Savable::Deserialize(fileData,this);
+
     
-	// Build player stuff
-    Actors.Player()->Build();
-    
-	return true;
     GameLoaded.Fire([this](function<void(BaseFrame*)> subscriber) {
         subscriber(this);
     });
+	return true;
 }
 
 void BaseFrame::Load(Json::Value & parentValue, LoadData & loadData) {
@@ -145,32 +134,40 @@ void BaseFrame::OnFrameLeave() {
 }
 
 void BaseFrame::NewWorld() {
+	VoxEngine::LoadProgress.Update("Setting up game");
 	//Load the reset save
 	Savable::Deserialize(resetSave,this);
 	//Build a brave new world or some shit
+	VoxEngine::LoadProgress.Update("Building a world");
 	Voxels.NewWorld(rand());
-	// Build player stuff
-    Actors.Player()->Build();
 }
 
 void BaseFrame::Build()
 {
     // Load the model group from the manifest
     cout << "Loading models\n";
+
+	VoxEngine::LoadProgress.Update("Loading models");
     models = new ModelGroup("meshes/manifest.json", Textures);
     
 	//Attempt to load particles
+	VoxEngine::LoadProgress.Update("Loading particles");
 	Particles.Load();
 
 	//Load actors and weapons
+	VoxEngine::LoadProgress.Update("Loading enemies");
 	Actors.Load();
 
 	cout << "Loading audio\n";
+	VoxEngine::LoadProgress.Update("Loading audio");
 	audio = new AudioPlayer(100);
-    Actors.Player()->Build();
+
     GameStarted.Fire([this](function<void(BaseFrame*)> subscriber) {
         subscriber(this);
     });
+	
+	//Connect achievements
+	VoxEngine::SavedAccountData.GameAchievements.ConnectToGame(&notification,this);
     
    
     // Subscribe to the application state event
@@ -183,7 +180,7 @@ void BaseFrame::Build()
             audio->Pause();
             
             // Save the game
-            this->Save(Game()->GetSaveLocation() + "data.json.compressed");
+            this->Save();
             
             // Pause
             //pauseWindow->SetVisible(true);
@@ -202,6 +199,7 @@ void BaseFrame::Build()
     });
     
 	//Build the reset save
+	VoxEngine::LoadProgress.Update("finalizing...");
 	resetSave = Savable::Serialize(this);
 
 	cout << "Finished BaseFrame::Build()\n";
@@ -244,7 +242,7 @@ void BaseFrame::Draw(double width, double height)
 	Textures.Refresh();
     
 	// Calculate the view and fog distances from the stored slider
-    viewDistance = glm::mix(MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE, VoxEngine::GlobalSavedData.GameOptions.ViewDistance);
+    viewDistance = glm::mix(MIN_DRAW_DISTANCE, MAX_DRAW_DISTANCE, VoxEngine::SavedDeviceData.GameOptions.ViewDistance);
     float fogDistance = viewDistance * 0.8f;
     
     // Compute the view for size vector
@@ -365,7 +363,7 @@ ModelGroup* BaseFrame::Models()
 }
 
 string BaseFrame::GetSaveLocation() {
-	return OS::SaveDirectory() + "Saves/" + SaveName + "/";
+	return OS::SaveDirectory() + "Destructo_Saves/" + saveName + "/";
 }
 
 //Retrieve the game object

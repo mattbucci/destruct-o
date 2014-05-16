@@ -5,7 +5,7 @@
 #include "lodepng.h"
 #include "base64.h"
 #include "Utilities.h"
-
+#include "VoxEngine.h"
 
 
 TileHandler::~TileHandler(void)
@@ -100,6 +100,8 @@ void TileHandler::handlerLoop() {
 			if (now >= tile->UseByDate) {
 				_ASSERTE(tile->Cells != NULL);
 				vec2i tilePos = vec2i(tile->tile_x,tile->tile_y);
+				//Create relevant directories
+				OS::BuildPath(saveDirectory());
 				//Cache to disk
 				tile->SaveTile(saveDirectory() + tileName(tilePos));
 
@@ -107,6 +109,8 @@ void TileHandler::handlerLoop() {
 				if (getTileCacheLastTile == tile)
 					//Mark no tile as cached
 					getTileCacheLastTilePos = vec2i(-10000,10000);
+
+				cout << "Cached tile [" << tilePos.x << "," << tilePos.y << "]\n";
 
 				//Erase from the list of tiles in memory
 				cachedTiles.erase(tilePos);
@@ -272,13 +276,23 @@ GameTile * TileHandler::getTile(vec2i pos) {
 }
 
 //Generates all the tiles in the given radius synchronously
+//This is used exclusively in the world build right now
+
 void TileHandler::UpdateSync(vec2 pos, int radius) {
 	//First predict all the tiles
 	Update(pos,radius);
+	//A size call (should?) be safe without the lock
+	int originalSize = genQueue.size();
+
 	//Next sleep until the gen queue is empty
 	while (1) {
 		//Obtain Lock on World Set
 		unique_lock<mutex> worldLck(worldMtx);
+
+		//Update the load screen
+		//if no load screen open, does nothing
+		VoxEngine::LoadProgress.Update("Building tiles",originalSize-genQueue.size(),originalSize);
+
 		//Wait for a tile to finish, and then check if all the tiles are done
 		//Ensure Generator is Running (We aren't waiting for nothing!)
 		genCv.notify_all();
@@ -404,11 +418,15 @@ void TileHandler::Load(Json::Value & parentValue, LoadData & loadData) {
 	//Load general data
 	Savable::Load(parentValue,loadData);
 
-	
+	//Keep track of how many tiles you've done
+	int tilesDone = 0;
 
 	//Load tiles
 	Json::Value & tiles = parentValue["tiles"];
 	for (auto tile : tiles) {
+		//If this load is async, show the user progress
+		VoxEngine::LoadProgress.Update("Unpacking tiles",tilesDone++,tiles.size());
+
 		vec2i tilePosition((int)tile["x"].asFloat(),(int)tile["y"].asFloat());
 		//Get the tile data
 		string base64Data = tile["base64data"].asString();

@@ -9,6 +9,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -17,6 +18,13 @@ public class ClearActivity extends Activity {
 		SDLActivity.mSingleton = this;
 	}
 	
+	@Override
+	public void onBackPressed() {
+		//We only care about the back button
+		//button codes listed on line 42 of SDL_androidkeyboard.c
+		SDLActivity.onNativeKeyDown(4);
+		SDLActivity.onNativeKeyUp(4);
+	}
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +124,12 @@ class ClearRenderer implements GLSurfaceView.Renderer {
 	
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
     	Log.v("_SDL", "onSurfaceCreated");
+    	if (ranOnce) {
+    		//Right now there's no way to reinitialize the opengl context without trashing global state
+    		//so we're going to have to restart the app entirely and then do something fancy to try and bring
+    		//the user exactly back to where they were
+    		Log.v("_SDL", "Attempting to app restart, this will probably not work");
+    	}
     	ranOnce = false;
 
     }

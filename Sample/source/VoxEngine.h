@@ -4,17 +4,13 @@
 #include "stdafx.h"
 
 #include "InputEvent.h"
-#include "GameData.h"
+#include "DeviceData.h"
+#include "AccountData.h"
 #include "AsyncTask.h"
 #include "SyncTask.h"
 #include "GameEvent.h"
 #include "MovingAverage.h"
-
-#undef SDL_PumpEvents
-#undef SDL_PollEvents
-
-#define SDL_PumpEvents()
-#define SDL_PollEvents
+#include "LoadInProgess.h"
 
 // Callback on iOS to set the render flag
 void iOSAnimationCallback(void *context);
@@ -118,17 +114,24 @@ public:
 	//do so from here
 	static SyncTask SynchronousTask;
 
-	//Saved global game data
-	//A good place for things that are per-device
-	//instead of per-save
+	//Saved per-device data
+	//instead of per-world-save
 	//Such as options, account data, etc.
-	static GameData GlobalSavedData;
+	static DeviceData SavedDeviceData;
+
+	//Saved per-account data
+	//instead of per-world or per-device
+	//such as username, security data, and achievements
+	static AccountData SavedAccountData;
 
 
 	//Get the average update and draw times
 	static MovingAverage<float> DrawTime;
 	static MovingAverage<float> UpdateTime;
 
+	//Can be used by everything/anything to indicate the progress of a load
+	//when used outside of a load has no harmful effects
+	static LoadInProgress LoadProgress;
     
     // state changed changed event
     static GameEvent<void (bool)> ApplicationStateChanged;

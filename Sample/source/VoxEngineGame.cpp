@@ -62,6 +62,9 @@ void VoxEngine::Start() {
 	VisualInterface.init();
 	//Populate the list of game systems
 	Frames::BuildSystemList();
+	//Load game settings and account data from disk
+	SavedDeviceData.Load();
+	SavedAccountData.Load();
 
 	//Start up game
 	continueGameLoop = true;
@@ -87,7 +90,15 @@ void VoxEngine::StartRenderLoop() {
 	//Android calls RenderLoop() externally
 #ifndef __ANDROID__
 	while (continueGameLoop) {
+		//Render/Update for one frame
 		RenderLoop();
+
+		//While rendering isn't safe, sleep and pump events
+		//also checks if any event is going to wake you up
+		while (!renderingIsSafe) {
+			SDL_PumpEvents();
+			OS::SleepTime(1.0/60.0);
+		}
 	}
 #endif
 }
@@ -111,6 +122,8 @@ void VoxEngine::RenderLoop() {
     // If we have a task needing completed (mostly frame switched)
     if (VoxEngine::task != NULL) {
 		if (!VoxEngine::task->IsStarted()) {
+			//Clear progress
+			LoadProgress.Update("");
 			//Start the task
 			VoxEngine::task->Start();
 
@@ -125,8 +138,9 @@ void VoxEngine::RenderLoop() {
 					//Assume one of the frames constructed the 2d shader
 					GL2DProgram * shader = (GL2DProgram*)Frames::shaders->GetShader("2d");
 					// Draw the loading screen
+					glClearColor(33.0f/255*.6f,196.0/255*.6f,0,1.0f);
 					glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-					load->Draw(curWidth,curHeight,shader);
+					load->Draw(scaledSize.x,scaledSize.y,shader);
 					//Draw the frame
 					PostFrame();
 				}
@@ -134,6 +148,20 @@ void VoxEngine::RenderLoop() {
 				//If there's a sync task, execute it now
 				SynchronousTask.PollingThreadPoll();
 
+				//Run events, process resize events still
+				//ignore all else
+				for (int i = 0; i < 20; i++) {
+					//Poll for events
+					SDL_Event event;
+					int eventPolled = SDL_PollEvent(&event);
+					if (eventPolled && (event.type == SDL_WINDOWEVENT) && (event.window.event == SDL_WINDOWEVENT_RESIZED)) {
+						//process resize
+						curWidth = event.window.data1;
+						curHeight = event.window.data2;
+						glViewport(0,0,curWidth,curHeight);
+						ResizeWindow();
+					}
+				}
 				//Sleep softly and use no cpu power
 				OS::SleepTime(1.0/60.0);
 			}
@@ -225,12 +253,12 @@ bool VoxEngine::WaitForSafeRender()
     // Process events
     SDL_PumpEvents();
     
-    // Loop if rendering is not safe
-    while(!renderingIsSafe)
+    // If rendering isn't safe, don't do it
+    if(!renderingIsSafe)
     {
         // Wait a frame and pump events
-        SDL_PumpEvents();
         OS::SleepTime(1.0/60.0);
+		return false;
     }
 
 #ifdef __IPHONEOS__

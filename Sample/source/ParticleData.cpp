@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "ParticleData.h"
-
+#include "lodepng.h"
 
 //Trims all whitespace at the start/end of the in string
 string ParticleData::Parser::trimWhitespace(string in) {
@@ -327,28 +327,20 @@ ParticleData * ParticleData::Parser::ReadParticle(string vpartText) {
 }
 
 ParticleData ParticleData::LoadParticleData(string filename) {
-	SDL_RWops *file = SDL_RWFromFile(filename.c_str(), "r"); 
-	long size;
-	
-	//cout << "Parsing particle file \"" << filename << "\":";
-
-	if(!file) {
-		//cout << "Failed to open particle data file \"" << filename << "\"";
-		return ParticleData();
-	}
+	vector<unsigned char> fileData;
 
 	//Use the SDL system to read the file
-	SDL_RWseek(file , 0 , RW_SEEK_END);
-	size = (long)SDL_RWtell(file);
-	SDL_RWseek(file,0,RW_SEEK_SET);
+	lodepng::load_file(fileData,filename);
 
-	char * fileData = new char[size];
-	SDL_RWread(file,fileData, 1, (size_t)size);
-	SDL_RWclose(file);
+	if (fileData.size() <= 0)
+		return ParticleData();
+
+	
+	
 
 	//Now use an instance of the parser to parse the file
 	static Parser parseSystem;
-	ParticleData * data = parseSystem.ReadParticle(string(fileData,size));
+	ParticleData * data = parseSystem.ReadParticle(string((char*)fileData.data(),fileData.size()));
 	//If no error occurred print out that you finished
 	if (data == NULL)
 		return ParticleData();

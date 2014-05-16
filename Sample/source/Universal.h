@@ -22,6 +22,23 @@ private:
 		vec3 surfaceNormal;
 	};
 public:
+	//This struct will be used for advanced traces
+	//in the future
+	/*
+	//This struct is not savable and thus should never
+	//be stored long-term
+	struct TraceOptions {
+		TraceOptions();
+		//The actor to ignore
+		PhysicsActor * actorToIgnore;
+		//the min distance the trace can travel before giving up
+		//the trace may go for much longer than this
+		//or be much shorter than this if it hits something
+		int minTraceDistance;
+		//unused - may be used to color traces
+		//for debug purposes
+		vec4 debugTraceColor;
+	}*/
 
 	//Creates a concussion
 	//damaging terrain

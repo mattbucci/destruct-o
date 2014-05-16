@@ -6,8 +6,6 @@
 #include "VoxelSystem.h"
 #include "GameCamera.h"
 #include "ActorSystem.h"
-#include "FirstPersonModeMobile.h"
-#include "FirstPersonMode.h"
 #include "PhysicsSystem.h"
 #include "ParticleCloud.h"
 #include "Notification.h"
@@ -21,7 +19,7 @@ class ActorPlayer;
 class ParticleSystem;
 class ModelGroup;
 class AudioPlayer;
-
+class FirstPerson;
 class GLSkydome;
 
 //Retrieve base frame
@@ -58,6 +56,9 @@ class BaseFrame : public GameSystem {
 		//this will be moved to a more powerful game logic system in the future
 		shader->Acid.SetAcidFactor(0);
 	}
+	//Should be unique per-save
+	string saveName;
+
 	//Access to the singleton
 	friend BaseFrame * Game();
 protected:
@@ -67,9 +68,6 @@ protected:
 public:
 	BaseFrame(ShaderGroup * shaders);
 	~BaseFrame();
-
-	//Should be unique per-save
-	string SaveName;
 
 	//Get the save path to the particular save folder
 	string GetSaveLocation();
@@ -91,7 +89,6 @@ public:
 	//Private objects which must be initialized after everything else
 	//goes here
 private:
-	Achievements achievements;
 	//This is the reset save
 	//it represents the initial state of the world when there isnt' a world
 	//its loaded to force the state to clear when making a new world
@@ -121,11 +118,11 @@ public:
     
     //synchronously saves the game
 	//returns true if successful
-	bool Save(string saveFile);
+	bool Save();
     
 	//synchronously loads the game over any existing data
 	//returns true if successful
-	bool Load(string saveFile);
+	bool Load(string saveName);
 
 	//Draw happens whenever possible
 	void Draw(double width, double height) override;
@@ -150,5 +147,6 @@ public:
 		CLASS_MEMBER(Physics,ReflectionData::SAVE_INSTANCE)
 		CLASS_MEMBER(Actors,ReflectionData::SAVE_INSTANCE)
 		CLASS_MEMBER(Voxels,ReflectionData::SAVE_INSTANCE)
+		CLASS_MEMBER(saveName,ReflectionData::SAVE_STRING)
 	END_DECLARATION
 };

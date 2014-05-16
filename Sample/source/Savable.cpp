@@ -121,6 +121,9 @@ void Savable::SaveValue(ReflectionData::savable valueData,Json::Value & value) {
 	case ReflectionData::SAVE_CONTIGOUSLIST:
 		SaveContainerValue<ContiguousList,__listdummyallocator>(valueData,value);
 		return;
+	case ReflectionData::SAVE_UNSAVABLEHANDLE:
+		//not saved
+		break;
 	default:
 		_ASSERTE(false);
 	}
@@ -214,7 +217,7 @@ void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, L
 		uint64_t loadedValue;
 		loadedValue = value["__HANDLE__"].asUInt64();
 		if (loadedValue != 0) {
-			Savable * classInstance = ReflectionStore::Data().RetrieveClassInstance(value["__TYPE__"].asString());
+			Savable * classInstance = ReflectionStore::Data().RetrieveClassTypeTools(value["__TYPE__"].asString())->BuildInstance();
 			//Save the fact you constructed a class so that anything else
 			//that was supposed to have a handle to that class can have their handles reconstructed
 			loadData.RegisterLoadedHandle(loadedValue,classInstance);
@@ -234,7 +237,10 @@ void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, L
 			*(void**)valueData.member = nullptr;
 		return;
 	}
-
+	case ReflectionData::SAVE_UNSAVABLEHANDLE:
+		//Just set it NULL
+		*(void**)valueData.member = nullptr;
+		break;
 	case ReflectionData::SAVE_INSTANCE: {
 		uint64_t loadedValue;
 		loadedValue = value["__HANDLE__"].asUInt64();
@@ -264,7 +270,13 @@ void Savable::LoadValue(ReflectionData::savable valueData,Json::Value & value, L
 		_ASSERTE(false);
 	}
 }
-
+//SAVE_INSTANCE special cases
+void Savable::saveContainerInstance(ReflectionData::savable valueData,Json::Value & value) {
+	//STUB
+}
+void Savable::loadContainerInstance(ReflectionData::savable valueData,Json::Value & value, LoadData & loadData) {
+	//STUB
+}
 
 
 void Savable::Save(Json::Value & parentValue) {
@@ -397,7 +409,7 @@ Savable * Savable::Deserialize(vector<unsigned char> serializedData, bool compre
 	//parse the json object 
 	reader.parse(string((char*)&serializedData[0],serializedData.size()),root);
 	//create a new object for the serialized data
-	Savable * createdObject = ReflectionStore::Data().RetrieveClassInstance(root["__ROOTTYPE__"].asString());
+	Savable * createdObject = ReflectionStore::Data().RetrieveClassTypeTools(root["__ROOTTYPE__"].asString())->BuildInstance();
 	//Load all the data into the new object
 	DeserializeJson(root,createdObject);
 

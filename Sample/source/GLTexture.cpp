@@ -2,6 +2,9 @@
 #include "GLTexture.h"
 #include "lodepng.h"
 
+//Default texture options
+const GLTexture::textureFlags GLTexture::DefaultTextureOption  = GLTexture::TEXTURE_MIPMAP;
+
 GLTexture::GLTexture(string texturePathName) {
 	textureId = 0;
 	this->texturePathName = texturePathName;
@@ -39,6 +42,9 @@ GLTexture * GLTexture::GenerateErrorTexture() {
 	return err;
 }
 
+
+
+
 //stolen from http://www.geeksforgeeks.org/write-one-line-c-function-to-find-whether-a-no-is-power-of-two/
 /* Function to check if x is power of 2*/
 static bool isPowerOfTwo (int x) {
@@ -47,7 +53,7 @@ static bool isPowerOfTwo (int x) {
 }
 
 //Attempt to cache the texture in graphics memory
-bool GLTexture::CacheTexture(){
+bool GLTexture::CacheTexture(textureFlags flags){
 	//Check that you're not already cached
 	if (IsCached())
 		return true;
@@ -66,7 +72,7 @@ bool GLTexture::CacheTexture(){
 	glBindTexture(GL_TEXTURE_2D, textureId);
 
 	//texture mapping type, perhaps elsewhere?
-	if (isPowerOfTwo(width) && isPowerOfTwo(height)) {
+	if ((flags & TEXTURE_MIPMAP) && isPowerOfTwo(width) && isPowerOfTwo(height)) {
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	
     
@@ -77,9 +83,18 @@ bool GLTexture::CacheTexture(){
 		//Decreases load performance substantially. Should be fixed later
 		glGenerateMipmap(GL_TEXTURE_2D);		
 	}
-	else {
+	else if (flags & TEXTURE_LINEAR) {
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );	//GL_NEAREST FOR SPEED
 		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	//GL_NEAREST FOR SPEED
+    
+		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width,
+					height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+					&data[0] );
+	}
+	else {
+		///asume fastest
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );	//GL_NEAREST FOR SPEED
+		glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);	//GL_NEAREST FOR SPEED
     
 		glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width,
 					height, 0, GL_RGBA, GL_UNSIGNED_BYTE,

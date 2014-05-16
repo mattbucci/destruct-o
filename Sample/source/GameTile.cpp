@@ -58,7 +58,7 @@ GameTile * GameTile::LoadTileFromDisk(string tileImagePath) {
 	_ASSERTE(height==TILE_SIZE);
 	cout << "\tLoaded image file, now converting to game tile data.\n";
 	GameTile * tile = new GameTile();
-	tile->readImageData(tileData);
+	tile->readImageData(tileData,true);
 	return tile; 
 }
 
@@ -76,7 +76,7 @@ void GameTile::PatchStackEdges(TileCell * cellList, int cellWidth) {
 }
 
 
-void GameTile::readImageData(const vector<unsigned char> & imageData) {
+void GameTile::readImageData(const vector<unsigned char> & imageData, bool updateStackHeights) {
 	_ASSERTE(imageData.size() == (TILE_SIZE*TILE_SIZE*4));
 	for (unsigned int i = 0; i < imageData.size(); i+= 4) {
 		//Load every RGBA pixel into a tile cell
@@ -88,7 +88,8 @@ void GameTile::readImageData(const vector<unsigned char> & imageData) {
 		Cells[i/4].cellMaxHealth = imageData[i+3];
 	}
 
-	UpdateTileSection(0,0,TILE_SIZE,TILE_SIZE);
+	if (updateStackHeights)
+		UpdateTileSection(0,0,TILE_SIZE,TILE_SIZE);
 }
 
 //Load a game tile from memory
@@ -109,12 +110,12 @@ GameTile * GameTile::LoadCompressedTileFromMemory(const vector<unsigned char> & 
 	_ASSERTE(height==TILE_SIZE);
 	cout << "\tLoaded image file, now converting to game tile data.\n";
 	GameTile * tile = new GameTile();
-	tile->readImageData(imageData);
+	tile->readImageData(imageData,true);
 	return tile; 
 }
 
-void GameTile::LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tileData, GameTile * newTile) {
-	newTile->readImageData(tileData);
+void GameTile::LoadTileFromMemoryIntoExisting(const vector<unsigned char> & tileData, GameTile * newTile,bool doUpdate) {
+	newTile->readImageData(tileData,doUpdate);
 }
 
 //Recalculate stack heights for the given region of tile cells
@@ -228,8 +229,13 @@ void GameTile::Crater(IntRect craterRegion, int craterBottomZ, float damageDone,
 				continue;
 			}
 
+			//Warn the user something is suspicious
+			//place a breakpoint on the cout to find otu what the cause was
+			if (heightDiff > 30)
+				cout << "Suspicious crater!\n";
+
 			//Keep track of all removed voxels
-			while (heightDiff >= 0) {
+			while (heightDiff > 0) {
 				removedVoxels.push_back(vec4(x+(tile_x*TILE_SIZE),y+(tile_y*TILE_SIZE),height,cell.materialId));
 				cellsRemoved++;
 				heightDiff--;

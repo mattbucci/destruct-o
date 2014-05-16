@@ -100,7 +100,14 @@ void PhysicsSystem::updatePhysicsActors() {
 				actor->velocity += vel*forceDirection;
 				//Apply extra enhanced friction while they're touching
 				actor->velocity *= .98;
+				
+				//Keep track of whether or not you're touching a wall or the floor
+				if (forceDirection.z <= 0)
+					actor->touchingWall = true;
+				//This is the bug which allows wall climbing
+				//but I'm going to leave it
 				actor->onGround = true;
+				actor->colliding = true;
 			}
 		}
 		
@@ -113,7 +120,9 @@ void PhysicsSystem::updatePhysicsActors() {
 
 		//Now apply velocity/acceleration
 		//Always decrease the total energy in the system
-		actor->velocity *= .99;
+		//accept true flying things, they can fly forever
+		if (!actor->flying)
+			actor->velocity *= .99;
 		//Apply forces!
 		actor->velocity += actor->acceleration*(float)simulationDelta;
 		actor->position += actor->velocity*(float)simulationDelta;
@@ -208,7 +217,7 @@ void PhysicsSystem::collideVoxelsToVoxels() {
 
 	//Calculate a max-section-size
 	//which is the largest n for the O(n^2) operation
-	unsigned int MaxSectionSize = (unsigned int)(10.0f+30.0f*VoxEngine::GlobalSavedData.GameOptions.PhysicsAccuracy);
+	unsigned int MaxSectionSize = (unsigned int)(10.0f+30.0f*VoxEngine::SavedDeviceData.GameOptions.PhysicsAccuracy);
 
 	//Sort using insertion sort as the list rarely moves much
 	allVoxels.sort([](PhysicsVoxel * a, PhysicsVoxel * b) -> bool {
@@ -299,6 +308,9 @@ void PhysicsSystem::collideVoxelsToActors() {
 					//Check if the force will move the actor up
 					if (intr.Normal.z > 0)
 						actor->onGround = true;
+					else
+						actor->touchingWall = true;
+					actor->colliding = true;
 
 					voxel->Acceleration += forceDirection*force;
 					actor->Acceleration += -forceDirection*force;
@@ -348,8 +360,17 @@ void PhysicsSystem::collideActorsToActors() {
 				//Check if the force will move the actor up
 				if (intr.Normal.z > 0)
 					actorB->onGround = true;
+				else
+					actorB->touchingWall = true;
 				if (intr.Normal.z < 0)
 					actorA->onGround = true;
+				else
+					actorA->touchingWall = true;
+				//Mark the actors as colliding with each other
+				actorA->colliding = true;
+				actorB->colliding = true;
+				actorA->collidingWith = actorB;
+				actorB->collidingWith = actorA;
 
 				actorB->Acceleration += forceDirection*force;
 				actorA->Acceleration += -forceDirection*force; 
@@ -420,17 +441,21 @@ void PhysicsSystem::Update() {
 
 	//Establish all actors as not on the ground
 	//if they experience an upwards force as a result of a collision or ground, mark them as on the ground
-	for (auto actor : actors)
+	for (auto actor : actors) {
 		actor->onGround = false;
+		actor->colliding = false;
+		actor->collidingWith = NULL;
+	}
+		
 	
 	//Now check for collisions between everything that can experience them
 	//Physics voxel physics may be skipped periodically
 	skipCount--;
 	if (skipCount <= 0) {
 		//Determine new skip count
-		if (VoxEngine::GlobalSavedData.GameOptions.PhysicsAccuracy <= .26f)
+		if (VoxEngine::SavedDeviceData.GameOptions.PhysicsAccuracy <= .26f)
 			skipCount = 4;
-		else if (VoxEngine::GlobalSavedData.GameOptions.PhysicsAccuracy <= .51f) 
+		else if (VoxEngine::SavedDeviceData.GameOptions.PhysicsAccuracy <= .51f) 
 			skipCount = 2;
 		else
 			skipCount = 1;
@@ -479,10 +504,12 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 
 	shader->Model.PopMatrix();
 
-
+	/*
 	//FOR DEBUG
 	//DRAW ACTOR EXTENTS
-	/*glDepthMask(GL_FALSE);
+	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
 	for (auto actor : actors) {
 		//Skip the player
 		if (typeid(*(Actor*)actor) == typeid(ActorPlayer))
@@ -501,12 +528,14 @@ void PhysicsSystem::Draw(ShaderGroup * shaders) {
 
 		//draw one voxel
 		renderer->startDraw(shader);
-		renderer->pushVoxel(shader,vec3(),8);
+		renderer->pushVoxel(shader,vec3(),2);
 		renderer->finishDraw(shader);
 
 		shader->Model.PopMatrix();
 	}
-	glDepthMask(GL_TRUE);*/
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+	//*/
 }
 
 ContiguousList<PhysicsActor*>* PhysicsSystem::GetActors() {

@@ -10,8 +10,21 @@
 #include "ActorSystem.h"
 #include "PhysicsSystem.h"
 #include "PhysicsVoxel.h"
+#include "GLVoxelColors.h"
 
 #include "TimeStepGuard.h"
+
+#ifdef __MOBILE__
+//Only uncomment this as a very last resort to get mobile
+//working
+#define NO_PARTICLES_AT_ALL
+#endif
+//If they've disabled particles, disable them
+#ifdef NO_PARTICLES_AT_ALL
+#define MOBILE_ESCAPE(x) return x;
+#else
+#define MOBILE_ESCAPE(x)
+#endif
 
 //Register particle events
 ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics)
@@ -21,21 +34,11 @@ ParticleCloud::ParticleCloud(ActorSystem * actors, PhysicsSystem * physics)
 	drawTracker(1.0f/60.0f*.15f,1.0f/60.0f*.65f){
 
 	//VOXEL DISINTEGRATE EVENT
-	static const vec4 materialColors[16] = {
-		vec4(.39,.761,.254,1),
-		vec4(.43,.304,.214,1),
-		vec4(80.0f/255.0f,205.0f/255.0f,210.0f/255.0f,1),
-		//No colors set for anything else, make them all brown
-		vec4(.43,.304,.214,1),
-		vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),
-		vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),
-		vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),vec4(.43,.304,.214,1),
-	};
 	Subscribe<void(PhysicsVoxel*)>(&physics->VoxelDisintegrating,[this](PhysicsVoxel * voxel) {
 		ParticleData particlePuff = Game()->Particles.GetCached("physicsDisintegrate.vpart");
 		//disintegrate voxel
 		particlePuff.Color.ClearValues();
-		particlePuff.Color.AddValue(0,materialColors[voxel->MaterialId]);
+		particlePuff.Color.AddValue(0,vec4(GLVoxelColors::MaterialColors[voxel->MaterialId],1.0));
 		BuildParticleSystem(particlePuff, voxel->Position, Utilities::random(.3f,.5f));
 	});
 }
@@ -54,7 +57,7 @@ void ParticleCloud::enactRecommendation(float recommendation, bool updateRecomme
 		float chanceNotDeleted = .7f+.3f*(float)recommendation; 
 		for (auto it = particles.begin(); it != particles.end();){
 			//Voxels removed in this fashion do not produce particles
-			if (Utilities::random(0.0f,1.0f) > chanceNotDeleted) {
+			if ((*it)->Timed() && (Utilities::random(0.0f,1.0f) > chanceNotDeleted)) {
 				delete *it;
 				it = particles.erase(it);
 				eliminatedSystems++;
@@ -78,6 +81,8 @@ void ParticleCloud::UpdateCloud() {
 	//carefully control performance
 	enactRecommendation(updateTracker.GetRecommendation(),true);
 
+	MOBILE_ESCAPE();
+
 	//First update each particle
 	for (auto it = particles.begin(); it != particles.end(); ) {
 		ParticleSystem * current = *it;
@@ -94,10 +99,19 @@ void ParticleCloud::UpdateCloud() {
 	}
 }
 
-void ParticleCloud::BuildParticleSystem(const ParticleData & particleType, vec3 pos, float lifeTime) {
+ParticleSystem * ParticleCloud::BuildParticleSystem(const ParticleData & particleType, vec3 pos, float lifeTime) {
+	//don't run on mobile right now
+	if (lifeTime > 0.0f) {
+		MOBILE_ESCAPE(NULL);
+	}
+	//Build a particle system
 	ParticleSystem * ps = new ParticleSystem(particleType,Game()->Now(),lifeTime);
 	particles.push_back(ps);
 	ps->Position = pos;
+	//Only infinite life particle systems are immune
+	//to being removed for performance
+	//so only they can have a persistant pointer
+	return (lifeTime < 0.0f) ? ps : NULL;
 }
 
 void ParticleCloud::Clear() {
@@ -112,6 +126,8 @@ void ParticleCloud::Draw(ShaderGroup * shaders) {
 	TimeStepGuard guard(&drawTracker);
 	//carefully control performance
 	enactRecommendation(drawTracker.GetRecommendation(),false);
+
+	MOBILE_ESCAPE();
 
 	GL3DProgram * shader3d = (GL3DProgram *)shaders->GetShader("3d");
 	GLParticleProgram * shaderParticles = (GLParticleProgram*)shaders->GetShader("particles");

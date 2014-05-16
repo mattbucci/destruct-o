@@ -160,7 +160,7 @@ void VoxelSystem::Draw(ShaderGroup * shaders, SimplePolygon<4>& drawRegion)
 
 void VoxelSystem::Update(vec3 player_pos){
 	//Pass to TileHandler
-	tiles.Update(vec2(player_pos));
+	tiles.Update(vec2(player_pos),2);
 }
 
 int VoxelSystem::GetLastVoxelCount() {

@@ -22,8 +22,7 @@ public:
 	virtual void Draw(MaterialProgram * materialShader);
 
 	CLASS_DECLARATION(ActorBomb)
-		//ActorProjectile has no save table, so just list the physics actor
-		INHERITS_FROM(PhysicsActor)
+		INHERITS_FROM(ActorProjectile)
 		CLASS_MEMBER(bomb,ReflectionData::SAVE_OWNEDHANDLE);
 	END_DECLARATION
 };

@@ -25,6 +25,10 @@
 #include <functional>
 #include <limits>
 
+//for threading
+#include <mutex>
+#include <thread>
+
 using namespace std;
 
 //Disable the rest of includes if in the unit testing system

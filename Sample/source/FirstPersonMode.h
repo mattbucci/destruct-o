@@ -27,11 +27,9 @@ protected:
 	bool jumpRequested;
     
     // Does the user want to switch weapon modes
-    bool weaponModeSwitch;
     bool weaponModeSwitchEvent;
     
     // Check whether the pause button has been pressed
-    bool pauseRequested;
     bool pauseRequestedEvent;
     
 public:

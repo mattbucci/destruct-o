@@ -10,6 +10,8 @@
 #include "GLParticleProgram.h"
 #include "VoxEngine.h"
 
+
+
 ParticleSystem::ParticleSystem(ParticleData particleSystemDescription,double now, double lifetime) {
 	this->particleSystemDescription = particleSystemDescription;
 	this->creationTime = now;
@@ -21,6 +23,18 @@ ParticleSystem::ParticleSystem(ParticleData particleSystemDescription,double now
 }
 ParticleSystem::~ParticleSystem() {
 	particleList.clear();
+}
+
+
+//Destroy this particle system during the next update
+void ParticleSystem::Destroy() {
+	deathAt = 1;
+}
+
+//Check if this particle has an infinite lifespan
+//returns false if it does
+bool ParticleSystem::Timed() {
+	return deathAt >= 0;
 }
 
 //Update the particle emitter spawning particles
@@ -41,7 +55,7 @@ bool ParticleSystem::UpdateEmitter() {
 		float generationRate = particleSystemDescription.GenerationRate.ValueAtSequence(systemLifeFactor);
 		//Scale generation rate with particle system options
 		//generation rate goes from 25% to 100%
-		generationRate *= (VoxEngine::GlobalSavedData.GameOptions.ParticleQuality*.75f+.25f);
+		generationRate *= (VoxEngine::SavedDeviceData.GameOptions.ParticleQuality*.75f+.25f);
 		//Check if it's time to spawn a new particle
 		double perParticle = 1.0f/generationRate;
 		while (nextParticle < systemTime) {

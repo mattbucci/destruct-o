@@ -58,6 +58,8 @@ void GameSystem::Draw(double width, double height) {
 
 	GL2DProgram * shaders2d = (GL2DProgram*)shaders->GetShader("2d");
 
+	shaders2d->SetWidthHeight(width,height);
+
 	//Update debug data before draw
 	Controls.Debug.Fps = fpsCount.GetFps();
 	//and profiling debug data

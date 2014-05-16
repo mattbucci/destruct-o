@@ -23,6 +23,8 @@ public:
 	//Valid range: 0 (least particles) - 1 (most particles)
 	float ParticleQuality;
 
+	//Autojump 0 is off, >0 is on
+	float Autojump;
 
 	void Print();
 
@@ -30,6 +32,8 @@ public:
 		CLASS_MEMBER(HUDTransparency,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(ViewDistance,ReflectionData::SAVE_FLOAT)
 		CLASS_MEMBER(PhysicsAccuracy,ReflectionData::SAVE_FLOAT)
+		CLASS_MEMBER(ParticleQuality,ReflectionData::SAVE_FLOAT)
+		CLASS_MEMBER(Autojump,ReflectionData::SAVE_FLOAT)
 	END_DECLARATION
 };
 

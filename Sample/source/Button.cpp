@@ -31,6 +31,12 @@ void Button::OnMouseEnter() {
 }
 
 
+//On draw properly size the label
+void Button::Draw(GL2DProgram * shaders) {
+	innerLabel.SetMaxWidth(position.Width);
+	Control::Draw(shaders);
+}
+
 Button::Button() : innerLabel(0,0,"") {
 	useNinePatch(VisualInterface.NPButton);
 	//center the label
@@ -83,6 +89,10 @@ Button::~Button() {
 
 void Button::SetText(string text) {
 	innerLabel.SetText(text);
+}
+
+void Button::SetTextColor(vec4 color) {
+	innerLabel.SetTextColor(color);
 }
 
 string Button::GetLabelText() {

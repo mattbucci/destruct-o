@@ -30,8 +30,7 @@
 // Timing functions
 #include "OS.h"
 
-// PNG loading functions
-#include "lodepng.h"
+#include "TexturedRect.h"
 
 // Subclass of FirstPersonMode which handles the first person controller on mobile devices.
 // Will draw a virtual joystick for motion, accepts tapping and dragging on the screen
@@ -39,6 +38,7 @@
 class FirstPersonModeMobile : public FirstPersonMode
 {
 protected:
+	bool sprinting;
     // Current finger controlling looking
     SDL_FingerID fingerLook;
     bool         fingerLookActive;
@@ -56,11 +56,11 @@ protected:
     // Previous know screen dimensions
     vec2         screenDimensions;
     
-    // Texture to use for joystick
-    GLuint           joystickTexture;
-    GL2DVertexGroup *joystickVertices;
-    GLuint           joystickOutlineTexture;
-    GL2DVertexGroup *joystickOutlineVertices;
+	TexturedRect joystickOutline;
+	TexturedRect joystickNub;
+	TexturedRect shootIco;
+	vec2 shootIcoLocation;
+	double lastShootIcoUpdate;
     
 public:
 	FirstPersonModeMobile();

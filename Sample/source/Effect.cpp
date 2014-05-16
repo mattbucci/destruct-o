@@ -8,6 +8,7 @@
 
 #include "stdafx.h"
 #include "Effect.h"
+#include "lodepng.h"
 
 Effect::Effect() {
     Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
@@ -55,19 +56,11 @@ bool Effect::load_files() {
     //Load the effects
     string filename = "sounds/Effects.txt";
     
-	SDL_RWops *file = SDL_RWFromFile(filename.c_str(), "r");
-	long size;
-    
-	//Use the SDL system to read the file
-	SDL_RWseek(file , 0 , RW_SEEK_END);
-	size = (long)SDL_RWtell(file);
-	SDL_RWseek(file,0,RW_SEEK_SET);
-    
-	char * fileData = new char[size];
-	SDL_RWread(file,fileData, 1, (size_t)size);
-	SDL_RWclose(file);
-    
-    stringstream File(string(fileData,size));
+	vector<unsigned char> fileData;
+    lodepng::load_file(fileData,filename);
+	
+
+    stringstream File(string((char*)fileData.data(),fileData.size()));
     
     string tmp;
     //Effect File Defintion Format

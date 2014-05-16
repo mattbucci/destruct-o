@@ -51,7 +51,11 @@ public:
 
 	//Build a particle system with the given particle data
 	//to last the specified amount of time
-	void BuildParticleSystem(const ParticleData & particleType, vec3 pos, float lifeTime);
+	//specifying -1 creates a system with infinite life
+	//should be terminated by Destroy()
+	//returns the particle system IF AND ONLY IF lifeTime is infinite (<0)
+	//otherwise the system is created but null is returned
+	ParticleSystem * BuildParticleSystem(const ParticleData & particleType, vec3 pos, float lifeTime);
 
 	//Destroy all particle systems that currently exist
 	void Clear();

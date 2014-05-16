@@ -5,11 +5,12 @@
 #include "GameEvent.h"
 
 class Button : public Control {
+protected:
 	vec4 normalColor;
 	vec4 hoverColor;
 	vec4 clickColor;
 	Label innerLabel;
-protected:
+
 	virtual void OnMousePress(vec2 mousePos, int button, bool down);
 	virtual void OnMouseMove(vec2 mousePos);
 	virtual void OnMouseLeave();
@@ -24,7 +25,11 @@ public:
 
 	GameEvent<void(Button*)> EventClicked;
 
+	//On draw properly size the label
+	virtual void Draw(GL2DProgram * shaders) override;
+
 	void SetText(string text);
+	void SetTextColor(vec4 color);
 //Get
 	string GetLabelText();
 };

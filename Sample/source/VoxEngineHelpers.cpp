@@ -14,6 +14,7 @@
 bool VoxEngine::renderingIsSafe = true;
 bool VoxEngine::iOSRenderRequested = false;
 double VoxEngine::iOSRenderTime = 0.0;
+LoadInProgress VoxEngine::LoadProgress;
 
 LoadingScreen * VoxEngine::load;
 
@@ -63,7 +64,12 @@ MovingAverage<float> VoxEngine::UpdateTime(20);
 
 
 //Save data to keep across all games
-GameData VoxEngine::GlobalSavedData;
+DeviceData VoxEngine::SavedDeviceData;
+
+//Saved per-account data
+//instead of per-world or per-device
+//such as username, security data, and achievements
+AccountData VoxEngine::SavedAccountData;
 
 GameEvent<void (bool)> VoxEngine::ApplicationStateChanged;
 
@@ -171,6 +177,8 @@ void VoxEngine::ProcessEvents(vector<InputEvent> & eventQueue) {
 					case SDL_QUIT:
 						//Stops the next iteration of the game loop
 						continueGameLoop = false;
+						//Save things now
+						VoxEngine::SavedDeviceData.Save();
 						break;
 				}
 			}
@@ -207,8 +215,8 @@ int EventFilter(void *context, SDL_Event *event)
             {
                 subscriber(VoxEngine::renderingIsSafe);
             });
+			cout << "ENTERING BACKGROUND SAFTLEY?\n";
             return 0;
-            break;
             
         // If the application has resumed, it is again safe to render
         case SDL_APP_DIDENTERFOREGROUND:
@@ -218,7 +226,6 @@ int EventFilter(void *context, SDL_Event *event)
                 subscriber(VoxEngine::renderingIsSafe);
             });
             return 0;
-            break;
 #endif
         default:
             break;
