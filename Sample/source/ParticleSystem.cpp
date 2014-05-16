@@ -96,8 +96,10 @@ void ParticleSystem::Draw(ParticleRenderer * renderer, GLParticleProgram * shade
 		break;
 	}
 	//Sort if necessary
-	if (particleSystemDescription.MaterialStyle == ParticleData::BLEND) {
-		particleList.sort([cameraZAxis](Particle & a, Particle & b) {
+	if (particleSystemDescription.MaterialStyle == ParticleData::BLEND)
+    {
+		particleList.sort([cameraZAxis](const Particle & a, const Particle & b)
+        {
 			return glm::dot(a.Position, cameraZAxis) < glm::dot(b.Position, cameraZAxis);
 		});
 	}
