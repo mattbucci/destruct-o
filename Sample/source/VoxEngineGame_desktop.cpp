@@ -115,6 +115,10 @@ SDL_Window* VoxEngine::BuildSDLContext(int openglMajorVersion, int openglMinorVe
 	cout << "Built context with opengl version: " << openglMajorVersion << "." << openglMinorVersion << "\n";
 	SDL_GL_CreateContext(displayWindow);
 	
+	//Setup the icon
+	SDL_SetWindowIcon(displayWindow,SDL_LoadBMP("DestructoIcon.bmp"));
+	SDL_SetWindowTitle(displayWindow,"Destruct-o");
+
 	//Get glsl version
 	char * versionString = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 	//This function can fail to return a proper version string

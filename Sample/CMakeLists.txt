@@ -26,7 +26,7 @@ include_directories("includes/json")
 IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 	# Destructo Executable
-	add_executable(Destructo ${Destructo_SRC})
+	add_executable(Destructo ${Destructo_SRC} "icon/DestructoIcon.rc" )
 
     # Windows should consume headers bundles with source
     include_directories("includes/SDL")
