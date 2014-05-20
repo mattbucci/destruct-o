@@ -1,0 +1,8 @@
+bin\
+bin/
+build\
+build/
+obj\
+obj/
+androidproject/obj
+androidproject/libs

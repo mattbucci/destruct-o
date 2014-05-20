@@ -1,0 +1,1 @@
+Since android compilation is a super pain, I'm going to try to leave an up-to-date android binary in thise folder
