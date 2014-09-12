@@ -64,7 +64,7 @@ void TerrainChunkRenderer::HotChunk::Set(TerrainChunk * chunk, GLTerrainProgram 
     
     // Vertex base color
 	glEnableVertexAttribArray( shader->AttributeMaterial() );
-	glVertexAttribPointer ( shader->AttributeMaterial(), 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,Material) );
+	glVertexAttribPointer ( shader->AttributeMaterial(), 1, GL_UNSIGNED_SHORT, GL_FALSE, sizeof(TerrainChunk::ChunkVertexData), (void*)offsetof(TerrainChunk::ChunkVertexData,Material) );
     
     // Don't fuck the VAOs
     glBindVertexArray( 0 );

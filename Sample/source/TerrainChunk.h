@@ -45,8 +45,7 @@ public:
 		Utilities::PODVec3 Vertex;
 		uint8_t TextureCoordinateX;
 		uint8_t TextureCoordinateY;
-		uint8_t pad[2];
-		uint32_t Material;
+		uint16_t Material;
 	};
 
 	//Array of interleaved vertex data
