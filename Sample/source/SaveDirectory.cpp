@@ -6,7 +6,19 @@
 // Only include this file on non apple platforms
 #if !(defined __IPHONEOS__) && !(defined __APPLE__)
 
-#ifndef __ANDROID__
+#if (defined __ANDROID__)
+
+// Return a save file directory
+string OS::SaveDirectory()
+{
+    // Find the magical save directoy
+    static string saveDir = "/mnt/sdcard/";
+    
+    // Return the magical save directory
+    return saveDir;
+}
+
+#elif (defined _WIN32)
 
 // Return a save file directory
 string OS::SaveDirectory()
@@ -24,7 +36,7 @@ string OS::SaveDirectory()
 string OS::SaveDirectory()
 {
     // Find the magical save directoy
-    static string saveDir = "/mnt/sdcard/";
+    static string saveDir = "";
     
     // Return the magical save directory
     return saveDir;
