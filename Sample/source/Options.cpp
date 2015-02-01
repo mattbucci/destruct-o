@@ -6,7 +6,7 @@ Options::Options() {
 	HUDTransparency = .25f;
 
 #ifdef __MOBILE__
-	ViewDistance = .25f;
+	ViewDistance = .50f;
 	ParticleQuality = 0.0f;
 	PhysicsAccuracy = .25f;
 	Autojump = 2;
