@@ -5,24 +5,25 @@ A fully multiplatform Voxel Based Game with network sync built on SDL
 
 ## License ##
 Destructo's source code is distributed under the 3 clause BSD license, dependencies are distributed under their respective licenses. See licenses/
-| Dependency | License |
-| ---------- | ------- |
-| SDL2 | zlib |
-| GLEW | 3 clause BSD |
-| GLM | Happy Bunny License |
-| cURL | MIT |
-| LodePNG | zlib |
-| base64 | APSL and Apache |
-| zlib | zlib |
-| libnoise | LGPL 2.1 |
-| freetype | 3 clause BSD |
-| libogg | 3 clause BSD |
-| libvorbis | 3 clause BSD |
-| libflac | 3 clause BSD |
-| libidn | LGPL 3.0 |
-| librtmp | LGPL 2.1 |
-| libmikmod | LGPL 3.0 |
-| libmodplug | public domain |
+
+| Dependency | License             |
+| ---------- |:-------------------:|
+| SDL2       | zlib                |
+| GLEW       | 3 clause BSD        |
+| GLM        | Happy Bunny License |
+| cURL       | MIT                 |
+| LodePNG    | zlib                |
+| base64     | APSL and Apache     |
+| zlib       | zlib                |
+| libnoise   | LGPL 2.1            |
+| freetype   | 3 clause BSD        |
+| libogg     | 3 clause BSD        |
+| libvorbis  | 3 clause BSD        |
+| libflac    | 3 clause BSD        |
+| libidn     | LGPL 3.0            |
+| librtmp    | LGPL 2.1            |
+| libmikmod  | LGPL 3.0            |
+| libmodplug | public domain       |
 
 ## Summary ##
 Destructo is a procedurally generated tribute to 90s games like duke nukem and quake. The player will be dropped into a strange world, using a method similar to the "ACID Shader" http://www.youtube.com/watch?v=JpksyojwqzE. Similar to the 90s era games, the player will be an overly macho guy with an alcohol dependency. If he doesn't keep drinking his vision gets worse and worse utilizing the "ACID Shader" we'll be writing. You can find source code for this shader here: http://pastebin.com/WbVNtMg7 which will be applied as a post effect to the rendered world.
