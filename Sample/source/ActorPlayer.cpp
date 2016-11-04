@@ -1,3 +1,33 @@
+/**
+ * Copyright (c) 2016, Nathaniel R. Lewis, Anthony Popelar, Matt Bucci, Brian Bamsch
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include "stdafx.h"
 #include "BaseFrame.h"
 #include "ActorPlayer.h"
@@ -29,7 +59,7 @@ ActorPlayer::ActorPlayer()
 	//start the user with a full charge
 	life = maxLife = 200;
 	energyPool = maxEnergyPool = 100;
-	
+
 	//Start the player off in abouts the center
 	Position = (vec3(0,0,0));
 	deltaPosition = 0.0;
@@ -91,7 +121,7 @@ void ActorPlayer::setWeapon(int weaponId)
 		setModel("player_weapon");
 	}
 	model->GetTransform().Translation() = glm::vec3(0, -0.3, -1.95);
-	
+
 	// Based on which weapon it is, select a reticle
 	if(weaponId == 0)
 	{
@@ -100,7 +130,7 @@ void ActorPlayer::setWeapon(int weaponId)
 	{
 		Game()->GetHUD()->SetReticle("hud/reticle.png", glm::vec2(48, 48));
 	}
-	
+
 	//Save weapon
 	this->currentWeapon = weapons[weaponId];
 }
@@ -118,16 +148,16 @@ bool ActorPlayer::Update()
 	// If the weapon is null, don't do shit
 	if(currentWeapon == NULL)
 		return PhysicsActor::Update();
-	
+
 	// Get the movement vector from the first person controller
 	vec2 moveVector = Game()->FirstPerson->GetMoveVector();
-	
+
 	// Calculate the direction we are facing
 	facingDirection = atan2(moveVector.y, moveVector.x);
-	
+
 	// Calculate the magnitude of the movement vector (are we sprinting)
 	float magnitude = glm::length(moveVector);
-	
+
 	// Check if we should switch weapons
 	if(Game()->FirstPerson->GetSwitchWeaponRequested()) {
 		//switch weapons to the next weapon which has been purchased
@@ -138,10 +168,10 @@ bool ActorPlayer::Update()
 				break;
 			}
 		}
-		
+
 	}
-		
-	
+
+
 	// Update the weapon
 	currentWeapon->Update(Game()->FirstPerson->GetLookVector(), weaponPos);
 
@@ -154,17 +184,17 @@ bool ActorPlayer::Update()
 	//but only if its not the pulseLaser, no idea why
 	if(r && (currentWeaponId == 0))
 		model->Update(SIMULATION_DELTA, Game()->Now());
-	
+
 	// Forward the weapon mode to the controller
 	model->Controller()->SetBoolean("mode", (currentWeaponId == 0) ? true : false);
-	
+
 	// Forward the movement speed to the player's weapon animation controller
 	model->Controller()->SetFloat("speed", OnGround() ? magnitude : 0.0f);
-	
+
 	// Use the movement vector to set the velocity of the player's physics object
 	Velocity.x = moveVector.x * movementSpeed;
 	Velocity.y = moveVector.y * movementSpeed;
-	
+
 	// Have we walked more than 200 units?
 	if(deltaPosition > 200 && OnGround())
 	{
@@ -173,11 +203,11 @@ bool ActorPlayer::Update()
 		{
 			subscriber(this);
 		});
-		
+
 		//cout << "Player Position: " << Position.x << "," << Position.y << "," << Position.z << endl;
 		deltaPosition -=200;
 	}
-	
+
 	// If we haven't, check if we should add more distance to our odometer
 	else
 	{
@@ -186,7 +216,7 @@ bool ActorPlayer::Update()
 			deltaPosition+= sqrt(pow(Velocity.x,2)+pow(Velocity.y,2));
 		}
 	}
-	
+
 	// Lets check if the controller wants us to jump
 	if(Game()->FirstPerson->GetJumpRequested())
 	{
@@ -196,7 +226,7 @@ bool ActorPlayer::Update()
 		{
 			// Apply upwards velocity
 			Velocity.z += jumpVelocity;
-			
+
 			// First the event that we'e
 			Game()->Actors.ActorJumped.Fire([this](function<void(ActorPlayer*)> subscriber)
 			{
@@ -231,7 +261,7 @@ bool ActorPlayer::Update()
 							Velocity.z += min(15*(upcomingHeight-feetHeight),20.0f);
 							//jump!
 						}
-				
+
 					}
 				}
 			}
@@ -255,7 +285,7 @@ void ActorPlayer::DrawWeapon(MaterialProgram *materialShader)
 	{
 		// Update the shader
 		weaponCamera.Apply(materialShader);
-		
+
 		// Draw the model
 		model->Update(SIMULATION_DELTA, Game()->Now());
 		model->Draw(materialShader);
@@ -276,7 +306,7 @@ void ActorPlayer::DrawWeapon(MaterialProgram *materialShader)
 	}
 }
 
-	
+
 //Get modifiers for the selected weapon
 //A damage factor of 0 indicates the weapon is locked
 WeaponModifiers * ActorPlayer::GetModifiers(int weaponId) {

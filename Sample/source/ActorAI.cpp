@@ -1,3 +1,33 @@
+/**
+ * Copyright (c) 2016, Nathaniel R. Lewis, Anthony Popelar, Matt Bucci, Brian Bamsch
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include "stdafx.h"
 #include "ActorAI.h"
 #include "ActorSystem.h"
@@ -48,7 +78,7 @@ static const float LifeFleeLevel = .2f;
 static const float EnergyFleeLevel = .2f;
 
 //Used only by the save system to create an actorai loaded
-ActorAI::ActorAI() : 
+ActorAI::ActorAI() :
 	PhysicsActor(GameFactions::FACTION_HOSTILE),
 	enemyPosition(10),
 	stateChangesPerSec(20){
@@ -138,7 +168,7 @@ bool ActorAI::applyFacingDirection(float desiredFacingDirection) {
 		desiredFacingDirection -= TWO_PI;
 	while (desiredFacingDirection < 0)
 		desiredFacingDirection += TWO_PI;
-	
+
 	//First determine how close you already are to that facing direction
 	float differenceA = facingDirection - desiredFacingDirection;
 	float absDifferenceA = abs(differenceA);
@@ -148,7 +178,7 @@ bool ActorAI::applyFacingDirection(float desiredFacingDirection) {
 		facingDirection = desiredFacingDirection;
 		return true;
 	}
-		
+
 
 	//Determine which turn direction is faster
 	if (differenceA > 0) {
@@ -242,7 +272,7 @@ bool ActorAI::jumpCheckWallTouch(vec3 traceDirection, float feetHeight, float & 
 //Uses the appropriate jump check to jump if necessary
 //then jump the appropriate height
 void ActorAI::jumpIfNecessary(vec3 moveDirection) {
-				
+
 	//The direction you intend to move
 	float feetHeight = Position.z-Size.z/2.0f;
 
@@ -253,9 +283,9 @@ void ActorAI::jumpIfNecessary(vec3 moveDirection) {
 		bool doJump;
 		float heightDifference;
 		//Check using the appropriate test for your size
-		if (actorSize > 2.0f) 
+		if (actorSize > 2.0f)
 			doJump = jumpCheckWallTouch(moveDirection,feetHeight,heightDifference);
-		else 
+		else
 			doJump = jumpCheckRayTrace(moveDirection,feetHeight,heightDifference);
 		//Now do you need to jump?
 		if (doJump) {
@@ -283,7 +313,7 @@ bool ActorAI::checkEnemyValid() {
 		state = AI_SCANNING;
 		return false;
 	}
-	
+
 	//Check if you've seen the enemy recently
 	if ((sawEnemyLast+LostEnemyTime) <= Game()->Now()) {
 		targetEnemy = NULL;
@@ -297,7 +327,7 @@ bool ActorAI::checkEnemyValid() {
 		state = AI_SCANNING;
 		return false;
 	}
-		
+
 
 	//Check if you can see the enemy now
 	if (canSeeActor(targetEnemy))
@@ -312,7 +342,7 @@ bool ActorAI::faceEnemy() {
 	if (!checkSpineLimits()) {
 		//Face the enemy you're moving to
 		vec2 diff = vec2(enemyPosition.GetAverage()) - vec2(Position);
-			
+
 		return applyFacingDirection(atan2f(diff.y,diff.x));
 	}
 	//Else you can move the spine and don't have to manually face the enemy
@@ -356,13 +386,13 @@ bool ActorAI::pathTowardsGoal(vec2 goal) {
 		return true;
 	}
 
-			
+
 	//If you're in the air, look like it
 	bool touchingGround = false;
 	if (OnGround() && Velocity.z < .2) {
 		touchingGround = true;
 		setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_RUN]);
-				
+
 	}
 	else if (!animationRunning())
 		setAnimation(data->AnimationLookupTable[Weapon::ANIMATION_AIM]);
@@ -377,7 +407,7 @@ bool ActorAI::pathTowardsGoal(vec2 goal) {
 void ActorAI::moveTowardsGoal(vec2 goal) {
 	//Face the direction you're moving
 	vec2 diff = goal - vec2(Position);
-			
+
 	applyFacingDirection(atan2f(diff.y,diff.x));
 	//Apply some velocity in the direction you want to move
 	vec2 moveVelocity = glm::normalize(diff)*data->BaseMovementSpeed;
@@ -434,7 +464,7 @@ void ActorAI::stateScanning(bool & holdingTrigger) {
 			state = AI_WAITINGFORPATH;
 		}
 	}
-		
+
 	//Check if there is anything to do
 	if (targetEnemy == NULL)
 		return;
@@ -478,7 +508,7 @@ void ActorAI::stateTargeting(bool & holdingTrigger) {
 void ActorAI::stateEngaging(bool & holdingTrigger) {
 	if (!checkEnemyValid())
 		return;
-		
+
 	//Face the enemy you're engaging
 	if (!faceEnemy())
 		//If you're not facing the enemy, you can't pull the trigger
@@ -502,7 +532,7 @@ bool ActorAI::checkIfSafeFromActor(vec3 location, PhysicsActor * actor) {
 	float distFromEnemyToCover = glm::distance(actor->GetPosition(),location);
 	//If you have a cover location, check that it is still safe
 	if (distFromEnemyToCover < CoverMinDistance)
-		//Not safe 
+		//Not safe
 		return false;
 	else if (distFromEnemyToCover > CoverMaxDistance)
 		//safe, the enemy may be able to see you, but they're too far away (hopefully)
@@ -521,7 +551,7 @@ bool ActorAI::checkIfSafeFromActor(vec3 location, PhysicsActor * actor) {
 		if (traceDistance+5 < distFromEnemyToCover)
 			//They can't see you in theory perhaps maybe
 			return true;
-		
+
 		//Cover is not safe
 		return false;
 	}
@@ -586,7 +616,7 @@ void ActorAI::stateFleeing(bool & holdingTrigger) {
 		weightTotal += weight;
 		enemyPosition += vec2(actor->GetPosition())*weight;
 	}
-		
+
 	enemyPosition /= weightTotal;
 	//if the enemy position is close to you flee in a specific direction
 	//can't choose a random direction because then a different one would be chosen
@@ -595,7 +625,7 @@ void ActorAI::stateFleeing(bool & holdingTrigger) {
 	if (glm::length(enemyPosition) > .5)
 		//flee away from the average enemy position
 		fleeDirection = glm::normalize(vec2(Position)-enemyPosition);
-	
+
 	//Choose a point far off along the flee direction
 	vec2 fleeEndPoint = fleeDirection*200.0f+vec2(Position);
 	//mark it as the cover point
@@ -779,7 +809,7 @@ void ActorAI::cheapUpdate() {
 		break;
 	case AI_TARGETING_ENEMY:
 		//If you have an enemy, face them
-		if (targetEnemy != NULL) 
+		if (targetEnemy != NULL)
 			//Face the enemy you're targeting
 			faceEnemy();
 		break;
@@ -831,7 +861,7 @@ void ActorAI::Draw(MaterialProgram * materialShader){
 		//Update the weapon muzzle position
 
 		findMuzzlePosition();
-		 
+
 
 		//Only recalculate if rotting isn't true
 		if (state != AI_ROTTING) {
@@ -948,7 +978,7 @@ void ActorAI::updateShitList() {
 			it = shitList.erase(it);
 		}
 		else {
-			if (hated->second > .5) 
+			if (hated->second > .5)
 				someoneReallyHated = true;
 
 			//Decrease how much you hate everyone slowly, decreases approx 40% over 10 seconds
@@ -1006,7 +1036,7 @@ void ActorAI::findMuzzlePosition() {
     muzzlePositionA= vec3(globalTransformA * vec4(data->MuzzleOffsetA, 1.0));
 	//Check for NaN
 	_ASSERTE(muzzlePositionA.x == muzzlePositionA.x);
-	
+
 
     if (data->UseDualMuzzles) {
         //Find the second muzzle

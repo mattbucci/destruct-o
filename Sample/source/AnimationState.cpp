@@ -1,17 +1,31 @@
-/*
- *  Copyright 2014 Nathaniel Lewis
+/**
+ * Copyright (c) 2016, Nathaniel R. Lewis, Anthony Popelar, Matt Bucci, Brian Bamsch
+ * All rights reserved.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "stdafx.h"
@@ -41,7 +55,7 @@ const static std::string ComparisonFunctionKeys[] =
 AnimationState::AnimationState(AnimationLayer *_layer)
     : layer(_layer), name(""), source(new AnimationSource()), transitions(transition_vector()), loop(true)
 {
-    
+
 }
 
 /**
@@ -55,14 +69,14 @@ AnimationState::AnimationState(const AnimationState& state, AnimationLayer *_lay
 {
     // Duplicate the animation source
     AnimationClip *animation = dynamic_cast<AnimationClip *>(state.source);
-    
+
     // If we are an animation clip
     if(animation)
     {
         source = new AnimationClip(*animation);
         return;
     }
-    
+
     // unsupported animation source
     throw new std::runtime_error("AnimationState::AnimationState(const AnimationState& state, AnimationLayer& _layer) - can not duplicate unsupported animation source");
 }
@@ -81,13 +95,13 @@ AnimationState::AnimationState(const Json::Value& value, AnimationLayer *_layer)
     {
         throw std::runtime_error("AnimationState::AnimationState(const Json::Value& value, AnimationLayer& _layer) - value must be a object");
     }
-    
+
     // Get the name of the layer
     name = value["name"].asString();
-    
+
     // Load the transitions
     const Json::Value& serializedTransitions = value["transitions"];
-    
+
     // If transition object were provided
     if(serializedTransitions.isArray())
     {
@@ -97,54 +111,54 @@ AnimationState::AnimationState(const Json::Value& value, AnimationLayer *_layer)
             transitions.push_back(Transition(*it));
         }
     }
-    
+
     // Load the animation source
     const Json::Value& animationSource = value["source"];
-    
+
     // If we have a serialized animation source
     if(animationSource.isObject())
     {
         // Get the type
         const std::string type = animationSource["type"].asString();
-        
+
         // If this is an animation clip, load it
         if(type == "AnimationClip")
         {
             // Get the name of the animation
             const std::string animationName = animationSource["value"].asString();
-            
+
             // Get an iterator to the animation
             Model::animation_const_iterator animationIt = layer->Controller()->GetModel()->Animations().find(animationName);
-            
+
             // If we found the animation
             if(animationIt != layer->Controller()->GetModel()->Animations().end())
             {
                 // Create a new AnimationClip based on the input animation
                 AnimationClip *animClip = new AnimationClip(animationIt->second);
-                
+
                 // Get whether or not this animation is to loop
                 Json::Value defaultValue = true;
                 loop = animationSource.get("loop", defaultValue).asBool();
-                
+
                 // Get the rate of animation for this clip
                 Json::Value normalRate = 1.0;
                 animClip->SetPlaybackSpeed(animationSource.get("speed", defaultValue).asFloat());
-                
+
                 // Store the source
                 source = animClip;
             }
-            
+
             // Otherwise throw an exception
             else
             {
                 throw std::runtime_error("AnimationState::AnimationState(const Json::Value& value, AnimationLayer& _layer) - unrecognized animation clip requested");
             }
         }
-        
+
         // If this is a blend group, load it
         else if(type == "AnimationBlendGroup")
         {
-            
+
         }
     }
 }
@@ -178,13 +192,13 @@ void AnimationState::Update(double delta, double now, bool comparison)
 {
     // Update the target source object
     source->Update(delta, now);
-    
+
     // If we don't want to run the comparisons, exit
     if(!comparison)
     {
         return;
     }
-    
+
     // Figure out if we should transition
     for(AnimationState::transition_vector::iterator it = transitions.begin(); it != transitions.end(); it++)
     {
@@ -193,7 +207,7 @@ void AnimationState::Update(double delta, double now, bool comparison)
         {
             // If the function is exit, we take the transition if the animation has stopped playing
             AnimationClip *animation = dynamic_cast<AnimationClip *>(source);
-            
+
             // Clip must be valid.  Will not be if its a blend group
             if(animation && !animation->IsLooping())
             {
@@ -204,14 +218,14 @@ void AnimationState::Update(double delta, double now, bool comparison)
                     break;
                 }
             }
-            
+
             // If we has a blend group
             else
             {
                 throw new std::runtime_error("void AnimationState::Update(double delta, double now) - exit function only supported on non-looping animation clips");
             }
         }
-        
+
         // Otherwise, pull the parameter and compare
         else
         {
@@ -220,13 +234,13 @@ void AnimationState::Update(double delta, double now, bool comparison)
             {
                 // Throw runtime error if this is not an animation clip
                 AnimationClip *animation = dynamic_cast<AnimationClip *>(source);
-                
+
                 // If we currently have a valid animation, use it
                 if(animation)
                 {
                     // Get the animation's progress
                     const float progress = animation->GetProgress(now);
-                    
+
                     // Perform the comparison
                     if((it->function == AnimationState::Transition::kComparisonFunctionEquals && progress == it->value.number) ||
                        (it->function == AnimationState::Transition::kComparisonFunctionLess && progress < it->value.number) ||
@@ -236,20 +250,20 @@ void AnimationState::Update(double delta, double now, bool comparison)
                         break;
                     }
                 }
-                
+
                 // If we has a blend group
                 else
                 {
                     throw new std::runtime_error("void AnimationState::Update(double delta, double now) - builtin.animation.progress parameter only supported for AnimationClips");
                 }
-                
+
                 // Skip
                 continue;
             }
-            
+
             // Lookup the parameter
             AnimationController::parameter_const_iterator parameter = layer->Controller()->GetParameter(it->parameter);
-            
+
             // If its a boolean parameter, equals is only valid
             if(parameter->second.type == AnimationController::Parameter::kTypeBool)
             {
@@ -262,14 +276,14 @@ void AnimationState::Update(double delta, double now, bool comparison)
                         layer->Transition(it->target, now);
                     }
                 }
-                
+
                 // If its a different function, fail, as its unsupported
                 else
                 {
                     throw new std::runtime_error("void AnimationState::Update(double delta, double now) - booleans can only be compared with the equals function");
                 }
             }
-            
+
             // If its a float parameter, any function goes
             else if(parameter->second.type == AnimationController::Parameter::kTypeFloat)
             {
@@ -293,19 +307,19 @@ void AnimationState::WillTransition(double now)
 {
     // Is the source an animation clip
     AnimationClip *animation = dynamic_cast<AnimationClip *>(source);
-    
+
     // If we are an animation clip
     if(animation)
     {
         // Reset the pose to the initial state
         animation->Stop();
-        
+
         // Get out
         return;
     }
-    
+
     // TODO Add support for animation blend groups
-    
+
     // If we don't recognize the source type, just reset the source to initial pose
     source->Reset();
 }
@@ -318,19 +332,19 @@ void AnimationState::DidTransition(double now)
 {
     // Is the source an animation clip
     AnimationClip *animation = dynamic_cast<AnimationClip *>(source);
-    
+
     // If we are an animation clip
     if(animation && !animation->IsPlaying())
     {
         // Cause the animation to begin playing (also resets the pose)
         animation->Play(loop, now);
-        
+
         // Get out
         return;
     }
-    
+
     // TODO Add support for animation blend groups
-    
+
     // If we don't recognize the source type, just reset the source to initial pose
     source->Reset();
 }
@@ -377,14 +391,14 @@ AnimationState::Transition::Transition(const Json::Value& value)
     {
         throw std::runtime_error("AnimationState::Transition::Transition(const Json::Value& value) - value must be a object");
     }
-    
+
     // Load the comparison function key
     const std::string *functionKey = std::find(&ComparisonFunctionKeys[0], &ComparisonFunctionKeys[0] + ComparisonFunctionCount, value["function"].asString());
     function = (AnimationState::Transition::ComparisonFunction) std::distance(&ComparisonFunctionKeys[0], functionKey);
-    
+
     // Load the target state
     target = value["target"].asString();
-    
+
     // Load the value if we have one
     const Json::Value& serializedValue = value["value"];
     if(serializedValue.isBool())
@@ -395,7 +409,7 @@ AnimationState::Transition::Transition(const Json::Value& value)
     {
         this->value.number = serializedValue.asFloat();
     }
-    
+
     // Load the parameter if we have one
     const Json::Value& serializedParameter = value["parameter"];
     if(serializedParameter.isString())

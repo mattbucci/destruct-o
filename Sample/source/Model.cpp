@@ -1,17 +1,31 @@
-/*
- *  Copyright 2014 Nathaniel Lewis
+/**
+ * Copyright (c) 2016, Nathaniel R. Lewis, Anthony Popelar, Matt Bucci, Brian Bamsch
+ * All rights reserved.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "stdafx.h"
@@ -24,7 +38,7 @@
 Model::Model(TextureCache &_textureCache)
     : meshes(0, NULL), skeleton(new Node()), textureCache(_textureCache), previousProgram(NULL), uploaded(false)
 {
-    
+
 }
 
 // Create a model by deserializing it from Json
@@ -33,16 +47,16 @@ Model::Model(const Json::Value& root, const std::string& directory, TextureCache
 {
     // Load animations
     loadAnimations(root);
-    
+
     // Load materials
     loadMaterials(root, directory);
-    
+
     // Load mesh data
     loadMeshes(root);
-    
+
     // Load node data
     loadSkeleton(root);
-    
+
     // Load parts
     loadParts(root);
 }
@@ -54,14 +68,14 @@ Model::~Model()
     {
         delete *it;
     }
-    
+
     // Destroy all of the vertex buffers associated with meshes
     for(std::map<Mesh *, GLuint>::iterator it = buffers.begin(); it != buffers.end(); it++)
     {
         // If the contents are still a valid vertex buffer
         glDeleteBuffers(1, &it->second);
     }
-    
+
     // Destroy all of the part render objects
     for(std::vector<Model::MeshPartRenderData *>::iterator it = renderables.begin(); it != renderables.end(); it++)
     {
@@ -69,11 +83,11 @@ Model::~Model()
         glDeleteBuffers(1, &(*it)->indices);
 		//Cleanup vertex arrays
         glDeleteVertexArrays(1, &(*it)->attributes);
-        
+
         // Delete the object itself
         delete *it;
     }
-    
+
     // Destroy all of the materials
     for(std::map<std::string, Material *>::iterator it = materials.begin(); it != materials.end(); it++)
     {
@@ -85,7 +99,7 @@ Model::~Model()
     {
         delete it->second;
     }
-    
+
     // Destroy the skeletal nodes
     delete skeleton;
 }
@@ -95,7 +109,7 @@ void Model::loadAnimations(const Json::Value &root)
 {
     // Load the animations
     const Json::Value &serializedAnimations = root["animations"];
-    
+
     // If the model file contains animation entries
     if(serializedAnimations != Json::Value::null)
     {
@@ -104,7 +118,7 @@ void Model::loadAnimations(const Json::Value &root)
         {
             // Create a new animation object from the storage
             Animation *animation = new Animation(*it);
-            
+
             // Store this animation
             animations[animation->Id()] = animation;
         }
@@ -116,7 +130,7 @@ void Model::loadMaterials(const Json::Value &root, const std::string& directory)
 {
     // Get the value for the mesh entry
     const Json::Value& mats = root["materials"];
-    
+
     // If the model file contains mesh entries
     if(mats != Json::Value::null)
     {
@@ -125,7 +139,7 @@ void Model::loadMaterials(const Json::Value &root, const std::string& directory)
         {
             // Load a material from the entry
             Material *material = new Material(*it, directory);
-            
+
             // Store this material for later usage
             materials[material->Id()] = material;
         }
@@ -137,7 +151,7 @@ void Model::loadMeshes(const Json::Value& root)
 {
     // Get the value for the mesh entry
     const Json::Value& meshes = root["meshes"];
-    
+
     // If the model file contains mesh entries
     if(meshes != Json::Value::null)
     {
@@ -146,7 +160,7 @@ void Model::loadMeshes(const Json::Value& root)
         {
             // Load a mesh from the json blob
             Mesh *mesh = new Mesh(*it);
-            
+
             // Hold on to the mesh
             this->meshes.push_back(mesh);
         }
@@ -158,7 +172,7 @@ void Model::loadSkeleton(const Json::Value &root)
 {
     // Get potential node entries
     const Json::Value& nodes = root["nodes"];
-    
+
     // If the model contains node entries
     if(nodes != Json::Value::null)
     {
@@ -167,7 +181,7 @@ void Model::loadSkeleton(const Json::Value &root)
         {
             // Create a new child node
             Node *child = new Node(*it, skeleton);
-            
+
             // Add this child to our list
             skeleton->AddChild(child, false);
         }
@@ -179,7 +193,7 @@ void Model::loadParts(const Json::Value &root)
 {
     // Get potential node entries
     const Json::Value& nodes = root["nodes"];
-    
+
     // If the model contains node entries
     if(nodes != Json::Value::null)
     {
@@ -199,10 +213,10 @@ void Model::loadPartsNodeSearch(const Json::Value &node)
     {
         return;
     }
-    
+
     // Get the id for global inverse lookup
     std::string id = node["id"].asString();
-    
+
     // If we find that we have a parts entry, explore it
     const Json::Value& parts = node["parts"];
     if(parts != Json::Value::null)
@@ -211,7 +225,7 @@ void Model::loadPartsNodeSearch(const Json::Value &node)
         {
             // Allocate a part to store data in
             Model::MeshPartRenderData *renderable = new Model::MeshPartRenderData();
-            
+
             // Look up the mesh part this renderable uses
             std::string meshpartid = (*it)["meshpartid"].asString();
             for(std::vector<Mesh *>::iterator mIt = meshes.begin(); mIt != meshes.end(); mIt++)
@@ -224,18 +238,18 @@ void Model::loadPartsNodeSearch(const Json::Value &node)
                     {
                         // Store this mesh part
                         renderable->meshpart = *pIt;
-                        
+
                         // get the fuck out (nested loop, can't break, need to force the iterators to the end)
                         mIt = meshes.end() - 1;
                         break;
                     }
                 }
             }
-            
+
             // Lookup the material this mesh uses
             std::string materialid = (*it)["materialid"].asString();
             renderable->material = materials[materialid];
-            
+
             // Load the bones
             const Json::Value& bones = (*it)["bones"];
             if(bones != Json::Value::null)
@@ -244,20 +258,20 @@ void Model::loadPartsNodeSearch(const Json::Value &node)
                 {
                     // Allocate a bone and deserialize
                     Model::Bone *bone = new Model::Bone(*bIt);
-                    
+
                     // Store in the bones list
                     renderable->bones.push_back(bone);
                 }
             }
-            
+
             // Store the node this is attached to
             renderable->id = id;
-            
+
             // Store this renderable data in our renderable list
             renderables.push_back(renderable);
         }
     }
-    
+
     // Explore children if we have any
     const Json::Value& childs = node["children"];
     if(childs != Json::Value::null)
@@ -278,22 +292,22 @@ void Model::Upload()
     {
         return;
     }
-    
+
     // Upload the mesh data
     for(std::vector<Mesh *>::iterator it = meshes.begin(); it != meshes.end(); it++)
     {
         // Create a vertex buffer for this mesh
         GLuint vertexBufferObject = 0;
         glGenBuffers(1, &vertexBufferObject);
-        
+
         // Upload the data to the GPU
         glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
         glBufferData(GL_ARRAY_BUFFER, (*it)->Data().size() * sizeof(GLfloat), (*it)->Data().data(), GL_STATIC_DRAW);
-        
+
         // Post this mesh to the buffers list
         buffers[(*it)] = vertexBufferObject;
     }
-    
+
     // Upload the mesh part data
     for(std::vector<MeshPartRenderData *>::iterator it = renderables.begin(); it != renderables.end(); it++)
     {
@@ -303,7 +317,7 @@ void Model::Upload()
 
         // Create the vertex buffer for the indices
         glGenBuffers(1, &renderable->indices);
-        
+
         // Upload the index data to the gpu
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderable->indices);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, renderable->meshpart->indices.size() * sizeof(GLushort), renderable->meshpart->indices.data(), GL_STATIC_DRAW);
@@ -321,7 +335,7 @@ void Model::Upload()
             textureCache.GetTexture<GLTexture>(it->second);
         }
     }
-    
+
     // We are now uploaded
     uploaded = true;
 }
@@ -334,7 +348,7 @@ void Model::Update(double delta, double now)
     {
         Upload();
     }
-    
+
     // Other shit
 }
 
@@ -353,36 +367,36 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         //throw new std::runtime_error("void Model::Draw(const GLMeshProgram *program) - Attempted to draw a model not uploaded to the GPU");
         return;
     }
-    
+
     // Use standard blending
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
+
     // Iterate through all the renderables
     for(std::vector<Model::MeshPartRenderData *>::iterator renderable = renderables.begin(); renderable != renderables.end(); renderable++)
     {
         // Find the node this thing is attached to
         const Node *node = _skeleton.FindNode((*renderable)->id);
-        
+
         // Calculate the global inverse transform of the mesh (for internal scaling purposes)
         glm::mat4 globalInverseTransform = glm::inverse(node->TransformMatrix());
-        
+
         // Offset the render by the global inverse transform
         program->Model.PushMatrix();
         program->Model.Combine(node->TransformMatrix());
         program->Apply();
-        
+
         // Bind the vertex array object
         glBindVertexArray((*renderable)->attributes);
-        
+
         // Update the program attributes if the shader has changed
         if(previousProgram != program)
         {
             // Bind the vertex buffer of the mesh
             glBindBuffer(GL_ARRAY_BUFFER, buffers[(*renderable)->meshpart->mesh]);
-            
+
 			// Bind the index buffer of the mesh part
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*renderable)->indices);
-            
+
             // Iterate through the vertex attributes (dynamic shader parameters, as model vertex attributes vary)
             for(VertexAttributes::const_iterator attribute = (*renderable)->meshpart->mesh->Attributes().begin(); attribute != (*renderable)->meshpart->mesh->Attributes().end(); attribute++)
             {
@@ -393,38 +407,38 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
                     case VertexAttributes::kAttributeVertex:
                         programAttribute = program->AttributeVertex();
                         break;
-                        
+
                     case VertexAttributes::kAttributeNormal:
                         programAttribute = program->AttributeNormal();
                         break;
-                        
+
                     case VertexAttributes::kAttributeTextureCoordinate:
                         // Return the right texture coordinate mapping
                         programAttribute = program->AttributeTexture(attribute->index);
                         break;
-                        
+
                     case VertexAttributes::kAttributeBoneWeight:
                         // Return the correct bone weight mapping
                         programAttribute = program->AttributeBoneWeight(attribute->index);
                         break;
-                        
+
                     default:
                         // Skip unknown attributes
                         continue;
                         //throw new std::runtime_error("void Model::Draw(const GLMeshProgram *program) - Unrecognized shader attribute");
                         //break;
                 }
-                
+
                 // If something goes wrong, skip it
                 if(programAttribute == -1) continue;
-                
+
                 // Enable the vertex array object entry for this attribute
                 glEnableVertexAttribArray(programAttribute);
 
                 // Update the vertex attribute pointer
                 glVertexAttribPointer(programAttribute, (GLsizei) VertexAttributes::AttributeSize(attribute->attribute), GL_FLOAT, GL_FALSE, (GLsizei) (*renderable)->meshpart->mesh->Attributes().AttributeFrameSize() * sizeof(GLfloat), (GLvoid *)(attribute->offset * sizeof(GLfloat)));
             }
-            
+
         }
 
         // Bind the material's textures to some texturing units
@@ -432,40 +446,40 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         {
             // Set the shader texture sampler to this texture unit
             glUniform1i(program->UniformTexture(tIt->first), tIt->first);
-            
+
             // Active the texture unit for this texture
             glActiveTexture(GL_TEXTURE0 + tIt->first);
-            
+
             // Bind the texture for this texture unit
             textureCache.GetTexture<GLTexture>(tIt->second)->Bind();
         }
-        
+
         // Set all the bones according to the skeleton
         GLint boneIdx = 0;
         for(std::vector<Model::Bone *>::iterator bone = (*renderable)->bones.begin(); bone != (*renderable)->bones.end(); bone++, boneIdx++)
         {
             // Get the node which cooresponds to our bone
             const Node *node = _skeleton.FindNode((*bone)->id);
-            
+
             // Calculate the final bone transform
             glm::mat4 finalTransform = globalInverseTransform * node->TransformMatrix() * (*bone)->inverseTransformMatrix;
-            
+
             // Upload the bone to the shader
             glUniformMatrix4fv(program->UniformBones(boneIdx), 1, GL_FALSE, (const GLfloat *) &finalTransform);
         }
-        
+
         // Pass the bone count through (well, anything more than zero means skinned)
         glUniform1i(program->UniformSkinned(), (GLint)(*renderable)->bones.size());
-        
+
         // Pass the texture count through (anything more than zero means skinned)
         glUniform1i(program->UniformTextured(), (GLint)(*renderable)->material->Textures().size());
-        
+
         // Set the color
         glm::vec3 ambient = (*renderable)->material->ColorAmbient();
         glm::vec3 diffuse = (*renderable)->material->ColorDiffuse();
         glUniform3f(program->UniformColorAmbient(), ambient.r, ambient.g, ambient.b);
         glUniform3f(program->UniformColorDiffuse(), diffuse.r, diffuse.g, diffuse.b);
-        
+
         // Should we use blending
         if((*renderable)->material->Opaque())
         {
@@ -474,17 +488,17 @@ void Model::Draw(MaterialProgram *program, const Node& _skeleton)
         {
             glEnable(GL_BLEND);
         }
-        
+
         // Finally, we can draw the god damn mesh
         glDrawElements(GL_TRIANGLES, (GLsizei) (*renderable)->meshpart->indices.size(), GL_UNSIGNED_SHORT, NULL);
-        
+
         // Pop the matrix
         program->Model.PopMatrix();
     }
-    
+
     // Store the previous program
     previousProgram = program;
-    
+
     // Don't fuck the VAOs
     glBindVertexArray(0);
 }
@@ -503,7 +517,7 @@ const std::map<std::string, Animation *>& Model::Animations() const
 Model::Bone::Bone()
     : id(""), transform(Transform())
 {
-    
+
 }
 
 // Deserialization constructor
@@ -514,13 +528,13 @@ Model::Bone::Bone(const Json::Value& value)
     {
         throw std::runtime_error("Model::Bone::Bone(const Json::Value& value) - value must be a object");
     }
-    
+
     // Load the name of the material
     id = value["node"].asString();
-    
+
     // Load the transform
     transform = Transform(value);
-    
+
     // Create an inverse transform matrix
     inverseTransformMatrix = glm::inverse(transform.TransformMatrix());
 }
@@ -529,7 +543,7 @@ Model::Bone::Bone(const Json::Value& value)
 Model::MeshPartRenderData::MeshPartRenderData()
     : meshpart(NULL), material(NULL), bones(0, NULL), attributes(0), indices(0)
 {
-    
+
 }
 
 Model::MeshPartRenderData::~MeshPartRenderData()
@@ -547,38 +561,38 @@ Model* Model::LoadFromJsonFile(const std::string &directory, const std::string &
 {
     // Compute filename
     std::string filename = directory + "/" + name;
-    
+
     // Load the compressed data from disk
     std::vector<unsigned char> buffer;
     lodepng::load_file(buffer, filename);
-    
+
     // If the loading of the file failed, error out
     if(buffer.size() == 0)
     {
         throw new std::runtime_error("Model* Model::LoadFromJsonFile() - Failed to load: " + filename);
     }
-    
+
     // Calculate buffer pointers for json decode
     const char *pBegin = (const char *) buffer.data();
     const char *pEnd = (const char *) (buffer.data() + buffer.size());
-    
+
     // Create a json parser for this file
     Json::Reader reader;
     Json::Value  root;
-    
+
     // Read the model file
     if(!reader.parse(pBegin, pEnd, root))
     {
         throw new std::runtime_error("Model* Model::LoadFromJsonFile() - Parsing failed for: " + filename);
     }
-    
+
     // Create the model object
     Model *model = new Model(root, directory, _textureCache);
-    
+
     // Adjust the root transform of the skeleton to coorespond with the offset
     model->skeleton->LocalTransform() = offset;
     model->skeleton->Recalculate();
-    
+
     // Return an allocated model
     return model;
 }
@@ -588,22 +602,22 @@ Model* Model::LoadFromCompressedJsonFile(const std::string &directory, const std
 {
     // Compute filename
     std::string filename = directory + "/" + name;
-    
+
     // Load the compressed data from disk
     std::vector<unsigned char> compressedData;
     lodepng::load_file(compressedData, filename);
-    
+
     // If the loading of the file failed, error out
     if(compressedData.size() == 0)
     {
         throw new std::runtime_error("Model* Model::LoadFromCompressedJsonFile() - Failed to load: " + filename);
     }
-    
+
     // Decompress this data (since we are dealing with large file, use the least amount of copies as possible
     unsigned char *buffer = 0;
     size_t buffersize = 0;
     unsigned error = lodepng_zlib_decompress(&buffer, &buffersize, compressedData.data(), compressedData.size(), &lodepng_default_decompress_settings);
-    
+
     // If the decompression was not successful, error out
     if(!buffer || error)
     {
@@ -613,27 +627,27 @@ Model* Model::LoadFromCompressedJsonFile(const std::string &directory, const std
     // Calculate buffer pointers for json decode
     const char *pBegin = (const char *) buffer;
     const char *pEnd = (const char *) (buffer + buffersize);
-    
+
     // Create a json parser for this file
     Json::Reader reader;
     Json::Value  root;
-    
+
     // Read the model file
     if(!reader.parse(pBegin, pEnd, root))
     {
         throw new std::runtime_error("Model* Model::LoadFromCompressedJsonFile() - Parsing failed for: " + filename);
     }
-    
+
     // Create the model object
     Model *model = new Model(root, directory, _textureCache);
-    
+
     // Adjust the root transform of the skeleton to coorespond with the offset
     model->skeleton->LocalTransform() = offset;
     model->skeleton->Recalculate();
-    
+
     // Release the zlib decompression buffer
     free(buffer);
-    
+
     // Return an allocated model
     return model;
 }

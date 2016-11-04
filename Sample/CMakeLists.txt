@@ -44,7 +44,7 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     target_link_libraries(Destructo "opengl32.lib")
 
     # Windows cURL things.  Now does 2013 and 2012
-	if (${CMAKE_CXX_COMPILER} MATCHES "11")	
+	if (${CMAKE_CXX_COMPILER} MATCHES "11")
 		target_link_libraries(Destructo optimized "../libs/windows/curl/11/libcurl_imp")
 		target_link_libraries(Destructo debug "../libs/windows/curl/11/libcurld_imp")
 		file(COPY ${PROJECT_SOURCE_DIR}/libs/windows/curl/11/dlls/ DESTINATION ${PROJECT_SOURCE_DIR}/libs/windows/_alldlls/)
@@ -54,17 +54,17 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 		file(COPY ${PROJECT_SOURCE_DIR}/libs/windows/curl/12/dlls/ DESTINATION ${PROJECT_SOURCE_DIR}/libs/windows/_alldlls/)
 	ELSE ()
 		message("Warning: unsupported MSVC, curl not linked.")
-	ENDIF ()	
+	ENDIF ()
 
 	#enable Multiprocessor build
 	SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /MP" )
-	
+
 	#copy game and dlls
 	file(COPY ${PROJECT_SOURCE_DIR}/game/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
 	file(COPY ${PROJECT_SOURCE_DIR}/libs/windows/_alldlls/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
 	file(COPY ${PROJECT_SOURCE_DIR}/libs/windows/_alldlls/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
 
-	
+
 ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
 # Are we compiling on Mac OS X?
@@ -107,7 +107,7 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 	# Set the runtime search path to look for frameworks and libraries in the Frameworks folder of the .app
 	set_target_properties(Destructo PROPERTIES XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@loader_path @loader_path/../Frameworks")
-    
+
     # Don't strip symbols on copy (for frameworks)
     set_target_properties(Destructo PROPERTIES XCODE_ATTRIBUTE_COPY_PHASE_STRIP "No")
 
@@ -190,8 +190,9 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     target_link_libraries(Destructo ${GLEW_LIBRARY})
 
     # Discover the include path for the OpenGL Mathematics Library
-    find_path(GLM_INCLUDE_DIR NAMES glm/glm.hpp)
-    include_directories(${GLM_INCLUDE_DIR})
+    #find_path(GLM_INCLUDE_DIR NAMES glm/glm.hpp)
+    #include_directories(${GLM_INCLUDE_DIR})
+	include_directories("includes/glm-0.9.4.4")
 
     # Discover the include path for lib cURL
     find_path(CURL_INCLUDE_DIR NAMES curl/curl.h)
@@ -210,6 +211,7 @@ IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     # Make a define, only used with Linux.  Also, make sure we use c++11
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__LINUX__")
     set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++11 -Wall")
+	target_link_libraries(Destructo pthread)
 
 ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
@@ -234,7 +236,7 @@ source_group(OpenGL FILES ${GLFiles})
 #actors
 FILE(GLOB ActorFiles
 	"source/Actor*"
-	
+
 )
 source_group(Actors FILES ${ActorFiles})
 

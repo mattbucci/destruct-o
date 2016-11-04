@@ -1,17 +1,31 @@
-/*
- *  Copyright 2014 Nathaniel Lewis
+/**
+ * Copyright (c) 2016, Nathaniel R. Lewis, Anthony Popelar, Matt Bucci, Brian Bamsch
+ * All rights reserved.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef __TRANSFORM_H__
@@ -25,16 +39,16 @@ class Transform
 {
     // Translation
     glm::vec3 translation;
-    
+
     // Rotation
     glm::quat rotation;
-    
+
     // Scale
     glm::vec3 scale;
-    
+
     // Current transform matrix
     glm::mat4 transformMatrix;
-    
+
     // Dirty flag (needs to re-transform)
     bool      dirty;
 public:
@@ -42,26 +56,26 @@ public:
     Transform();
     Transform(const Transform&   transform);
     Transform(const Json::Value& value);
-    
+
     // Assignment operator
     Transform& operator= (const Transform& transform);
-    
+
     // Read only references to members, does not set dirty flag (causes recalculation)
     const glm::vec3& Translation() const;
     const glm::vec3& Scale() const;
     const glm::quat& Rotation() const;
-    
+
     // Read/write references to members, sets a dirty flag
     glm::vec3&       Translation();
     glm::vec3&       Scale();
     glm::quat&       Rotation();
-    
+
     // Get a combined transformation matrix
     const glm::mat4& TransformMatrix();
-    
+
     // Get a combined transformation matrix
     const glm::mat4& TransformMatrix() const;
-    
+
     // Interpolate between two transforms
     static Transform Interpolate(const Transform& a, const Transform&  b, const float t);
 };

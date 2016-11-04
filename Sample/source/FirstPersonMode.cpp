@@ -1,3 +1,33 @@
+/**
+ * Copyright (c) 2016, Nathaniel R. Lewis, Anthony Popelar, Matt Bucci, Brian Bamsch
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include "stdafx.h"
 #include "FirstPersonMode.h"
 #include "Frames.h"
@@ -94,7 +124,7 @@ const float& FirstPersonMode::GetMovementSpeed()
     return movement_speed;
 }
 
-//Enable or disable first person mode 
+//Enable or disable first person mode
 void FirstPersonMode::Enable(bool enableFirstPerson) {
 #ifndef __MOBILE__
 	//A neat little feature of SDL
@@ -106,7 +136,7 @@ void FirstPersonMode::Enable(bool enableFirstPerson) {
 
 //Update the looking direction based off input events
 void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEvent> input) {
-    
+
 
 
 	//What follows only matters if first person mode is enabled
@@ -125,7 +155,7 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 	{
         moveVector.x = -1.0f;
     }
-    
+
 	if (pressedKeys.find('a') != pressedKeys.end())
 	{
         moveVector.y = 1.0f;
@@ -134,13 +164,13 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 	{
         moveVector.y = -1.0f;
     }
-    
+
     // Normalize the movement vector (uncomment for a huge cluster fuck)
     if(moveVector.x > 0 || moveVector.y > 0)
     {
         moveVector = glm::normalize(moveVector);
     }
-    
+
     // Multiple the movement vector by the movement speed
     moveVector *= movement_speed;
 
@@ -151,7 +181,7 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 		jumpRequested = true;
 	}
 
-    
+
 	//Sum up the mouse deltas into the current looking vector
 	//Mouse sensitivity constants for now
 	static const float mouseXSensitivity = 1.0f/6.0f;
@@ -175,10 +205,10 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 				else movement_speed = 5.0f;
 			}
 			// Does the user want to pause (or unpause) the game
-			else if (e.Key == SDLK_ESCAPE) 
+			else if (e.Key == SDLK_ESCAPE)
 				pauseRequestedEvent = true;
 			// Does the user want to switch weapons?
-			else if (e.Key == SDLK_TAB) 
+			else if (e.Key == SDLK_TAB)
 				weaponModeSwitchEvent = true;
 			else if (e.Key == 'u')
 				//switch to upgrade frame
@@ -192,24 +222,24 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 			triggerPulled = false;
 #endif
 	}
-	
+
 	// If we have an active joystick, override keyboard with joystick
 	if(joystick)
 	{
 		// Get the x and y axes of the left joystick. (Xbox 360 gamepad)
 		Sint32 axisX = SDL_JoystickGetAxis(joystick, 0);
 		Sint32 axisY = SDL_JoystickGetAxis(joystick, 1);
-		
+
 		// Get the x and y axes of the right joystick. (Xbox 360 gamepad)
 		Sint32 axisLX = SDL_JoystickGetAxis(joystick, 3);
 		Sint32 axisLY = SDL_JoystickGetAxis(joystick, 4);
-		
+
 		// Get the button to check if we want jump requests (left bumper)
 		if(SDL_JoystickGetButton(joystick, 4))
 		{
 			jumpRequested = true;
 		}
-		
+
 		// Check if we should override the movement vector
 		if(axisX != 0 || axisY != 0)
 		{
@@ -217,7 +247,7 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 			moveVector.x = static_cast<float>(-axisY) / 32767.0f;
 			moveVector.y = static_cast<float>(-axisX) / 32767.0f;
 		}
-		
+
 		// Check if we should override the mouse delta sum
 		if(axisLX != 0 || axisLY != 0)
 		{
@@ -226,18 +256,18 @@ void FirstPersonMode::ReadInput(const set<Sint64> & pressedKeys, vector<InputEve
 			mouseDeltaSum.y = (static_cast<float>(-axisLY) / 32767.0f) * 16.0f;
 		}
 	}
-	
+
 	//No update at this time
 	if ((mouseDeltaSum == vec2()) && (aggregateMouseVector != vec2()))
 		return;
-	
+
 	//Now use the current mouse delta to build an aggregate
 	aggregateMouseVector += mouseDeltaSum*vec2(mouseXSensitivity,mouseYSensitivity);
 
 	//Limit the aggregate appropriately
 	aggregateMouseVector.x = glm::mod(aggregateMouseVector.x,360.0f);
 	aggregateMouseVector.y = clamp<float>(aggregateMouseVector.y, -60.0f, 75.0f);
-	
+
 	//Calculate the looking vector from the new aggregate angle vector
 	//this part adapted from a previous FPS engine I wrote, so its a bit contrived
 	float f = aggregateMouseVector.x/180.f*(float)M_PI;

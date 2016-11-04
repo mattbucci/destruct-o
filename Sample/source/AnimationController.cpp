@@ -1,17 +1,31 @@
-/*
- *  Copyright 2014 Nathaniel Lewis
+/**
+ * Copyright (c) 2016, Nathaniel R. Lewis, Anthony Popelar, Matt Bucci, Brian Bamsch
+ * All rights reserved.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "stdafx.h"
@@ -58,36 +72,36 @@ AnimationController::AnimationController(const Json::Value& value, const Model* 
     {
         throw std::runtime_error("AnimationController::AnimationController(const Json::Value& value) - value must be a object");
     }
-    
+
     // We need to get all the parameters associated with this animation controller
     const Json::Value& serializedParameters = value["parameters"];
-    
+
     // Iterate through the parameters and store them
     for(Json::Value::iterator parameter = serializedParameters.begin(); parameter != serializedParameters.end(); parameter++)
     {
         // Deserialize a parameter
         AnimationController::Parameter param = AnimationController::Parameter(*parameter);
-        
+
         // Store this parameter
         parameters[param.name] = param;
     }
-    
+
     // We need to get all the parameters associated with this animation controller
     const Json::Value& serializedLayers = value["layers"];
-    
+
     // Iterate through the parameters and store them
     for(Json::Value::iterator layerIt = serializedLayers.begin(); layerIt != serializedLayers.end(); layerIt++)
     {
         // Deserialize a parameter
         AnimationLayer *layer = new AnimationLayer(*layerIt, this);
-        
+
         // Store the layer
         layers[layer->Id()] = layer;
-        
+
         // Put the layer on the priority queue
         layerQueue.push(layer);
     }
-    
+
     // Bind the shit to the shit
     Bind(model->Skeleton());
 }
@@ -98,7 +112,7 @@ AnimationController::AnimationController(const Json::Value& value, const Model* 
 AnimationController::AnimationController()
     : AnimationSource(), parameters(AnimationController::parameter_store()), layers(AnimationController::layer_store())
 {
-    
+
 }
 
 /**
@@ -124,16 +138,16 @@ AnimationController& AnimationController::operator= (const AnimationController& 
     {
         delete it->second;
     }
-    
+
     // Defer to the operator for assignment of the base class
     AnimationSource::operator=(controller);
-    
+
     // Copy the static resources
     parameters = controller.parameters;
-    
+
     // Copy the model
     model = controller.model;
-    
+
     // Duplicate the layers of the animation controller
     layers = layer_store();
     layerQueue = layer_queue();
@@ -143,7 +157,7 @@ AnimationController& AnimationController::operator= (const AnimationController& 
         layers[it->first] = layer;
         layerQueue.push(layer);
     }
-    
+
     // Return a this pointer
     return *this;
 }
@@ -156,7 +170,7 @@ void AnimationController::Bind(const Node *_root)
 {
     // Call the bind function of the parent class on the model's skeleton
     AnimationSource::Bind(_root);
-    
+
     // Iterate through the animation layers and rebind them
     for(layer_iterator it = layers.begin(); it != layers.end(); it++)
     {
@@ -177,20 +191,20 @@ void AnimationController::Update(double delta, double now)
     {
         it->second->Update(delta, now);
     }
-    
+
     // If there are layers to blend, do so
     if(!layerQueue.empty())
     {
         // Blend the layers (layers with lower number are considered more important)
 //#warning Implement multilayer blending only the highest priority layer is currently selected masking should be used
-    
+
         // Copy the relavent bones to the local skeleton
         for(Node::flattreemap::const_iterator it = layerQueue.top()->Bones().begin(); it != layerQueue.top()->Bones().end(); it++)
         {
             skeletonTable[it->first]->LocalTransform() = it->second->LocalTransform();
         }
     }
-    
+
     // Recalculate the skeleton
     skeleton->Recalculate();
 }
@@ -206,7 +220,7 @@ AnimationController::Parameter::Parameter()
 AnimationController::Parameter::Parameter(const Parameter& parameter)
     : name(parameter.name), type(parameter.type), value(parameter.value)
 {
-    
+
 }
 
 // Deserialization constructor
@@ -217,25 +231,25 @@ AnimationController::Parameter::Parameter(const Json::Value& value)
     {
         throw std::runtime_error("AnimationController::Parameter::Parameter(const Json::Value& value) - value must be a object");
     }
-    
+
     // Get the name of the parameter
     name = value["name"].asString();
-    
+
     // Get the type
     const std::string *typeKey = std::find(&ParameterTypeKeys[0], &ParameterTypeKeys[0] + ParameterTypeCount, value["type"].asString());
     type = (AnimationController::Parameter::Type) std::distance(&ParameterTypeKeys[0], typeKey);
-    
+
     // Store the value based on type
     switch (type)
     {
         case AnimationController::Parameter::kTypeFloat:
             this->value.number = value["value"].asFloat();
             break;
-            
+
         case AnimationController::Parameter::kTypeBool:
             this->value.boolean = value["value"].asBool();
             break;
-            
+
         default:
             throw std::runtime_error("AnimationController::Parameter::Parameter(const Json::Value& value) - unrecognized parameter type");
             break;
@@ -271,13 +285,13 @@ const bool AnimationController::GetBoolean(const std::string& key, bool fallback
 {
     // Get the boolean
     AnimationController::parameter_const_iterator param = parameters.find(key);
-    
+
     // If we found it return it
     if(param != parameters.end())
     {
         return param->second.value.boolean;
     }
-    
+
     // Return the fallback
     return fallback;
 }
@@ -286,13 +300,13 @@ const float AnimationController::GetFloat(const std::string& key, float fallback
 {
     // Get the float
     AnimationController::parameter_const_iterator param = parameters.find(key);
-    
+
     // If we found it return it
     if(param != parameters.end())
     {
         return param->second.value.number;
     }
-    
+
     // Return the fallback
     return fallback;
 }
@@ -301,7 +315,7 @@ void AnimationController::SetBoolean(const std::string& key, bool value)
 {
     // Get the float
     AnimationController::parameter_iterator param = parameters.find(key);
-    
+
     // If we found it return it
     if(param != parameters.end())
     {
@@ -313,7 +327,7 @@ void AnimationController::SetFloat(const std::string& key, float value)
 {
     // Get the float
     AnimationController::parameter_iterator param = parameters.find(key);
-    
+
     // If we found it return it
     if(param != parameters.end())
     {

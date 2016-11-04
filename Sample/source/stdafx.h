@@ -127,7 +127,7 @@ using glm::quat;
 //in visual studio. They can be ignored
 #define __STR2__(x) #x
 #define __STR1__(x) __STR2__(x)
-#define __LOC__ __FILE__ "("__STR1__(__LINE__)") : Warning Msg: "
+#define __LOC__ __FILE__ " ( " __STR1__(__LINE__) " ) : Warning Msg: "
 
 //Allow packing of structures in GCC and in VisualC++ not sure about clang
 #ifdef WIN32
